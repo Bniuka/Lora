@@ -29,7 +29,7 @@ export default function CreatorSubscription() {
         return;
       }
       const script = document.createElement('script');
-      script.src = "https://www.paypal.com/sdk/js?client-id=AXd-69JXPLq5PvNBsoZlkrimc5KxbXE8a9o4ubs215zZJZSdQr9UycN12N-bj66QoldyvnM8DQ6DRK4D&currency=USD&intent=capture";
+      script.src = "https://www.paypal.com/sdk/js?client-id=EEItlAkQuMS7Zhq7Jhz6wBQpdBuM6sQDi7isAcHtkGhQU6_C0jBxRNhz-mpw1cba27t-XdBb03udjKwe&currency=USD&intent=capture";
       script.async = true;
       script.onload = () => setScriptLoaded(true);
       document.body.appendChild(script);
