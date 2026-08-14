@@ -33,22 +33,45 @@ export function AuthProvider({ children }) {
         } else {
           // If profile is missing in DB, insert it so foreign keys don't break
           const { data: authData } = await supabase.auth.getUser();
-          const email = authData?.user?.email || '';
+          const user = authData?.user;
+          const email = user?.email || '';
+          const meta = user?.user_metadata || {};
           
           const fallbackProfile = { 
             id: userId, 
-            role: 'learner', 
-            first_name: 'New', 
-            last_name: 'Learner',
+            role: meta.role || 'learner', 
+            first_name: meta.first_name || 'New', 
+            last_name: meta.last_name || 'Learner',
             email: email,
-            contact_number: '0000000000',
-            country_code: 'US'
+            contact_number: meta.contact_number || '0000000000',
+            country_code: meta.country_code || 'US'
           };
           
           // Attempt to insert the missing profile
           const { error: insertError } = await supabase.from('profiles').insert(fallbackProfile);
           if (insertError) {
             console.error('[useAuth] Fallback profile insert failed:', insertError);
+          }
+
+          if (fallbackProfile.role === 'creator') {
+            const now = new Date();
+            const trialEnds = new Date(now);
+            trialEnds.setDate(now.getDate() + 30);
+      
+            const creatorFallback = {
+              id: userId,
+              payment_link: meta.payment_link || '',
+              about: meta.about || '',
+              category: meta.category || '',
+              subscription_status: 'trial',
+              trial_started_at: now.toISOString(),
+              trial_ends_at: trialEnds.toISOString(),
+            };
+            const { error: creatorError } = await supabase.from('creator_profiles').insert(creatorFallback);
+            if (creatorError) {
+              console.error('[useAuth] Fallback creator insert failed:', creatorError);
+            }
+            setCreatorProfile(creatorFallback);
           }
           
           setProfile(fallbackProfile);
@@ -91,6 +114,18 @@ export function AuthProvider({ children }) {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          role,
+          contact_number: contactNumber,
+          country_code: countryCode,
+          payment_link: paymentLink,
+          about,
+          category
+        }
+      }
     });
 
     if (authError) {
@@ -98,45 +133,53 @@ export function AuthProvider({ children }) {
       throw authError;
     }
 
+    if (!authData.user) {
+      throw new Error('An account with this email already exists. Try logging in.');
+    }
+
     const userId = authData.user.id;
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: userId,
-      role,
-      first_name: firstName,
-      last_name: lastName,
-      contact_number: contactNumber,
-      country_code: countryCode,
-      email,
-    });
-
-    if (profileError) {
-      console.error('[useAuth] profiles insert error:', profileError.message, profileError);
-      throw profileError;
-    }
-
-    if (role === 'creator') {
-      // Include trial subscription fields directly so no separate update is needed
-      const now = new Date();
-      const trialEnds = new Date(now);
-      trialEnds.setDate(now.getDate() + 30);
-
-      const { error: creatorError } = await supabase.from('creator_profiles').insert({
+    // If email confirmation is required, authData.session will be null.
+    // We cannot insert into 'profiles' right now because RLS requires an active session.
+    // We will rely on fetchProfile's fallback logic to insert it on their first login.
+    if (authData.session) {
+      const { error: profileError } = await supabase.from('profiles').insert({
         id: userId,
-        payment_link: paymentLink || '',
-        about,
-        category,
-        subscription_status: 'trial',
-        trial_started_at: now.toISOString(),
-        trial_ends_at: trialEnds.toISOString(),
+        role,
+        first_name: firstName,
+        last_name: lastName,
+        contact_number: contactNumber,
+        country_code: countryCode,
+        email,
       });
-      if (creatorError) {
-        console.error('[useAuth] creator_profiles insert error:', creatorError.message, creatorError);
-        throw creatorError;
+
+      if (profileError) {
+        console.error('[useAuth] profiles insert error:', profileError.message, profileError);
+        throw profileError;
       }
+
+      if (role === 'creator') {
+        const now = new Date();
+        const trialEnds = new Date(now);
+        trialEnds.setDate(now.getDate() + 30);
+
+        const { error: creatorError } = await supabase.from('creator_profiles').insert({
+          id: userId,
+          payment_link: paymentLink || '',
+          about,
+          category,
+          subscription_status: 'trial',
+          trial_started_at: now.toISOString(),
+          trial_ends_at: trialEnds.toISOString(),
+        });
+        if (creatorError) {
+          console.error('[useAuth] creator_profiles insert error:', creatorError.message, creatorError);
+          throw creatorError;
+        }
+      }
+      await fetchProfile(userId);
     }
 
-    await fetchProfile(userId);
     return authData;
   };
 
