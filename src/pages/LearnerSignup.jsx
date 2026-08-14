@@ -49,6 +49,7 @@ export default function LearnerSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -71,7 +72,7 @@ export default function LearnerSignup() {
         contactNumber: phone,
         countryCode: phone ? phone.slice(0, phone.length - 10) : '',
       });
-      navigate('/learner/dashboard');
+      setIsSuccess(true);
     } catch (err) {
       setError(friendlyError(err.message));
     } finally {
@@ -94,7 +95,28 @@ export default function LearnerSignup() {
             <p className="text-sm text-[#475569]">Start discovering and learning on Lora</p>
           </motion.div>
 
-          <motion.form
+          {isSuccess ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] text-center"
+            >
+              <div className="w-16 h-16 bg-blue-50 text-[#2563EB] rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0F172A] mb-4">Check your email</h2>
+              <p className="text-[#475569] mb-8">
+                We've sent a confirmation link to <span className="font-medium text-[#0F172A]">{watch('email')}</span>. 
+                Please verify your email address to complete your registration.
+              </p>
+              <Link to="/login" className="btn-primary w-full py-4 text-base block">
+                Go to Login
+              </Link>
+            </motion.div>
+          ) : (
+            <motion.form
             onSubmit={handleSubmit(onSubmit)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -179,6 +201,7 @@ export default function LearnerSignup() {
               <Link to="/login" className="text-[#2563EB] font-semibold hover:underline">Log in</Link>
             </p>
           </motion.form>
+          )}
         </div>
       </div>
     </PageTransition>
