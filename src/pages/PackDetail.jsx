@@ -9,7 +9,7 @@ import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-f
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference } from '../lib/utils';
-import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
+import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 
 function SessionButton({ session }) {
   const now = new Date();
@@ -191,6 +191,7 @@ export default function PackDetail() {
                     <Sparkles size={12} /> Free Preview
                   </span>
                 )}
+                <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} />
               </div>
               <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#0F172A] to-[#334155] leading-tight mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
                 {pack.title}

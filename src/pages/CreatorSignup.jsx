@@ -43,6 +43,8 @@ function friendlyError(msg) {
     return 'An account with this email already exists. Try logging in.';
   if (lower.includes('invalid login') || lower.includes('invalid email or password'))
     return 'Incorrect email or password. Please try again.';
+  if (lower.includes('error sending confirmation email') || lower.includes('rate limit'))
+    return 'Email service limit reached. Please try again later or contact the administrator.';
   return 'Something went wrong. Please try again.';
 }
 

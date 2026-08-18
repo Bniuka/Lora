@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, Package, Sparkles, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch } from '../components/ui';
+import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch, ShareMenu } from '../components/ui';
 
 const CATEGORIES = ['All', 'Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
@@ -131,6 +131,9 @@ export default function Discover() {
                     {pack.has_free_session && (
                       <div className="absolute top-3 left-3"><GoldBadge icon={Sparkles}>Free Preview</GoldBadge></div>
                     )}
+                    <div className="absolute top-3 right-3">
+                      <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} />
+                    </div>
                   </div>
                   <div className="p-5">
                     <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-1">{pack.title}</h3>

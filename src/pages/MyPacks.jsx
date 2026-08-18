@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Package, PlusCircle, Edit3, Trash2, Eye, Users } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition, GoldBadge, Skeleton, EmptyState, Modal } from '../components/ui';
+import { PageTransition, GoldBadge, Skeleton, EmptyState, Modal, ShareMenu } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 
 export default function MyPacks() {
@@ -97,8 +97,9 @@ export default function MyPacks() {
                       <Package size={36} className="text-[#E2E8F0]" />
                     </div>
                   )}
-                  <div className="absolute top-3 right-3 flex gap-2">
+                  <div className="absolute top-3 right-3 flex items-center gap-2">
                     {pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
+                    <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} />
                   </div>
                 </div>
 
