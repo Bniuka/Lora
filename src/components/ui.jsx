@@ -226,7 +226,6 @@ export function ToggleSwitch({ checked, onChange, label }) {
     </div>
   );
 }
-
 /* ============================================================
    SHARE MENU
    ============================================================ */
@@ -331,7 +330,6 @@ export function ShareMenu({ url, title }) {
               className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-6 sm:p-8 overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Decorative background element */}
               <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-[#2563EB]/10 to-transparent rounded-full blur-3xl" />
               
               <div className="flex items-center justify-between mb-8 relative z-10">

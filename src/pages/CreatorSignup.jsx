@@ -43,8 +43,6 @@ function friendlyError(msg) {
     return 'An account with this email already exists. Try logging in.';
   if (lower.includes('invalid login') || lower.includes('invalid email or password'))
     return 'Incorrect email or password. Please try again.';
-  if (lower.includes('error sending confirmation email') || lower.includes('rate limit'))
-    return 'Email service limit reached. Please try again later or contact the administrator.';
   return 'Something went wrong. Please try again.';
 }
 
@@ -55,7 +53,6 @@ export default function CreatorSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -82,7 +79,7 @@ export default function CreatorSignup() {
         category: data.category,
       });
 
-      setIsSuccess(true);
+      navigate('/creator/subscription');
     } catch (err) {
       console.error('[CreatorSignup] error:', err.message, err);
       setError(friendlyError(err.message));
@@ -106,28 +103,7 @@ export default function CreatorSignup() {
             <p className="text-sm text-[#475569]">Start teaching and earning on Lora</p>
           </motion.div>
 
-          {isSuccess ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] text-center"
-            >
-              <div className="w-16 h-16 bg-blue-50 text-[#2563EB] rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-4">Check your email</h2>
-              <p className="text-[#475569] mb-8">
-                We've sent a confirmation link to <span className="font-medium text-[#0F172A]">{watch('email')}</span>. 
-                Please verify your email address to complete your registration and set up your creator subscription.
-              </p>
-              <Link to="/login" className="btn-primary w-full py-4 text-base block">
-                Go to Login
-              </Link>
-            </motion.div>
-          ) : (
-            <motion.form
+          <motion.form
             onSubmit={handleSubmit(onSubmit)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -234,7 +210,6 @@ export default function CreatorSignup() {
               <Link to="/login" className="text-[#2563EB] font-semibold hover:underline">Log in</Link>
             </p>
           </motion.form>
-          )}
         </div>
       </div>
     </PageTransition>

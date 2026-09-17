@@ -17,11 +17,20 @@ export default function CreatorSubscription() {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [error, setError] = useState('');
 
+  // Wait for profile to load before determining trial status
+  if (creatorProfile === undefined) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center">
+        <Loader2 className="w-10 h-10 text-[#C9A84C] animate-spin" />
+      </div>
+    );
+  }
+
   const isUpgrade = searchParams.get('upgrade') === 'true';
   const isTrialView = creatorProfile?.subscription_status === 'trial' && !isUpgrade;
 
   useEffect(() => {
-    if (isTrialView) return; // No PayPal needed for free trial start
+    if (isTrialView) return;
 
     const loadPayPalScript = () => {
       if (window.paypal) {
@@ -29,7 +38,8 @@ export default function CreatorSubscription() {
         return;
       }
       const script = document.createElement('script');
-      script.src = "https://www.paypal.com/sdk/js?client-id=EEItlAkQuMS7Zhq7Jhz6wBQpdBuM6sQDi7isAcHtkGhQU6_C0jBxRNhz-mpw1cba27t-XdBb03udjKwe&currency=USD&intent=capture";
+      // Hide Venmo and PayLater to prevent clutter, but KEEP Card/Credit
+      script.src = "https://www.paypal.com/sdk/js?client-id=BAA3LepPjCppAUIZqcUh_cS9FGoyk9NET_68v8caPOhyq4c3wBYkfvyMNDmLJD9jij4qkhnNEEBN1m4hKs&vault=true&intent=subscription&disable-funding=paylater,venmo";
       script.async = true;
       script.onload = () => setScriptLoaded(true);
       document.body.appendChild(script);
@@ -40,35 +50,36 @@ export default function CreatorSubscription() {
 
   useEffect(() => {
     if (!isTrialView && scriptLoaded && window.paypal) {
+      const container = document.getElementById('paypal-button-container');
+      if (container) {
+        container.innerHTML = ''; // Clear container to prevent duplicate buttons
+      }
+
       window.paypal.Buttons({
-        createOrder: (data, actions) => {
-          return actions.order.create({
-            intent: "CAPTURE",
-            purchase_units: [{
-              amount: {
-                currency_code: "USD",
-                value: AMOUNT_USD
-              },
-              description: "Lora Creator Plan - Monthly Subscription"
-            }]
+        style: {
+          shape: 'pill',
+          color: 'gold',
+          layout: 'vertical',
+          label: 'paypal'
+        },
+        createSubscription: (data, actions) => {
+          return actions.subscription.create({
+            plan_id: 'P-29205712KU195831VNKVYZQQ'
           });
         },
         onApprove: async (data, actions) => {
           try {
             setLoading(true);
-            const order = await actions.order.capture();
             
-            // Insert payment
             await supabase.from('subscription_payments').insert({
               creator_id: creatorProfile.id,
-              paypal_order_id: order.id,
+              paypal_order_id: data.subscriptionID, 
               amount: AMOUNT_LKR,
               currency: 'LKR',
               status: 'completed',
               paid_at: new Date().toISOString()
             });
 
-            // Update profile
             const now = new Date();
             const nextBilling = new Date();
             nextBilling.setDate(now.getDate() + 30);
@@ -82,8 +93,7 @@ export default function CreatorSubscription() {
 
             await refreshProfile();
             
-            // Show toast (assuming alert for now)
-            alert("Payment successful! Welcome to Lora Pro 🎉");
+            alert("Subscription activated! Welcome to Lora Pro 🎉");
             
             setTimeout(() => {
               navigate('/creator/dashboard');
