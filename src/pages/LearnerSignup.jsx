@@ -71,7 +71,7 @@ export default function LearnerSignup() {
         contactNumber: phone,
         countryCode: phone ? phone.slice(0, phone.length - 10) : '',
       });
-      navigate('/learner/dashboard');
+      navigate('/verify-email', { state: { email: data.email } });
     } catch (err) {
       setError(friendlyError(err.message));
     } finally {
@@ -132,6 +132,10 @@ export default function LearnerSignup() {
               <label className="form-label">Email Address</label>
               <input {...register('email')} type="email" className="input-field" placeholder="you@example.com" />
               {errors.email && <p className="form-error">{errors.email.message}</p>}
+              <p className="mt-2 text-xs text-[#2563EB] bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2 flex items-start gap-2">
+                <span className="shrink-0 mt-0.5">📧</span>
+                We will send a verification email to this address. Please make sure it's correct.
+              </p>
             </div>
 
             <div className="mb-6">

@@ -14,6 +14,7 @@ import LearnerSignup from './pages/LearnerSignup';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import UpdatePassword from './pages/UpdatePassword';
+import VerifyEmail from './pages/VerifyEmail';
 import PackDetail from './pages/PackDetail';
 import CreatorPublicProfile from './pages/CreatorPublicProfile';
 
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/update-password" element={<UpdatePassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/learner/pack/:id" element={<PackDetail />} />
         <Route path="/creator/:id" element={<CreatorPublicProfile />} />
 
