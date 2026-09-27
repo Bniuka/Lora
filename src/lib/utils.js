@@ -28,3 +28,12 @@ export async function generatePaymentReference() {
   
   return code;
 }
+
+export function hasValidSubscription(creatorProfile) {
+  if (!creatorProfile) return false;
+  if (creatorProfile.subscription_status === 'active') return true;
+  if (creatorProfile.subscription_status === 'trial') {
+    return new Date(creatorProfile.trial_ends_at) > new Date();
+  }
+  return false;
+}

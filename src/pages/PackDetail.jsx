@@ -9,7 +9,7 @@ import {
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { generatePaymentReference } from '../lib/utils';
+import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
 
 function SessionButton({ session }) {
@@ -73,7 +73,7 @@ export default function PackDetail() {
     const fetch = async () => {
       const [packRes, sessRes] = await Promise.all([
         supabase.from('session_packs')
-          .select('*, creator_profiles(id, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url))')
+          .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url))')
           .eq('id', id).single(),
         supabase.from('sessions').select('*').eq('pack_id', id).order('order_index'),
       ]);
@@ -172,6 +172,23 @@ export default function PackDetail() {
 
   if (loading) return <div className="max-w-4xl mx-auto p-6"><Skeleton className="h-80 mb-6" /><Skeleton className="h-40" /></div>;
   if (!pack) return <div className="text-center py-20 text-[#94A6B8]">Pack not found</div>;
+
+  const isCreatorValid = hasValidSubscription(creator);
+  // Hide pack if the creator's subscription is invalid, unless the current user is the creator
+  if (!isCreatorValid && user?.id !== pack.creator_id) {
+    return (
+      <div className="max-w-4xl mx-auto p-12 text-center py-32">
+        <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Lock size={32} />
+        </div>
+        <h2 className="text-3xl font-bold text-[#0F172A] mb-4">Course Unavailable</h2>
+        <p className="text-lg text-[#475569] max-w-md mx-auto mb-8">
+          This course is currently unavailable because the creator's account is inactive or their free trial has ended.
+        </p>
+        <Link to="/learner/discover" className="btn-primary inline-flex">Explore other courses</Link>
+      </div>
+    );
+  }
 
   const embedUrl = getVideoEmbedUrl(pack.intro_video_url);
 

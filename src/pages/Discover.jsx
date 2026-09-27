@@ -7,6 +7,8 @@ import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch, ShareMen
 
 const CATEGORIES = ['All', 'Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
+import { hasValidSubscription } from '../lib/utils';
+
 export default function Discover() {
   const [searchParams] = useSearchParams();
   const [packs, setPacks] = useState([]);
@@ -20,7 +22,7 @@ export default function Discover() {
     setLoading(true);
     let q = supabase
       .from('session_packs')
-      .select('*, creator_profiles(id, profiles(first_name, last_name)), enrollments(count)')
+      .select('*, creator_profiles(id, subscription_status, trial_ends_at, profiles(first_name, last_name)), enrollments(count)')
       .eq('is_published', true)
       .order('created_at', { ascending: false });
 
@@ -31,7 +33,10 @@ export default function Discover() {
     if (hasFreeSession) q = q.eq('has_free_session', true);
 
     const { data } = await q;
-    setPacks(data || []);
+    
+    // Filter out packs from creators with expired subscriptions/trials
+    const validPacks = (data || []).filter(pack => hasValidSubscription(pack.creator_profiles));
+    setPacks(validPacks);
     setLoading(false);
   };
 
