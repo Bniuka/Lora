@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
-  Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy
+  Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -64,6 +65,9 @@ export default function PackDetail() {
   const [paymentStep, setPaymentStep] = useState(1);
   const [refCode, setRefCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [descExpanded, setDescExpanded] = useState(false);
+
+  const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
 
   useEffect(() => {
     const fetch = async () => {
@@ -173,208 +177,270 @@ export default function PackDetail() {
 
   return (
     <PageTransition>
-      <div className="max-w-4xl mx-auto px-5 sm:px-6 md:px-10 pt-8 pb-32 sm:pb-40 overflow-x-hidden sm:overflow-x-visible">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-          {pack.thumbnail_url && (
-            <div className="relative w-full h-64 sm:h-80 rounded-[32px] overflow-hidden mb-8 shadow-2xl group">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/30 to-transparent z-10 transition-opacity duration-500"></div>
-              <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000" />
-            </div>
-          )}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-[#2563EB] to-[#3B82F6] rounded-full shadow-lg shadow-[#2563EB]/30">{pack.category}</span>
-                {pack.has_free_session && (
-                  <span className="px-3 py-1 text-xs font-bold text-[#78350F] bg-gradient-to-r from-[#FCD34D] to-[#F59E0B] rounded-full shadow-lg shadow-[#F59E0B]/30 flex items-center gap-1">
-                    <Sparkles size={12} /> Free Preview
-                  </span>
-                )}
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#0F172A] to-[#334155] leading-tight mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
-                {pack.title}
-              </h1>
-              {creator && (
-                <Link to={`/creator/${creator.id}`} className="text-sm font-medium text-[#64748B] hover:text-[#2563EB] transition-colors flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#E2E8F0] flex items-center justify-center text-[#475569] font-bold uppercase">
-                    {creator.profiles?.first_name?.[0]}{creator.profiles?.last_name?.[0]}
-                  </div>
-                  Created by {creator.profiles?.first_name} {creator.profiles?.last_name}
-                </Link>
-              )}
-            </div>
-            <div className="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-[#F1F5F9] min-w-[180px] text-center shrink-0 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-16 h-16 bg-[#2563EB]/5 rounded-bl-[64px]" />
-              <p className="text-xs uppercase tracking-[0.2em] text-[#94A6B8] mb-1 font-bold">Total Price</p>
-              <p className="text-3xl font-black text-[#2563EB] mb-0" style={{ fontFamily: 'var(--font-heading)' }}>
-                {pack.currency} {pack.price}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Intro Video */}
-        {embedUrl && (
-          <div className="mb-12 rounded-[24px] overflow-hidden border border-[#E2E8F0] shadow-xl shadow-[#0F172A]/5 aspect-video bg-black relative">
-            <iframe src={embedUrl} title="Intro video" className="w-full h-full relative z-10" allowFullScreen allow="autoplay; encrypted-media" />
-          </div>
-        )}
-
-        <p className="text-[#475569] mb-12 leading-relaxed text-lg">{pack.description}</p>
-
-        {/* FREE SESSION CARD */}
-        {freeSession && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12 p-8 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#1E293B] to-[#0F172A] relative overflow-hidden shadow-2xl border border-[#334155] text-white"
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#3B82F6] to-transparent opacity-20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[#F59E0B] to-transparent opacity-10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
-            
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-4 py-1.5 text-[10px] font-black tracking-widest text-[#FDE68A] bg-[#F59E0B]/20 rounded-full border border-[#F59E0B]/30 flex items-center gap-1 uppercase">
-                  <Sparkles size={14} /> Free Preview Session
-                </span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-5 leading-tight">{freeSession.title}</h3>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-[#94A6B8] mb-8">
-                <span className="flex items-center gap-2 bg-white/5 px-4 py-2.5 rounded-xl border border-white/10 backdrop-blur-sm">
-                  <Calendar size={16} className="text-[#60A5FA]" /> {format(new Date(freeSession.scheduled_at), 'MMM dd, yyyy · h:mm a')}
-                </span>
-                <span className="flex items-center gap-2 bg-white/5 px-4 py-2.5 rounded-xl border border-white/10 backdrop-blur-sm">
-                  <Clock size={16} className="text-[#60A5FA]" /> {freeSession.duration_minutes} min
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                {(() => {
-                  const now = new Date();
-                  const scheduled = new Date(freeSession.scheduled_at);
-                  const minutesDiff = differenceInMinutes(scheduled, now);
-                  const isLive = minutesDiff <= 15 && minutesDiff >= -freeSession.duration_minutes;
-                  const hasPassed = isPast(scheduled) && !isLive;
-
-                  if (isLive) {
-                    return (
-                      <button onClick={() => handleFreeJoin(freeSession)}
-                        className="bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-4 px-8 rounded-2xl font-bold shadow-lg shadow-[#2563EB]/40 hover:shadow-[#2563EB]/60 hover:-translate-y-1 transition-all flex items-center gap-2">
-                        <Play size={20} className="fill-current" /> JOIN LIVE NOW
-                      </button>
-                    );
-                  }
-                  if (hasPassed && freeSession.recording_url) {
-                    return (
-                      <button onClick={() => {
-                        if (!user) { setLoginPrompt(true); return; }
-                        window.open(freeSession.recording_url, '_blank');
-                      }} className="bg-white/10 hover:bg-white/20 border border-white/20 text-white py-4 px-8 rounded-2xl font-bold transition-all flex items-center gap-2">
-                        <Video size={20} /> WATCH RECORDING
-                      </button>
-                    );
-                  }
-                  if (hasPassed) {
-                    return <span className="text-sm font-medium text-[#94A6B8] bg-white/5 px-5 py-3 rounded-xl">Recording Coming Soon</span>;
-                  }
-                  return (
-                    <div className="text-sm font-bold text-[#60A5FA] bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-5 py-3 rounded-xl flex items-center gap-2">
-                      <Clock size={16} className="animate-pulse" />
-                      Starts {formatDistanceToNow(scheduled, { addSuffix: true })}
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Session schedule */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-[#0F172A] mb-8 flex flex-wrap items-center gap-3" style={{ fontFamily: 'var(--font-heading)' }}>
-            <div className="w-1.5 h-6 bg-gradient-to-b from-[#2563EB] to-[#60A5FA] rounded-full shrink-0"></div>
-            <span>Session Schedule</span> <span className="text-[#94A6B8] text-lg font-medium">({paidSessions.length} sessions)</span>
-          </h2>
-          <div className="space-y-4">
-            {paidSessions.map((s, i) => (
-              <div key={s.id} className="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-5 sm:p-6 rounded-[24px] border border-[#F1F5F9] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-[#DBEAFE] transition-all overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#F8FAFC] to-transparent opacity-0 group-hover:opacity-100 rounded-[24px] transition-opacity -z-10"></div>
-                
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#F1F5F9] to-[#E2E8F0] group-hover:from-[#DBEAFE] group-hover:to-[#EFF6FF] flex items-center justify-center flex-shrink-0 transition-colors">
-                  {enrollment?.status === 'confirmed' ? (
-                    <span className="text-sm font-black text-[#2563EB]">{i + 1}</span>
-                  ) : (
-                    <Lock size={16} className="text-[#94A6B8] group-hover:text-[#2563EB]/60" />
-                  )}
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-lg font-bold text-[#0F172A] mb-2 group-hover:text-[#2563EB] transition-colors break-words leading-tight">{s.title}</h4>
-                  <p className="text-sm font-medium text-[#64748B] flex flex-wrap items-center gap-x-3 gap-y-2">
-                    <span className="flex items-center gap-1 shrink-0"><Calendar size={14} className="text-[#94A6B8]" /> {format(new Date(s.scheduled_at), 'MMM dd · h:mm a')}</span>
-                    <span className="text-[#E2E8F0] hidden sm:block">|</span>
-                    <span className="flex items-center gap-1 shrink-0"><Clock size={14} className="text-[#94A6B8]" /> {s.duration_minutes}m</span>
-                  </p>
-                </div>
-                
-                {enrollment?.status === 'confirmed' && (
-                  <div className="shrink-0 mt-2 sm:mt-0">
-                    <SessionButton session={s} />
-                  </div>
-                )}
-              </div>
-            ))}
+      <div className="min-h-screen bg-white pb-32">
+        {/* BREADCRUMB */}
+        <div className="bg-[#F8F9FA] border-b border-[#E2E8F0] py-3 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-[#64748B] font-medium">
+            <Link to="/" className="hover:text-[#2563EB]">Home</Link>
+            <ChevronRight size={14} />
+            <Link to="/learner/discover" className="hover:text-[#2563EB]">Sessions</Link>
+            <ChevronRight size={14} />
+            <span className="text-[#0F172A] truncate">{pack.title}</span>
           </div>
         </div>
 
-        {/* Community links */}
-        {(pack.whatsapp_link || pack.telegram_link) && (enrollment?.status === 'confirmed' || user?.id === pack.creator_id) && (
-          <div className="flex gap-4 mb-10">
-            {pack.whatsapp_link && (
-              <a href={pack.whatsapp_link} target="_blank" rel="noopener noreferrer"
-                className="btn-ghost text-sm flex items-center gap-2 text-[#2D7A4F] border border-[#2D7A4F]/20 hover:bg-[#2D7A4F]/10">
-                <MessageCircle size={16} /> WhatsApp Group
-              </a>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex flex-col lg:flex-row gap-10">
+          
+          {/* LEFT COLUMN */}
+          <div className="flex-1 lg:max-w-[65%] min-w-0">
+            {pack.has_free_session && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] rounded-full text-xs font-bold uppercase tracking-widest mb-4 border border-[#DBEAFE]">
+                <Sparkles size={12} /> Free Preview Session
+              </div>
             )}
-            {pack.telegram_link && (
-              <a href={pack.telegram_link} target="_blank" rel="noopener noreferrer"
-                className="btn-ghost text-sm flex items-center gap-2 text-[#2D7A4F] border border-[#2D7A4F]/20 hover:bg-[#2D7A4F]/10">
-                <Send size={16} /> Telegram Channel
-              </a>
+            
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] leading-[1.1] mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
+              {pack.title}
+            </h1>
+            
+            {creator && (
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-[#E2E8F0]">
+                <div className="w-12 h-12 rounded-full bg-[#E2E8F0] flex items-center justify-center text-[#475569] font-bold uppercase shrink-0">
+                  {creator.profiles?.first_name?.[0]}{creator.profiles?.last_name?.[0]}
+                </div>
+                <div>
+                  <p className="text-sm text-[#64748B] mb-0.5">Created by</p>
+                  <Link to={`/creator/${creator.id}`} className="text-base font-bold text-[#0F172A] hover:text-[#2563EB] transition-colors">
+                    {creator.profiles?.first_name} {creator.profiles?.last_name}
+                  </Link>
+                </div>
+              </div>
             )}
-          </div>
-        )}
 
-        {/* Enroll CTA */}
-        {user && profile?.role === 'learner' && !enrollment && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="sticky bottom-6 z-30 mt-12 sm:mt-20">
-            <button onClick={handleStartPaymentFlow} className="w-full bg-gradient-to-r from-[#2563EB] via-[#1D4ED8] to-[#1E40AF] text-white py-4 sm:py-5 px-6 sm:px-8 rounded-2xl font-bold text-base sm:text-lg shadow-[0_10px_40px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_50px_rgba(37,99,235,0.6)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 sm:gap-3 group">
-              ENROLL NOW FOR {pack.currency} {pack.price}
-            </button>
-          </motion.div>
-        )}
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-[#475569] font-medium mb-8">
+              <div className="flex items-center gap-2"><PlayCircle size={18} className="text-[#2563EB]"/> {sessions.length} session{sessions.length !== 1 && 's'}</div>
+              <div className="flex items-center gap-2"><Clock size={18} className="text-[#2563EB]"/> {totalMinutes} min total</div>
+              <div className="flex items-center gap-2"><Users size={18} className="text-[#2563EB]"/> All Levels</div>
+              <div className="flex items-center gap-2 text-[#F59E0B]"><Star size={18} className="fill-current"/> <span className="text-[#0F172A] font-bold">4.9</span> <span className="text-[#64748B]">(128 reviews)</span></div>
+            </div>
 
-        {enrollment?.status === 'pending' && (
-          <div className="p-5 rounded-xl bg-[#DBEAFE]/20 border border-[#DBEAFE] text-center">
-            <p className="text-sm text-[#2563EB] font-semibold">Payment submitted! Waiting for creator confirmation.</p>
-          </div>
-        )}
+            {/* Video Player */}
+            {embedUrl && (
+              <div className="mb-10 rounded-xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black aspect-video relative group">
+                <iframe src={embedUrl} title="Intro video" className="w-full h-full relative z-10" allowFullScreen allow="autoplay; encrypted-media" />
+                {embedUrl.includes('youtube') && (
+                  <div className="absolute top-4 left-4 z-20 pointer-events-none">
+                    <span className="bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+                      <Play size={12} /> Watch on YouTube
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Thumbnail Fallback */}
+            {!embedUrl && pack.thumbnail_url && (
+              <div className="mb-10 rounded-xl overflow-hidden shadow-lg border border-[#E2E8F0] aspect-video">
+                <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover" />
+              </div>
+            )}
 
-        {enrollment?.status === 'rejected' && (
-          <div className="p-5 rounded-xl bg-red-50 border border-red-100">
-            <p className="text-sm text-[#C0392B] font-medium mb-3">Payment was rejected</p>
-            {enrollment.rejection_reason && <p className="text-xs text-[#475569] mb-4">{enrollment.rejection_reason}</p>}
-            <button onClick={() => setPaymentModal(true)} className="btn-primary text-sm">Re-upload Screenshot</button>
-          </div>
-        )}
+            {/* About */}
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-[#0F172A] mb-4">About This Session</h2>
+              <div className="relative">
+                <p className={`text-base text-[#475569] leading-relaxed whitespace-pre-wrap ${!descExpanded ? 'line-clamp-3' : ''}`}>
+                  {pack.description}
+                </p>
+                {pack.description?.length > 150 && (
+                  <button onClick={() => setDescExpanded(!descExpanded)} className="text-[#2563EB] font-bold text-sm hover:underline mt-2 flex items-center gap-1">
+                    {descExpanded ? <>Show less <ChevronUp size={16}/></> : <>Show more <ChevronDown size={16}/></>}
+                  </button>
+                )}
+              </div>
+            </div>
 
-        {!user && (
-          <div className="sticky bottom-4 z-10">
-            <Link to="/signup/learner" className="btn-primary w-full py-4 text-base block text-center shadow-xl">
-              Sign Up to Enroll
-            </Link>
+            {/* What You'll Learn */}
+            <div className="mb-10 bg-[#F8F9FA] rounded-xl p-6 sm:p-8 border border-[#E2E8F0]">
+              <h2 className="text-xl font-bold text-[#0F172A] mb-6">What You'll Learn</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {['Master the core concepts from scratch', 'Practical hands-on exercises & projects', 'Live Q&A and community support', 'Access to exclusive resources and templates'].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="mt-0.5 bg-[#DCFCE7] text-[#16A34A] rounded-full p-0.5 shrink-0">
+                      <CheckCircle size={16} />
+                    </div>
+                    <span className="text-sm text-[#475569] font-medium leading-tight">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Session Schedule */}
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-[#0F172A] mb-6">Session Schedule</h2>
+              <div className="space-y-4">
+                {sessions.map((s, i) => (
+                  <div key={s.id} className="p-5 sm:p-6 rounded-xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-[#F8F9FA] border border-[#E2E8F0] flex items-center justify-center shrink-0">
+                      {(enrollment?.status === 'confirmed' || s.is_free_session) ? (
+                        <span className="text-base font-black text-[#2563EB]">{i + 1}</span>
+                      ) : (
+                        <Lock size={18} className="text-[#94A6B8]" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-[#0F172A] bg-[#F1F5F9] px-2 py-1 rounded-md">
+                          {format(new Date(s.scheduled_at), 'MMM dd')}
+                        </span>
+                        {s.is_free_session && (
+                          <span className="text-[10px] font-bold text-[#2563EB] bg-[#DBEAFE] px-2 py-1 rounded-md uppercase tracking-wider">Free Preview</span>
+                        )}
+                        {differenceInMinutes(new Date(s.scheduled_at), new Date()) > 0 && differenceInMinutes(new Date(s.scheduled_at), new Date()) < 24*60 && (
+                          <span className="text-[10px] font-bold text-[#D97706] bg-[#FEF3C7] px-2 py-1 rounded-md uppercase tracking-wider">Upcoming Soon</span>
+                        )}
+                      </div>
+                      <h4 className="text-lg font-bold text-[#0F172A] mb-1 leading-tight truncate">{s.title}</h4>
+                      <div className="text-sm text-[#64748B] flex items-center gap-3">
+                        <span className="flex items-center gap-1.5"><Clock size={14} /> {format(new Date(s.scheduled_at), 'h:mm a')}</span>
+                        <span>•</span>
+                        <span>{s.duration_minutes}m duration</span>
+                      </div>
+                    </div>
+                    {enrollment?.status === 'confirmed' || s.is_free_session ? (
+                      <div className="shrink-0 mt-2 sm:mt-0">
+                        <SessionButton session={s} />
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
-        )}
+
+          {/* RIGHT COLUMN (SIDEBAR) */}
+          <div className="lg:w-[35%] shrink-0">
+            <div className="sticky top-8 space-y-6">
+              
+              {/* Pricing Card */}
+              <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-xl p-6 sm:p-8">
+                <p className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Total Price</p>
+                <div className="text-4xl font-black text-[#0F172A] mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
+                  {pack.currency} {pack.price}
+                </div>
+
+                {user && profile?.role === 'learner' && !enrollment && (
+                  <button onClick={handleStartPaymentFlow} className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2 mb-4">
+                    Join This Session
+                  </button>
+                )}
+
+                {enrollment?.status === 'pending' && (
+                  <div className="p-4 rounded-xl bg-[#DBEAFE]/30 border border-[#DBEAFE] text-center mb-4">
+                    <p className="text-sm text-[#2563EB] font-bold">Payment submitted!</p>
+                    <p className="text-xs text-[#2563EB]/80 mt-1">Waiting for creator confirmation.</p>
+                  </div>
+                )}
+                {enrollment?.status === 'rejected' && (
+                  <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-center mb-4">
+                    <p className="text-sm text-[#C0392B] font-bold mb-2">Payment rejected</p>
+                    <button onClick={() => setPaymentModal(true)} className="btn-primary w-full py-2 text-sm">Re-upload Screenshot</button>
+                  </div>
+                )}
+                {!user && (
+                  <Link to="/signup/learner" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2 mb-4">
+                    Sign Up to Join
+                  </Link>
+                )}
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Full lifetime access</div>
+                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Access on mobile and desktop</div>
+                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Certificate of completion</div>
+                </div>
+
+                <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-center gap-2 text-xs text-[#64748B] font-medium">
+                  <ShieldCheck size={14} className="text-[#94A6B8]"/> Secure checkout • 7-day refund
+                </div>
+              </div>
+
+              {/* Session Details Card */}
+              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+                <h3 className="font-bold text-[#0F172A] mb-4">Session Details</h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <Calendar size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
+                    <div>
+                      <p className="text-sm font-bold text-[#0F172A]">Starts On</p>
+                      <p className="text-sm text-[#475569]">{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Clock size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
+                    <div>
+                      <p className="text-sm font-bold text-[#0F172A]">Time</p>
+                      <p className="text-sm text-[#475569]">{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <LayoutGrid size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
+                    <div>
+                      <p className="text-sm font-bold text-[#0F172A]">Category</p>
+                      <p className="text-sm text-[#475569]">{pack.category}</p>
+                    </div>
+                  </div>
+                  
+                  {sessions[0] && differenceInMinutes(new Date(sessions[0].scheduled_at), new Date()) > 0 && (
+                    <div className="mt-6 p-4 bg-[#F8F9FA] rounded-lg border border-[#E2E8F0] text-center">
+                      <p className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Starts In</p>
+                      <p className="text-sm font-bold text-[#2563EB]">{formatDistanceToNow(new Date(sessions[0].scheduled_at))}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* What's Included */}
+              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+                <h3 className="font-bold text-[#0F172A] mb-4">What's Included</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-sm text-[#475569]"><MonitorPlay size={16} className="text-[#64748B]"/> {totalMinutes} minutes of live content</div>
+                  <div className="flex items-center gap-3 text-sm text-[#475569]"><Smartphone size={16} className="text-[#64748B]"/> Access on TV & Mobile</div>
+                  <div className="flex items-center gap-3 text-sm text-[#475569]"><InfinityIcon size={16} className="text-[#64748B]"/> Replay availability</div>
+                  {(pack.whatsapp_link || pack.telegram_link) && (
+                    <div className="flex items-center gap-3 text-sm text-[#475569]"><Users size={16} className="text-[#64748B]"/> Community group access</div>
+                  )}
+                </div>
+                
+                {(pack.whatsapp_link || pack.telegram_link) && (enrollment?.status === 'confirmed' || user?.id === pack.creator_id) && (
+                  <div className="mt-5 pt-5 border-t border-[#E2E8F0] space-y-2">
+                    {pack.whatsapp_link && (
+                      <a href={pack.whatsapp_link} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full py-2 text-sm flex items-center justify-center gap-2 border-[#E2E8F0]">
+                        <MessageCircle size={16} className="text-[#25D366]"/> Join WhatsApp
+                      </a>
+                    )}
+                    {pack.telegram_link && (
+                      <a href={pack.telegram_link} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full py-2 text-sm flex items-center justify-center gap-2 border-[#E2E8F0]">
+                        <Send size={16} className="text-[#229ED9]"/> Join Telegram
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Support Card */}
+              <div className="bg-[#F8F9FA] rounded-xl border border-[#E2E8F0] p-6 text-center">
+                <div className="w-10 h-10 rounded-full bg-[#E2E8F0] text-[#64748B] flex items-center justify-center mx-auto mb-3">
+                  <Headset size={20} />
+                </div>
+                <h3 className="font-bold text-[#0F172A] mb-1">Need Help?</h3>
+                <p className="text-xs text-[#475569] mb-4">Having trouble with your enrollment or have questions?</p>
+                <button className="text-sm font-bold text-[#2563EB] hover:underline">Contact Support</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
 
         {/* Payment Modal */}
         <Modal isOpen={paymentModal} onClose={() => { setPaymentModal(false); setPaymentStep(1); setScreenshot(null); }}
