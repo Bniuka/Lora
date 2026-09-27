@@ -12,6 +12,8 @@ import RoleSelection from './pages/RoleSelection';
 import CreatorSignup from './pages/CreatorSignup';
 import LearnerSignup from './pages/LearnerSignup';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
+import UpdatePassword from './pages/UpdatePassword';
 import PackDetail from './pages/PackDetail';
 import CreatorPublicProfile from './pages/CreatorPublicProfile';
 
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="/signup/creator" element={<CreatorSignup />} />
         <Route path="/signup/learner" element={<LearnerSignup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/learner/pack/:id" element={<PackDetail />} />
         <Route path="/creator/:id" element={<CreatorPublicProfile />} />
 
