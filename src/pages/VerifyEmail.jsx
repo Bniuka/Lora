@@ -1,7 +1,7 @@
 ﻿import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, RefreshCw, ArrowRight, CheckCircle } from "lucide-react";
+import { Mail, RefreshCw, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { PageTransition } from "../components/ui";
 
@@ -10,14 +10,30 @@ export default function VerifyEmail() {
   const email = location.state?.email || "";
   const [resent, setResent] = useState(false);
   const [resending, setResending] = useState(false);
+  const [resendError, setResendError] = useState("");
 
   const handleResend = async () => {
     if (!email || resending) return;
     setResending(true);
-    await supabase.auth.resend({ type: "signup", email });
+    setResendError("");
+    setResent(false);
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/login`,
+      },
+    });
+
     setResending(false);
-    setResent(true);
-    setTimeout(() => setResent(false), 5000);
+
+    if (error) {
+      setResendError("Could not resend email. Please try again in a moment.");
+    } else {
+      setResent(true);
+      setTimeout(() => setResent(false), 6000);
+    }
   };
 
   return (
@@ -80,19 +96,41 @@ export default function VerifyEmail() {
           {/* CTA */}
           <Link
             to="/login"
-            className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all mb-4"
+            className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all mb-5"
           >
             Go to Login <ArrowRight size={18} />
           </Link>
 
-          {/* Resend */}
+          {/* Resend feedback */}
+          {resent && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center gap-2 text-sm text-[#16A34A] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-4 py-3 mb-3"
+            >
+              <CheckCircle size={16} />
+              Email resent successfully! Check your inbox.
+            </motion.div>
+          )}
+          {resendError && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center gap-2 text-sm text-[#C0392B] bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-3"
+            >
+              <AlertCircle size={16} />
+              {resendError}
+            </motion.div>
+          )}
+
+          {/* Resend button */}
           <button
             onClick={handleResend}
             disabled={resending || !email}
-            className="text-sm text-[#64748B] hover:text-[#2563EB] flex items-center justify-center gap-1.5 mx-auto transition-colors disabled:opacity-50"
+            className="text-sm text-[#64748B] hover:text-[#2563EB] flex items-center justify-center gap-1.5 mx-auto transition-colors disabled:opacity-40"
           >
             <RefreshCw size={14} className={resending ? "animate-spin" : ""} />
-            {resent ? "Email resent! Check your inbox." : "Didn't receive it? Resend email"}
+            {resending ? "Sending..." : "Didn't receive it? Resend email"}
           </button>
 
           <p className="text-xs text-[#94A6B8] mt-6">
