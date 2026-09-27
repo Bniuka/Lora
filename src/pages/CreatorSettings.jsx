@@ -140,18 +140,28 @@ export default function CreatorSettings() {
                 </Link>
               )}
               {creatorProfile?.subscription_status === 'active' && (
-                <button 
-                  onClick={async () => {
-                    if (window.confirm('Are you sure you want to cancel your subscription?')) {
-                      await supabase.from('creator_profiles').update({ subscription_status: 'cancelled' }).eq('id', user.id);
-                      alert('Subscription cancelled. You have access until ' + new Date(creatorProfile.subscription_ends_at).toLocaleDateString());
-                      refreshProfile();
-                    }
-                  }}
-                  className="px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-sm font-medium"
-                >
-                  Cancel Subscription
-                </button>
+                <div className="flex flex-col gap-2">
+                  <a 
+                    href="https://www.paypal.com/myaccount/autopay/" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="px-4 py-2 border border-[#E2E8F0] text-[#0F172A] rounded-xl hover:bg-[#F8FAFC] transition-colors text-sm font-medium text-center"
+                  >
+                    Manage Card / PayPal
+                  </a>
+                  <button 
+                    onClick={async () => {
+                      if (window.confirm('Are you sure you want to cancel? IMPORTANT: You must also log into your PayPal account to stop the recurring payment.')) {
+                        await supabase.from('creator_profiles').update({ subscription_status: 'cancelled' }).eq('id', user.id);
+                        alert('Subscription cancelled in Lora. Please ensure you also cancel the recurring payment on PayPal.');
+                        refreshProfile();
+                      }
+                    }}
+                    className="px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-sm font-medium"
+                  >
+                    Cancel Subscription
+                  </button>
+                </div>
               )}
               {(creatorProfile?.subscription_status === 'expired' || creatorProfile?.subscription_status === 'cancelled') && (
                 <Link to="/creator/subscription" className="btn-primary py-2 px-4 whitespace-nowrap bg-[#C9A84C] hover:bg-[#A0782A]">
