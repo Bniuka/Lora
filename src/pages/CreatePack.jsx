@@ -12,7 +12,7 @@ import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 
 const STEPS = ['Basic Info', 'Media', 'Community', 'Sessions', 'Review'];
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
-const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL'];
+const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
 
 const emptySession = () => ({
   id: crypto.randomUUID(),
@@ -118,7 +118,7 @@ export default function CreatePack() {
           pack_id: pack.id,
           title: form.freeSession.title,
           zoom_link: form.freeSession.zoom_link,
-          scheduled_at: form.freeSession.scheduled_at,
+          scheduled_at: form.freeSession.scheduled_at ? new Date(form.freeSession.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(form.freeSession.duration_minutes) || 60,
           order_index: orderIdx++,
           is_free_session: true,
@@ -131,7 +131,7 @@ export default function CreatePack() {
           pack_id: pack.id,
           title: s.title,
           zoom_link: s.zoom_link,
-          scheduled_at: s.scheduled_at,
+          scheduled_at: s.scheduled_at ? new Date(s.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(s.duration_minutes) || 60,
           order_index: orderIdx++,
           is_free_session: false,

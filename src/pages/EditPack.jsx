@@ -11,6 +11,7 @@ import { PageTransition, ToggleSwitch, GoldBadge, Skeleton } from '../components
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
+const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
 
 export default function EditPack() {
   useSubscriptionGuard();
@@ -34,7 +35,14 @@ export default function EditPack() {
         setPack(packRes.data);
         setThumbPreview(packRes.data.thumbnail_url);
       }
-      setSessions(sessRes.data || []);
+      const formatLocal = (iso) => {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      };
+      setSessions(sessRes.data ? sessRes.data.map(s => ({ ...s, scheduled_at: formatLocal(s.scheduled_at) })) : []);
       setLoading(false);
     };
     fetch();
@@ -99,7 +107,7 @@ export default function EditPack() {
           pack_id: id,
           title: s.title,
           zoom_link: s.zoom_link,
-          scheduled_at: s.scheduled_at,
+          scheduled_at: s.scheduled_at ? new Date(s.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(s.duration_minutes) || 60,
           order_index: s.order_index,
           is_free_session: s.is_free_session,
@@ -168,8 +176,10 @@ export default function EditPack() {
               </div>
               <div>
                 <label className="form-label">Currency</label>
-                <input className="input-field" value={pack.currency}
-                  onChange={e => updatePack('currency', e.target.value)} />
+                <select className="select-field" value={pack.currency}
+                  onChange={e => updatePack('currency', e.target.value)}>
+                  {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
             </div>
           </div>
@@ -241,7 +251,7 @@ export default function EditPack() {
                     <input className="input-field" placeholder="Zoom link" value={s.zoom_link}
                       onChange={e => updateSession(idx, 'zoom_link', e.target.value)} />
                     <div className="grid grid-cols-2 gap-4">
-                      <input type="datetime-local" className="input-field" value={s.scheduled_at ? s.scheduled_at.slice(0, 16) : ''}
+                      <input type="datetime-local" className="input-field" value={s.scheduled_at || ''}
                         onChange={e => updateSession(idx, 'scheduled_at', e.target.value)} />
                       <input type="number" className="input-field" placeholder="Duration (min)" value={s.duration_minutes}
                         onChange={e => updateSession(idx, 'duration_minutes', e.target.value)} />

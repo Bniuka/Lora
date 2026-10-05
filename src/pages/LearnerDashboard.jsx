@@ -8,7 +8,7 @@ import { PageTransition, StatusBadge, GoldBadge, Skeleton, EmptyState } from '..
 import { generatePaymentReference } from '../lib/utils';
 
 export default function LearnerDashboard() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
   const [discover, setDiscover] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function LearnerDashboard() {
   }, [user]);
 
   const handleRegenerateCode = async (enrollmentId) => {
-    const code = await generatePaymentReference();
+    const code = await generatePaymentReference(profile?.first_name);
     const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
     
     await supabase.from('enrollments').update({

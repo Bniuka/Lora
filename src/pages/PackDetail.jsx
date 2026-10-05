@@ -111,7 +111,7 @@ export default function PackDetail() {
 
   const handleStartPaymentFlow = async () => {
     setUploadError(null);
-    const code = await generatePaymentReference();
+    const code = await generatePaymentReference(profile?.first_name);
     setRefCode(code);
     setPaymentStep(1);
     setPaymentModal(true);
@@ -487,121 +487,161 @@ export default function PackDetail() {
           {paymentStep === 2 && (
             <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1 -mx-1 pb-2">
               
-              {creator?.payment_link && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-[#0F172A] flex items-center gap-2"><ExternalLink size={18} className="text-[#2563EB]"/> Option 1: Payment Link</h3>
-                  <div className="p-5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                    <p className="text-xs text-[#94A6B8] uppercase tracking-wider mb-1">Total Amount:</p>
-                    <p className="text-2xl font-bold text-[#0F172A] mb-5">{pack.currency} {pack.price}</p>
-                    <a href={creator?.payment_link} target="_blank" rel="noopener noreferrer" className="btn-primary w-full py-3 flex items-center justify-center gap-2">
-                      <ExternalLink size={18} /> Pay via Link
-                    </a>
+              {/* Total Amount Card */}
+              <div className="flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-[#64748B] mb-0.5">Total Amount</p>
+                    <p className="text-lg font-black text-[#0F172A] tracking-tight">{pack.currency} {pack.price}</p>
+                  </div>
+                </div>
+                {creator?.payment_link && (
+                   <a href={creator?.payment_link} target="_blank" rel="noopener noreferrer" className="bg-[#10B981]/10 text-[#10B981] font-bold px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 hover:bg-[#10B981]/20 transition-colors border border-[#10B981]/20">
+                     <CheckCircle size={14} /> Pay via Link
+                   </a>
+                )}
+              </div>
+
+              {(!creator?.payment_option || creator?.payment_option === 'bank' || creator?.payment_option === 'both') && (
+                <div className="relative overflow-hidden rounded-2xl bg-[#0F172A] text-white shadow-xl border border-[#1E293B]">
+                  {/* Decorative background curve mimicking the image */}
+                  <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-gradient-to-tl from-[#1E40AF]/40 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+                  <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-tl from-[#2563EB]/40 to-transparent rounded-full blur-xl pointer-events-none"></div>
+                  
+                  <div className="relative z-10 p-6">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="flex gap-4">
+                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/5">
+                           <Building2 size={24} className="text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-lg text-white mb-1">Bank Transfer Details</h3>
+                          <p className="text-xs text-[#94A6B8]">Please use the following bank details to make your payment.</p>
+                        </div>
+                      </div>
+                      <span className="bg-[#2563EB] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-md">
+                        {creator?.payment_link ? 'Option 2' : 'Bank Details'}
+                      </span>
+                    </div>
+
+                    {bankDetails ? (
+                      <div className="grid grid-cols-2 gap-y-6 gap-x-4 pt-4 border-t border-white/10">
+                        <div>
+                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Bank Name</p>
+                          <p className="text-sm font-bold text-white tracking-wide">{bankDetails.bank_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Account Holder</p>
+                          <p className="text-sm font-bold text-white tracking-wide">{bankDetails.account_holder_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Account Number</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-white tracking-wide">{bankDetails.account_number}</p>
+                            <button onClick={() => navigator.clipboard.writeText(bankDetails.account_number)} className="text-[#3B82F6] hover:text-[#60A5FA] transition-colors p-1 rounded-md hover:bg-white/5" title="Copy Account Number">
+                              <Copy size={14} />
+                            </button>
+                          </div>
+                        </div>
+                        {bankDetails.branch && (
+                          <div>
+                            <p className="text-xs text-[#94A6B8] mb-1 font-medium">Branch Details</p>
+                            <p className="text-sm font-bold text-white tracking-wide">{bankDetails.branch} {bankDetails.branch_code && <span className="text-[#94A6B8] font-normal">({bankDetails.branch_code})</span>}</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="py-4 border-t border-white/10">
+                        <p className="text-sm text-[#94A6B8]">Bank transfer details are not available. Please contact the creator.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {(!creator?.payment_option || creator?.payment_option === 'bank' || creator?.payment_option === 'both') && (
-                <div className="space-y-3 pt-2">
-                  <h3 className="font-semibold text-[#0F172A] flex items-center gap-2"><Building2 size={18} className="text-[#2563EB]"/> {creator?.payment_link ? 'Option 2: Bank Transfer' : 'Bank Transfer'}</h3>
-                  {bankDetails ? (
-                    <div className="relative p-6 rounded-2xl bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white shadow-[0_8px_30px_rgba(15,23,42,0.12)] overflow-hidden border border-[#334155]">
-                      {/* Decorative Background Elements */}
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#3B82F6] to-transparent opacity-20 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#60A5FA] to-transparent opacity-10 rounded-full blur-2xl -ml-5 -mb-5"></div>
-                      
-                      <div className="relative z-10 space-y-6">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#94A6B8] mb-1">Bank Name</p>
-                            <p className="text-lg font-bold text-white">{bankDetails.bank_name}</p>
-                          </div>
-                          <Building2 size={24} className="text-[#3B82F6] opacity-90" />
-                        </div>
-                        
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#94A6B8] mb-1">Account Holder</p>
-                          <p className="text-base font-semibold text-white tracking-wide">{bankDetails.account_holder_name}</p>
-                        </div>
-                        
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#94A6B8] mb-1">Account Number</p>
-                          <div className="flex items-center justify-between bg-[#000000]/20 rounded-xl p-3 border border-[#334155]/50 backdrop-blur-sm">
-                            <p className="text-xl font-mono tracking-widest text-[#E2E8F0]">{bankDetails.account_number}</p>
-                            <button 
-                              onClick={() => navigator.clipboard.writeText(bankDetails.account_number)} 
-                              className="p-2 rounded-lg bg-[#3B82F6]/20 text-[#60A5FA] hover:bg-[#3B82F6]/40 hover:text-white transition-colors"
-                              title="Copy Account Number"
-                            >
-                              <Copy size={16} />
-                            </button>
-                          </div>
-                        </div>
-
-                        {bankDetails.branch && (
-                          <div>
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#94A6B8] mb-1">Branch Details</p>
-                            <p className="text-sm font-medium text-[#E2E8F0]">{bankDetails.branch} {bankDetails.branch_code && <span className="text-[#94A6B8]">({bankDetails.branch_code})</span>}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC]">
-                      <p className="text-sm text-[#475569]">Bank transfer details are not available. Please contact the creator to get their bank account information.</p>
-                    </div>
-                  )}
-                  
-                  {bankDetails?.extra_note && (
-                    <p className="text-xs text-[#475569] italic bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
-                      <strong className="text-[#2563EB] not-italic font-semibold">Note:</strong> {bankDetails.extra_note}
-                    </p>
-                  )}
+              {bankDetails?.extra_note && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                  <div className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                    <span className="text-xs font-bold font-serif">i</span>
+                  </div>
+                  <p className="text-sm text-[#334155] leading-relaxed">
+                    <strong className="text-[#0F172A]">Note:</strong> {bankDetails.extra_note}
+                  </p>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-[#E2E8F0]">
-                <p className="text-sm text-[#0F172A] font-medium mb-3">Which payment method did you use?</p>
-                <div className="flex gap-4 mb-4">
+              {/* Payment Method Selector */}
+              <div className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0] shadow-sm text-[#2563EB]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                  </div>
+                  <h3 className="font-bold text-[#0F172A] text-base">Which payment method did you use?</h3>
+                </div>
+                <div className="flex flex-wrap gap-8 pl-16">
                   {creator?.payment_link && (
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="paymentMethod" value="link" checked={paymentMethod === 'link'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4 text-[#2563EB]" />
-                      <span className="text-sm text-[#475569]">Payment Link</span>
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <div className="relative flex items-center justify-center">
+                        <input type="radio" name="paymentMethod" value="link" checked={paymentMethod === 'link'} onChange={(e) => setPaymentMethod(e.target.value)} className="peer sr-only" />
+                        <div className="w-5 h-5 rounded-full border-2 border-[#CBD5E1] peer-checked:border-[#2563EB] group-hover:border-[#2563EB] transition-colors bg-white"></div>
+                        <div className="absolute w-2.5 h-2.5 rounded-full bg-[#2563EB] scale-0 peer-checked:scale-100 transition-transform"></div>
+                      </div>
+                      <span className="text-sm font-medium text-[#475569] group-hover:text-[#0F172A] transition-colors">Payment Link</span>
                     </label>
                   )}
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="paymentMethod" value="bank" checked={paymentMethod === 'bank'} onChange={(e) => setPaymentMethod(e.target.value)} className="w-4 h-4 text-[#2563EB]" />
-                    <span className="text-sm text-[#475569]">Manual Bank Transfer</span>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className="relative flex items-center justify-center">
+                      <input type="radio" name="paymentMethod" value="bank" checked={paymentMethod === 'bank'} onChange={(e) => setPaymentMethod(e.target.value)} className="peer sr-only" />
+                      <div className="w-5 h-5 rounded-full border-2 border-[#CBD5E1] peer-checked:border-[#2563EB] group-hover:border-[#2563EB] transition-colors bg-white"></div>
+                      <div className="absolute w-2.5 h-2.5 rounded-full bg-[#2563EB] scale-0 peer-checked:scale-100 transition-transform"></div>
+                    </div>
+                    <span className="text-sm font-medium text-[#475569] group-hover:text-[#0F172A] transition-colors">Manual Bank Transfer</span>
                   </label>
                 </div>
-                <p className="text-sm text-[#0F172A] font-medium mb-1">Upload Confirmation Screenshot</p>
-                <p className="text-xs text-[#475569] mb-4">A screenshot is required to complete enrollment</p>
-                <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-[#E2E8F0] rounded-xl cursor-pointer hover:border-[#2563EB]/40 transition-colors bg-[#F8FAFC]">
-                  {screenshot ? (
-                    <div className="text-center">
-                      <CheckCircle size={24} className="text-[#2D7A4F] mx-auto mb-1" />
-                      <span className="text-sm text-[#0F172A]">{screenshot.name}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <Upload size={24} className="text-[#94A6B8] mb-2" />
-                      <span className="text-sm text-[#94A6B8]">Upload payment screenshot</span>
-                      <span className="text-xs text-[#94A6B8]">Max 5MB, images only</span>
-                    </>
-                  )}
-                  <input type="file" accept="image/*" className="hidden" onChange={e => { setScreenshot(e.target.files?.[0] || null); setUploadError(null); }} />
-                </label>
+              </div>
+
+              {/* Upload Screenshot */}
+              <div className="p-6 rounded-2xl border-2 border-dashed border-[#CBD5E1] bg-[#F8FAFC] relative transition-all hover:border-[#2563EB] group">
+                <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={e => { setScreenshot(e.target.files?.[0] || null); setUploadError(null); }} />
+                
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-[#DBEAFE] flex items-center justify-center text-[#2563EB] shrink-0 group-hover:scale-110 transition-transform">
+                    {screenshot ? <CheckCircle size={24} className="text-[#10B981]" /> : <Upload size={24} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-[#0F172A] text-sm sm:text-base truncate">
+                      {screenshot ? screenshot.name : 'Upload Payment Confirmation Screenshot'}
+                    </h3>
+                    <p className="text-xs text-[#64748B]">
+                      {screenshot ? 'Click to replace screenshot' : 'A screenshot is required to complete your enrollment.'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center gap-2 bg-[#0F172A] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md group-hover:bg-[#1E293B] transition-colors min-w-[200px]">
+                    <Upload size={18} /> {screenshot ? 'Replace Screenshot' : 'Upload Screenshot'}
+                  </div>
+                  <p className="text-[11px] text-[#94A6B8] mt-3 font-medium tracking-wide">
+                    Max 5MB • Images only (JPG, PNG)
+                  </p>
+                </div>
               </div>
 
               {uploadError && (
-                <div className="p-3 mt-2 rounded-lg bg-red-50 border border-red-200">
-                  <p className="text-sm text-red-600 font-medium">Error: {uploadError}</p>
+                <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
+                  <div className="shrink-0 mt-0.5 text-red-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
+                  <p className="text-sm text-red-700 font-medium">Error: {uploadError}</p>
                 </div>
               )}
 
               <div className="flex gap-4 pt-2">
-                <button onClick={() => setPaymentStep(1)} className="btn-ghost px-4 border border-[#E2E8F0]">← Back</button>
-                <button onClick={handlePaymentUpload} className="btn-primary flex-1 py-4" disabled={uploading || !screenshot}>
-                  {uploading ? <Loader2 size={18} className="animate-spin" /> : "Submit Payment"}
+                <button onClick={() => setPaymentStep(1)} className="btn-ghost px-6 border border-[#E2E8F0] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors text-[#475569]">← Back</button>
+                <button onClick={handlePaymentUpload} className="btn-primary flex-1 py-4 font-bold rounded-xl shadow-lg shadow-blue-500/20" disabled={uploading || !screenshot}>
+                  {uploading ? <Loader2 size={20} className="animate-spin mx-auto" /> : "Submit Payment"}
                 </button>
               </div>
             </div>
