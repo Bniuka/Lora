@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Profile & Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand-soft:#e9eeff;--ok:#0f9d6b;--bad:#d6334a;--hero:#0e1733;--hero-ink:#fff;--shadow:0 1px 2px rgba(14,23,51,.05),0 8px 24px -12px rgba(14,23,51,.12);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1022;--surface:#121a33;--ink:#eef1fb;--muted:#9aa5c4;--line:#222c4c;--brand:#6c8cff;--brand-soft:#1b2750;--hero:#1a2750;--shadow:none}}
+:root[data-theme="dark"]{--bg:#0a1022;--surface:#121a33;--ink:#eef1fb;--muted:#9aa5c4;--line:#222c4c;--brand:#6c8cff;--brand-soft:#1b2750;--hero:#1a2750;--shadow:none}
+*{box-sizing:border-box}html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;margin:0;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+aside{background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;font:800 22px 'Bricolage Grotesque';padding:0 10px 22px}
+.logo i{width:34px;height:34px;border-radius:11px;background:var(--brand);display:grid;place-items:center}
+.logo svg{width:16px;fill:#fff}
+nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);text-decoration:none;font-weight:500;margin-bottom:2px}
+nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav a:hover{background:var(--bg);color:var(--ink)}
+nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.tip{margin-top:auto;border-radius:16px;padding:16px;background:var(--brand-soft);font-size:13px;color:var(--muted)}
+.tip b{display:block;color:var(--ink);font:700 15px 'Bricolage Grotesque';margin-bottom:4px}
+.tip button{margin-top:10px;background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:8px 14px;font-weight:600;cursor:pointer;width:100%}
+main{min-width:0}
+.top{display:flex;align-items:center;gap:16px;padding:14px 32px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.search input{flex:1;border:0;background:none;padding:10px 0;outline:0;min-width:0}
+.search kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px}
+.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8a5cff);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.who small{display:block;color:var(--muted);font-size:12px;line-height:1.1}
+.page{max-width:1020px;padding:32px;display:grid;grid-template-columns:190px 1fr;gap:36px;align-items:start}
+.toc{position:sticky;top:90px;display:flex;flex-direction:column;gap:2px}
+.toc h1{font-size:30px;margin-bottom:14px}
+.toc a{color:var(--muted);text-decoration:none;padding:8px 12px;border-left:2px solid var(--line);font-weight:500}
+.toc a.on{color:var(--brand);border-color:var(--brand);font-weight:600}
+.stack{display:flex;flex-direction:column;gap:26px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
+.card>header{margin-bottom:20px}.card h2{font-size:20px}.card header p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.plan{background:var(--hero);color:var(--hero-ink);border:0;position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.plan:after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 40px rgba(255,255,255,.03),0 0 0 80px rgba(255,255,255,.02);pointer-events:none}
+.ring{width:92px;height:92px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .t{stroke:rgba(255,255,255,.15)}.ring .p{stroke:#7fa0ff;transition:stroke-dashoffset .8s ease}
+.ring div{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font:800 24px/1 'Bricolage Grotesque'}
+.ring small{display:block;font:500 11px Figtree;opacity:.7;margin-top:2px}
+.plan h2{font-size:24px}.plan p{margin:4px 0 0;opacity:.75}
+.badge{display:inline-block;background:rgba(255,255,255,.14);border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600;margin-bottom:8px}
+.btn{border:0;border-radius:12px;padding:12px 22px;font-weight:600;cursor:pointer;background:var(--brand);color:#fff;transition:transform .1s,filter .15s;z-index:1}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.98)}
+.btn.light{background:#fff;color:#0e1733}
+.btn.ghost{background:none;border:1.5px solid var(--brand);color:var(--brand)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.seg label{cursor:pointer}.seg input{position:absolute;opacity:0}
+.opt{display:block;height:100%;border:1.5px solid var(--line);border-radius:16px;padding:16px;transition:.15s;position:relative}
+.opt svg{width:36px;height:36px;padding:8px;border-radius:11px;background:var(--bg);stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:10px;transition:.15s}
+.opt b{display:block;font:700 15px 'Bricolage Grotesque'}.opt span{font-size:13px;color:var(--muted)}
+.seg input:checked+.opt{border-color:var(--brand);background:var(--brand-soft)}
+.seg input:checked+.opt svg{background:var(--brand);stroke:#fff}
+.seg input:checked+.opt:after{content:"✓";position:absolute;top:12px;right:14px;width:20px;height:20px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;display:grid;place-items:center}
+.seg input:focus-visible+.opt{outline:2px solid var(--brand);outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.full{grid-column:1/-1}
+.f label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}.f label em{color:var(--bad);font-style:normal}
+.f input,.f select,.f textarea{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:0;transition:.15s}
+.f textarea{min-height:110px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 4px var(--brand-soft)}
+.f input.err{border-color:var(--bad)}
+.f .hint{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px}
+.f .hint.bad{color:var(--bad)}
+.panel{display:none;margin-bottom:6px}.panel.show{display:block;animation:in .2s ease}
+.panel+.panel.show,.panel.show+.panel.show{margin-top:20px}
+@keyframes in{from{opacity:0;transform:translateY(-4px)}}
+.panel .sub{font-weight:700;font-family:'Bricolage Grotesque';margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.panel .sub:after{content:"";flex:1;height:1px;background:var(--line)}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{display:none}.page{grid-template-columns:1fr;padding:20px}.toc{position:static;flex-direction:row;flex-wrap:wrap;gap:6px}.toc h1{width:100%}.toc a{border:1px solid var(--line);border-radius:99px;padding:6px 14px}.top{padding:12px 20px}.who div{display:none}}
+@media(max-width:640px){.seg,.grid{grid-template-columns:1fr}.plan{grid-template-columns:1fr;text-align:left}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</div>
+  <nav>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>My Packs</a>
+    <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Pack</a>
+    <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Enrollments</a>
+    <a href="#" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</a>
+  </nav>
+  <div class="tip"><b>Grow your audience</b>Share your courses with the world and make a bigger impact.<button>View tips</button></div>
+</aside>
+
+<main>
+  <div class="top">
+    <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search courses, packs, students…" aria-label="Search"><kbd>Ctrl K</kbd></label>
+    <div class="who"><div class="av">BD</div><div><b>Binuka Dinsara</b><small>Creator</small></div></div>
+  </div>
+
+  <div class="page">
+    <div class="toc"><h1>Settings</h1>
+      <a href="#plan" class="on">Subscription</a><a href="#pay">Payments</a><a href="#profile">Profile</a><a href="#security">Password</a>
+    </div>
+
+    <div class="stack">
+      <!-- SUBSCRIPTION -->
+      <section class="card plan" id="plan">
+        <div class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="42"/><circle class="p" id="ringP" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div><span id="daysLeft">22</span><small>days left</small></div></div>
+        <div><span class="badge">Free trial</span><h2>Lora Creator Plan</h2><p>Trial ends on 11/1/2026, then Rs. 3,499/month.</p></div>
+        <button class="btn light" id="upgradeBtn" type="button">Upgrade now</button>
+      </section>
+
+      <!-- PAYMENT SETTINGS -->
+      <section class="card" id="pay">
+        <header><h2>Payment settings</h2><p>Choose how learners pay you.</p></header>
+        <div class="seg" role="radiogroup" aria-label="Payment method">
+          <label><input type="radio" name="payMethod" value="link"><span class="opt"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><b>Payment link</b><span>Share a URL: bKash, PayPal, etc.</span></span></label>
+          <label><input type="radio" name="payMethod" value="bank"><span class="opt"><svg viewBox="0 0 24 24"><path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg><b>Bank details</b><span>Share your bank info directly</span></span></label>
+          <label><input type="radio" name="payMethod" value="both" checked><span class="opt"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg><b>Both options</b><span>Let learners choose their method</span></span></label>
+        </div>
+
+        <div class="panel" id="linkPanel">
+          <div class="f"><label for="paymentLink">Payment link URL</label><input id="paymentLink" name="paymentLink" type="url" value="https://www.paypal.com/ncp/payment/DTLMMJCDEJ6Q8"></div>
+        </div>
+
+        <div class="panel" id="bankPanel">
+          <h3 class="sub">Bank account</h3>
+          <div class="grid">
+            <div class="f"><label for="bankName">Bank name <em>*</em></label><select id="bankName" name="bankName"><option value="">Select a bank</option><option>Bank of Ceylon</option><option>Commercial Bank</option><option>Hatton National Bank</option><option>People's Bank</option><option>Sampath Bank</option><option>Seylan Bank</option><option>Nations Trust Bank</option></select></div>
+            <div class="f"><label for="holder">Account holder name <em>*</em></label><input id="holder" name="accountHolder"></div>
+            <div class="f"><label for="accNo">Account number <em>*</em></label><input id="accNo" name="accountNumber" inputmode="numeric"></div>
+            <div class="f"><label for="country">Country <em>*</em></label><select id="country" name="country"><option>United States</option><option>Sri Lanka</option><option>India</option><option>United Kingdom</option><option>Australia</option></select></div>
+            <div class="f"><label for="branch">Branch</label><input id="branch" name="branch"></div>
+            <div class="f"><label for="branchCode">Branch code</label><input id="branchCode" name="branchCode"></div>
+            <div class="f full"><label for="note">Extra note for learners</label><textarea id="note" name="note" placeholder="e.g. Please use your full name as the payment reference"></textarea></div>
+          </div>
+        </div>
+        <div class="actions"><button class="btn" id="savePay" type="button">Save payment settings</button></div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="card" id="profile">
+        <header><h2>Profile information</h2><p>This is what learners see on your courses.</p></header>
+        <div class="grid">
+          <div class="f"><label for="first">First name</label><input id="first" name="firstName" value="Binuka"></div>
+          <div class="f"><label for="last">Last name</label><input id="last" name="lastName" value="Dinsara"></div>
+          <div class="f"><label for="phone">Contact number</label><input id="phone" name="contact" type="tel" value="+94702682823"></div>
+          <div class="f"><label for="cat">Category</label><select id="cat" name="category"><option selected>Technology</option><option>Business</option><option>Design</option><option>Health</option><option>Language</option><option>Music</option></select></div>
+          <div class="f full"><label for="about">About</label><textarea id="about" name="about" maxlength="300">I am teaching more specific and comprehensive things about  technology</textarea><div class="hint"><span>Tell learners who you are and what you teach.</span><span id="count">70/300</span></div></div>
+        </div>
+        <div class="actions"><button class="btn" id="saveProfile" type="button">Save changes</button></div>
+      </section>
+
+      <!-- PASSWORD -->
+      <section class="card" id="security">
+        <header><h2>Change password</h2><p>Use at least 6 characters.</p></header>
+        <div class="grid">
+          <div class="f"><label for="pw1">New password</label><input id="pw1" name="newPassword" type="password" placeholder="Min 6 characters" autocomplete="new-password"></div>
+          <div class="f"><label for="pw2">Confirm new password</label><input id="pw2" name="confirmPassword" type="password" placeholder="Repeat password" autocomplete="new-password"><div class="hint" id="pwHint" hidden></div></div>
+        </div>
+        <div class="actions"><button class="btn ghost" id="savePw" type="button">Update password</button></div>
+      </section>
+    </div>
+  </div>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2400)};
+
+// Trial ring: days remaining until trial end date
+const end=new Date('2026-11-01'),now=new Date('2026-10-10'),total=30;
+const left=Math.max(0,Math.ceil((end-now)/864e5));
+$('#daysLeft').textContent=left;
+requestAnimationFrame(()=>$('#ringP').style.strokeDashoffset=264*(1-left/total));
+
+// Payment method: show/hide fields exactly like the original (link / bank / both)
+function method(){const v=document.querySelector('[name=payMethod]:checked').value;
+  $('#linkPanel').classList.toggle('show',v!=='bank');
+  $('#bankPanel').classList.toggle('show',v!=='link')}
+document.querySelectorAll('[name=payMethod]').forEach(r=>r.addEventListener('change',method));method();
+
+// About counter
+const about=$('#about'),upd=()=>$('#count').textContent=about.value.length+'/300';
+about.addEventListener('input',upd);upd();
+
+// Validation + save handlers: replace the toast calls with your existing API calls
+$('#savePay').onclick=()=>{
+  const v=document.querySelector('[name=payMethod]:checked').value;let ok=true;
+  if(v!=='link')['bankName','holder','accNo'].forEach(id=>{const e=$('#'+id);const bad=!e.value.trim();e.classList.toggle('err',bad);if(bad)ok=false});
+  if(v!=='bank'&&!$('#paymentLink').value.trim()){$('#paymentLink').classList.add('err');ok=false}else $('#paymentLink').classList.remove('err');
+  toast(ok?'Payment settings saved':'Fill in the required fields')};
+$('#saveProfile').onclick=()=>toast('Profile saved');
+$('#savePw').onclick=()=>{
+  const a=$('#pw1').value,b=$('#pw2').value,h=$('#pwHint');let m='';
+  if(a.length<6)m='Password must be at least 6 characters.';else if(a!==b)m='Passwords don\u2019t match.';
+  h.hidden=!m;h.className='hint bad';h.textContent=m;$('#pw2').classList.toggle('err',!!m);
+  if(!m){toast('Password updated');$('#pw1').value=$('#pw2').value=''}};
+$('#upgradeBtn').onclick=()=>toast('Opening upgrade…');
+
+// Section nav highlight
+const links=[...document.querySelectorAll('.toc a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle('on',l.hash==='#'+e.target.id))}),{rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('section.card').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
