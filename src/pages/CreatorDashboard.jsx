@@ -172,7 +172,7 @@ export default function CreatorDashboard() {
 
   return (
     <PageTransition>
-      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-7">
+      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-6">
         <TrialBanner />
 
         {/* ══════════ HERO BANNER ══════════ */}
@@ -238,13 +238,13 @@ export default function CreatorDashboard() {
             <img
               src="/banner_illustration.png"
               alt="Creator workspace"
-              className="w-full h-full object-cover object-left-top"
-              style={{ maxHeight: 240, opacity: 0.95 }}
+              className="w-full h-full object-cover object-right-top"
+              style={{ maxHeight: 220, opacity: 0.95 }}
               onError={e => { e.currentTarget.style.display = 'none'; }}
             />
 
             {/* fade overlay on left edge of image */}
-            <div className="absolute inset-y-0 left-0 w-20 pointer-events-none"
+            <div className="absolute inset-y-0 left-0 w-24 pointer-events-none"
               style={{ background: 'linear-gradient(to right, #E8EFFE, transparent)' }} />
           </div>
         </div>
@@ -258,7 +258,7 @@ export default function CreatorDashboard() {
         </div>
 
         {/* ══════════ QUICK ACTIONS ══════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <ActionCard to="/creator/packs/new"    icon={PlusCircle} iconBg="#EFF6FF" iconColor="#2563EB" title="Create New Pack"      subtitle="Start a new course pack"            primary />
           <ActionCard to="/creator/enrollments"  icon={Users}      iconBg="#F5F3FF" iconColor="#7C3AED" title="Manage Enrollments"   subtitle="View & manage your students" />
           <ActionCard to="/creator/dashboard"    icon={DollarSign} iconBg="#F0FDF4" iconColor="#16A34A" title="View Payouts"         subtitle="Track your earnings" />
@@ -372,13 +372,13 @@ export default function CreatorDashboard() {
             ) : (
               /* Empty state */
               <div
-                className="bg-white rounded-2xl p-10 flex flex-col items-center justify-center text-center"
+                className="bg-white rounded-2xl p-8 flex flex-col items-center justify-center text-center"
                 style={{ border: '1.5px dashed #CBD5E1' }}
               >
-                <Package size={40} className="text-[#CBD5E1] mb-3" />
-                <p className="text-[15px] font-bold text-[#0F172A] mb-1">No packs yet</p>
-                <p className="text-[13px] text-[#64748B] max-w-xs mb-5">
-                  Create your first session pack and start teaching your audience today!
+                <Package size={36} className="text-[#CBD5E1] mb-3" />
+                <p className="text-[14px] font-bold text-[#0F172A] mb-1">No packs yet</p>
+                <p className="text-[12.5px] text-[#64748B] max-w-[240px] mb-5">
+                  Create your first session pack and start teaching your audience today.
                 </p>
                 <Link
                   to="/creator/packs/new"
