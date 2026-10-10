@@ -172,7 +172,7 @@ export default function CreatorDashboard() {
 
   return (
     <PageTransition>
-      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-5">
+      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-7">
         <TrialBanner />
 
         {/* ══════════ HERO BANNER ══════════ */}

@@ -412,7 +412,7 @@ export default function CreatorLayout({ children }) {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-[1360px] mx-auto px-6 py-7">
+          <div className="max-w-[1360px] mx-auto px-8 py-8">
             {children}
           </div>
         </main>
