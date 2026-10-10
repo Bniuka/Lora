@@ -174,79 +174,25 @@ export default function CreatorDashboard() {
       <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-10 pb-10">
         <TrialBanner />
 
-        {/* ══════════ HERO BANNER ══════════ */}
-        <div
-          className="relative rounded-[28px] overflow-hidden flex flex-col md:flex-row shadow-sm"
-          style={{
-            background: 'linear-gradient(120deg, #F0F5FF 0%, #E8EFFE 40%, #DCE8FD 100%)',
-            border: '1px solid #DBEAFE',
-            minHeight: 260,
-          }}
+        {/* ══════════ WELCOME TEXT ══════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="pb-2"
         >
-          {/* LEFT content */}
-          <div className="relative z-10 flex flex-col justify-between p-10 md:p-14 md:w-[60%]">
-            <div>
-              <h1
-                className="text-[32px] md:text-[40px] font-extrabold text-[#0F172A] leading-tight mb-4"
-                style={{ letterSpacing: '-0.5px' }}
-              >
-                <span className="mr-3">👋</span>Welcome back, {firstName}
-              </h1>
-              <p className="text-[16px] text-[#475569] leading-relaxed max-w-[500px] mb-8">
-                Keep creating, teaching and making an impact. Your journey as a creator is just getting bigger and better every day.
-              </p>
-            </div>
-
-            {/* Info pills */}
-            <div className="flex flex-wrap gap-4">
-              {[
-                { icon: Sparkles, label: 'Creator', sub: 'Since Apr 2025', bg: '#EFF6FF', c: '#1D4ED8' },
-                { icon: Users, label: 'Your audience', sub: 'Growing daily', bg: '#F5F3FF', c: '#7C3AED' },
-                { icon: TrendingUp, label: 'Next goal', sub: 'Reach 100+ students', bg: '#F0FDF4', c: '#16A34A' },
-              ].map(({ icon: Icon, label, sub, bg, c }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-4 rounded-2xl px-5 py-4"
-                  style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
-                >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ background: bg }}>
-                    <Icon size={18} color={c} />
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-bold text-[#0F172A] leading-none mb-1.5">{label}</p>
-                    <p className="text-[12px] font-medium text-[#64748B] leading-none">{sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT image + quote */}
-          <div className="hidden md:flex md:w-[40%] items-end justify-end relative overflow-hidden">
-            {/* quote */}
-            <div className="absolute top-8 right-10 text-right z-10">
-              <p
-                className="text-[17px] font-medium text-[#1E3A8A] leading-relaxed italic"
-                style={{ fontFamily: 'Georgia, serif', opacity: 0.8 }}
-              >
-                " Great creators<br />build a better future. "
-              </p>
-            </div>
-
-            {/* illustration */}
-            <img
-              src="/banner_illustration.png"
-              alt="Creator workspace"
-              className="w-full h-full object-cover object-right-top"
-              style={{ maxHeight: 260, opacity: 0.95 }}
-              onError={e => { e.currentTarget.style.display = 'none'; }}
-            />
-
-            {/* fade overlay on left edge of image */}
-            <div className="absolute inset-y-0 left-0 w-32 pointer-events-none"
-              style={{ background: 'linear-gradient(to right, #E8EFFE, transparent)' }} />
-          </div>
-        </div>
+          <motion.h1 
+            className="text-[36px] md:text-[48px] font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#9333EA] to-[#2563EB]"
+            style={{ backgroundSize: '200% auto' }}
+            animate={{ backgroundPosition: ['0% center', '200% center'] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          >
+            Welcome back, {firstName}
+          </motion.h1>
+          <p className="text-[16px] text-[#64748B] font-medium">
+            Here's what's happening with your courses today.
+          </p>
+        </motion.div>
 
         {/* ══════════ KPI CARDS ══════════ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
