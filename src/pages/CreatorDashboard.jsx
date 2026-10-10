@@ -21,9 +21,9 @@ function Sparkline({ color, up }) {
     ? 'M0,14 C10,12 20,8 30,10 C40,12 50,4 60,6 C70,8 80,4 90,2'
     : 'M0,4 C10,6 20,10 30,8 C40,6 50,14 60,12 C70,10 80,14 90,16';
   return (
-    <svg viewBox="0 0 90 18" className="w-full" style={{ height: 36 }} preserveAspectRatio="none">
+    <svg viewBox="0 0 90 18" className="w-full mt-4" style={{ height: 42 }} preserveAspectRatio="none">
       <path d={path} fill={color} fillOpacity="0.08" />
-      <path d={line} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={line} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -32,36 +32,35 @@ function Sparkline({ color, up }) {
 function KpiCard({ icon: Icon, label, value, iconBg, iconColor, sparkColor, up = true }) {
   return (
     <div
-      className="bg-white rounded-2xl flex flex-col"
+      className="bg-white rounded-[24px] flex flex-col"
       style={{
         border: '1px solid #E8EDF3',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-        padding: '22px 22px 18px',
-        minHeight: 155,
+        boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+        padding: '32px 32px 24px',
+        minHeight: 180,
       }}
     >
       {/* top row: icon + label + value */}
-      <div className="flex items-start gap-3 mb-4">
+      <div className="flex items-start gap-4 mb-6">
         <div
-          className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
           style={{ background: iconBg }}
         >
-          <Icon size={19} color={iconColor} />
+          <Icon size={24} color={iconColor} />
         </div>
         <div>
-          <p className="text-[12.5px] font-medium text-[#64748B] leading-none mb-1.5">{label}</p>
-          <p className="text-[28px] font-bold text-[#0F172A] leading-none tracking-tight">{value}</p>
+          <p className="text-[14px] font-semibold text-[#64748B] mb-2 uppercase tracking-wide">{label}</p>
+          <p className="text-[32px] font-extrabold text-[#0F172A] leading-none tracking-tight">{value}</p>
         </div>
       </div>
 
       {/* trend row */}
-      <div className="flex items-center gap-1.5 mb-3">
-        {up
-          ? <TrendingUp size={13} color="#16A34A" />
-          : <TrendingDown size={13} color="#DC2626" />
-        }
-        <span style={{ color: up ? '#16A34A' : '#DC2626' }} className="text-[12px] font-semibold">0%</span>
-        <span className="text-[11.5px] text-[#94A3B8] font-normal">vs last 7 days</span>
+      <div className="flex items-center gap-2 mb-2">
+        <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${up ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]'}`}>
+          {up ? <TrendingUp size={14} color="#16A34A" /> : <TrendingDown size={14} color="#DC2626" />}
+          <span style={{ color: up ? '#16A34A' : '#DC2626' }} className="text-[13px] font-bold">0%</span>
+        </div>
+        <span className="text-[13px] text-[#94A3B8] font-medium ml-1">vs last 7 days</span>
       </div>
 
       {/* sparkline */}
@@ -77,25 +76,25 @@ function ActionCard({ to, icon: Icon, iconBg, iconColor, title, subtitle, primar
   return (
     <Link
       to={to}
-      className="flex items-center gap-4 rounded-2xl transition-all hover:-translate-y-0.5 group"
+      className="flex items-center gap-5 rounded-[20px] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
       style={{
         background: primary ? '#0F172A' : 'white',
         border: primary ? 'none' : '1px solid #E8EDF3',
         boxShadow: primary
-          ? '0 4px 14px rgba(15,23,42,0.18)'
-          : '0 1px 4px rgba(0,0,0,0.05)',
-        padding: '18px 20px',
+          ? '0 8px 24px rgba(15,23,42,0.2)'
+          : '0 4px 16px rgba(0,0,0,0.03)',
+        padding: '24px 28px',
       }}
     >
       <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-        style={{ background: primary ? 'rgba(255,255,255,0.12)' : iconBg }}
+        className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
+        style={{ background: primary ? 'rgba(255,255,255,0.15)' : iconBg }}
       >
-        <Icon size={18} color={primary ? 'white' : iconColor} />
+        <Icon size={22} color={primary ? 'white' : iconColor} />
       </div>
       <div>
-        <p className={`text-[13.5px] font-semibold leading-tight ${primary ? 'text-white' : 'text-[#0F172A]'}`}>{title}</p>
-        <p className={`text-[11.5px] mt-0.5 leading-tight ${primary ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>{subtitle}</p>
+        <p className={`text-[15px] font-bold mb-1 ${primary ? 'text-white' : 'text-[#0F172A]'}`}>{title}</p>
+        <p className={`text-[13px] leading-relaxed ${primary ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>{subtitle}</p>
       </div>
     </Link>
   );
@@ -104,16 +103,16 @@ function ActionCard({ to, icon: Icon, iconBg, iconColor, title, subtitle, primar
 /* ─── Quick stats row ─── */
 function StatRow({ icon: Icon, iconBg, iconColor, label, value, last }) {
   return (
-    <div className={`flex items-center justify-between py-3.5 ${!last ? 'border-b border-[#F1F5F9]' : ''}`}>
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
-          <Icon size={14} color={iconColor} />
+    <div className={`flex items-center justify-between py-5 ${!last ? 'border-b border-[#F1F5F9]' : ''}`}>
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
+          <Icon size={18} color={iconColor} />
         </div>
-        <span className="text-[13px] font-medium text-[#475569]">{label}</span>
+        <span className="text-[14px] font-semibold text-[#475569]">{label}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <span className="text-[14px] font-bold text-[#0F172A]">{value}</span>
-        <ChevronRight size={13} className="text-[#CBD5E1]" />
+      <div className="flex items-center gap-3">
+        <span className="text-[16px] font-extrabold text-[#0F172A]">{value}</span>
+        <ChevronRight size={16} className="text-[#CBD5E1]" />
       </div>
     </div>
   );
@@ -157,10 +156,10 @@ export default function CreatorDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
-        <Skeleton className="h-44 w-full rounded-2xl" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-36 rounded-2xl" />)}
+      <div className="space-y-8" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <Skeleton className="h-56 w-full rounded-3xl" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-44 rounded-3xl" />)}
         </div>
       </div>
     );
@@ -172,34 +171,34 @@ export default function CreatorDashboard() {
 
   return (
     <PageTransition>
-      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-6">
+      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-10 pb-10">
         <TrialBanner />
 
         {/* ══════════ HERO BANNER ══════════ */}
         <div
-          className="relative rounded-2xl overflow-hidden flex flex-col md:flex-row"
+          className="relative rounded-[28px] overflow-hidden flex flex-col md:flex-row shadow-sm"
           style={{
             background: 'linear-gradient(120deg, #F0F5FF 0%, #E8EFFE 40%, #DCE8FD 100%)',
             border: '1px solid #DBEAFE',
-            minHeight: 200,
+            minHeight: 260,
           }}
         >
           {/* LEFT content */}
-          <div className="relative z-10 flex flex-col justify-between p-8 md:p-10 md:w-[55%]">
+          <div className="relative z-10 flex flex-col justify-between p-10 md:p-14 md:w-[60%]">
             <div>
               <h1
-                className="text-[28px] md:text-[34px] font-extrabold text-[#0F172A] leading-tight mb-3"
+                className="text-[32px] md:text-[40px] font-extrabold text-[#0F172A] leading-tight mb-4"
                 style={{ letterSpacing: '-0.5px' }}
               >
-                <span className="mr-2">👋</span>Welcome back, {firstName}
+                <span className="mr-3">👋</span>Welcome back, {firstName}
               </h1>
-              <p className="text-[14px] text-[#475569] leading-relaxed max-w-[420px] mb-6">
-                Keep creating, teaching and making an impact. Your journey as a creator is just getting bigger.
+              <p className="text-[16px] text-[#475569] leading-relaxed max-w-[500px] mb-8">
+                Keep creating, teaching and making an impact. Your journey as a creator is just getting bigger and better every day.
               </p>
             </div>
 
             {/* Info pills */}
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-4">
               {[
                 { icon: Sparkles, label: 'Creator', sub: 'Since Apr 2025', bg: '#EFF6FF', c: '#1D4ED8' },
                 { icon: Users, label: 'Your audience', sub: 'Growing daily', bg: '#F5F3FF', c: '#7C3AED' },
@@ -207,15 +206,15 @@ export default function CreatorDashboard() {
               ].map(({ icon: Icon, label, sub, bg, c }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
-                  style={{ background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                  className="flex items-center gap-4 rounded-2xl px-5 py-4"
+                  style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
                 >
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
-                    <Icon size={14} color={c} />
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ background: bg }}>
+                    <Icon size={18} color={c} />
                   </div>
                   <div>
-                    <p className="text-[12.5px] font-semibold text-[#0F172A] leading-none">{label}</p>
-                    <p className="text-[11px] text-[#64748B] leading-none mt-0.5">{sub}</p>
+                    <p className="text-[14px] font-bold text-[#0F172A] leading-none mb-1.5">{label}</p>
+                    <p className="text-[12px] font-medium text-[#64748B] leading-none">{sub}</p>
                   </div>
                 </div>
               ))}
@@ -223,11 +222,11 @@ export default function CreatorDashboard() {
           </div>
 
           {/* RIGHT image + quote */}
-          <div className="hidden md:flex md:w-[45%] items-end justify-end relative overflow-hidden">
+          <div className="hidden md:flex md:w-[40%] items-end justify-end relative overflow-hidden">
             {/* quote */}
-            <div className="absolute top-6 right-6 text-right z-10">
+            <div className="absolute top-8 right-10 text-right z-10">
               <p
-                className="text-[15px] font-semibold text-[#1E3A8A] leading-snug italic"
+                className="text-[17px] font-medium text-[#1E3A8A] leading-relaxed italic"
                 style={{ fontFamily: 'Georgia, serif', opacity: 0.8 }}
               >
                 " Great creators<br />build a better future. "
@@ -239,18 +238,18 @@ export default function CreatorDashboard() {
               src="/banner_illustration.png"
               alt="Creator workspace"
               className="w-full h-full object-cover object-right-top"
-              style={{ maxHeight: 220, opacity: 0.95 }}
+              style={{ maxHeight: 260, opacity: 0.95 }}
               onError={e => { e.currentTarget.style.display = 'none'; }}
             />
 
             {/* fade overlay on left edge of image */}
-            <div className="absolute inset-y-0 left-0 w-24 pointer-events-none"
+            <div className="absolute inset-y-0 left-0 w-32 pointer-events-none"
               style={{ background: 'linear-gradient(to right, #E8EFFE, transparent)' }} />
           </div>
         </div>
 
         {/* ══════════ KPI CARDS ══════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <KpiCard icon={Package}    label="Total Packs" value={stats.packs}                   iconBg="#EFF6FF" iconColor="#2563EB" sparkColor="#2563EB" up />
           <KpiCard icon={Users}      label="Students"    value={stats.students}                 iconBg="#F5F3FF" iconColor="#7C3AED" sparkColor="#7C3AED" up />
           <KpiCard icon={DollarSign} label="Revenue"     value={`$${stats.revenue.toFixed(0)}`} iconBg="#F0FDF4" iconColor="#16A34A" sparkColor="#16A34A" up />
@@ -258,7 +257,7 @@ export default function CreatorDashboard() {
         </div>
 
         {/* ══════════ QUICK ACTIONS ══════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <ActionCard to="/creator/packs/new"    icon={PlusCircle} iconBg="#EFF6FF" iconColor="#2563EB" title="Create New Pack"      subtitle="Start a new course pack"            primary />
           <ActionCard to="/creator/enrollments"  icon={Users}      iconBg="#F5F3FF" iconColor="#7C3AED" title="Manage Enrollments"   subtitle="View & manage your students" />
           <ActionCard to="/creator/dashboard"    icon={DollarSign} iconBg="#F0FDF4" iconColor="#16A34A" title="View Payouts"         subtitle="Track your earnings" />
@@ -266,89 +265,91 @@ export default function CreatorDashboard() {
         </div>
 
         {/* ══════════ BOTTOM: RECENT PACKS + RIGHT COLUMN ══════════ */}
-        <div className="grid lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_320px] gap-4 items-start">
+        <div className="grid lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-8 items-start">
 
           {/* ── Recent Packs ── */}
-          <div>
+          <div className="space-y-6">
             {/* Section header */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2.5">
-                <BarChart2 size={18} className="text-[#64748B]" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm border border-[#E8EDF3]">
+                  <BarChart2 size={20} className="text-[#64748B]" />
+                </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-[#0F172A] leading-tight">Recent Packs</h2>
-                  <p className="text-[12px] text-[#64748B] leading-tight">Your latest course packs and their performance.</p>
+                  <h2 className="text-[18px] font-extrabold text-[#0F172A] leading-tight">Recent Packs</h2>
+                  <p className="text-[14px] text-[#64748B] leading-relaxed mt-0.5">Your latest course packs and their performance.</p>
                 </div>
               </div>
               <Link
                 to="/creator/packs"
-                className="text-[12.5px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-colors"
+                className="text-[14px] font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1.5 transition-colors"
               >
-                View All <ArrowRight size={13} />
+                View All <ArrowRight size={16} />
               </Link>
             </div>
 
             {latestPack ? (
               <div
-                className="bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row"
-                style={{ border: '1px solid #E8EDF3', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}
+                className="bg-white rounded-[24px] overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md"
+                style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
               >
                 {/* Thumbnail */}
-                <div className="md:w-[260px] md:flex-shrink-0 relative" style={{ minHeight: 180 }}>
+                <div className="md:w-[300px] md:flex-shrink-0 relative" style={{ minHeight: 220 }}>
                   {latestPack.thumbnail_url ? (
                     <img
                       src={latestPack.thumbnail_url}
                       alt={latestPack.title}
                       className="w-full h-full object-cover"
-                      style={{ minHeight: 180 }}
+                      style={{ minHeight: 220 }}
                     />
                   ) : (
-                    <div className="w-full h-full bg-[#1E293B] flex items-center justify-center" style={{ minHeight: 180 }}>
-                      <Package size={40} className="text-white/20" />
+                    <div className="w-full h-full bg-[#1E293B] flex items-center justify-center" style={{ minHeight: 220 }}>
+                      <Package size={48} className="text-white/20" />
                     </div>
                   )}
                   {/* Published badge overlay */}
                   {latestPack.is_published && (
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg">
-                      <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
-                      <span className="text-[11.5px] font-semibold text-[#16A34A]">Published</span>
+                    <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-sm">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" />
+                      <span className="text-[12px] font-bold text-[#16A34A] uppercase tracking-wide">Published</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col justify-between p-6">
+                <div className="flex-1 flex flex-col justify-between p-8">
                   <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11.5px] font-semibold ${
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold uppercase tracking-wide ${
                         latestPack.is_published
                           ? 'bg-[#F0FDF4] text-[#16A34A]'
                           : 'bg-[#FEF3C7] text-[#D97706]'
                       }`}>
-                        <CheckCircle size={11} />
+                        <CheckCircle size={14} />
                         {latestPack.is_published ? 'Published' : 'Draft'}
                       </span>
                     </div>
 
-                    <h3 className="text-[19px] font-bold text-[#0F172A] leading-snug mb-2">
+                    <h3 className="text-[22px] font-extrabold text-[#0F172A] leading-snug mb-3">
                       {latestPack.title}
                     </h3>
-                    <p className="text-[13px] text-[#64748B] leading-relaxed mb-4 line-clamp-2">
+                    <p className="text-[14.5px] text-[#64748B] leading-relaxed mb-6 line-clamp-2">
                       {latestPack.description || 'Learn practical ways to master the topic. This course covers real strategies, tools and step-by-step methods.'}
                     </p>
 
                     {/* Meta row */}
-                    <div className="flex flex-wrap items-center gap-4 text-[12.5px] text-[#475569]">
-                      <span className="flex items-center gap-1.5">
-                        <GraduationCap size={14} className="text-[#94A3B8]" />
+                    <div className="flex flex-wrap items-center gap-6 text-[13.5px] font-medium text-[#475569]">
+                      <span className="flex items-center gap-2">
+                        <GraduationCap size={18} className="text-[#94A3B8]" />
                         {sessionCount} lessons
                       </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock size={14} className="text-[#94A3B8]" />
+                      <span className="flex items-center gap-2">
+                        <Clock size={18} className="text-[#94A3B8]" />
                         Learn at your own pace
                       </span>
                       {latestPack.category && (
-                        <span className="flex items-center gap-1.5">
-                          <Zap size={14} className="text-[#94A3B8]" />
+                        <span className="flex items-center gap-2">
+                          <Zap size={18} className="text-[#94A3B8]" />
                           {latestPack.category}
                         </span>
                       )}
@@ -356,15 +357,15 @@ export default function CreatorDashboard() {
                   </div>
 
                   {/* Price + CTA */}
-                  <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#F1F5F9]">
-                    <p className="text-[20px] font-extrabold text-[#2563EB] tracking-tight">
+                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#F1F5F9]">
+                    <p className="text-[24px] font-extrabold text-[#2563EB] tracking-tight">
                       {latestPack.currency} {latestPack.price}
                     </p>
                     <Link
                       to={`/creator/packs/edit/${latestPack.id}`}
-                      className="flex items-center gap-2 text-[13px] font-semibold text-[#2563EB] border border-[#BFDBFE] rounded-full px-5 py-2 hover:bg-[#EFF6FF] transition-colors"
+                      className="flex items-center gap-2.5 text-[14px] font-bold text-[#2563EB] border-2 border-[#BFDBFE] rounded-xl px-6 py-2.5 hover:bg-[#EFF6FF] hover:border-[#93C5FD] transition-all"
                     >
-                      View Details <ArrowRight size={14} />
+                      View Details <ArrowRight size={16} />
                     </Link>
                   </div>
                 </div>
@@ -372,36 +373,40 @@ export default function CreatorDashboard() {
             ) : (
               /* Empty state */
               <div
-                className="bg-white rounded-2xl p-8 flex flex-col items-center justify-center text-center"
-                style={{ border: '1.5px dashed #CBD5E1' }}
+                className="bg-white rounded-[24px] p-12 flex flex-col items-center justify-center text-center"
+                style={{ border: '2px dashed #CBD5E1' }}
               >
-                <Package size={36} className="text-[#CBD5E1] mb-3" />
-                <p className="text-[14px] font-bold text-[#0F172A] mb-1">No packs yet</p>
-                <p className="text-[12.5px] text-[#64748B] max-w-[240px] mb-5">
+                <div className="w-16 h-16 rounded-full bg-[#F1F5F9] flex items-center justify-center mb-5">
+                  <Package size={28} className="text-[#94A3B8]" />
+                </div>
+                <p className="text-[18px] font-extrabold text-[#0F172A] mb-2">No packs yet</p>
+                <p className="text-[14.5px] text-[#64748B] max-w-[300px] mb-8 leading-relaxed">
                   Create your first session pack and start teaching your audience today.
                 </p>
                 <Link
                   to="/creator/packs/new"
-                  className="inline-flex items-center gap-2 text-[13px] font-semibold text-white px-5 py-2.5 rounded-full transition-colors"
-                  style={{ background: '#2563EB', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}
+                  className="inline-flex items-center gap-2 text-[15px] font-bold text-white px-8 py-4 rounded-xl transition-all hover:-translate-y-1"
+                  style={{ background: '#2563EB', boxShadow: '0 8px 24px rgba(37,99,235,0.3)' }}
                 >
-                  <PlusCircle size={15} /> Create Pack
+                  <PlusCircle size={18} /> Create Pack
                 </Link>
               </div>
             )}
           </div>
 
           {/* ── Right column ── */}
-          <div className="space-y-4">
+          <div className="space-y-6">
 
             {/* Quick Stats card */}
             <div
-              className="bg-white rounded-2xl"
-              style={{ border: '1px solid #E8EDF3', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', padding: '20px 20px 4px' }}
+              className="bg-white rounded-[24px]"
+              style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', padding: '28px 28px 8px' }}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <BarChart2 size={16} className="text-[#64748B]" />
-                <h3 className="text-[14px] font-bold text-[#0F172A]">Quick Stats</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
+                  <BarChart2 size={18} className="text-[#64748B]" />
+                </div>
+                <h3 className="text-[16px] font-extrabold text-[#0F172A]">Quick Stats</h3>
               </div>
 
               <StatRow icon={Package}    iconBg="#EFF6FF" iconColor="#2563EB" label="Total Packs"     value={stats.packs} />
@@ -412,31 +417,33 @@ export default function CreatorDashboard() {
 
             {/* Recent Activity card */}
             <div
-              className="bg-white rounded-2xl"
-              style={{ border: '1px solid #E8EDF3', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', padding: '20px' }}
+              className="bg-white rounded-[24px]"
+              style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', padding: '28px' }}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Activity size={16} className="text-[#64748B]" />
-                  <h3 className="text-[14px] font-bold text-[#0F172A]">Recent Activity</h3>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
+                    <Activity size={18} className="text-[#64748B]" />
+                  </div>
+                  <h3 className="text-[16px] font-extrabold text-[#0F172A]">Recent Activity</h3>
                 </div>
                 <Link
                   to="/creator/enrollments"
-                  className="text-[11.5px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-0.5 transition-colors"
+                  className="text-[13px] font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-colors"
                 >
-                  View All <ArrowRight size={12} />
+                  View All <ArrowRight size={14} />
                 </Link>
               </div>
 
-              <div className="rounded-xl p-3 flex gap-3 items-start" style={{ background: '#F8FAFC' }}>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#DCFCE7' }}>
-                  <CheckCircle size={15} color="#16A34A" />
+              <div className="rounded-[16px] p-4 flex gap-4 items-start" style={{ background: '#F8FAFC' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
+                  <CheckCircle size={18} color="#16A34A" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold text-[#0F172A] leading-tight">New enrollment</p>
-                  <p className="text-[11.5px] text-[#64748B] leading-relaxed mt-0.5">Someone enrolled in your course</p>
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <p className="text-[14px] font-bold text-[#0F172A] leading-tight mb-1">New enrollment</p>
+                  <p className="text-[13px] text-[#64748B] leading-relaxed">Someone enrolled in your course</p>
                 </div>
-                <span className="text-[10.5px] text-[#94A3B8] whitespace-nowrap flex-shrink-0 mt-0.5">2 days ago</span>
+                <span className="text-[12px] font-medium text-[#94A3B8] whitespace-nowrap flex-shrink-0 pt-1">2 days ago</span>
               </div>
             </div>
 
