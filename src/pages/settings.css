@@ -1,0 +1,620 @@
+/* ============================================================
+   Lora Settings Page — light-mode-only styles
+   All selectors are scoped under .lora-settings to avoid
+   conflicts with app-level .card, .btn, .grid, .top, .page etc.
+   ============================================================ */
+
+/* ── Font import ── */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+/* ── Design tokens (light mode only — no dark overrides) ── */
+.lora-settings {
+  --s-bg: #f4f6fb;
+  --s-surface: #fff;
+  --s-ink: #0e1733;
+  --s-muted: #68728d;
+  --s-line: #e3e7f1;
+  --s-brand: #2f5bff;
+  --s-brand-soft: #e9eeff;
+  --s-ok: #0f9d6b;
+  --s-bad: #d6334a;
+  --s-hero: #0e1733;
+  --s-hero-ink: #fff;
+  --s-shadow: 0 1px 2px rgba(14, 23, 51, 0.05), 0 8px 24px -12px rgba(14, 23, 51, 0.12);
+}
+
+/* ── Box-sizing reset inside scope ── */
+.lora-settings *,
+.lora-settings *::before,
+.lora-settings *::after {
+  box-sizing: border-box !important;
+}
+
+/* ── Root wrapper ── */
+.lora-settings {
+  font-family: 'Figtree', system-ui, sans-serif !important;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--s-ink) !important;
+  background: transparent !important;
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 36px;
+  align-items: start;
+  max-width: 1020px;
+  padding: 0;
+  padding-bottom: 80px;
+}
+
+@media (max-width: 900px) {
+  .lora-settings {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Headings ── */
+.lora-settings h1,
+.lora-settings h2,
+.lora-settings h3,
+.lora-settings h4 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--s-ink) !important;
+}
+
+/* ── Focus styles ── */
+.lora-settings input:focus-visible,
+.lora-settings select:focus-visible,
+.lora-settings textarea:focus-visible,
+.lora-settings button:focus-visible {
+  outline: 2px solid var(--s-brand) !important;
+  outline-offset: 2px !important;
+}
+
+/* ────────── TOC sidebar ────────── */
+.lora-settings .s-toc {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lora-settings .s-toc h1 {
+  font-size: 30px !important;
+  margin-bottom: 14px !important;
+  color: var(--s-ink) !important;
+}
+
+.lora-settings .s-toc a {
+  color: var(--s-muted) !important;
+  text-decoration: none !important;
+  padding: 8px 12px !important;
+  border-left: 2px solid var(--s-line) !important;
+  font-weight: 500 !important;
+  font-family: 'Figtree', sans-serif !important;
+  transition: color 0.15s, border-color 0.15s !important;
+}
+
+.lora-settings .s-toc a.on,
+.lora-settings .s-toc a.active {
+  color: var(--s-brand) !important;
+  border-color: var(--s-brand) !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 900px) {
+  .lora-settings .s-toc {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .lora-settings .s-toc h1 {
+    width: 100%;
+  }
+  .lora-settings .s-toc a {
+    border: 1px solid var(--s-line) !important;
+    border-left: 1px solid var(--s-line) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+  }
+  .lora-settings .s-toc a.on,
+  .lora-settings .s-toc a.active {
+    border-color: var(--s-brand) !important;
+  }
+}
+
+/* ────────── Card stack ────────── */
+.lora-settings .s-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  min-width: 0;
+}
+
+/* ────────── Generic card ────────── */
+.lora-settings .s-card {
+  background: var(--s-surface) !important;
+  border: 1px solid var(--s-line) !important;
+  border-radius: 20px !important;
+  padding: 26px !important;
+  box-shadow: var(--s-shadow) !important;
+  color: var(--s-ink) !important;
+}
+
+.lora-settings .s-card > header {
+  margin-bottom: 20px !important;
+}
+
+.lora-settings .s-card > header h2 {
+  font-size: 20px !important;
+  color: var(--s-ink) !important;
+}
+
+.lora-settings .s-card > header p {
+  margin: 4px 0 0 !important;
+  color: var(--s-muted) !important;
+  font-size: 14px !important;
+}
+
+/* ────────── Plan card (dark hero) ────────── */
+.lora-settings .s-plan {
+  background: var(--s-hero) !important;
+  color: var(--s-hero-ink) !important;
+  border: 0 !important;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  border-radius: 20px !important;
+  padding: 26px !important;
+  box-shadow: var(--s-shadow) !important;
+}
+
+.lora-settings .s-plan::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 40px rgba(255, 255, 255, 0.03), 0 0 0 80px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+.lora-settings .s-plan h2 {
+  font-size: 24px !important;
+  color: var(--s-hero-ink) !important;
+}
+
+.lora-settings .s-plan p {
+  margin: 4px 0 0 !important;
+  opacity: 0.75;
+  color: var(--s-hero-ink) !important;
+}
+
+@media (max-width: 640px) {
+  .lora-settings .s-plan {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Trial progress ring ── */
+.lora-settings .s-ring {
+  width: 92px;
+  height: 92px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.lora-settings .s-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.lora-settings .s-ring circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.lora-settings .s-ring .ring-track {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+
+.lora-settings .s-ring .ring-progress {
+  stroke: #7fa0ff;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.lora-settings .s-ring-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--s-hero-ink) !important;
+}
+
+.lora-settings .s-ring-label small {
+  display: block;
+  font-family: 'Figtree', sans-serif !important;
+  font-weight: 500;
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* ── Plan badge ── */
+.lora-settings .s-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-radius: 99px !important;
+  padding: 2px 10px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  color: var(--s-hero-ink) !important;
+}
+
+/* ────────── Buttons ────────── */
+.lora-settings .s-btn {
+  border: 0 !important;
+  border-radius: 12px !important;
+  padding: 12px 22px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  background: var(--s-brand) !important;
+  color: #fff !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+  transition: transform 0.1s, filter 0.15s !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.lora-settings .s-btn:hover { filter: brightness(1.08) !important; }
+.lora-settings .s-btn:active { transform: scale(0.98) !important; }
+
+.lora-settings .s-btn-light {
+  background: #fff !important;
+  color: var(--s-ink) !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  padding: 12px 22px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+  transition: transform 0.1s, filter 0.15s !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.lora-settings .s-btn-ghost {
+  background: none !important;
+  border: 1.5px solid var(--s-brand) !important;
+  color: var(--s-brand) !important;
+  border-radius: 12px !important;
+  padding: 12px 22px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+  transition: transform 0.1s, filter 0.15s !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.lora-settings .s-btn-ghost:hover {
+  background: var(--s-brand-soft) !important;
+}
+
+.lora-settings .s-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px !important;
+}
+
+/* ────────── Payment method segment ────────── */
+.lora-settings .s-seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 22px !important;
+}
+
+@media (max-width: 640px) {
+  .lora-settings .s-seg {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lora-settings .s-seg label {
+  cursor: pointer;
+}
+
+.lora-settings .s-seg-input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.lora-settings .s-opt {
+  display: block;
+  height: 100%;
+  border: 1.5px solid var(--s-line) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  transition: border-color 0.15s, background 0.15s !important;
+  position: relative;
+  background: var(--s-surface) !important;
+  cursor: pointer;
+}
+
+.lora-settings .s-opt-icon {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 11px;
+  background: var(--s-bg) !important;
+  stroke: var(--s-muted);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-bottom: 10px;
+  transition: background 0.15s, stroke 0.15s;
+  display: block;
+}
+
+.lora-settings .s-opt b {
+  display: block;
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: var(--s-ink) !important;
+}
+
+.lora-settings .s-opt span {
+  font-size: 13px;
+  color: var(--s-muted) !important;
+}
+
+/* checked state */
+.lora-settings .s-seg-input:checked + .s-opt {
+  border-color: var(--s-brand) !important;
+  background: var(--s-brand-soft) !important;
+}
+
+.lora-settings .s-seg-input:checked + .s-opt .s-opt-icon {
+  background: var(--s-brand) !important;
+  stroke: #fff !important;
+}
+
+.lora-settings .s-seg-input:checked + .s-opt::after {
+  content: "✓";
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--s-brand);
+  color: #fff;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+}
+
+.lora-settings .s-seg-input:focus-visible + .s-opt {
+  outline: 2px solid var(--s-brand) !important;
+  outline-offset: 2px !important;
+}
+
+/* ────────── Show/hide panels ────────── */
+.lora-settings .s-panel {
+  display: none;
+  margin-bottom: 6px;
+}
+
+.lora-settings .s-panel.show {
+  display: block;
+  animation: s-fade-in 0.2s ease;
+}
+
+.lora-settings .s-panel + .s-panel.show,
+.lora-settings .s-panel.show + .s-panel.show {
+  margin-top: 20px;
+}
+
+@keyframes s-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+
+.lora-settings .s-sub-heading {
+  font-weight: 700 !important;
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  margin: 0 0 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--s-ink) !important;
+}
+
+.lora-settings .s-sub-heading::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--s-line);
+}
+
+/* ────────── Grid layout for forms ────────── */
+.lora-settings .s-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .lora-settings .s-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lora-settings .s-full {
+  grid-column: 1 / -1;
+}
+
+/* ────────── Form fields ────────── */
+.lora-settings .s-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.lora-settings .s-field label {
+  display: block !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  margin-bottom: 6px !important;
+  color: var(--s-ink) !important;
+  font-family: 'Figtree', sans-serif !important;
+}
+
+.lora-settings .s-field label em {
+  color: var(--s-bad) !important;
+  font-style: normal !important;
+}
+
+.lora-settings .s-field input,
+.lora-settings .s-field select,
+.lora-settings .s-field textarea {
+  width: 100% !important;
+  background: var(--s-bg) !important;
+  border: 1.5px solid var(--s-line) !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  outline: 0 !important;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s !important;
+  color: var(--s-ink) !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+.lora-settings .s-field textarea {
+  min-height: 110px !important;
+  resize: vertical !important;
+}
+
+.lora-settings .s-field input:focus,
+.lora-settings .s-field select:focus,
+.lora-settings .s-field textarea:focus {
+  border-color: var(--s-brand) !important;
+  background: var(--s-surface) !important;
+  box-shadow: 0 0 0 4px var(--s-brand-soft) !important;
+}
+
+.lora-settings .s-field input.err,
+.lora-settings .s-field select.err,
+.lora-settings .s-field textarea.err {
+  border-color: var(--s-bad) !important;
+}
+
+.lora-settings .s-hint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--s-muted) !important;
+  margin-top: 6px;
+}
+
+.lora-settings .s-hint.bad {
+  color: var(--s-bad) !important;
+}
+
+/* ────────── Toast ────────── */
+.lora-settings-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 30px);
+  background: #0e1733;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 9999;
+  font-family: 'Figtree', sans-serif;
+}
+
+.lora-settings-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ── Cancel link ── */
+.lora-settings .s-cancel-link {
+  color: #ef4444 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  font-family: 'Figtree', sans-serif !important;
+}
+
+.lora-settings .s-cancel-link:hover {
+  text-decoration: underline !important;
+}
+
+/* ── PayPal manage link inside plan card ── */
+.lora-settings .s-plan-manage {
+  display: inline-block;
+  background: rgba(255,255,255,0.1) !important;
+  color: #fff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  text-decoration: none !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  font-family: 'Figtree', sans-serif !important;
+  transition: background 0.15s !important;
+}
+
+.lora-settings .s-plan-manage:hover {
+  background: rgba(255,255,255,0.2) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-settings *, .lora-settings-toast {
+    animation: none !important;
+    transition: none !important;
+  }
+}

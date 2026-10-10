@@ -5,16 +5,17 @@ import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { Link } from 'react-router-dom';
+import './settings.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
 export default function CreatorSettings() {
   useSubscriptionGuard();
   const { profile, creatorProfile, refreshProfile, user } = useAuth();
-  
+
   const [savingPay, setSavingPay] = useState(false);
   const [savingProf, setSavingProf] = useState(false);
-  
+  const [savingPw, setSavingPw] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
 
   const showToast = (msg) => {
@@ -23,13 +24,13 @@ export default function CreatorSettings() {
   };
 
   const [form, setForm] = useState({
-    first_name: profile?.first_name || '',
-    last_name: profile?.last_name || '',
-    contact_number: profile?.contact_number || '',
-    payment_link: creatorProfile?.payment_link || '',
-    payment_option: creatorProfile?.payment_option || 'both',
-    about: creatorProfile?.about || '',
-    category: creatorProfile?.category || 'Technology',
+    first_name: '',
+    last_name: '',
+    contact_number: '',
+    payment_link: '',
+    payment_option: 'both',
+    about: '',
+    category: 'Technology',
   });
 
   useEffect(() => {
@@ -46,8 +47,8 @@ export default function CreatorSettings() {
   }, [profile, creatorProfile]);
 
   const [bankDetails, setBankDetails] = useState({
-    bank_name: '', account_holder_name: '', account_number: '', branch: '', 
-    branch_code: '', country: 'Sri Lanka', extra_note: ''
+    bank_name: '', account_holder_name: '', account_number: '',
+    branch: '', branch_code: '', country: 'LK', extra_note: ''
   });
 
   useEffect(() => {
@@ -62,31 +63,26 @@ export default function CreatorSettings() {
 
   const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
+  /* ── Handlers ── */
   const handleSavePayments = async () => {
     setSavingPay(true);
     try {
-      if (form.payment_option === 'bank' || form.payment_option === 'both') {
-        if (!bankDetails.bank_name || !bankDetails.account_holder_name || !bankDetails.account_number) {
-          throw new Error('Bank Name, Account Holder, and Account Number are required.');
-        }
+      if ((form.payment_option === 'bank' || form.payment_option === 'both') &&
+          (!bankDetails.bank_name || !bankDetails.account_holder_name || !bankDetails.account_number)) {
+        throw new Error('Bank Name, Account Holder, and Account Number are required.');
       }
       if (form.payment_option === 'link' && !form.payment_link) {
         throw new Error('Payment Link URL is required.');
       }
-
       await supabase.from('creator_profiles').update({
         payment_link: form.payment_link,
         payment_option: form.payment_option,
       }).eq('id', user.id);
-
       if (form.payment_option === 'bank' || form.payment_option === 'both') {
         await supabase.from('creator_bank_details').upsert({
-          creator_id: user.id,
-          ...bankDetails,
-          updated_at: new Date().toISOString()
+          creator_id: user.id, ...bankDetails, updated_at: new Date().toISOString()
         }, { onConflict: 'creator_id' });
       }
-
       await refreshProfile();
       showToast('Payment settings saved');
     } catch (err) {
@@ -104,12 +100,9 @@ export default function CreatorSettings() {
         last_name: form.last_name,
         contact_number: form.contact_number,
       }).eq('id', user.id);
-
       await supabase.from('creator_profiles').update({
-        about: form.about,
-        category: form.category,
+        about: form.about, category: form.category,
       }).eq('id', user.id);
-
       await refreshProfile();
       showToast('Profile saved');
     } catch (err) {
@@ -121,336 +114,354 @@ export default function CreatorSettings() {
 
   const handlePasswordChange = async () => {
     setPwMsg('');
-    if (passwords.new !== passwords.confirm) { setPwMsg('Passwords don’t match.'); return; }
+    if (passwords.new !== passwords.confirm) { setPwMsg("Passwords don\u2019t match."); return; }
     if (passwords.new.length < 6) { setPwMsg('Password must be at least 6 characters.'); return; }
-
+    setSavingPw(true);
     const { error } = await supabase.auth.updateUser({ password: passwords.new });
+    setSavingPw(false);
     if (error) { setPwMsg('Error: ' + error.message); return; }
-
     showToast('Password updated');
     setPasswords({ new: '', confirm: '' });
   };
 
-  // Section nav highlight
+  /* ── Section nav highlight via IntersectionObserver ── */
   const [activeSection, setActiveSection] = useState('plan');
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) setActiveSection(entry.target.id);
-      });
-    }, { rootMargin: '-30% 0px -60% 0px' });
-
-    const sections = document.querySelectorAll('section.card-section');
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); }),
+      { rootMargin: '-30% 0px -60% 0px' }
+    );
+    const sections = document.querySelectorAll('.s-section');
     sections.forEach(s => observer.observe(s));
     return () => sections.forEach(s => observer.unobserve(s));
   }, []);
 
-  // Trial calculations
-  const end = new Date(creatorProfile?.trial_ends_at || Date.now());
-  const now = new Date();
+  /* ── Trial ring ── */
+  const trialEnd = new Date(creatorProfile?.trial_ends_at || Date.now());
+  const daysLeft = Math.max(0, Math.ceil((trialEnd - new Date()) / 864e5));
   const total = 30;
-  const left = Math.max(0, Math.ceil((end - now) / 864e5));
+  const circumference = 264;
+  const offset = circumference * (1 - daysLeft / total);
+
+  const payOpt = form.payment_option;
+  const showLink = payOpt === 'link' || payOpt === 'both';
+  const showBank = payOpt === 'bank' || payOpt === 'both';
 
   return (
     <PageTransition>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
-        
-        .settings-page {
-          --bg: #f4f6fb; --surface: #fff; --ink: #0e1733; --muted: #68728d; --line: #e3e7f1; 
-          --brand: #2f5bff; --brand-soft: #e9eeff; --ok: #0f9d6b; --bad: #d6334a; 
-          --hero: #0e1733; --hero-ink: #fff; 
-          --shadow: 0 1px 2px rgba(14,23,51,.05), 0 8px 24px -12px rgba(14,23,51,.12);
-          font-family: 'Figtree', sans-serif;
-          color: var(--ink);
-          background: transparent;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-          :root:not([data-theme="light"]) .settings-page {
-            --bg: #0a1022; --surface: #121a33; --ink: #eef1fb; --muted: #9aa5c4; 
-            --line: #222c4c; --brand: #6c8cff; --brand-soft: #1b2750; --hero: #1a2750; --shadow: none;
-          }
-        }
-        
-        .settings-page h1, .settings-page h2, .settings-page h3, .settings-page b, .font-bricolage {
-          font-family: 'Bricolage Grotesque', sans-serif;
-          letter-spacing: -0.02em;
-        }
-        
-        .settings-page input:focus-visible, .settings-page select:focus-visible, .settings-page textarea:focus-visible, .settings-page button:focus-visible {
-          outline: 2px solid var(--brand); outline-offset: 2px;
-        }
-        
-        /* Segmented Control */
-        .seg-input:checked + .seg-opt {
-          border-color: var(--brand); background: var(--brand-soft);
-        }
-        .seg-input:checked + .seg-opt .seg-icon {
-          background: var(--brand); stroke: #fff;
-        }
-        .seg-input:checked + .seg-opt::after {
-          content: "✓"; position: absolute; top: 12px; right: 14px; width: 20px; height: 20px;
-          border-radius: 50%; background: var(--brand); color: #fff; font-size: 12px;
-          display: grid; place-items: center;
-        }
-        .seg-input:focus-visible + .seg-opt {
-          outline: 2px solid var(--brand); outline-offset: 2px;
-        }
-        
-        /* Inputs */
-        .f-input {
-          width: 100%; background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px;
-          padding: 12px 14px; outline: 0; transition: .15s; color: inherit; font-family: inherit;
-        }
-        .f-input:focus {
-          border-color: var(--brand); background: var(--surface); box-shadow: 0 0 0 4px var(--brand-soft);
-        }
-        .f-input.err { border-color: var(--bad); }
-        
-        .plan-card::after {
-          content: ""; position: absolute; right: -60px; top: -80px; width: 260px; height: 260px;
-          border-radius: 50%; border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 0 0 40px rgba(255,255,255,.03), 0 0 0 80px rgba(255,255,255,.02); pointer-events: none;
-        }
-      `}</style>
+      {/* ── Root wrapper — all styles scoped here ── */}
+      <div className="lora-settings">
 
-      <div className="settings-page max-w-[1020px] w-full grid md:grid-cols-[190px_1fr] gap-9 items-start pb-20">
-        
-        {/* TOC */}
-        <div className="sticky top-[20px] md:top-[90px] flex md:flex-col gap-2 flex-wrap z-10 pb-4 md:pb-0 bg-[#F1F5F9] md:bg-transparent -mx-4 px-4 md:mx-0 md:px-0">
-          <h1 className="text-[30px] mb-3 w-full font-bricolage tracking-tight hidden md:block m-0 font-extrabold text-[var(--ink)]">Settings</h1>
+        {/* ── TOC ── */}
+        <div className="s-toc">
+          <h1>Settings</h1>
           {[
-            { id: 'plan', label: 'Subscription' },
-            { id: 'pay', label: 'Payments' },
-            { id: 'profile', label: 'Profile' },
-            { id: 'security', label: 'Password' }
-          ].map(link => (
-            <a 
-              key={link.id}
-              href={`#${link.id}`}
-              className={`px-3.5 py-1.5 md:py-2 md:px-3 text-[14px] md:text-[15px] font-medium transition-all
-                md:border-l-2 md:border-y-0 md:border-r-0 md:rounded-none border rounded-full
-                ${activeSection === link.id 
-                  ? 'text-[var(--brand)] md:border-[var(--brand)] border-[var(--brand)] bg-[var(--brand-soft)] md:bg-transparent font-semibold' 
-                  : 'text-[var(--muted)] md:border-[var(--line)] border-[var(--line)] bg-[var(--surface)] md:bg-transparent'}`}
+            { id: 'plan',     label: 'Subscription' },
+            { id: 'pay',      label: 'Payments' },
+            { id: 'profile',  label: 'Profile' },
+            { id: 'security', label: 'Password' },
+          ].map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className={activeSection === id ? 'on' : ''}
             >
-              {link.label}
+              {label}
             </a>
           ))}
         </div>
 
-        {/* Content Stack */}
-        <div className="flex flex-col gap-7 min-w-0">
-          
-          {/* SUBSCRIPTION */}
-          <section className="card-section plan-card bg-[var(--hero)] text-[var(--hero-ink)] rounded-[20px] relative overflow-hidden grid md:grid-cols-[auto_1fr_auto] gap-6 items-center p-6 md:p-8" id="plan">
-            <div className="relative w-[92px] h-[92px] shrink-0" aria-hidden="true">
-              <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="8" strokeLinecap="round" />
-                <circle cx="50" cy="50" r="42" fill="none" stroke="#7fa0ff" strokeWidth="8" strokeLinecap="round" 
-                  strokeDasharray="264" strokeDashoffset={264 * (1 - left / total)} 
-                  className="transition-[stroke-dashoffset] duration-1000 ease-out" />
+        {/* ── Content stack ── */}
+        <div className="s-stack">
+
+          {/* ════ SUBSCRIPTION ════ */}
+          <section className="s-section s-plan" id="plan">
+            <div className="s-ring" aria-hidden="true">
+              <svg viewBox="0 0 100 100">
+                <circle className="ring-track" cx="50" cy="50" r="42" />
+                <circle
+                  className="ring-progress"
+                  cx="50" cy="50" r="42"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                />
               </svg>
-              <div className="absolute inset-0 grid place-content-center text-center font-bricolage font-extrabold text-[24px] leading-none">
-                <span>{left}</span>
-                <small className="block font-figtree font-medium text-[11px] opacity-70 mt-1">days left</small>
+              <div className="s-ring-label">
+                <span>{daysLeft}</span>
+                <small>days left</small>
               </div>
             </div>
-            <div className="z-10">
-              <span className="inline-block bg-white/10 rounded-full px-2.5 py-1 text-[12px] font-semibold mb-2">
-                {creatorProfile?.subscription_status === 'trial' ? 'Free trial' : 
-                 creatorProfile?.subscription_status === 'active' ? 'Active' : 'Expired'}
+
+            <div>
+              <span className="s-badge">
+                {creatorProfile?.subscription_status === 'trial' ? 'Free trial'
+                  : creatorProfile?.subscription_status === 'active' ? 'Active'
+                  : 'Expired'}
               </span>
-              <h2 className="text-[24px] font-bricolage tracking-tight m-0 text-white">Lora Creator Plan</h2>
-              <p className="m-0 mt-1.5 opacity-75 text-[14.5px]">
-                {creatorProfile?.subscription_status === 'trial' 
-                  ? `Trial ends on ${end.toLocaleDateString()}, then Rs. 3,499/month.`
-                  : creatorProfile?.subscription_status === 'active' && creatorProfile?.next_billing_date
-                    ? `Next billing date: ${new Date(creatorProfile.next_billing_date).toLocaleDateString()}`
-                    : 'Rs. 3,499/month'}
+              <h2>Lora Creator Plan</h2>
+              <p>
+                {creatorProfile?.subscription_status === 'trial'
+                  ? `Trial ends on ${trialEnd.toLocaleDateString()}, then Rs.\u00a03,499/month.`
+                  : creatorProfile?.subscription_status === 'active' && creatorProfile.next_billing_date
+                    ? `Next billing: ${new Date(creatorProfile.next_billing_date).toLocaleDateString()} · Rs.\u00a03,499/month`
+                    : 'Rs.\u00a03,499/month'}
               </p>
             </div>
-            <div className="z-10 relative">
-              {creatorProfile?.subscription_status === 'trial' || creatorProfile?.subscription_status === 'expired' ? (
-                 <Link to="/creator/subscription?upgrade=true" className="bg-white text-[#0e1733] font-semibold py-3 px-5 rounded-xl hover:brightness-110 active:scale-95 transition-all block whitespace-nowrap text-center">
-                   Upgrade now
-                 </Link>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  <a href="https://www.paypal.com/myaccount/autopay/" target="_blank" rel="noopener noreferrer" className="bg-white/10 text-white font-semibold py-2 px-4 rounded-xl hover:bg-white/20 transition-all text-sm text-center">Manage PayPal</a>
-                  <button onClick={async () => {
-                     if (window.confirm('Are you sure you want to cancel? IMPORTANT: You must also log into your PayPal account to stop the recurring payment.')) {
-                       await supabase.from('creator_profiles').update({ subscription_status: 'cancelled' }).eq('id', user.id);
-                       alert('Subscription cancelled in Lora. Please ensure you also cancel the recurring payment on PayPal.');
-                       refreshProfile();
-                     }
-                  }} className="text-red-300 font-medium text-sm hover:text-red-400">Cancel Subscription</button>
+
+            <div>
+              {(creatorProfile?.subscription_status === 'trial' || creatorProfile?.subscription_status === 'expired' || creatorProfile?.subscription_status === 'cancelled') && (
+                <Link to="/creator/subscription?upgrade=true" className="s-btn-light">
+                  Upgrade now
+                </Link>
+              )}
+              {creatorProfile?.subscription_status === 'active' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <a href="https://www.paypal.com/myaccount/autopay/" target="_blank" rel="noopener noreferrer" className="s-plan-manage">
+                    Manage PayPal
+                  </a>
+                  <button
+                    className="s-cancel-link"
+                    onClick={async () => {
+                      if (window.confirm('Are you sure? Also cancel the recurring payment on PayPal.')) {
+                        await supabase.from('creator_profiles').update({ subscription_status: 'cancelled' }).eq('id', user.id);
+                        alert('Subscription cancelled. Please also cancel on PayPal.');
+                        refreshProfile();
+                      }
+                    }}
+                  >
+                    Cancel Subscription
+                  </button>
                 </div>
               )}
             </div>
           </section>
 
-          {/* PAYMENT SETTINGS */}
-          <section className="card-section bg-[var(--surface)] border border-[var(--line)] rounded-[20px] p-6 sm:p-7 shadow-[var(--shadow)]" id="pay">
-            <header className="mb-6">
-              <h2 className="text-[20px] font-bricolage tracking-tight m-0">Payment settings</h2>
-              <p className="m-0 mt-1 text-[14px] text-[var(--muted)]">Choose how learners pay you.</p>
+          {/* ════ PAYMENT SETTINGS ════ */}
+          <section className="s-section s-card" id="pay">
+            <header>
+              <h2>Payment settings</h2>
+              <p>Choose how learners pay you.</p>
             </header>
-            
-            <div className="grid sm:grid-cols-3 gap-3 mb-6" role="radiogroup">
+
+            <div className="s-seg" role="radiogroup" aria-label="Payment method">
               {[
-                { id: 'link', icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></>, title: 'Payment link', desc: 'Share a URL: bKash, PayPal, etc.' },
-                { id: 'bank', icon: <><path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></>, title: 'Bank details', desc: 'Share your bank info directly' },
-                { id: 'both', icon: <><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></>, title: 'Both options', desc: 'Let learners choose their method' },
+                {
+                  id: 'link',
+                  title: 'Payment link',
+                  desc: 'Share a URL: bKash, PayPal, etc.',
+                  icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></>,
+                },
+                {
+                  id: 'bank',
+                  title: 'Bank details',
+                  desc: 'Share your bank info directly',
+                  icon: <><path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></>,
+                },
+                {
+                  id: 'both',
+                  title: 'Both options',
+                  desc: 'Let learners choose their method',
+                  icon: <><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></>,
+                },
               ].map(opt => (
-                <label key={opt.id} className="cursor-pointer relative">
-                  <input type="radio" name="payMethod" value={opt.id} checked={form.payment_option === opt.id} onChange={() => update('payment_option', opt.id)} className="seg-input absolute opacity-0" />
-                  <span className="seg-opt block h-full border-[1.5px] border-[var(--line)] rounded-2xl p-4 transition-all relative bg-[var(--surface)]">
-                    <svg className="seg-icon w-9 h-9 p-2 rounded-xl bg-[var(--bg)] stroke-[var(--muted)] fill-none stroke-[1.8px] mb-2.5 transition-all" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                      {opt.icon}
-                    </svg>
-                    <b className="block font-bricolage text-[15px] mb-0.5">{opt.title}</b>
-                    <span className="text-[13px] text-[var(--muted)] block">{opt.desc}</span>
+                <label key={opt.id}>
+                  <input
+                    type="radio"
+                    name="payMethod"
+                    value={opt.id}
+                    className="s-seg-input"
+                    checked={payOpt === opt.id}
+                    onChange={() => update('payment_option', opt.id)}
+                  />
+                  <span className="s-opt">
+                    <svg className="s-opt-icon" viewBox="0 0 24 24">{opt.icon}</svg>
+                    <b>{opt.title}</b>
+                    <span>{opt.desc}</span>
                   </span>
                 </label>
               ))}
             </div>
 
-            {(form.payment_option === 'link' || form.payment_option === 'both') && (
-              <div className="mb-4 animate-in fade-in slide-in-from-top-1">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="paymentLink">Payment link URL</label>
-                <input id="paymentLink" className="f-input" type="url" value={form.payment_link} onChange={e => update('payment_link', e.target.value)} placeholder="https://..." />
+            {/* Payment link panel */}
+            <div className={`s-panel${showLink ? ' show' : ''}`} id="linkPanel">
+              <div className="s-field">
+                <label htmlFor="paymentLink">Payment link URL</label>
+                <input
+                  id="paymentLink"
+                  name="paymentLink"
+                  type="url"
+                  value={form.payment_link}
+                  onChange={e => update('payment_link', e.target.value)}
+                  placeholder="https://..."
+                />
               </div>
-            )}
+            </div>
 
-            {(form.payment_option === 'bank' || form.payment_option === 'both') && (
-              <div className="animate-in fade-in slide-in-from-top-1 pt-4">
-                <h3 className="font-bricolage font-bold m-0 mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-[1px] after:bg-[var(--line)]">Bank account</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Bank name <em className="text-[var(--bad)] not-italic">*</em></label>
-                    <select className="f-input" value={bankDetails.bank_name} onChange={e => setBankDetails({...bankDetails, bank_name: e.target.value})}>
-                      <option value="">Select a bank</option>
-                      <option>Bank of Ceylon</option>
-                      <option>Commercial Bank</option>
-                      <option>Hatton National Bank</option>
-                      <option>People's Bank</option>
-                      <option>Sampath Bank</option>
-                      <option>Seylan Bank</option>
-                      <option>Nations Trust Bank</option>
-                    </select>
-                  </div>
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Account holder name <em className="text-[var(--bad)] not-italic">*</em></label>
-                    <input className="f-input" value={bankDetails.account_holder_name} onChange={e => setBankDetails({...bankDetails, account_holder_name: e.target.value})} />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Account number <em className="text-[var(--bad)] not-italic">*</em></label>
-                    <input className="f-input" inputMode="numeric" value={bankDetails.account_number} onChange={e => setBankDetails({...bankDetails, account_number: e.target.value})} />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Country <em className="text-[var(--bad)] not-italic">*</em></label>
-                    <select className="f-input" value={bankDetails.country} onChange={e => setBankDetails({...bankDetails, country: e.target.value})}>
-                      <option value="US">United States</option>
-                      <option value="LK">Sri Lanka</option>
-                      <option value="IN">India</option>
-                      <option value="GB">United Kingdom</option>
-                      <option value="AU">Australia</option>
-                    </select>
-                  </div>
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Branch</label>
-                    <input className="f-input" value={bankDetails.branch} onChange={e => setBankDetails({...bankDetails, branch: e.target.value})} />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Branch code</label>
-                    <input className="f-input" value={bankDetails.branch_code} onChange={e => setBankDetails({...bankDetails, branch_code: e.target.value})} />
-                  </div>
-                  <div className="sm:col-span-2 mb-2">
-                    <label className="block font-semibold text-[13.5px] mb-1.5">Extra note for learners</label>
-                    <textarea className="f-input min-h-[110px]" value={bankDetails.extra_note} onChange={e => setBankDetails({...bankDetails, extra_note: e.target.value})} placeholder="e.g. Please use your full name as the payment reference" />
-                  </div>
+            {/* Bank panel */}
+            <div className={`s-panel${showBank ? ' show' : ''}`} id="bankPanel">
+              <h3 className="s-sub-heading">Bank account</h3>
+              <div className="s-grid">
+                <div className="s-field">
+                  <label htmlFor="bankName">Bank name <em>*</em></label>
+                  <select id="bankName" name="bankName" value={bankDetails.bank_name} onChange={e => setBankDetails({ ...bankDetails, bank_name: e.target.value })}>
+                    <option value="">Select a bank</option>
+                    <option value="Bank of Ceylon">Bank of Ceylon</option>
+                    <option value="Commercial Bank of Ceylon PLC">Commercial Bank</option>
+                    <option value="Hatton National Bank PLC">Hatton National Bank</option>
+                    <option value="People's Bank">People's Bank</option>
+                    <option value="Sampath Bank PLC">Sampath Bank</option>
+                    <option value="Seylan Bank PLC">Seylan Bank</option>
+                    <option value="Nations Trust Bank PLC">Nations Trust Bank</option>
+                    <option value="DFCC Bank PLC">DFCC Bank</option>
+                    <option value="National Development Bank PLC">National Development Bank</option>
+                    <option value="Amana Bank PLC">Amana Bank</option>
+                    <option value="Pan Asia Banking Corporation PLC">Pan Asia Banking</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div className="s-field">
+                  <label htmlFor="holder">Account holder name <em>*</em></label>
+                  <input id="holder" name="accountHolder" value={bankDetails.account_holder_name} onChange={e => setBankDetails({ ...bankDetails, account_holder_name: e.target.value })} />
+                </div>
+
+                <div className="s-field">
+                  <label htmlFor="accNo">Account number <em>*</em></label>
+                  <input id="accNo" name="accountNumber" inputMode="numeric" value={bankDetails.account_number} onChange={e => setBankDetails({ ...bankDetails, account_number: e.target.value })} />
+                </div>
+
+                <div className="s-field">
+                  <label htmlFor="country">Country <em>*</em></label>
+                  <select id="country" name="country" value={bankDetails.country} onChange={e => setBankDetails({ ...bankDetails, country: e.target.value })}>
+                    <option value="US">United States</option>
+                    <option value="LK">Sri Lanka</option>
+                    <option value="IN">India</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="BD">Bangladesh</option>
+                  </select>
+                </div>
+
+                <div className="s-field">
+                  <label htmlFor="branch">Branch</label>
+                  <input id="branch" name="branch" value={bankDetails.branch} onChange={e => setBankDetails({ ...bankDetails, branch: e.target.value })} />
+                </div>
+
+                <div className="s-field">
+                  <label htmlFor="branchCode">Branch code</label>
+                  <input id="branchCode" name="branchCode" value={bankDetails.branch_code} onChange={e => setBankDetails({ ...bankDetails, branch_code: e.target.value })} />
+                </div>
+
+                <div className="s-field s-full">
+                  <label htmlFor="note">Extra note for learners</label>
+                  <textarea id="note" name="note" value={bankDetails.extra_note} onChange={e => setBankDetails({ ...bankDetails, extra_note: e.target.value })} placeholder="e.g. Please use your full name as the payment reference" />
                 </div>
               </div>
-            )}
-            <div className="flex justify-end mt-6">
-              <button onClick={handleSavePayments} disabled={savingPay} className="bg-[var(--brand)] text-white font-semibold py-3 px-6 rounded-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 border-0 cursor-pointer">
-                {savingPay ? <Loader2 size={18} className="animate-spin" /> : 'Save payment settings'}
+            </div>
+
+            <div className="s-actions">
+              <button className="s-btn" onClick={handleSavePayments} disabled={savingPay}>
+                {savingPay ? <Loader2 size={16} className="animate-spin" /> : 'Save payment settings'}
               </button>
             </div>
           </section>
 
-          {/* PROFILE */}
-          <section className="card-section bg-[var(--surface)] border border-[var(--line)] rounded-[20px] p-6 sm:p-7 shadow-[var(--shadow)]" id="profile">
-            <header className="mb-6">
-              <h2 className="text-[20px] font-bricolage tracking-tight m-0">Profile information</h2>
-              <p className="m-0 mt-1 text-[14px] text-[var(--muted)]">This is what learners see on your courses.</p>
+          {/* ════ PROFILE ════ */}
+          <section className="s-section s-card" id="profile">
+            <header>
+              <h2>Profile information</h2>
+              <p>This is what learners see on your courses.</p>
             </header>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="first">First name</label>
-                <input id="first" className="f-input" value={form.first_name} onChange={e => update('first_name', e.target.value)} />
+
+            <div className="s-grid">
+              <div className="s-field">
+                <label htmlFor="first">First name</label>
+                <input id="first" name="firstName" value={form.first_name} onChange={e => update('first_name', e.target.value)} />
               </div>
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="last">Last name</label>
-                <input id="last" className="f-input" value={form.last_name} onChange={e => update('last_name', e.target.value)} />
+
+              <div className="s-field">
+                <label htmlFor="last">Last name</label>
+                <input id="last" name="lastName" value={form.last_name} onChange={e => update('last_name', e.target.value)} />
               </div>
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="phone">Contact number</label>
-                <input id="phone" className="f-input" type="tel" value={form.contact_number} onChange={e => update('contact_number', e.target.value)} />
+
+              <div className="s-field">
+                <label htmlFor="phone">Contact number</label>
+                <input id="phone" name="contact" type="tel" value={form.contact_number} onChange={e => update('contact_number', e.target.value)} />
               </div>
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="cat">Category</label>
-                <select id="cat" className="f-input" value={form.category} onChange={e => update('category', e.target.value)}>
+
+              <div className="s-field">
+                <label htmlFor="cat">Category</label>
+                <select id="cat" name="category" value={form.category} onChange={e => update('category', e.target.value)}>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-              <div className="sm:col-span-2 mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="about">About</label>
-                <textarea id="about" className="f-input min-h-[110px]" maxLength={300} value={form.about} onChange={e => update('about', e.target.value)} />
-                <div className="flex justify-between text-[12.5px] text-[var(--muted)] mt-1.5">
+
+              <div className="s-field s-full">
+                <label htmlFor="about">About</label>
+                <textarea id="about" name="about" maxLength={300} value={form.about} onChange={e => update('about', e.target.value)} />
+                <div className="s-hint">
                   <span>Tell learners who you are and what you teach.</span>
-                  <span className="font-medium text-[var(--ink)]">{form.about.length}/300</span>
+                  <span>{form.about.length}/300</span>
                 </div>
               </div>
             </div>
-            <div className="flex justify-end mt-6">
-              <button onClick={handleSaveProfile} disabled={savingProf} className="bg-[var(--brand)] text-white font-semibold py-3 px-6 rounded-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 border-0 cursor-pointer">
-                {savingProf ? <Loader2 size={18} className="animate-spin" /> : 'Save changes'}
+
+            <div className="s-actions">
+              <button className="s-btn" onClick={handleSaveProfile} disabled={savingProf}>
+                {savingProf ? <Loader2 size={16} className="animate-spin" /> : 'Save changes'}
               </button>
             </div>
           </section>
 
-          {/* PASSWORD */}
-          <section className="card-section bg-[var(--surface)] border border-[var(--line)] rounded-[20px] p-6 sm:p-7 shadow-[var(--shadow)]" id="security">
-            <header className="mb-6">
-              <h2 className="text-[20px] font-bricolage tracking-tight m-0">Change password</h2>
-              <p className="m-0 mt-1 text-[14px] text-[var(--muted)]">Use at least 6 characters.</p>
+          {/* ════ PASSWORD ════ */}
+          <section className="s-section s-card" id="security">
+            <header>
+              <h2>Change password</h2>
+              <p>Use at least 6 characters.</p>
             </header>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="pw1">New password</label>
-                <input id="pw1" className={`f-input ${pwMsg && !passwords.new ? 'err' : ''}`} type="password" placeholder="Min 6 characters" autoComplete="new-password" value={passwords.new} onChange={e => {setPasswords(p => ({ ...p, new: e.target.value })); setPwMsg('')}} />
+
+            <div className="s-grid">
+              <div className="s-field">
+                <label htmlFor="pw1">New password</label>
+                <input
+                  id="pw1"
+                  name="newPassword"
+                  type="password"
+                  placeholder="Min 6 characters"
+                  autoComplete="new-password"
+                  value={passwords.new}
+                  onChange={e => { setPasswords(p => ({ ...p, new: e.target.value })); setPwMsg(''); }}
+                />
               </div>
-              <div className="mb-2">
-                <label className="block font-semibold text-[13.5px] mb-1.5" htmlFor="pw2">Confirm new password</label>
-                <input id="pw2" className={`f-input ${pwMsg ? 'err' : ''}`} type="password" placeholder="Repeat password" autoComplete="new-password" value={passwords.confirm} onChange={e => {setPasswords(p => ({ ...p, confirm: e.target.value })); setPwMsg('')}} />
-                {pwMsg && <div className="flex justify-between text-[12.5px] text-[var(--bad)] mt-1.5 font-medium">{pwMsg}</div>}
+
+              <div className="s-field">
+                <label htmlFor="pw2">Confirm new password</label>
+                <input
+                  id="pw2"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Repeat password"
+                  autoComplete="new-password"
+                  className={pwMsg ? 'err' : ''}
+                  value={passwords.confirm}
+                  onChange={e => { setPasswords(p => ({ ...p, confirm: e.target.value })); setPwMsg(''); }}
+                />
+                {pwMsg && <div className="s-hint bad">{pwMsg}</div>}
               </div>
             </div>
-            <div className="flex justify-end mt-6">
-              <button onClick={handlePasswordChange} className="bg-transparent border-[1.5px] border-[var(--brand)] text-[var(--brand)] font-semibold py-3 px-6 rounded-xl hover:bg-[var(--brand-soft)] active:scale-95 transition-all cursor-pointer">
-                Update password
+
+            <div className="s-actions">
+              <button className="s-btn-ghost" onClick={handlePasswordChange} disabled={savingPw}>
+                {savingPw ? <Loader2 size={16} className="animate-spin" /> : 'Update password'}
               </button>
             </div>
           </section>
-          
-        </div>
-      </div>
-      
-      {/* Toast */}
-      <div className={`fixed left-1/2 bottom-[24px] -translate-x-1/2 bg-[var(--ink)] text-[var(--bg)] py-3 px-5 rounded-2xl font-semibold pointer-events-none z-50 transition-all duration-300 ${toastMsg ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+
+        </div>{/* /s-stack */}
+      </div>{/* /lora-settings */}
+
+      {/* ── Toast (outside lora-settings, uses dedicated class) ── */}
+      <div className={`lora-settings-toast${toastMsg ? ' show' : ''}`} role="status">
         {toastMsg}
       </div>
     </PageTransition>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Complete payment</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9edf7;--surface:#fff;--soft:#f4f6fb;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand-soft:#e9eeff;--ok:#0f9d6b;--bad:#d6334a;--card1:#0e1733;--card2:#1d2f78;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b18;--surface:#121a33;--soft:#0c1328;--ink:#eef1fb;--muted:#9aa5c4;--line:#222c4c;--brand:#6c8cff;--brand-soft:#1b2750;--card1:#1a2750;--card2:#2b3f9a}}
+:root[data-theme="dark"]{--bg:#070b18;--surface:#121a33;--soft:#0c1328;--ink:#eef1fb;--muted:#9aa5c4;--line:#222c4c;--brand:#6c8cff;--brand-soft:#1b2750;--card1:#1a2750;--card2:#2b3f9a}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif;display:grid;place-items:center;padding:16px}
+h1,h2,h3,.amt,.num{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.modal{width:100%;max-width:540px;max-height:calc(100vh - 32px);background:var(--surface);border-radius:26px;box-shadow:0 30px 80px -20px rgba(14,23,51,.35);display:flex;flex-direction:column;overflow:hidden}
+.head{padding:24px 26px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.head h1{font-size:24px}.head p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.x{border:0;background:var(--soft);width:34px;height:34px;border-radius:50%;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+.body{padding:20px 26px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+.total{display:flex;justify-content:space-between;align-items:flex-end;background:var(--soft);border-radius:18px;padding:16px 20px}
+.total small{color:var(--muted);font-weight:500}.amt{font-size:34px;font-weight:800;line-height:1.1}.amt span{font-size:15px;color:var(--muted);font-weight:600;margin-right:6px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--soft);padding:4px;border-radius:14px;gap:4px}
+.tabs button{border:0;background:none;border-radius:11px;padding:10px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(14,23,51,.12)}
+.tabs svg,.ic{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.pane{display:none}.pane.show{display:block;animation:in .2s ease}
+@keyframes in{from{opacity:0;transform:translateY(-4px)}}
+.btn{width:100%;border:0;border-radius:14px;padding:14px 20px;font-weight:600;cursor:pointer;background:var(--brand);color:#fff;display:flex;gap:8px;justify-content:center;align-items:center;transition:filter .15s,transform .1s}
+.btn:hover:not(:disabled){filter:brightness(1.08)}.btn:active:not(:disabled){transform:scale(.99)}
+.btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
+.helper{color:var(--muted);font-size:13px;margin:10px 2px 0;text-align:center}
+.bank{background:linear-gradient(135deg,var(--card1),var(--card2));color:#fff;border-radius:20px;padding:20px 22px;position:relative;overflow:hidden}
+.bank:after{content:"";position:absolute;right:-50px;top:-70px;width:220px;height:220px;border-radius:50%;box-shadow:0 0 0 34px rgba(255,255,255,.04),0 0 0 68px rgba(255,255,255,.03);pointer-events:none}
+.bank dl{margin:0;display:grid;gap:14px;position:relative;z-index:1}
+.bank dt{font-size:12px;opacity:.65;margin-bottom:1px}
+.bank dd{margin:0;font-weight:600;font-size:16px}
+.bank .bn{font:700 20px 'Bricolage Grotesque'}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.num{font-size:26px;font-weight:700;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.copy{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.copy:hover{background:rgba(255,255,255,.22)}.copy.done{background:var(--ok);border-color:var(--ok)}
+.copy .ic{width:15px;height:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note{margin-top:12px;background:var(--brand-soft);border-radius:14px;padding:12px 16px;font-size:14px}
+.note b{color:var(--brand)}
+.sec h2{font-size:17px;margin-bottom:10px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick label{cursor:pointer}.pick input{position:absolute;opacity:0}
+.pick span{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:500;transition:.15s}
+.pick span:before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;transition:.15s}
+.pick input:checked+span{border-color:var(--brand);background:var(--brand-soft);font-weight:600}
+.pick input:checked+span:before{border-color:var(--brand);background:radial-gradient(var(--brand) 45%,transparent 50%)}
+.pick input:focus-visible+span{outline:2px solid var(--brand);outline-offset:2px}
+.drop{border:2px dashed var(--line);border-radius:18px;padding:26px 16px;text-align:center;cursor:pointer;transition:.15s;background:var(--soft);display:block}
+.drop:hover,.drop.over{border-color:var(--brand);background:var(--brand-soft)}
+.drop.err{border-color:var(--bad)}
+.drop .ic{width:30px;height:30px;color:var(--brand);margin-bottom:6px}
+.drop b{display:block}.drop small{color:var(--muted)}
+.drop input{display:none}
+.file{display:none;align-items:center;gap:14px;border:1.5px solid var(--ok);border-radius:16px;padding:10px;background:var(--soft)}
+.file.show{display:flex}
+.file img{width:64px;height:64px;border-radius:10px;object-fit:cover;flex:none}
+.file div{flex:1;min-width:0}.file b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file small{color:var(--muted)}
+.file button{border:0;background:none;color:var(--bad);font-weight:600;cursor:pointer;padding:8px}
+.msg{color:var(--bad);font-size:13px;margin:8px 2px 0;min-height:0}
+.foot{padding:16px 26px calc(22px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:10px;background:var(--surface)}
+.foot .ghost{width:auto;background:none;border:1.5px solid var(--line);color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--ink);color:var(--surface);padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:560px){body{padding:0;place-items:end stretch}.modal{max-width:none;max-height:94vh;border-radius:26px 26px 0 0}.pick,.two{grid-template-columns:1fr}.num{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="ttl">
+  <div class="head"><div><h1 id="ttl">Complete payment</h1><p>Pay the creator, then confirm below to unlock your enrollment.</p></div><button class="x" aria-label="Close">×</button></div>
+
+  <div class="body">
+    <div class="total"><small>Total amount</small><div class="amt"><span>USD</span>10.99</div></div>
+
+    <!-- Show tabs only when the creator enabled BOTH methods; if only one is enabled, show just that pane -->
+    <div class="tabs" role="tablist">
+      <button class="on" role="tab" data-t="link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Payment link</button>
+      <button role="tab" data-t="bank"><svg viewBox="0 0 24 24"><path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>Bank transfer</button>
+    </div>
+
+    <div class="pane show" id="p-link">
+      <button class="btn" id="payLink" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Pay via link</button>
+      <p class="helper">Opens the creator's payment page in a new tab. Come back here after paying.</p>
+    </div>
+
+    <div class="pane" id="p-bank">
+      <div class="bank"><dl>
+        <div><dt>Bank</dt><dd class="bn">Commercial Bank of Ceylon PLC</dd></div>
+        <div class="two"><div><dt>Account holder</dt><dd>Binuka Dinsara</dd></div><div><dt>Branch</dt><dd>Galle (089)</dd></div></div>
+        <div><dt>Account number</dt><div class="row"><dd class="num" id="accNum">123 456 789</dd><button class="copy" id="copyBtn" type="button"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span>Copy</span></button></div></div>
+      </dl></div>
+      <div class="note"><b>Note:</b> <span id="creatorNote">Please include the payment description given by the creator in your transfer.</span></div>
+    </div>
+
+    <div class="sec">
+      <h2>Which payment method did you use?</h2>
+      <div class="pick">
+        <label><input type="radio" name="method" value="link"><span>Payment link</span></label>
+        <label><input type="radio" name="method" value="bank"><span>Manual bank transfer</span></label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Upload confirmation screenshot</h2>
+      <label class="drop" id="drop" for="shot"><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><b>Upload payment screenshot</b><small>Required to complete enrollment · Max 5MB, images only</small><input id="shot" name="screenshot" type="file" accept="image/*"></label>
+      <div class="file" id="file"><img id="thumb" alt="Screenshot preview"><div><b id="fname"></b><small id="fsize"></small></div><button type="button" id="rm">Remove</button></div>
+      <div class="msg" id="msg" role="alert"></div>
+    </div>
+  </div>
+
+  <div class="foot"><button class="btn ghost" type="button">Cancel</button><button class="btn" id="submit" type="button" disabled>Submit and enroll</button></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2200)};
+
+// Tabs only change what is visible; they never touch the form state
+$$('.tabs button').forEach(b=>b.onclick=()=>{
+  $$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#p-link').classList.toggle('show',b.dataset.t==='link');
+  $('#p-bank').classList.toggle('show',b.dataset.t==='bank')});
+
+// Pay via link: use your real payment URL
+$('#payLink').onclick=()=>window.open('https://www.paypal.com/','_blank','noopener');
+
+// Copy account number
+$('#copyBtn').onclick=async e=>{
+  const b=e.currentTarget,v=$('#accNum').textContent.replace(/\s/g,'');
+  try{await navigator.clipboard.writeText(v)}catch(_){}
+  b.classList.add('done');b.querySelector('span').textContent='Copied';
+  setTimeout(()=>{b.classList.remove('done');b.querySelector('span').textContent='Copy'},1800)};
+
+// Upload: same rules as before (images only, max 5MB)
+let file=null;
+function setFile(f){
+  const m=$('#msg'),d=$('#drop');m.textContent='';d.classList.remove('err');
+  if(!f)return;
+  if(!f.type.startsWith('image/')){m.textContent='Only image files are allowed.';d.classList.add('err');return}
+  if(f.size>5*1024*1024){m.textContent='File is too large. Maximum size is 5MB.';d.classList.add('err');return}
+  file=f;$('#thumb').src=URL.createObjectURL(f);$('#fname').textContent=f.name;$('#fsize').textContent=(f.size/1024).toFixed(0)+' KB';
+  $('#file').classList.add('show');d.style.display='none';check()}
+$('#shot').onchange=e=>setFile(e.target.files[0]);
+['dragover','dragenter'].forEach(n=>$('#drop').addEventListener(n,e=>{e.preventDefault();$('#drop').classList.add('over')}));
+['dragleave','drop'].forEach(n=>$('#drop').addEventListener(n,e=>{e.preventDefault();$('#drop').classList.remove('over')}));
+$('#drop').addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
+$('#rm').onclick=()=>{file=null;$('#shot').value='';$('#file').classList.remove('show');$('#drop').style.display='block';check()};
+
+// Submit stays disabled until a method is chosen and a screenshot is attached
+function check(){$('#submit').disabled=!(document.querySelector('[name=method]:checked')&&file)}
+$$('[name=method]').forEach(r=>r.onchange=check);
+// Replace with your existing enrollment submit (upload screenshot + selected method)
+$('#submit').onclick=()=>toast('Submitted. We\u2019ll confirm your enrollment soon.');
+</script>
+</body>
+</html>
