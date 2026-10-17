@@ -1,38 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PageTransition } from '../components/ui';
-import loraLogo from '../../Logo/Loralogo1.png';
+import blueLogo from '../../Logo/Blue_Logo_Cropped.png';
 import './home.css';
 
 export default function LandingPage() {
-  const [processedLogo, setProcessedLogo] = useState(loraLogo);
-
-  /* Clean up dark pixels from logo for clean transparent display */
-  useEffect(() => {
-    const img = new Image();
-    img.src = loraLogo;
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          if (data[i] < 45 && data[i + 1] < 45 && data[i + 2] < 45) {
-            data[i + 3] = 0;
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
-        setProcessedLogo(canvas.toDataURL());
-      } catch (e) {
-        console.error("Could not process logo:", e);
-      }
-    };
-  }, []);
-
   /* Scroll-reveal observer (visual effect) */
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -57,7 +29,7 @@ export default function LandingPage() {
         <header>
           <div className="wrap">
             <Link className="logo" to="/" aria-label="Lora home">
-              <img src={processedLogo} alt="Lora" />
+              <img src={blueLogo} alt="Lora" />
             </Link>
             <nav>
               <Link className="ln" to="/login">Log in</Link>
