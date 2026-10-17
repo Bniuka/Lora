@@ -1,0 +1,669 @@
+/* ================================================================
+   Lora Session / Course Details — light-mode-only scoped styles
+   All selectors are prefixed with .lora-course to avoid collisions
+   with app-level .card, .btn, .tag, .row, .side, .wrap, .meta
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+/* ── Scoped Tokens & Root ── */
+.lora-course {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --ok: #0f9d6b;
+  --ok-soft: #e3f7ee;
+  --gold: #f5a400;
+  --shadow: 0 1px 2px rgba(14,23,51,.05), 0 12px 30px -18px rgba(14,23,51,.2);
+
+  box-sizing: border-box !important;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  font: 15px/1.6 'Figtree', system-ui, sans-serif !important;
+  min-height: 100vh !important;
+}
+
+/* ── Box-sizing reset ── */
+.lora-course *,
+.lora-course *::before,
+.lora-course *::after {
+  box-sizing: border-box !important;
+}
+
+/* ── Typography ── */
+.lora-course h1,
+.lora-course h2,
+.lora-course h3,
+.lora-course .price {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+.lora-course a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-course button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-course :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Icon base ── */
+.lora-course .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+/* ── Page Wrap ── */
+.lora-course .wrap {
+  max-width: 1160px !important;
+  margin: 0 auto !important;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 24px 64px !important;
+}
+
+/* ── Breadcrumb ── */
+.lora-course .crumbs {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+  margin-bottom: 22px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-course .crumbs a {
+  color: var(--brand) !important;
+  font-weight: 500 !important;
+}
+
+.lora-course .crumbs a:hover {
+  text-decoration: underline !important;
+}
+
+.lora-course .crumbs b {
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Grid Layout ── */
+.lora-course .layout {
+  display: grid !important;
+  grid-template-columns: 1fr 380px !important;
+  gap: 32px !important;
+  align-items: start !important;
+}
+
+/* ── Card base ── */
+.lora-course .card {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 22px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* ── Free preview tag ── */
+.lora-course .tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  border-radius: 99px !important;
+  padding: 5px 12px !important;
+}
+
+/* ── Heading ── */
+.lora-course h1 {
+  font-size: clamp(34px, 5vw, 54px) !important;
+  line-height: 1.05 !important;
+  margin: 14px 0 18px !important;
+  color: var(--ink) !important;
+}
+
+/* ── Created by ── */
+.lora-course .by {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.lora-course .av {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, var(--brand), #8a5cff) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700 !important;
+  overflow: hidden !important;
+  flex: none !important;
+}
+
+.lora-course .av img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.lora-course .by small {
+  display: block !important;
+  color: var(--muted) !important;
+  line-height: 1.2 !important;
+  font-size: 13px !important;
+}
+
+.lora-course .by b {
+  font-size: 16px !important;
+  color: var(--ink) !important;
+}
+
+/* ── Meta items row ── */
+.lora-course .meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  margin: 20px 0 24px !important;
+}
+
+.lora-course .meta span {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 99px !important;
+  padding: 6px 14px !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+}
+
+.lora-course .meta .ic {
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--brand) !important;
+}
+
+.lora-course .meta b {
+  color: var(--ink) !important;
+}
+
+.lora-course .meta .star {
+  color: var(--gold) !important;
+  fill: var(--gold) !important;
+}
+
+/* ── Hero Thumbnail / Video ── */
+.lora-course .hero {
+  aspect-ratio: 16/9 !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #0e1733, #3b2fb8) !important;
+  position: relative !important;
+  box-shadow: 0 30px 60px -30px rgba(14, 23, 51, 0.5) !important;
+}
+
+.lora-course .hero img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.lora-course .hero iframe {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}
+
+/* ── Sections ── */
+.lora-course .sec {
+  margin-top: 36px !important;
+}
+
+.lora-course .sec h2 {
+  font-size: 26px !important;
+  margin-bottom: 14px !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .sec > p {
+  margin: 0 !important;
+  color: var(--muted) !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+/* ── What you'll learn ── */
+.lora-course .learn {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  padding: 22px !important;
+}
+
+.lora-course .learn div {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+  font-size: 15px !important;
+  color: var(--ink) !important;
+  line-height: 1.4 !important;
+}
+
+.lora-course .chk {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--ok-soft) !important;
+  color: var(--ok) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: none !important;
+  margin-top: 1px !important;
+}
+
+.lora-course .chk .ic {
+  width: 13px !important;
+  height: 13px !important;
+  stroke-width: 2.6 !important;
+}
+
+/* ── Session Schedule List ── */
+.lora-course .list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.lora-course .sess {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 18px !important;
+  position: relative !important;
+}
+
+.lora-course .sess .n {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  font: 800 17px 'Bricolage Grotesque', sans-serif !important;
+  flex: none !important;
+}
+
+.lora-course .sess.lock .n {
+  background: var(--bg) !important;
+  color: var(--muted) !important;
+}
+
+.lora-course .sess .t {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.lora-course .sess .d {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+}
+
+.lora-course .pv {
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  border-radius: 99px !important;
+  padding: 1px 9px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+.lora-course .sess h3 {
+  font-size: 19px !important;
+  margin: 2px 0 !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .sess .s {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  font-size: 13.5px !important;
+  color: var(--muted) !important;
+}
+
+.lora-course .sess .s .ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/* ── Buttons ── */
+.lora-course .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: 14px !important;
+  padding: 12px 20px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border: 1.5px solid var(--brand) !important;
+  color: var(--brand) !important;
+  background: var(--surface) !important;
+  white-space: nowrap !important;
+  transition: 0.15s !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+}
+
+.lora-course .btn:hover {
+  background: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-course .btn.pri {
+  background: var(--brand) !important;
+  color: #fff !important;
+  width: 100% !important;
+  padding: 15px !important;
+  font-size: 16px !important;
+  box-shadow: 0 12px 26px -12px rgba(47, 91, 255, 0.8) !important;
+  border: none !important;
+}
+
+.lora-course .btn.pri:hover {
+  background: var(--brand2) !important;
+}
+
+.lora-course .btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.lora-course .lk {
+  color: var(--muted) !important;
+  font-size: 13px !important;
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+}
+
+/* ── Sidebar ── */
+.lora-course .side {
+  position: sticky !important;
+  top: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+.lora-course .buy {
+  padding: 26px !important;
+}
+
+.lora-course .buy small {
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+}
+
+.lora-course .price {
+  font-size: 42px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  margin: 2px 0 18px !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .ul {
+  list-style: none !important;
+  margin: 18px 0 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.lora-course .ul li {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .secure {
+  margin-top: 18px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid var(--line) !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+}
+
+.lora-course .secure .ic {
+  width: 15px !important;
+  height: 15px !important;
+  color: var(--ok) !important;
+}
+
+.lora-course .box {
+  padding: 22px !important;
+}
+
+.lora-course .box h3 {
+  font-size: 18px !important;
+  margin-bottom: 12px !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .row {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: flex-start !important;
+  padding: 8px 0 !important;
+}
+
+.lora-course .row + .row {
+  border-top: 1px dashed var(--line) !important;
+}
+
+.lora-course .row .ib {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 11px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: none !important;
+}
+
+.lora-course .row small {
+  display: block !important;
+  color: var(--muted) !important;
+  line-height: 1.2 !important;
+  font-size: 12px !important;
+}
+
+.lora-course .row b {
+  font-weight: 600 !important;
+  color: var(--ink) !important;
+  font-size: 14px !important;
+}
+
+.lora-course .inc li {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .inc .ic {
+  color: var(--brand) !important;
+}
+
+.lora-course .help {
+  text-align: center !important;
+  padding: 24px !important;
+}
+
+.lora-course .help .ib {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 auto 10px !important;
+}
+
+.lora-course .help h3 {
+  font-size: 18px !important;
+  color: var(--ink) !important;
+}
+
+.lora-course .help p {
+  margin: 4px 0 10px !important;
+  color: var(--muted) !important;
+  font-size: 14px !important;
+}
+
+.lora-course .help a {
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Mobile Purchase Sticky Bar ── */
+.lora-course .mbar {
+  display: none !important;
+}
+
+/* ── Status badges inside sidebar ── */
+.lora-course .status-banner {
+  padding: 14px !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  margin-bottom: 16px !important;
+  font-size: 14px !important;
+}
+
+.lora-course .status-banner.pending {
+  background: #e9f1ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: var(--brand) !important;
+}
+
+.lora-course .status-banner.rejected {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  color: #dc2626 !important;
+}
+
+.lora-course .status-banner.confirmed {
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #16a34a !important;
+}
+
+/* ── Responsive rules ── */
+@media(max-width: 960px) {
+  .lora-course .layout {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-course .side {
+    position: static !important;
+  }
+  .lora-course .wrap {
+    padding: 20px 16px 110px !important;
+  }
+  .lora-course .mbar {
+    display: flex !important;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 30 !important;
+    background: var(--surface) !important;
+    border-top: 1px solid var(--line) !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    align-items: center !important;
+    gap: 14px !important;
+    box-shadow: 0 -4px 16px rgba(14, 23, 51, 0.08) !important;
+  }
+  .lora-course .mbar .price {
+    font-size: 24px !important;
+    margin: 0 !important;
+  }
+  .lora-course .mbar small {
+    display: block !important;
+    color: var(--muted) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+  }
+  .lora-course .mbar .btn {
+    flex: 1 !important;
+    width: auto !important;
+    padding: 13px !important;
+  }
+}
+
+@media(max-width: 560px) {
+  .lora-course .learn {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-course .sess {
+    flex-wrap: wrap !important;
+  }
+  .lora-course .sess .btn {
+    width: 100% !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-course * {
+    transition: none !important;
+  }
+}

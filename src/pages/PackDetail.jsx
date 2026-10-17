@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
 import './payment-modal.css';
+import './course-detail.css';
 
 function SessionButton({ session }) {
   const now = new Date();
@@ -22,28 +23,40 @@ function SessionButton({ session }) {
 
   if (isLive) {
     return (
-      <a href={session.zoom_link} target="_blank" rel="noopener noreferrer"
-        className="btn-primary text-xs py-2 px-4 animate-glow-pulse">
+      <a
+        href={session.zoom_link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn pri"
+        style={{ width: 'auto', padding: '9px 18px', fontSize: '13.5px' }}
+      >
         <Play size={14} /> Join Now
       </a>
     );
   }
   if (hasPassed && session.recording_url) {
     return (
-      <a href={session.recording_url} target="_blank" rel="noopener noreferrer"
-        className="btn-secondary text-xs py-2 px-4">
-        <Video size={14} /> Watch Recording
+      <a
+        href={session.recording_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn"
+      >
+        <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /></svg>
+        Watch recording
       </a>
     );
   }
   if (hasPassed && !session.recording_url) {
     return (
-      <span className="badge badge-pending text-[10px]">Recording Coming Soon</span>
+      <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: 600 }}>
+        Recording Coming Soon
+      </span>
     );
   }
   return (
-    <span className="text-xs text-[#94A6B8] flex items-center gap-1">
-      <Clock size={12} /> Starts {formatDistanceToNow(scheduled, { addSuffix: true })}
+    <span style={{ fontSize: '13px', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <Clock size={13} /> Starts {formatDistanceToNow(scheduled, { addSuffix: true })}
     </span>
   );
 }
@@ -281,7 +294,6 @@ function PaymentStep2({
 }
 
 export default function PackDetail() {
-
   const { id } = useParams();
   const { user, profile } = useAuth();
   const [pack, setPack] = useState(null);
@@ -299,7 +311,6 @@ export default function PackDetail() {
   const [paymentStep, setPaymentStep] = useState(1);
   const [refCode, setRefCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
-  const [descExpanded, setDescExpanded] = useState(false);
 
   const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
 
@@ -323,12 +334,12 @@ export default function PackDetail() {
           .select('*').eq('learner_id', user.id).eq('pack_id', id).maybeSingle();
         setEnrollment(enr);
       }
-      
+
       if (packRes.data?.creator_profiles) {
         supabase.from('creator_bank_details').select('*').eq('creator_id', packRes.data.creator_profiles.id).maybeSingle()
           .then(({ data }) => setBankDetails(data));
       }
-      
+
       setLoading(false);
     };
     fetch();
@@ -392,9 +403,6 @@ export default function PackDetail() {
     }
   };
 
-  const freeSession = sessions.find(s => s.is_free_session);
-  const paidSessions = sessions.filter(s => !s.is_free_session);
-
   const getVideoEmbedUrl = (url) => {
     if (!url) return null;
     const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
@@ -404,293 +412,425 @@ export default function PackDetail() {
     return null;
   };
 
-  if (loading) return <div className="max-w-4xl mx-auto p-6"><Skeleton className="h-80 mb-6" /><Skeleton className="h-40" /></div>;
-  if (!pack) return <div className="text-center py-20 text-[#94A6B8]">Pack not found</div>;
+  if (loading) {
+    return (
+      <div className="lora-course">
+        <div className="wrap">
+          <div className="layout">
+            <main>
+              <div className="card" style={{ height: 420, opacity: 0.5, background: '#e3e7f1' }} />
+              <div className="card" style={{ height: 260, marginTop: 24, opacity: 0.5, background: '#e3e7f1' }} />
+            </main>
+            <aside className="side">
+              <div className="card" style={{ height: 340, opacity: 0.5, background: '#e3e7f1' }} />
+            </aside>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!pack) {
+    return (
+      <div className="lora-course">
+        <div className="wrap" style={{ textAlign: 'center', padding: '80px 24px' }}>
+          <h2>Session Pack Not Found</h2>
+          <p style={{ marginTop: 12, color: 'var(--muted)' }}>
+            The session pack you are looking for does not exist or has been removed.
+          </p>
+          <Link to="/learner/discover" className="btn pri" style={{ width: 'auto', display: 'inline-flex', marginTop: 24 }}>
+            Explore other sessions
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const isCreatorValid = hasValidSubscription(creator);
-  // Hide pack if the creator's subscription is invalid, unless the current user is the creator
+  // Hide pack if creator's subscription is invalid, unless current user is the creator
   if (!isCreatorValid && user?.id !== pack.creator_id) {
     return (
-      <div className="max-w-4xl mx-auto p-12 text-center py-32">
-        <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Lock size={32} />
+      <div className="lora-course">
+        <div className="wrap" style={{ textAlign: 'center', padding: '80px 24px' }}>
+          <div className="card" style={{ maxWidth: 500, margin: '0 auto', padding: '48px 32px' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'grid', placeItems: 'center', margin: '0 auto 16px' }}>
+              <Lock size={28} />
+            </div>
+            <h2>Course Unavailable</h2>
+            <p style={{ margin: '14px 0 24px', color: 'var(--muted)' }}>
+              This course is currently unavailable because the creator's account is inactive or their free trial has ended.
+            </p>
+            <Link to="/learner/discover" className="btn pri">Explore other courses</Link>
+          </div>
         </div>
-        <h2 className="text-3xl font-bold text-[#0F172A] mb-4">Course Unavailable</h2>
-        <p className="text-lg text-[#475569] max-w-md mx-auto mb-8">
-          This course is currently unavailable because the creator's account is inactive or their free trial has ended.
-        </p>
-        <Link to="/learner/discover" className="btn-primary inline-flex">Explore other courses</Link>
       </div>
     );
   }
 
   const embedUrl = getVideoEmbedUrl(pack.intro_video_url);
+  const hasFreePreview = pack.has_free_session || sessions.some(s => s.is_free_session);
+
+  const renderJoinAction = (isMobile = false) => {
+    if (!user) {
+      return (
+        <Link to="/signup/learner" className="btn pri" style={{ textAlign: 'center' }}>
+          Sign up to join
+        </Link>
+      );
+    }
+    if (user.id === pack.creator_id) {
+      return (
+        <Link to={`/creator/packs/edit/${pack.id}`} className="btn pri" style={{ textAlign: 'center' }}>
+          Edit pack
+        </Link>
+      );
+    }
+    if (enrollment?.status === 'confirmed') {
+      return (
+        <div className="status-banner confirmed">
+          <b>✓ You are enrolled in this pack</b>
+        </div>
+      );
+    }
+    if (enrollment?.status === 'pending') {
+      return (
+        <div className="status-banner pending">
+          <b>Payment submitted!</b>
+          <div style={{ fontSize: '12px', marginTop: 4 }}>Waiting for creator confirmation.</div>
+        </div>
+      );
+    }
+    if (enrollment?.status === 'rejected') {
+      return (
+        <div className="status-banner rejected">
+          <b>Payment rejected</b>
+          <button
+            onClick={() => { setPaymentStep(2); setPaymentModal(true); }}
+            className="btn"
+            style={{ width: '100%', marginTop: 8 }}
+          >
+            Re-upload screenshot
+          </button>
+        </div>
+      );
+    }
+    return (
+      <button className="btn pri" type="button" onClick={handleStartPaymentFlow}>
+        Join this session
+      </button>
+    );
+  };
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-white pb-32">
-        {/* BREADCRUMB */}
-        <div className="bg-[#F8F9FA] border-b border-[#E2E8F0] py-3 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-[#64748B] font-medium">
-            <Link to="/" className="hover:text-[#2563EB]">Home</Link>
-            <ChevronRight size={14} />
-            <Link to="/learner/discover" className="hover:text-[#2563EB]">Sessions</Link>
-            <ChevronRight size={14} />
-            <span className="text-[#0F172A] truncate">{pack.title}</span>
-          </div>
-        </div>
+      <div className="lora-course">
+        <div className="wrap">
+          {/* BREADCRUMB */}
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <span>›</span>
+            <Link to="/learner/discover">Sessions</Link>
+            <span>›</span>
+            <b>{pack.title}</b>
+          </nav>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex flex-col lg:flex-row gap-10">
-          
-          {/* LEFT COLUMN */}
-          <div className="flex-1 lg:max-w-[65%] min-w-0">
-            {pack.has_free_session && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] rounded-full text-xs font-bold uppercase tracking-widest mb-4 border border-[#DBEAFE]">
-                <Sparkles size={12} /> Free Preview Session
-              </div>
-            )}
-            
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] leading-[1.1] mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-              {pack.title}
-            </h1>
-            
-            {creator && (
-              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-[#E2E8F0]">
-                <div className="w-12 h-12 rounded-full bg-[#E2E8F0] flex items-center justify-center text-[#475569] font-bold uppercase shrink-0">
-                  {creator.profiles?.first_name?.[0]}{creator.profiles?.last_name?.[0]}
-                </div>
-                <div>
-                  <p className="text-sm text-[#64748B] mb-0.5">Created by</p>
-                  <Link to={`/creator/${creator.id}`} className="text-base font-bold text-[#0F172A] hover:text-[#2563EB] transition-colors">
-                    {creator.profiles?.first_name} {creator.profiles?.last_name}
-                  </Link>
-                </div>
-              </div>
-            )}
+          <div className="layout">
+            {/* MAIN CONTENT COLUMN */}
+            <main>
+              {/* Free preview tag */}
+              {hasFreePreview && (
+                <span className="tag">
+                  <svg className="ic" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                    <path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z" />
+                  </svg>
+                  Free preview session
+                </span>
+              )}
 
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-[#475569] font-medium mb-8">
-              <div className="flex items-center gap-2"><PlayCircle size={18} className="text-[#2563EB]"/> {sessions.length} session{sessions.length !== 1 && 's'}</div>
-              <div className="flex items-center gap-2"><Clock size={18} className="text-[#2563EB]"/> {totalMinutes} min total</div>
-              <div className="flex items-center gap-2"><Users size={18} className="text-[#2563EB]"/> All Levels</div>
-              <div className="flex items-center gap-2 text-[#F59E0B]"><Star size={18} className="fill-current"/> <span className="text-[#0F172A] font-bold">4.9</span> <span className="text-[#64748B]">(128 reviews)</span></div>
-            </div>
+              {/* Title */}
+              <h1>{pack.title}</h1>
 
-            {/* Video Player */}
-            {embedUrl && (
-              <div className="mb-10 rounded-xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black aspect-video relative group">
-                <iframe src={embedUrl} title="Intro video" className="w-full h-full relative z-10" allowFullScreen allow="autoplay; encrypted-media" />
-                {embedUrl.includes('youtube') && (
-                  <div className="absolute top-4 left-4 z-20 pointer-events-none">
-                    <span className="bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
-                      <Play size={12} /> Watch on YouTube
-                    </span>
+              {/* Creator Byline */}
+              {creator && (
+                <div className="by">
+                  <div className="av">
+                    {creator.profiles?.avatar_url ? (
+                      <img src={creator.profiles.avatar_url} alt="" />
+                    ) : (
+                      `${creator.profiles?.first_name?.[0] || 'C'}${creator.profiles?.last_name?.[0] || ''}`
+                    )}
                   </div>
-                )}
-              </div>
-            )}
-            
-            {/* Thumbnail Fallback */}
-            {!embedUrl && pack.thumbnail_url && (
-              <div className="mb-10 rounded-xl overflow-hidden shadow-lg border border-[#E2E8F0] aspect-video">
-                <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover" />
-              </div>
-            )}
+                  <div>
+                    <small>Created by</small>
+                    <Link to={`/creator/${creator.id}`}>
+                      <b>{creator.profiles?.first_name} {creator.profiles?.last_name}</b>
+                    </Link>
+                  </div>
+                </div>
+              )}
 
-            {/* About */}
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-4">About This Session</h2>
-              <div className="relative">
-                <p className={`text-base text-[#475569] leading-relaxed whitespace-pre-wrap ${!descExpanded ? 'line-clamp-3' : ''}`}>
-                  {pack.description}
+              {/* Meta tags */}
+              <div className="meta">
+                <span>
+                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5 3.5-5 3.5z" /></svg>
+                  <b>{sessions.length}</b> session{sessions.length !== 1 ? 's' : ''}
+                </span>
+                <span>
+                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                  <b>{totalMinutes}</b> min total
+                </span>
+                <span>
+                  <svg className="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" /></svg>
+                  All levels
+                </span>
+                <span>
+                  <svg className="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z" /></svg>
+                  <b>4.9</b> (128 reviews)
+                </span>
+              </div>
+
+              {/* Hero video or thumbnail */}
+              <div className="hero">
+                {embedUrl ? (
+                  <iframe src={embedUrl} title="Intro video" allowFullScreen allow="autoplay; encrypted-media" />
+                ) : pack.thumbnail_url ? (
+                  <img src={pack.thumbnail_url} alt={pack.title} />
+                ) : null}
+              </div>
+
+              {/* About this session */}
+              <section className="sec">
+                <h2>About this session</h2>
+                <p style={{ whiteSpace: 'pre-wrap' }}>
+                  {pack.description || 'Learn practical ways to master the topic. This course covers real strategies, tools, and step-by-step methods.'}
                 </p>
-                {pack.description?.length > 150 && (
-                  <button onClick={() => setDescExpanded(!descExpanded)} className="text-[#2563EB] font-bold text-sm hover:underline mt-2 flex items-center gap-1">
-                    {descExpanded ? <>Show less <ChevronUp size={16}/></> : <>Show more <ChevronDown size={16}/></>}
-                  </button>
-                )}
-              </div>
-            </div>
+              </section>
 
-            {/* What You'll Learn */}
-            <div className="mb-10 bg-[#F8F9FA] rounded-xl p-6 sm:p-8 border border-[#E2E8F0]">
-              <h2 className="text-xl font-bold text-[#0F172A] mb-6">What You'll Learn</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {['Master the core concepts from scratch', 'Practical hands-on exercises & projects', 'Live Q&A and community support', 'Access to exclusive resources and templates'].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <div className="mt-0.5 bg-[#DCFCE7] text-[#16A34A] rounded-full p-0.5 shrink-0">
-                      <CheckCircle size={16} />
-                    </div>
-                    <span className="text-sm text-[#475569] font-medium leading-tight">{item}</span>
+              {/* What you'll learn */}
+              <section className="sec">
+                <h2>What you'll learn</h2>
+                <div className="card learn">
+                  <div>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Master the core concepts from scratch
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Session Schedule */}
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-6">Session Schedule</h2>
-              <div className="space-y-4">
-                {sessions.map((s, i) => (
-                  <div key={s.id} className="p-5 sm:p-6 rounded-xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 hover:shadow-md transition-shadow">
-                    <div className="w-12 h-12 rounded-xl bg-[#F8F9FA] border border-[#E2E8F0] flex items-center justify-center shrink-0">
-                      {(enrollment?.status === 'confirmed' || s.is_free_session) ? (
-                        <span className="text-base font-black text-[#2563EB]">{i + 1}</span>
-                      ) : (
-                        <Lock size={18} className="text-[#94A6B8]" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-[#0F172A] bg-[#F1F5F9] px-2 py-1 rounded-md">
-                          {format(new Date(s.scheduled_at), 'MMM dd')}
-                        </span>
-                        {s.is_free_session && (
-                          <span className="text-[10px] font-bold text-[#2563EB] bg-[#DBEAFE] px-2 py-1 rounded-md uppercase tracking-wider">Free Preview</span>
-                        )}
-                        {differenceInMinutes(new Date(s.scheduled_at), new Date()) > 0 && differenceInMinutes(new Date(s.scheduled_at), new Date()) < 24*60 && (
-                          <span className="text-[10px] font-bold text-[#D97706] bg-[#FEF3C7] px-2 py-1 rounded-md uppercase tracking-wider">Upcoming Soon</span>
-                        )}
-                      </div>
-                      <h4 className="text-lg font-bold text-[#0F172A] mb-1 leading-tight truncate">{s.title}</h4>
-                      <div className="text-sm text-[#64748B] flex items-center gap-3">
-                        <span className="flex items-center gap-1.5"><Clock size={14} /> {format(new Date(s.scheduled_at), 'h:mm a')}</span>
-                        <span>•</span>
-                        <span>{s.duration_minutes}m duration</span>
-                      </div>
-                    </div>
-                    {enrollment?.status === 'confirmed' || s.is_free_session ? (
-                      <div className="shrink-0 mt-2 sm:mt-0">
-                        <SessionButton session={s} />
-                      </div>
-                    ) : null}
+                  <div>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Practical hands-on exercises &amp; projects
                   </div>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          {/* RIGHT COLUMN (SIDEBAR) */}
-          <div className="lg:w-[35%] shrink-0">
-            <div className="sticky top-8 space-y-6">
-              
-              {/* Pricing Card */}
-              <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-xl p-6 sm:p-8">
-                <p className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Total Price</p>
-                <div className="text-4xl font-black text-[#0F172A] mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-                  {pack.currency} {pack.price}
+                  <div>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Live Q&amp;A and community support
+                  </div>
+                  <div>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Access to exclusive resources and templates
+                  </div>
                 </div>
+              </section>
 
-                {user && profile?.role === 'learner' && !enrollment && (
-                  <button onClick={handleStartPaymentFlow} className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2 mb-4">
-                    Join This Session
-                  </button>
-                )}
+              {/* Session schedule */}
+              <section className="sec">
+                <h2>Session schedule</h2>
+                {sessions.length > 0 ? (
+                  <div className="list">
+                    {sessions.map((s, i) => {
+                      const isUnlocked = enrollment?.status === 'confirmed' || s.is_free_session || user?.id === pack.creator_id;
 
-                {enrollment?.status === 'pending' && (
-                  <div className="p-4 rounded-xl bg-[#DBEAFE]/30 border border-[#DBEAFE] text-center mb-4">
-                    <p className="text-sm text-[#2563EB] font-bold">Payment submitted!</p>
-                    <p className="text-xs text-[#2563EB]/80 mt-1">Waiting for creator confirmation.</p>
+                      if (isUnlocked) {
+                        return (
+                          <div key={s.id} className="card sess">
+                            <div className="n">{i + 1}</div>
+                            <div className="t">
+                              <div className="d">
+                                {format(new Date(s.scheduled_at), 'MMM dd')}
+                                {s.is_free_session && <span className="pv">Free preview</span>}
+                              </div>
+                              <h3>{s.title}</h3>
+                              <div className="s">
+                                <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                                {format(new Date(s.scheduled_at), 'h:mm a')}
+                                <span>·</span>
+                                {s.duration_minutes}m duration
+                              </div>
+                            </div>
+                            <SessionButton session={s} />
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div key={s.id} className="card sess lock">
+                          <div className="n">
+                            <svg className="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+                          </div>
+                          <div className="t">
+                            <div className="d">{format(new Date(s.scheduled_at), 'MMM dd')}</div>
+                            <h3>{s.title}</h3>
+                            <div className="s">
+                              <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                              {format(new Date(s.scheduled_at), 'h:mm a')}
+                              <span>·</span>
+                              {s.duration_minutes}m duration
+                            </div>
+                          </div>
+                          <span className="lk">
+                            <svg className="ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
+                              <rect x="5" y="11" width="14" height="9" rx="2" />
+                              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                            </svg>
+                            Unlocks after enrollment
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>
+                    No sessions scheduled yet.
                   </div>
                 )}
-                {enrollment?.status === 'rejected' && (
-                  <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-center mb-4">
-                    <p className="text-sm text-[#C0392B] font-bold mb-2">Payment rejected</p>
-                    <button onClick={() => setPaymentModal(true)} className="btn-primary w-full py-2 text-sm">Re-upload Screenshot</button>
-                  </div>
-                )}
-                {!user && (
-                  <Link to="/signup/learner" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center justify-center gap-2 mb-4">
-                    Sign Up to Join
-                  </Link>
-                )}
+              </section>
+            </main>
 
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Full lifetime access</div>
-                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Access on mobile and desktop</div>
-                  <div className="flex items-center gap-3 text-sm text-[#475569] font-medium"><CheckCircle size={16} className="text-[#16A34A]"/> Certificate of completion</div>
-                </div>
+            {/* SIDEBAR */}
+            <aside className="side">
+              {/* Buy card */}
+              <div className="card buy">
+                <small>Total price</small>
+                <div className="price">{pack.currency} {pack.price}</div>
 
-                <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-center gap-2 text-xs text-[#64748B] font-medium">
-                  <ShieldCheck size={14} className="text-[#94A6B8]"/> Secure checkout • 7-day refund
-                </div>
-              </div>
+                {renderJoinAction()}
 
-              {/* Session Details Card */}
-              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-                <h3 className="font-bold text-[#0F172A] mb-4">Session Details</h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <Calendar size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
-                    <div>
-                      <p className="text-sm font-bold text-[#0F172A]">Starts On</p>
-                      <p className="text-sm text-[#475569]">{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <Clock size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
-                    <div>
-                      <p className="text-sm font-bold text-[#0F172A]">Time</p>
-                      <p className="text-sm text-[#475569]">{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <LayoutGrid size={18} className="text-[#64748B] shrink-0 mt-0.5"/>
-                    <div>
-                      <p className="text-sm font-bold text-[#0F172A]">Category</p>
-                      <p className="text-sm text-[#475569]">{pack.category}</p>
-                    </div>
-                  </div>
-                  
-                  {sessions[0] && differenceInMinutes(new Date(sessions[0].scheduled_at), new Date()) > 0 && (
-                    <div className="mt-6 p-4 bg-[#F8F9FA] rounded-lg border border-[#E2E8F0] text-center">
-                      <p className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Starts In</p>
-                      <p className="text-sm font-bold text-[#2563EB]">{formatDistanceToNow(new Date(sessions[0].scheduled_at))}</p>
-                    </div>
-                  )}
+                <ul className="ul">
+                  <li>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Full lifetime access
+                  </li>
+                  <li>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Access on mobile and desktop
+                  </li>
+                  <li>
+                    <span className="chk">
+                      <svg className="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                    </span>
+                    Certificate of completion
+                  </li>
+                </ul>
+
+                <div className="secure">
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" />
+                  </svg>
+                  Secure checkout · 7-day refund
                 </div>
               </div>
 
-              {/* What's Included */}
-              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-                <h3 className="font-bold text-[#0F172A] mb-4">What's Included</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-sm text-[#475569]"><MonitorPlay size={16} className="text-[#64748B]"/> {totalMinutes} minutes of live content</div>
-                  <div className="flex items-center gap-3 text-sm text-[#475569]"><Smartphone size={16} className="text-[#64748B]"/> Access on TV & Mobile</div>
-                  <div className="flex items-center gap-3 text-sm text-[#475569]"><InfinityIcon size={16} className="text-[#64748B]"/> Replay availability</div>
+              {/* Session details */}
+              <div className="card box">
+                <h3>Session details</h3>
+                <div className="row">
+                  <span className="ib">
+                    <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                  </span>
+                  <div>
+                    <small>Starts on</small>
+                    <b>{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</b>
+                  </div>
+                </div>
+                <div className="row">
+                  <span className="ib">
+                    <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                  </span>
+                  <div>
+                    <small>Time</small>
+                    <b>{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</b>
+                  </div>
+                </div>
+                <div className="row">
+                  <span className="ib">
+                    <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                  </span>
+                  <div>
+                    <small>Category</small>
+                    <b>{pack.category || 'General'}</b>
+                  </div>
+                </div>
+              </div>
+
+              {/* What's included */}
+              <div className="card box">
+                <h3>What's included</h3>
+                <ul className="ul inc" style={{ marginTop: 0 }}>
+                  <li>
+                    <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
+                    {totalMinutes} minutes of live content
+                  </li>
+                  <li>
+                    <svg className="ic" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2" /><path d="M11 18h2" /></svg>
+                    Access on TV &amp; mobile
+                  </li>
+                  <li>
+                    <svg className="ic" viewBox="0 0 24 24"><path d="M4 12a4 4 0 0 1 4-4c4 0 4 8 8 8a4 4 0 0 0 0-8c-4 0-4 8-8 8a4 4 0 0 1-4-4z" /></svg>
+                    Replay availability
+                  </li>
                   {(pack.whatsapp_link || pack.telegram_link) && (
-                    <div className="flex items-center gap-3 text-sm text-[#475569]"><Users size={16} className="text-[#64748B]"/> Community group access</div>
+                    <li>
+                      <svg className="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" /></svg>
+                      Community group access
+                    </li>
                   )}
-                </div>
-                
+                </ul>
+
                 {(pack.whatsapp_link || pack.telegram_link) && (enrollment?.status === 'confirmed' || user?.id === pack.creator_id) && (
-                  <div className="mt-5 pt-5 border-t border-[#E2E8F0] space-y-2">
+                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)', display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {pack.whatsapp_link && (
-                      <a href={pack.whatsapp_link} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full py-2 text-sm flex items-center justify-center gap-2 border-[#E2E8F0]">
-                        <MessageCircle size={16} className="text-[#25D366]"/> Join WhatsApp
+                      <a href={pack.whatsapp_link} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: 13, padding: '8px 12px' }}>
+                        <MessageCircle size={15} style={{ color: '#25D366' }} /> Join WhatsApp Group
                       </a>
                     )}
                     {pack.telegram_link && (
-                      <a href={pack.telegram_link} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full py-2 text-sm flex items-center justify-center gap-2 border-[#E2E8F0]">
-                        <Send size={16} className="text-[#229ED9]"/> Join Telegram
+                      <a href={pack.telegram_link} target="_blank" rel="noopener noreferrer" className="btn" style={{ fontSize: 13, padding: '8px 12px' }}>
+                        <Send size={15} style={{ color: '#229ED9' }} /> Join Telegram Group
                       </a>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Support Card */}
-              <div className="bg-[#F8F9FA] rounded-xl border border-[#E2E8F0] p-6 text-center">
-                <div className="w-10 h-10 rounded-full bg-[#E2E8F0] text-[#64748B] flex items-center justify-center mx-auto mb-3">
-                  <Headset size={20} />
+              {/* Need help */}
+              <div className="card help">
+                <div className="ib">
+                  <svg className="ic" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="3" y="14" width="4" height="6" rx="1.5" /><rect x="17" y="14" width="4" height="6" rx="1.5" /></svg>
                 </div>
-                <h3 className="font-bold text-[#0F172A] mb-1">Need Help?</h3>
-                <p className="text-xs text-[#475569] mb-4">Having trouble with your enrollment or have questions?</p>
-                <button className="text-sm font-bold text-[#2563EB] hover:underline">Contact Support</button>
+                <h3>Need help?</h3>
+                <p>Having trouble with your enrollment or have questions?</p>
+                <a href="mailto:support@lora.com">Contact support</a>
               </div>
-
-            </div>
+            </aside>
           </div>
+        </div>
+
+        {/* MOBILE STICKY PURCHASE BAR */}
+        <div className="mbar">
+          <div>
+            <small>Total price</small>
+            <div className="price">{pack.currency} {pack.price}</div>
+          </div>
+          {renderJoinAction(true)}
         </div>
 
         {/* Payment Modal — steps 1 & 3 use the app Modal; step 2 uses its own overlay */}
@@ -726,16 +866,16 @@ export default function PackDetail() {
                 <CheckCircle size={32} className="text-[#2D7A4F]" />
               </div>
               <h3 className="text-xl font-bold text-[#0F172A] mb-2">Payment Submitted!</h3>
-              
+
               <div className="my-6 p-4 rounded-xl border border-[#DBEAFE] bg-[#F8FAFC] inline-block">
                 <p className="text-xs text-[#94A6B8] mb-1 uppercase tracking-wider">Reference Code</p>
                 <p className="text-lg font-mono font-bold text-[#2563EB]">{refCode}</p>
               </div>
-              
+
               <p className="text-sm text-[#475569] mb-8 leading-relaxed max-w-sm mx-auto">
                 The creator will verify your payment using this code. You'll be notified once access is granted.
               </p>
-              
+
               <button onClick={() => { setPaymentModal(false); window.location.reload(); }} className="btn-primary w-full py-4">
                 Close
               </button>
