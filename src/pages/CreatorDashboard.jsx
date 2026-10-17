@@ -1,119 +1,200 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  Package, DollarSign, Users, Clock, PlusCircle, Sparkles,
-  TrendingUp, TrendingDown, ArrowRight, Settings, CheckCircle,
-  GraduationCap, ChevronRight, BarChart2, Zap, Activity
-} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
-import TrialBanner from '../components/TrialBanner';
+import './dashboard.css';
 
-/* ─── Sparkline SVG ─── */
-function Sparkline({ color, up }) {
-  const path = up
-    ? 'M0,14 C10,12 20,8 30,10 C40,12 50,4 60,6 C70,8 80,4 90,2 L90,18 L0,18Z'
-    : 'M0,4 C10,6 20,10 30,8 C40,6 50,14 60,12 C70,10 80,14 90,16 L90,18 L0,18Z';
-  const line = up
-    ? 'M0,14 C10,12 20,8 30,10 C40,12 50,4 60,6 C70,8 80,4 90,2'
-    : 'M0,4 C10,6 20,10 30,8 C40,6 50,14 60,12 C70,10 80,14 90,16';
+/* ─── Sparkline SVG (pure, no external deps) ─── */
+function Sparkline({ data, colorVar }) {
+  const w = 200, h = 54;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const x = (i) => i * w / (data.length - 1);
+  const y = (v) => h - 6 - (v - min) / ((max - min) || 1) * (h - 14);
+  const pts = data.map((v, i) => `${x(i)},${y(v)}`);
+  const line = 'M' + pts.join(' L');
+  const area = `${line} L${w},${h} L0,${h}Z`;
   return (
-    <svg viewBox="0 0 90 18" className="w-full mt-4" style={{ height: 42 }} preserveAspectRatio="none">
-      <path d={path} fill={color} fillOpacity="0.08" />
-      <path d={line} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      className="ld-spark"
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path d={area} fill={`var(--${colorVar}s)`} />
+      <path
+        d={line}
+        fill="none"
+        stroke={`var(--${colorVar})`}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+      />
     </svg>
   );
 }
 
-/* ─── KPI Card ─── */
-function KpiCard({ icon: Icon, label, value, iconBg, iconColor, sparkColor, up = true }) {
+/* ─── Inline SVG icons ─── */
+function IcPack() {
   return (
-    <div
-      className="bg-white rounded-[24px] flex flex-col"
-      style={{
-        border: '1px solid #E8EDF3',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-        padding: '32px 32px 24px',
-        minHeight: 180,
-      }}
-    >
-      {/* top row: icon + label + value */}
-      <div className="flex items-start gap-4 mb-6">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
-          style={{ background: iconBg }}
-        >
-          <Icon size={24} color={iconColor} />
-        </div>
-        <div>
-          <p className="text-[14px] font-semibold text-[#64748B] mb-2 uppercase tracking-wide">{label}</p>
-          <p className="text-[32px] font-extrabold text-[#0F172A] leading-none tracking-tight">{value}</p>
-        </div>
-      </div>
-
-      {/* trend row */}
-      <div className="flex items-center gap-2 mb-2">
-        <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${up ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]'}`}>
-          {up ? <TrendingUp size={14} color="#16A34A" /> : <TrendingDown size={14} color="#DC2626" />}
-          <span style={{ color: up ? '#16A34A' : '#DC2626' }} className="text-[13px] font-bold">0%</span>
-        </div>
-        <span className="text-[13px] text-[#94A3B8] font-medium ml-1">vs last 7 days</span>
-      </div>
-
-      {/* sparkline */}
-      <div className="mt-auto">
-        <Sparkline color={sparkColor} up={up} />
-      </div>
-    </div>
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M21 8 12 3 3 8v8l9 5 9-5z" />
+      <path d="M3 8l9 5 9-5M12 13v8" />
+    </svg>
+  );
+}
+function IcStudents() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" />
+    </svg>
+  );
+}
+function IcRevenue() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5" />
+    </svg>
+  );
+}
+function IcPending() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+function IcCreate() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v8M8 12h8" />
+    </svg>
+  );
+}
+function IcEnroll() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" />
+    </svg>
+  );
+}
+function IcPayout() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5" />
+    </svg>
+  );
+}
+function IcSettings() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />
+    </svg>
+  );
+}
+function IcBarChart() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M6 20V10M12 20V4M18 20v-7" />
+    </svg>
+  );
+}
+function IcActivity() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M3 12h4l3-8 4 16 3-8h4" />
+    </svg>
+  );
+}
+function IcLesson() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M3 9l9-5 9 5-9 5z" />
+      <path d="M7 11.5V16c3 2 7 2 10 0v-4.5" />
+    </svg>
+  );
+}
+function IcClock() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+function IcZap() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <path d="M13 2 4 14h7l-1 8 9-12h-7z" />
+    </svg>
+  );
+}
+function IcArrowRight() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+function IcChevRight() {
+  return (
+    <svg className="ld-ic" style={{ width: 16, height: 16 }} viewBox="0 0 24 24">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+function IcCheck() {
+  return (
+    <svg className="ld-ic" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12 2.5 2.5 4.5-5" />
+    </svg>
   );
 }
 
-/* ─── Quick-action card ─── */
-function ActionCard({ to, icon: Icon, iconBg, iconColor, title, subtitle, primary }) {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-5 rounded-[20px] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
-      style={{
-        background: primary ? '#0F172A' : 'white',
-        border: primary ? 'none' : '1px solid #E8EDF3',
-        boxShadow: primary
-          ? '0 8px 24px rgba(15,23,42,0.2)'
-          : '0 4px 16px rgba(0,0,0,0.03)',
-        padding: '24px 28px',
-      }}
-    >
-      <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
-        style={{ background: primary ? 'rgba(255,255,255,0.15)' : iconBg }}
-      >
-        <Icon size={22} color={primary ? 'white' : iconColor} />
-      </div>
-      <div>
-        <p className={`text-[15px] font-bold mb-1 ${primary ? 'text-white' : 'text-[#0F172A]'}`}>{title}</p>
-        <p className={`text-[13px] leading-relaxed ${primary ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>{subtitle}</p>
-      </div>
-    </Link>
-  );
-}
+/* ════════════════ TRIAL BANNER ════════════════ */
+function DashTrialBanner({ creatorProfile }) {
+  const [visible, setVisible] = useState(false);
 
-/* ─── Quick stats row ─── */
-function StatRow({ icon: Icon, iconBg, iconColor, label, value, last }) {
+  useEffect(() => {
+    if (creatorProfile?.subscription_status !== 'trial') return;
+    const today = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem(`lora_trial_banner_dismissed_${today}`) !== 'true') {
+      setVisible(true);
+    }
+  }, [creatorProfile]);
+
+  if (!visible || creatorProfile?.subscription_status !== 'trial') return null;
+
+  const trialEnds = creatorProfile.trial_ends_at ? new Date(creatorProfile.trial_ends_at) : new Date();
+  const daysLeft = Math.max(0, Math.ceil((trialEnds - new Date()) / (1000 * 60 * 60 * 24)));
+
+  const handleDismiss = () => {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem(`lora_trial_banner_dismissed_${today}`, 'true');
+    setVisible(false);
+  };
+
+  const cls = daysLeft === 0 ? 'ld-trial danger' : daysLeft <= 7 ? 'ld-trial warn' : 'ld-trial';
+  const msg = daysLeft === 0
+    ? <>Your trial expires <b>today</b>! Subscribe now to avoid interruption.</>
+    : daysLeft <= 7
+    ? <>Your free trial ends in <b>{daysLeft} days</b>! Subscribe now to keep your courses live.</>
+    : <><b>Free trial active</b> · {daysLeft} days remaining. Enjoying Lora? Subscribe to keep going after your trial.</>;
+
   return (
-    <div className={`flex items-center justify-between py-5 ${!last ? 'border-b border-[#F1F5F9]' : ''}`}>
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
-          <Icon size={18} color={iconColor} />
-        </div>
-        <span className="text-[14px] font-semibold text-[#475569]">{label}</span>
-      </div>
-      <div className="flex items-center gap-3">
-        <span className="text-[16px] font-extrabold text-[#0F172A]">{value}</span>
-        <ChevronRight size={16} className="text-[#CBD5E1]" />
-      </div>
+    <div className={cls}>
+      <span className="ld-dot" />
+      <p>{msg}</p>
+      <Link to="/creator/settings#plan">Subscribe now</Link>
+      <button onClick={handleDismiss} aria-label="Dismiss">×</button>
     </div>
   );
 }
@@ -121,15 +202,17 @@ function StatRow({ icon: Icon, iconBg, iconColor, label, value, last }) {
 /* ════════════════ MAIN COMPONENT ════════════════ */
 export default function CreatorDashboard() {
   useSubscriptionGuard();
-  const { user, profile } = useAuth();
+  const { user, profile, creatorProfile } = useAuth();
+
   const [stats, setStats] = useState({ packs: 0, students: 0, revenue: 0, pending: 0 });
   const [recentPacks, setRecentPacks] = useState([]);
+  const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     const loadData = async () => {
-      const [packsRes, enrollRes] = await Promise.all([
+      const [packsRes, enrollRes, notifRes] = await Promise.all([
         supabase
           .from('session_packs')
           .select('*, sessions(count)')
@@ -139,6 +222,12 @@ export default function CreatorDashboard() {
           .from('enrollments')
           .select('*, session_packs!inner(creator_id, price, currency)')
           .eq('session_packs.creator_id', user.id),
+        supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(5),
       ]);
 
       const packs = packsRes.data || [];
@@ -149,17 +238,22 @@ export default function CreatorDashboard() {
 
       setStats({ packs: packs.length, students: confirmed.length, revenue, pending: pending.length });
       setRecentPacks(packs);
+      setActivity(notifRes.data || []);
       setLoading(false);
     };
     loadData();
   }, [user]);
 
+  /* ── Loading skeleton ── */
   if (loading) {
     return (
-      <div className="space-y-8" style={{ fontFamily: "'Inter', sans-serif" }}>
-        <Skeleton className="h-56 w-full rounded-3xl" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-44 rounded-3xl" />)}
+      <div className="lora-dash">
+        <div className="ld-page">
+          <div className="ld-stats">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="ld-card ld-stat" style={{ height: 160, opacity: 0.5, background: '#e3e7f1' }} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -169,234 +263,252 @@ export default function CreatorDashboard() {
   const latestPack = recentPacks[0] ?? null;
   const sessionCount = latestPack?.sessions?.[0]?.count ?? 0;
 
+  /* ── Sparkline demo data (7-day trend shape) ── */
+  const sparkData = {
+    packs:    [3, 4, 3.6, 4.6, 4.2, 5, 5.4],
+    students: [3, 3.6, 3, 4, 3.5, 4.4, 4.2],
+    revenue:  [2, 3, 2.6, 3.8, 3.2, 4.4, 5],
+    pending:  [5, 4.4, 4.8, 3.8, 4, 3.2, 3],
+  };
+
+  const statCards = [
+    { key: 'packs',    label: 'Total packs', value: stats.packs,                          colorVar: 'c1', up: true,  icon: <IcPack />,    spark: sparkData.packs },
+    { key: 'students', label: 'Students',    value: stats.students,                        colorVar: 'c2', up: true,  icon: <IcStudents />, spark: sparkData.students },
+    { key: 'revenue',  label: 'Revenue',     value: `LKR ${stats.revenue.toFixed(0)}`,     colorVar: 'c3', up: true,  icon: <IcRevenue />,  spark: sparkData.revenue },
+    { key: 'pending',  label: 'Pending',     value: stats.pending,                         colorVar: 'c4', up: false, icon: <IcPending />,  spark: sparkData.pending },
+  ];
+
+  const quickStats = [
+    { label: 'Total packs',    value: stats.packs,                      colorVar: 'c1', icon: <IcPack /> },
+    { label: 'Total students', value: stats.students,                    colorVar: 'c2', icon: <IcStudents /> },
+    { label: 'Total revenue',  value: `LKR ${stats.revenue.toFixed(0)}`, colorVar: 'c3', icon: <IcRevenue /> },
+    { label: 'Pending',        value: stats.pending,                     colorVar: 'c4', icon: <IcPending /> },
+  ];
+
   return (
-    <PageTransition>
-      <div style={{ fontFamily: "'Inter', sans-serif" }} className="space-y-10 pb-10">
-        <TrialBanner />
+    <div className="lora-dash">
+      <div className="ld-page">
 
-        {/* ══════════ WELCOME TEXT ══════════ */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="pb-2"
-        >
-          <motion.h1 
-            className="text-[36px] md:text-[48px] font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#9333EA] to-[#2563EB]"
-            style={{ backgroundSize: '200% auto' }}
-            animate={{ backgroundPosition: ['0% center', '200% center'] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-          >
-            Welcome back, {firstName}
-          </motion.h1>
-          <p className="text-[16px] text-[#64748B] font-medium">
-            Here's what's happening with your courses today.
-          </p>
-        </motion.div>
+        {/* ── Trial banner ── */}
+        <DashTrialBanner creatorProfile={creatorProfile} />
 
-        {/* ══════════ KPI CARDS ══════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <KpiCard icon={Package}    label="Total Packs" value={stats.packs}                   iconBg="#EFF6FF" iconColor="#2563EB" sparkColor="#2563EB" up />
-          <KpiCard icon={Users}      label="Students"    value={stats.students}                 iconBg="#F5F3FF" iconColor="#7C3AED" sparkColor="#7C3AED" up />
-          <KpiCard icon={DollarSign} label="Revenue"     value={`$${stats.revenue.toFixed(0)}`} iconBg="#F0FDF4" iconColor="#16A34A" sparkColor="#16A34A" up />
-          <KpiCard icon={Clock}      label="Pending"     value={stats.pending}                  iconBg="#FFF7ED" iconColor="#EA580C" sparkColor="#EA580C" up={false} />
+        {/* ── Welcome heading ── */}
+        <div className="ld-hello">
+          <h1>Welcome back, {firstName}</h1>
+          <p>Here's what's happening with your courses today.</p>
         </div>
 
-        {/* ══════════ QUICK ACTIONS ══════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <ActionCard to="/creator/packs/new"    icon={PlusCircle} iconBg="#EFF6FF" iconColor="#2563EB" title="Create New Pack"      subtitle="Start a new course pack"            primary />
-          <ActionCard to="/creator/enrollments"  icon={Users}      iconBg="#F5F3FF" iconColor="#7C3AED" title="Manage Enrollments"   subtitle="View & manage your students" />
-          <ActionCard to="/creator/dashboard"    icon={DollarSign} iconBg="#F0FDF4" iconColor="#16A34A" title="View Payouts"         subtitle="Track your earnings" />
-          <ActionCard to="/creator/settings"     icon={Settings}   iconBg="#F1F5F9" iconColor="#475569" title="Settings"            subtitle="Update your profile & preferences" />
-        </div>
-
-        {/* ══════════ BOTTOM: RECENT PACKS + RIGHT COLUMN ══════════ */}
-        <div className="grid lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-8 items-start">
-
-          {/* ── Recent Packs ── */}
-          <div className="space-y-6">
-            {/* Section header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm border border-[#E8EDF3]">
-                  <BarChart2 size={20} className="text-[#64748B]" />
-                </div>
+        {/* ── KPI stat cards ── */}
+        <div className="ld-stats">
+          {statCards.map(s => (
+            <div key={s.key} className="ld-card ld-stat">
+              <div className="ld-r">
+                <span
+                  className="ld-ib"
+                  style={{ background: `var(--${s.colorVar}s)`, color: `var(--${s.colorVar})` }}
+                >
+                  {s.icon}
+                </span>
                 <div>
-                  <h2 className="text-[18px] font-extrabold text-[#0F172A] leading-tight">Recent Packs</h2>
-                  <p className="text-[14px] text-[#64748B] leading-relaxed mt-0.5">Your latest course packs and their performance.</p>
+                  <small>{s.label}</small>
+                  <div className="ld-big">{s.value}</div>
                 </div>
               </div>
-              <Link
-                to="/creator/packs"
-                className="text-[14px] font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1.5 transition-colors"
-              >
-                View All <ArrowRight size={16} />
+              <div className="ld-trend">
+                <b className={s.up ? 'ld-up' : 'ld-down'}>
+                  {s.up ? '↗' : '↘'} 0%
+                </b>
+                vs last 7 days
+              </div>
+              <Sparkline data={s.spark} colorVar={s.colorVar} />
+            </div>
+          ))}
+        </div>
+
+        {/* ── Quick-action cards ── */}
+        <div className="ld-acts">
+          <Link className="ld-card ld-act dark" to="/creator/packs/new">
+            <span className="ld-ib"><IcCreate /></span>
+            <div>
+              <b>Create new pack</b>
+              <span>Start a new course pack</span>
+            </div>
+          </Link>
+
+          <Link className="ld-card ld-act" to="/creator/enrollments">
+            <span className="ld-ib" style={{ background: 'var(--c2s)', color: 'var(--c2)' }}>
+              <IcEnroll />
+            </span>
+            <div>
+              <b>Manage enrollments</b>
+              <span>View &amp; manage your students</span>
+            </div>
+          </Link>
+
+          <Link className="ld-card ld-act" to="/creator/payouts">
+            <span className="ld-ib" style={{ background: 'var(--c3s)', color: 'var(--c3)' }}>
+              <IcPayout />
+            </span>
+            <div>
+              <b>View payouts</b>
+              <span>Track your earnings</span>
+            </div>
+          </Link>
+
+          <Link className="ld-card ld-act" to="/creator/settings">
+            <span className="ld-ib" style={{ background: 'var(--bg)', color: 'var(--muted)' }}>
+              <IcSettings />
+            </span>
+            <div>
+              <b>Settings</b>
+              <span>Update your profile &amp; preferences</span>
+            </div>
+          </Link>
+        </div>
+
+        {/* ── Main two-column area ── */}
+        <div className="ld-cols">
+
+          {/* ── Recent Packs ── */}
+          <section className="ld-card ld-sec">
+            <div className="ld-sh">
+              <span className="ld-ib"><IcBarChart /></span>
+              <div>
+                <h2>Recent packs</h2>
+                <p>Your latest course packs and their performance.</p>
+              </div>
+              <Link className="ld-va" to="/creator/packs">
+                View all <IcArrowRight />
               </Link>
             </div>
 
             {latestPack ? (
-              <div
-                className="bg-white rounded-[24px] overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md"
-                style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
-              >
+              <article className="ld-pack">
                 {/* Thumbnail */}
-                <div className="md:w-[300px] md:flex-shrink-0 relative" style={{ minHeight: 220 }}>
-                  {latestPack.thumbnail_url ? (
-                    <img
-                      src={latestPack.thumbnail_url}
-                      alt={latestPack.title}
-                      className="w-full h-full object-cover"
-                      style={{ minHeight: 220 }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-[#1E293B] flex items-center justify-center" style={{ minHeight: 220 }}>
-                      <Package size={48} className="text-white/20" />
-                    </div>
+                <div className="ld-thumb">
+                  {latestPack.thumbnail_url && (
+                    <img src={latestPack.thumbnail_url} alt={latestPack.title} />
                   )}
-                  {/* Published badge overlay */}
-                  {latestPack.is_published && (
-                    <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-sm">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" />
-                      <span className="text-[12px] font-bold text-[#16A34A] uppercase tracking-wide">Published</span>
-                    </div>
-                  )}
+                  <span className={`ld-badge${latestPack.is_published ? '' : ' draft'}`}>
+                    {latestPack.is_published ? 'Published' : 'Draft'}
+                  </span>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col justify-between p-8">
-                  <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold uppercase tracking-wide ${
-                        latestPack.is_published
-                          ? 'bg-[#F0FDF4] text-[#16A34A]'
-                          : 'bg-[#FEF3C7] text-[#D97706]'
-                      }`}>
-                        <CheckCircle size={14} />
-                        {latestPack.is_published ? 'Published' : 'Draft'}
-                      </span>
-                    </div>
+                <div className="ld-pb">
+                  <h3>{latestPack.title}</h3>
+                  <p>{latestPack.description || 'No description provided.'}</p>
 
-                    <h3 className="text-[22px] font-extrabold text-[#0F172A] leading-snug mb-3">
-                      {latestPack.title}
-                    </h3>
-                    <p className="text-[14.5px] text-[#64748B] leading-relaxed mb-6 line-clamp-2">
-                      {latestPack.description || 'Learn practical ways to master the topic. This course covers real strategies, tools and step-by-step methods.'}
-                    </p>
-
-                    {/* Meta row */}
-                    <div className="flex flex-wrap items-center gap-6 text-[13.5px] font-medium text-[#475569]">
-                      <span className="flex items-center gap-2">
-                        <GraduationCap size={18} className="text-[#94A3B8]" />
-                        {sessionCount} lessons
+                  <div className="ld-meta">
+                    <span>
+                      <IcLesson />
+                      {sessionCount} lesson{sessionCount !== 1 ? 's' : ''}
+                    </span>
+                    <span>
+                      <IcClock />
+                      Learn at your own pace
+                    </span>
+                    {latestPack.category && (
+                      <span>
+                        <IcZap />
+                        {latestPack.category}
                       </span>
-                      <span className="flex items-center gap-2">
-                        <Clock size={18} className="text-[#94A3B8]" />
-                        Learn at your own pace
-                      </span>
-                      {latestPack.category && (
-                        <span className="flex items-center gap-2">
-                          <Zap size={18} className="text-[#94A3B8]" />
-                          {latestPack.category}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
 
-                  {/* Price + CTA */}
-                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#F1F5F9]">
-                    <p className="text-[24px] font-extrabold text-[#2563EB] tracking-tight">
+                  <div className="ld-pf">
+                    <span className="ld-price">
                       {latestPack.currency} {latestPack.price}
-                    </p>
-                    <Link
-                      to={`/creator/packs/edit/${latestPack.id}`}
-                      className="flex items-center gap-2.5 text-[14px] font-bold text-[#2563EB] border-2 border-[#BFDBFE] rounded-xl px-6 py-2.5 hover:bg-[#EFF6FF] hover:border-[#93C5FD] transition-all"
-                    >
-                      View Details <ArrowRight size={16} />
+                    </span>
+                    <Link className="ld-btn" to={`/creator/packs/edit/${latestPack.id}`}>
+                      View details <IcArrowRight />
                     </Link>
                   </div>
                 </div>
-              </div>
+              </article>
             ) : (
-              /* Empty state */
-              <div
-                className="bg-white rounded-[24px] p-12 flex flex-col items-center justify-center text-center"
-                style={{ border: '2px dashed #CBD5E1' }}
-              >
-                <div className="w-16 h-16 rounded-full bg-[#F1F5F9] flex items-center justify-center mb-5">
-                  <Package size={28} className="text-[#94A3B8]" />
-                </div>
-                <p className="text-[18px] font-extrabold text-[#0F172A] mb-2">No packs yet</p>
-                <p className="text-[14.5px] text-[#64748B] max-w-[300px] mb-8 leading-relaxed">
-                  Create your first session pack and start teaching your audience today.
-                </p>
-                <Link
-                  to="/creator/packs/new"
-                  className="inline-flex items-center gap-2 text-[15px] font-bold text-white px-8 py-4 rounded-xl transition-all hover:-translate-y-1"
-                  style={{ background: '#2563EB', boxShadow: '0 8px 24px rgba(37,99,235,0.3)' }}
-                >
-                  <PlusCircle size={18} /> Create Pack
+              <div className="ld-empty">
+                <span className="ld-ib"><IcPack /></span>
+                <h3>No packs yet</h3>
+                <p>Create your first session pack and start teaching your audience today.</p>
+                <Link className="ld-btn-primary" to="/creator/packs/new">
+                  <IcCreate /> Create Pack
                 </Link>
               </div>
             )}
-          </div>
+          </section>
 
           {/* ── Right column ── */}
-          <div className="space-y-6">
+          <div className="ld-side">
 
-            {/* Quick Stats card */}
-            <div
-              className="bg-white rounded-[24px]"
-              style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', padding: '28px 28px 8px' }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
-                  <BarChart2 size={18} className="text-[#64748B]" />
-                </div>
-                <h3 className="text-[16px] font-extrabold text-[#0F172A]">Quick Stats</h3>
+            {/* Quick Stats */}
+            <section className="ld-card ld-sec ld-qs">
+              <div className="ld-sh">
+                <span className="ld-ib"><IcBarChart /></span>
+                <h2>Quick stats</h2>
               </div>
 
-              <StatRow icon={Package}    iconBg="#EFF6FF" iconColor="#2563EB" label="Total Packs"     value={stats.packs} />
-              <StatRow icon={Users}      iconBg="#F5F3FF" iconColor="#7C3AED" label="Total Students"  value={stats.students} />
-              <StatRow icon={DollarSign} iconBg="#F0FDF4" iconColor="#16A34A" label="Total Revenue"   value={`$${stats.revenue.toFixed(0)}`} />
-              <StatRow icon={Clock}      iconBg="#FFF7ED" iconColor="#EA580C" label="Pending Payouts" value={0} last />
-            </div>
-
-            {/* Recent Activity card */}
-            <div
-              className="bg-white rounded-[24px]"
-              style={{ border: '1px solid #E8EDF3', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', padding: '28px' }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
-                    <Activity size={18} className="text-[#64748B]" />
-                  </div>
-                  <h3 className="text-[16px] font-extrabold text-[#0F172A]">Recent Activity</h3>
-                </div>
-                <Link
-                  to="/creator/enrollments"
-                  className="text-[13px] font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-colors"
-                >
-                  View All <ArrowRight size={14} />
+              {quickStats.map((q, i) => (
+                <Link key={i} to="#">
+                  <span
+                    className="ld-ib"
+                    style={{ background: `var(--${q.colorVar}s)`, color: `var(--${q.colorVar})` }}
+                  >
+                    {q.icon}
+                  </span>
+                  <span className="ld-qs-label">{q.label}</span>
+                  <b className="ld-qs-val">{q.value}</b>
+                  <IcChevRight />
                 </Link>
+              ))}
+            </section>
+
+            {/* Recent Activity */}
+            <section className="ld-card ld-sec ld-feed">
+              <div className="ld-sh">
+                <span className="ld-ib"><IcActivity /></span>
+                <h2>Recent activity</h2>
+                <Link className="ld-va" to="/creator/enrollments">View all</Link>
               </div>
 
-              <div className="rounded-[16px] p-4 flex gap-4 items-start" style={{ background: '#F8FAFC' }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
-                  <CheckCircle size={18} color="#16A34A" />
+              {activity.length > 0 ? (
+                <ul>
+                  {activity.map(n => (
+                    <li key={n.id}>
+                      <span
+                        className="ld-ib"
+                        style={{ background: 'var(--c3s)', color: 'var(--c3)', width: 38, height: 38 }}
+                      >
+                        <IcCheck />
+                      </span>
+                      <div>
+                        <b>{n.title}</b>
+                        <small>{n.message}</small>
+                      </div>
+                      <time>
+                        {(() => {
+                          const diff = Date.now() - new Date(n.created_at).getTime();
+                          const mins = Math.floor(diff / 60000);
+                          if (mins < 60) return `${mins}m ago`;
+                          const hrs = Math.floor(mins / 60);
+                          if (hrs < 24) return `${hrs}h ago`;
+                          return `${Math.floor(hrs / 24)}d ago`;
+                        })()}
+                      </time>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div style={{ padding: '12px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+                  No recent activity yet.
                 </div>
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <p className="text-[14px] font-bold text-[#0F172A] leading-tight mb-1">New enrollment</p>
-                  <p className="text-[13px] text-[#64748B] leading-relaxed">Someone enrolled in your course</p>
-                </div>
-                <span className="text-[12px] font-medium text-[#94A3B8] whitespace-nowrap flex-shrink-0 pt-1">2 days ago</span>
-              </div>
-            </div>
+              )}
+            </section>
 
           </div>
         </div>
 
       </div>
-    </PageTransition>
+    </div>
   );
 }
