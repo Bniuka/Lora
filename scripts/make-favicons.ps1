@@ -31,5 +31,21 @@ Resize-And-Save -targetW 192 -targetH 192 -outputPath "H:\LORA\public\favicon-19
 Resize-And-Save -targetW 512 -targetH 512 -outputPath "H:\LORA\public\favicon-512x512.png"
 Resize-And-Save -targetW 48 -targetH 48 -outputPath "H:\LORA\public\favicon.png"
 
+# Generate proper favicon.ico from 48x48
+$icoBmp = New-Object System.Drawing.Bitmap(48, 48)
+$icoG = [System.Drawing.Graphics]::FromImage($icoBmp)
+$icoG.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+$icoG.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+$icoG.DrawImage($src, 0, 0, 48, 48)
+$icoG.Dispose()
+$hIcon = $icoBmp.GetHicon()
+$icon = [System.Drawing.Icon]::FromHandle($hIcon)
+$fs = New-Object System.IO.FileStream("H:\LORA\public\favicon.ico", [System.IO.FileMode]::Create)
+$icon.Save($fs)
+$fs.Close()
+$icon.Dispose()
+$icoBmp.Dispose()
+Write-Host "Generated: H:\LORA\public\favicon.ico"
+
 $src.Dispose()
 Write-Host "All favicons generated successfully!"
