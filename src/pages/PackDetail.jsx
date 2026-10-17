@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
+import './payment-modal.css';
 
 function SessionButton({ session }) {
   const now = new Date();
@@ -47,7 +48,240 @@ function SessionButton({ session }) {
   );
 }
 
+function PaymentStep2({
+  pack, creator, bankDetails,
+  screenshot, setScreenshot,
+  uploadError, setUploadError,
+  uploading, paymentMethod, setPaymentMethod,
+  onBack, onSubmit,
+}) {
+  const [activeTab, setActiveTab] = useState(() =>
+    creator?.payment_option === 'bank' ? 'bank' : 'link'
+  );
+  const [copied, setCopied] = useState(false);
+  const [dropOver, setDropOver] = useState(false);
+
+  const showBoth = creator?.payment_option === 'both';
+  const showLink = creator?.payment_option === 'link' || creator?.payment_option === 'both';
+  const showBank = creator?.payment_option === 'bank' || creator?.payment_option === 'both';
+
+  function handleFile(f) {
+    setUploadError(null);
+    if (!f) return;
+    if (!f.type.startsWith('image/')) { setUploadError('Only image files are allowed.'); return; }
+    if (f.size > 5 * 1024 * 1024) { setUploadError('File is too large. Maximum size is 5MB.'); return; }
+    setScreenshot(f);
+  }
+
+  async function handleCopy() {
+    try { await navigator.clipboard.writeText(bankDetails?.account_number || ''); } catch (_) {}
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  }
+
+  const canSubmit = paymentMethod && screenshot && !uploading;
+
+  return (
+    <div className="lora-pay" role="dialog" aria-modal="true" aria-labelledby="pm-ttl">
+      {/* HEAD */}
+      <div className="pm-head">
+        <div>
+          <h1 className="pm-title" id="pm-ttl">Complete payment</h1>
+          <p className="pm-sub">Pay the creator, then confirm below to unlock your enrollment.</p>
+        </div>
+        <button className="pm-close" aria-label="Close" onClick={onBack}>×</button>
+      </div>
+
+      {/* BODY */}
+      <div className="pm-body">
+        {/* Total */}
+        <div className="pm-total">
+          <small>Total amount</small>
+          <div className="pm-amt"><span>{pack?.currency}</span>{pack?.price}</div>
+        </div>
+
+        {/* Tabs — only when both methods enabled */}
+        {showBoth && (
+          <div className="pm-tabs" role="tablist">
+            <button
+              role="tab"
+              className={activeTab === 'link' ? 'pm-tab on' : 'pm-tab'}
+              onClick={() => setActiveTab('link')}
+            >
+              <svg className="pm-ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+              Payment link
+            </button>
+            <button
+              role="tab"
+              className={activeTab === 'bank' ? 'pm-tab on' : 'pm-tab'}
+              onClick={() => setActiveTab('bank')}
+            >
+              <svg className="pm-ic" viewBox="0 0 24 24"><path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>
+              Bank transfer
+            </button>
+          </div>
+        )}
+
+        {/* Payment Link pane */}
+        {showLink && (!showBoth || activeTab === 'link') && (
+          <div className="pm-pane show">
+            <a
+              href={creator?.payment_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pm-btn-link"
+            >
+              <svg className="pm-ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+              Pay via link
+            </a>
+            <p className="pm-helper">Opens the creator's payment page in a new tab. Come back here after paying.</p>
+          </div>
+        )}
+
+        {/* Bank Transfer pane */}
+        {showBank && (!showBoth || activeTab === 'bank') && (
+          <div className="pm-pane show">
+            {bankDetails ? (
+              <div className="pm-bank">
+                <dl>
+                  <div>
+                    <dt>Bank</dt>
+                    <dd className="pm-bn">{bankDetails.bank_name}</dd>
+                  </div>
+                  <div className="pm-two">
+                    <div>
+                      <dt>Account holder</dt>
+                      <dd>{bankDetails.account_holder_name}</dd>
+                    </div>
+                    {bankDetails.branch && (
+                      <div>
+                        <dt>Branch</dt>
+                        <dd>{bankDetails.branch}{bankDetails.branch_code ? ` (${bankDetails.branch_code})` : ''}</dd>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <dt>Account number</dt>
+                    <div className="pm-row">
+                      <dd className="pm-num">{bankDetails.account_number}</dd>
+                      <button
+                        className={`pm-copy${copied ? ' done' : ''}`}
+                        type="button"
+                        onClick={handleCopy}
+                      >
+                        <svg className="pm-ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <span>{copied ? 'Copied' : 'Copy'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </dl>
+              </div>
+            ) : (
+              <p style={{ color: 'var(--pm-muted)', fontSize: 14 }}>
+                Bank details are not available. Please contact the creator.
+              </p>
+            )}
+            {bankDetails?.extra_note && (
+              <div className="pm-note">
+                <b>Note:</b> {bankDetails.extra_note}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Method picker */}
+        <div className="pm-sec">
+          <h2>Which payment method did you use?</h2>
+          <div className="pm-pick">
+            {showLink && (
+              <label>
+                <input
+                  type="radio"
+                  name="pmMethod"
+                  value="link"
+                  checked={paymentMethod === 'link'}
+                  onChange={e => setPaymentMethod(e.target.value)}
+                />
+                <span>Payment link</span>
+              </label>
+            )}
+            {showBank && (
+              <label>
+                <input
+                  type="radio"
+                  name="pmMethod"
+                  value="bank"
+                  checked={paymentMethod === 'bank'}
+                  onChange={e => setPaymentMethod(e.target.value)}
+                />
+                <span>Manual bank transfer</span>
+              </label>
+            )}
+          </div>
+        </div>
+
+        {/* Upload */}
+        <div className="pm-sec">
+          <h2>Upload confirmation screenshot</h2>
+          {!screenshot ? (
+            <label
+              className={`pm-drop${dropOver ? ' over' : ''}${uploadError ? ' err' : ''}`}
+              onDragOver={e => { e.preventDefault(); setDropOver(true); }}
+              onDragEnter={e => { e.preventDefault(); setDropOver(true); }}
+              onDragLeave={e => { e.preventDefault(); setDropOver(false); }}
+              onDrop={e => { e.preventDefault(); setDropOver(false); handleFile(e.dataTransfer.files[0]); }}
+            >
+              <svg className="pm-drop-icon" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+              <b>Upload payment screenshot</b>
+              <small>Required to complete enrollment · Max 5MB, images only</small>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => handleFile(e.target.files?.[0])}
+              />
+            </label>
+          ) : (
+            <div className="pm-file show">
+              <img
+                src={URL.createObjectURL(screenshot)}
+                alt="Screenshot preview"
+                style={{ width: 64, height: 64, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }}
+              />
+              <div>
+                <b style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{screenshot.name}</b>
+                <small>{(screenshot.size / 1024).toFixed(0)} KB</small>
+              </div>
+              <button
+                type="button"
+                className="pm-rm"
+                onClick={() => { setScreenshot(null); setUploadError(null); }}
+              >Remove</button>
+            </div>
+          )}
+          {uploadError && <div className="pm-msg">{uploadError}</div>}
+        </div>
+      </div>
+
+      {/* FOOT */}
+      <div className="pm-foot">
+        <button className="pm-btn ghost" type="button" onClick={onBack}>Cancel</button>
+        <button
+          className="pm-btn"
+          type="button"
+          disabled={!canSubmit}
+          onClick={onSubmit}
+        >
+          {uploading
+            ? <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+            : 'Submit and enroll'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function PackDetail() {
+
   const { id } = useParams();
   const { user, profile } = useAuth();
   const [pack, setPack] = useState(null);
@@ -459,8 +693,10 @@ export default function PackDetail() {
           </div>
         </div>
 
-        {/* Payment Modal */}
-        <Modal isOpen={paymentModal} onClose={() => { setPaymentModal(false); setPaymentStep(1); setScreenshot(null); }}
+        {/* Payment Modal — steps 1 & 3 use the app Modal; step 2 uses its own overlay */}
+        <Modal
+          isOpen={paymentModal && paymentStep !== 2}
+          onClose={() => { setPaymentModal(false); setPaymentStep(1); setScreenshot(null); }}
           title={paymentStep === 3 ? 'Payment Submitted!' : 'Complete Payment'}
         >
           {paymentStep === 1 && (
@@ -481,169 +717,6 @@ export default function PackDetail() {
               <button onClick={() => setPaymentStep(2)} className="btn-primary w-full py-4 mt-2">
                 Next: View Payment Instructions →
               </button>
-            </div>
-          )}
-
-          {paymentStep === 2 && (
-            <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1 -mx-1 pb-2">
-              
-              {/* Total Amount Card */}
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0]">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-[#64748B] mb-0.5">Total Amount</p>
-                    <p className="text-lg font-black text-[#0F172A] tracking-tight">{pack.currency} {pack.price}</p>
-                  </div>
-                </div>
-                {creator?.payment_link && (
-                   <a href={creator?.payment_link} target="_blank" rel="noopener noreferrer" className="bg-[#10B981]/10 text-[#10B981] font-bold px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 hover:bg-[#10B981]/20 transition-colors border border-[#10B981]/20">
-                     <CheckCircle size={14} /> Pay via Link
-                   </a>
-                )}
-              </div>
-
-              {(!creator?.payment_option || creator?.payment_option === 'bank' || creator?.payment_option === 'both') && (
-                <div className="relative overflow-hidden rounded-2xl bg-[#0F172A] text-white shadow-xl border border-[#1E293B]">
-                  {/* Decorative background curve mimicking the image */}
-                  <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-gradient-to-tl from-[#1E40AF]/40 to-transparent rounded-full blur-2xl pointer-events-none"></div>
-                  <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-tl from-[#2563EB]/40 to-transparent rounded-full blur-xl pointer-events-none"></div>
-                  
-                  <div className="relative z-10 p-6">
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/5">
-                           <Building2 size={24} className="text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-lg text-white mb-1">Bank Transfer Details</h3>
-                          <p className="text-xs text-[#94A6B8]">Please use the following bank details to make your payment.</p>
-                        </div>
-                      </div>
-                      <span className="bg-[#2563EB] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-md">
-                        {creator?.payment_link ? 'Option 2' : 'Bank Details'}
-                      </span>
-                    </div>
-
-                    {bankDetails ? (
-                      <div className="grid grid-cols-2 gap-y-6 gap-x-4 pt-4 border-t border-white/10">
-                        <div>
-                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Bank Name</p>
-                          <p className="text-sm font-bold text-white tracking-wide">{bankDetails.bank_name}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Account Holder</p>
-                          <p className="text-sm font-bold text-white tracking-wide">{bankDetails.account_holder_name}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-[#94A6B8] mb-1 font-medium">Account Number</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-white tracking-wide">{bankDetails.account_number}</p>
-                            <button onClick={() => navigator.clipboard.writeText(bankDetails.account_number)} className="text-[#3B82F6] hover:text-[#60A5FA] transition-colors p-1 rounded-md hover:bg-white/5" title="Copy Account Number">
-                              <Copy size={14} />
-                            </button>
-                          </div>
-                        </div>
-                        {bankDetails.branch && (
-                          <div>
-                            <p className="text-xs text-[#94A6B8] mb-1 font-medium">Branch Details</p>
-                            <p className="text-sm font-bold text-white tracking-wide">{bankDetails.branch} {bankDetails.branch_code && <span className="text-[#94A6B8] font-normal">({bankDetails.branch_code})</span>}</p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="py-4 border-t border-white/10">
-                        <p className="text-sm text-[#94A6B8]">Bank transfer details are not available. Please contact the creator.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {bankDetails?.extra_note && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                  <div className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                    <span className="text-xs font-bold font-serif">i</span>
-                  </div>
-                  <p className="text-sm text-[#334155] leading-relaxed">
-                    <strong className="text-[#0F172A]">Note:</strong> {bankDetails.extra_note}
-                  </p>
-                </div>
-              )}
-
-              {/* Payment Method Selector */}
-              <div className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center border border-[#E2E8F0] shadow-sm text-[#2563EB]">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                  </div>
-                  <h3 className="font-bold text-[#0F172A] text-base">Which payment method did you use?</h3>
-                </div>
-                <div className="flex flex-wrap gap-8 pl-16">
-                  {creator?.payment_link && (
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                      <div className="relative flex items-center justify-center">
-                        <input type="radio" name="paymentMethod" value="link" checked={paymentMethod === 'link'} onChange={(e) => setPaymentMethod(e.target.value)} className="peer sr-only" />
-                        <div className="w-5 h-5 rounded-full border-2 border-[#CBD5E1] peer-checked:border-[#2563EB] group-hover:border-[#2563EB] transition-colors bg-white"></div>
-                        <div className="absolute w-2.5 h-2.5 rounded-full bg-[#2563EB] scale-0 peer-checked:scale-100 transition-transform"></div>
-                      </div>
-                      <span className="text-sm font-medium text-[#475569] group-hover:text-[#0F172A] transition-colors">Payment Link</span>
-                    </label>
-                  )}
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="relative flex items-center justify-center">
-                      <input type="radio" name="paymentMethod" value="bank" checked={paymentMethod === 'bank'} onChange={(e) => setPaymentMethod(e.target.value)} className="peer sr-only" />
-                      <div className="w-5 h-5 rounded-full border-2 border-[#CBD5E1] peer-checked:border-[#2563EB] group-hover:border-[#2563EB] transition-colors bg-white"></div>
-                      <div className="absolute w-2.5 h-2.5 rounded-full bg-[#2563EB] scale-0 peer-checked:scale-100 transition-transform"></div>
-                    </div>
-                    <span className="text-sm font-medium text-[#475569] group-hover:text-[#0F172A] transition-colors">Manual Bank Transfer</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Upload Screenshot */}
-              <div className="p-6 rounded-2xl border-2 border-dashed border-[#CBD5E1] bg-[#F8FAFC] relative transition-all hover:border-[#2563EB] group">
-                <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={e => { setScreenshot(e.target.files?.[0] || null); setUploadError(null); }} />
-                
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-[#DBEAFE] flex items-center justify-center text-[#2563EB] shrink-0 group-hover:scale-110 transition-transform">
-                    {screenshot ? <CheckCircle size={24} className="text-[#10B981]" /> : <Upload size={24} />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-[#0F172A] text-sm sm:text-base truncate">
-                      {screenshot ? screenshot.name : 'Upload Payment Confirmation Screenshot'}
-                    </h3>
-                    <p className="text-xs text-[#64748B]">
-                      {screenshot ? 'Click to replace screenshot' : 'A screenshot is required to complete your enrollment.'}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center gap-2 bg-[#0F172A] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md group-hover:bg-[#1E293B] transition-colors min-w-[200px]">
-                    <Upload size={18} /> {screenshot ? 'Replace Screenshot' : 'Upload Screenshot'}
-                  </div>
-                  <p className="text-[11px] text-[#94A6B8] mt-3 font-medium tracking-wide">
-                    Max 5MB • Images only (JPG, PNG)
-                  </p>
-                </div>
-              </div>
-
-              {uploadError && (
-                <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
-                  <div className="shrink-0 mt-0.5 text-red-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
-                  <p className="text-sm text-red-700 font-medium">Error: {uploadError}</p>
-                </div>
-              )}
-
-              <div className="flex gap-4 pt-2">
-                <button onClick={() => setPaymentStep(1)} className="btn-ghost px-6 border border-[#E2E8F0] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors text-[#475569]">← Back</button>
-                <button onClick={handlePaymentUpload} className="btn-primary flex-1 py-4 font-bold rounded-xl shadow-lg shadow-blue-500/20" disabled={uploading || !screenshot}>
-                  {uploading ? <Loader2 size={20} className="animate-spin mx-auto" /> : "Submit Payment"}
-                </button>
-              </div>
             </div>
           )}
 
@@ -669,6 +742,26 @@ export default function PackDetail() {
             </div>
           )}
         </Modal>
+
+        {/* Step 2: full-screen overlay with scoped lora-pay design */}
+        {paymentModal && paymentStep === 2 && (
+          <div className="lora-pay-backdrop">
+            <PaymentStep2
+              pack={pack}
+              creator={creator}
+              bankDetails={bankDetails}
+              screenshot={screenshot}
+              setScreenshot={setScreenshot}
+              uploadError={uploadError}
+              setUploadError={setUploadError}
+              uploading={uploading}
+              paymentMethod={paymentMethod}
+              setPaymentMethod={setPaymentMethod}
+              onBack={() => setPaymentStep(1)}
+              onSubmit={handlePaymentUpload}
+            />
+          </div>
+        )}
 
         {/* Login prompt modal */}
         <Modal isOpen={loginPrompt} onClose={() => setLoginPrompt(false)} title="Create an Account">

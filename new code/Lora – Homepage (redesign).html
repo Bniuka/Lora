@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Teach the world, get paid your way</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--soft:#f4f6fb;--ink:#0e1733;--muted:#5d6783;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--navy:#0b1230;--gold:#f5c400;
+box-sizing:border-box}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Figtree,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.03em;margin:0;line-height:1.05}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:14px;padding:14px 26px;font-weight:600;transition:transform .15s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:var(--brand);color:#fff;box-shadow:0 10px 28px -10px rgba(47,91,255,.7)}
+.btn.pri:hover{background:var(--brand2)}
+.btn.sec{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:10px 20px;border-radius:12px;font-size:15px}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.btn:hover svg{transform:translateX(3px)}
+/* header */
+header{position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px);background:rgba(255,255,255,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font:800 30px 'Bricolage Grotesque';letter-spacing:.12em;color:var(--gold)} /* replace with your real LORA logo <img> */
+nav{display:flex;align-items:center;gap:22px}
+nav .ln{font-weight:600;color:var(--muted)}nav .ln:hover{color:var(--ink)}
+/* hero */
+.hero{position:relative;text-align:center;padding:84px 0 96px;background:radial-gradient(900px 420px at 50% -10%,#cfdcff 0%,transparent 70%),radial-gradient(500px 300px at 90% 40%,#e6dcff 0%,transparent 70%),var(--bg)}
+.hero h1{font-size:clamp(44px,8vw,92px);font-weight:800}
+.hero h1 em{font-style:italic;background:linear-gradient(100deg,#2f5bff,#7a4dff);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.hero p.lead{max-width:640px;margin:26px auto 34px;font-size:19px;color:var(--muted)}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.ticks{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin:30px 0 0;padding:0;list-style:none;color:var(--muted);font-size:14.5px}
+.ticks li{display:flex;align-items:center;gap:8px}
+.ticks i{width:20px;height:20px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;color:var(--brand);font-style:normal;font-size:11px;font-weight:800}
+.pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:54px}
+.pills span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-weight:600;font-size:14px;box-shadow:0 8px 20px -12px rgba(14,23,51,.25);animation:float 5s ease-in-out infinite}
+.pills span:nth-child(2n){animation-delay:-1.5s}.pills span:nth-child(3n){animation-delay:-3s}
+@keyframes float{50%{transform:translateY(-6px)}}
+/* features */
+section{padding:96px 0}
+.eyebrow{font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin-bottom:12px;display:block}
+.sh{max-width:620px;margin-bottom:48px}.sh h2{font-size:clamp(34px,5vw,52px)}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+.bc{background:var(--soft);border:1px solid var(--line);border-radius:26px;padding:30px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+.bc:hover{transform:translateY(-4px);box-shadow:0 24px 50px -28px rgba(14,23,51,.35)}
+.bc:nth-child(1),.bc:nth-child(4){grid-column:span 4}.bc:nth-child(2),.bc:nth-child(3){grid-column:span 2}
+.bc:nth-child(1){background:linear-gradient(135deg,#2f5bff,#5b3dff);color:#fff;border:0}
+.bc:nth-child(1) p{color:rgba(255,255,255,.82)}
+.ico{width:52px;height:52px;border-radius:16px;background:#fff;display:grid;place-items:center;margin-bottom:22px;box-shadow:0 8px 20px -10px rgba(14,23,51,.3)}
+.ico svg{width:26px;height:26px;stroke:var(--brand);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bc h3{font-size:24px;margin-bottom:10px}.bc p{margin:0;color:var(--muted)}
+/* how it works */
+.how{background:var(--navy);color:#fff;position:relative;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:22px 22px}
+.how .eyebrow{color:#8fa8ff}.how .sh h2{color:#fff}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;counter-reset:s}
+.step{border-top:2px solid rgba(255,255,255,.16);padding-top:22px;position:relative}
+.step:before{counter-increment:s;content:"0" counter(s);font:800 64px/1 'Bricolage Grotesque';color:rgba(255,255,255,.1);display:block;margin-bottom:14px}
+.step:after{content:"";position:absolute;top:-2px;left:0;width:36px;height:2px;background:#6c8cff}
+.step small{color:#8fa8ff;font-weight:700;letter-spacing:.12em;font-size:12px}
+.step h3{font-size:22px;margin:6px 0 10px}.step p{margin:0;color:rgba(255,255,255,.66);font-size:15px}
+/* cta */
+.final{padding:0 0 96px;background:var(--bg)}
+.banner{margin-top:-1px;border-radius:32px;padding:80px 28px;text-align:center;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,#2f5bff,#6a3dff)}
+.banner:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.2),transparent 40%);pointer-events:none}
+.banner h2{font-size:clamp(36px,6vw,64px);position:relative}.banner p{max-width:560px;margin:18px auto 32px;font-size:18px;color:rgba(255,255,255,.85);position:relative}
+.banner .btn{background:#fff;color:var(--brand);position:relative}
+.gap{height:96px;background:var(--navy)}
+.how+.final{padding-top:96px}
+/* footer */
+footer{background:var(--navy);color:rgba(255,255,255,.65);padding:34px 0 calc(34px + env(safe-area-inset-bottom,0px))}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:14px}
+footer b{display:block;font:800 22px 'Bricolage Grotesque';color:#fff}
+footer small{letter-spacing:.1em;text-transform:uppercase;font-size:11px}
+footer nav a{color:#fff;font-weight:600;font-size:14px}footer nav a:hover{color:#8fa8ff}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.bento{grid-template-columns:1fr 1fr}.bc:nth-child(n){grid-column:span 2}.steps{grid-template-columns:1fr 1fr}section{padding:72px 0}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}.hero{padding:56px 0 64px}.hero p.lead{font-size:17px}header .wrap{height:64px;padding:0 16px}.logo{font-size:24px}header nav{gap:12px}header nav .ln{font-size:14px}header nav .btn.sm{padding:9px 14px;font-size:14px}footer .wrap{flex-direction:column;text-align:center}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="logo" href="/" aria-label="Lora home">LORA</a>
+  <nav><a class="ln" href="/login">Log in</a><a class="btn pri sm" href="/signup">Get started</a></nav>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <h1>Teach the world,<br><em>get paid</em> your way.</h1>
+  <p class="lead">The premium course platform designed for creators who can't access Stripe or PayPal. Accept any local payment method. Verify manually. Start earning today.</p>
+  <div class="cta"><a class="btn pri" href="/signup?role=creator">Start teaching <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn sec" href="/signup?role=learner">Join as learner</a></div>
+  <ul class="ticks"><li><i>✓</i>Free to start</li><li><i>✓</i>No transaction fees</li><li><i>✓</i>Any payment method</li></ul>
+  <div class="pills" aria-hidden="true"><span>bKash</span><span>UPI</span><span>Bank transfer</span><span>QR codes</span><span>PayPal link</span></div>
+</div></div>
+
+<section><div class="wrap">
+  <div class="sh rv"><span class="eyebrow">Everything you need</span><h2>Built for creators everywhere.</h2></div>
+  <div class="bento">
+    <article class="bc rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><h3>No Stripe? No problem.</h3><p>Accept payments via any local method: bKash, UPI, bank transfer, QR codes. Your students pay directly to your account, skipping the international gateway hurdles.</p></article>
+    <article class="bc rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Manual verification</h3><p>Students upload payment proof directly to your dashboard. You verify the receipt and unlock access with a single click. Simple, secure, and completely fraud-resistant.</p></article>
+    <article class="bc rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 5.5 3.5-5.5 3.5z"/></svg></div><h3>Free preview sessions</h3><p>Let students join a free live session before committing. Build absolute trust, showcase your expertise, and dramatically boost enrollments.</p></article>
+    <article class="bc rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></div><h3>Session-based learning</h3><p>Schedule live Zoom sessions, automatically share recordings, and build a thriving, interactive community around your core expertise.</p></article>
+  </div>
+</div></section>
+
+<section class="how"><div class="wrap">
+  <div class="sh rv"><span class="eyebrow">How it works</span><h2>From idea to income in four steps.</h2></div>
+  <div class="steps">
+    <div class="step rv"><small>STEP 01</small><h3>Create your pack</h3><p>Add your live sessions, set your local pricing, upload beautiful thumbnails, and optionally add a free preview session to draw students in.</p></div>
+    <div class="step rv"><small>STEP 02</small><h3>Share your course</h3><p>Students discover your beautiful landing page, watch your intro video, and experience your free preview session.</p></div>
+    <div class="step rv"><small>STEP 03</small><h3>Get paid directly</h3><p>Students pay using your local payment link (or bank details) and upload their receipt proof. You verify it on your dashboard.</p></div>
+    <div class="step rv"><small>STEP 04</small><h3>Teach &amp; grow</h3><p>Deliver high-quality live sessions on Zoom, automatically share recordings, and grow your student base without borders.</p></div>
+  </div>
+</div></section>
+
+<div class="final"><div class="wrap">
+  <div class="banner rv"><h2>Ready to start teaching?</h2><p>Join hundreds of creators who are monetizing their expertise today, without needing international payment gateways.</p><a class="btn" href="/signup?role=creator">Create your first pack <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</div></div>
+</main>
+
+<footer><div class="wrap">
+  <div><b>Lora</b><small>Built for creators, everywhere.</small></div>
+  <span>© 2026 Lora. All rights reserved.</span>
+  <nav><a href="/signup">Get started</a><a href="/login">Log in</a></nav>
+</div></footer>
+
+<script>
+// Fade-in on scroll (purely visual)
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

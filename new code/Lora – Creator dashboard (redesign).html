@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Creator dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand-soft:#e9eeff;--navy:#0e1733;--shadow:0 1px 2px rgba(14,23,51,.05),0 10px 28px -16px rgba(14,23,51,.16);
+--c1:#2f5bff;--c1s:#e9eeff;--c2:#8a4dff;--c2s:#f1eaff;--c3:#12a46f;--c3s:#e3f7ee;--c4:#f2620f;--c4s:#fff0e6;box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+h1,h2,h3,.big{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+aside{background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;font:800 22px 'Bricolage Grotesque';padding:0 10px 22px}
+.logo i{width:34px;height:34px;border-radius:11px;background:var(--brand);display:grid;place-items:center}.logo svg{width:16px;fill:#fff}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:500;margin-bottom:2px}
+nav a:hover{background:var(--bg);color:var(--ink)}nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.tip{margin-top:auto;border-radius:16px;padding:16px;background:var(--brand-soft);font-size:13px;color:var(--muted)}
+.tip b{display:block;color:var(--ink);font:700 15px 'Bricolage Grotesque';margin-bottom:4px}
+.tip button{margin-top:10px;background:var(--ink);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:600;cursor:pointer;width:100%}
+main{min-width:0}
+.top{display:flex;align-items:center;gap:16px;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.search input{flex:1;border:0;background:none;padding:10px 0;outline:0;min-width:0;font:inherit}
+.search kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px}
+.bell{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8a5cff);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.who small{display:block;color:var(--muted);font-size:12px;line-height:1.1}
+.page{max-width:1180px;padding:28px 32px 48px;display:flex;flex-direction:column;gap:24px}
+/* trial banner */
+.trial{display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,#e4f8ee,#e9f1ff);border:1px solid #c9ecd9;border-radius:16px;padding:12px 16px;font-size:14px}
+.trial .dot{width:10px;height:10px;border-radius:50%;background:#12a46f;box-shadow:0 0 0 4px rgba(18,164,111,.2);flex:none}
+.trial p{margin:0;flex:1}.trial a{font-weight:700;color:var(--brand);white-space:nowrap}
+.trial button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1}
+.hello h1{font-size:clamp(30px,4vw,42px)}.hello p{margin:4px 0 0;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.stats,.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat{padding:22px;position:relative;overflow:hidden}
+.stat .r{display:flex;align-items:center;gap:14px}
+.ib{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.ib .ic{width:22px;height:22px}
+.stat small{color:var(--muted);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+.big{font-size:34px;font-weight:800;line-height:1.05}
+.trend{margin-top:12px;font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.trend b{border-radius:99px;padding:1px 8px;font-size:12px}
+.up{background:#e3f7ee;color:#0b7f55}.down{background:#fde8ec;color:#c0283f}
+.spark{display:block;width:100%;height:54px;margin-top:10px}
+.act{display:flex;align-items:center;gap:14px;padding:18px 20px;transition:transform .2s,box-shadow .2s}
+.act:hover{transform:translateY(-3px);box-shadow:0 18px 36px -20px rgba(14,23,51,.35)}
+.act b{display:block;font:700 16px 'Bricolage Grotesque'}.act span{color:var(--muted);font-size:13.5px;line-height:1.35;display:block}
+.act.dark{background:linear-gradient(135deg,#0e1733,#24357c);color:#fff;border:0}.act.dark span{color:rgba(255,255,255,.7)}
+.act.dark .ib{background:rgba(255,255,255,.14)}
+.cols{display:grid;grid-template-columns:1fr 350px;gap:24px;align-items:start}
+.sec{padding:24px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sh .ib{width:40px;height:40px;background:var(--bg);color:var(--muted)}
+.sh h2{font-size:19px}.sh p{margin:0;color:var(--muted);font-size:13.5px}
+.va{margin-left:auto;color:var(--brand);font-weight:600;font-size:14px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.pack{display:grid;grid-template-columns:230px 1fr;gap:20px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)}
+.thumb{position:relative;min-height:190px;background:linear-gradient(135deg,#0e1733,#3b2fb8)} /* replace with the pack's real thumbnail <img> (object-fit:cover) */
+.thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.badge{position:absolute;top:12px;left:12px;background:#e3f7ee;color:#0b7f55;font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:3px 10px}
+.pb{padding:18px 20px 18px 0;display:flex;flex-direction:column;gap:8px}
+.pb h3{font-size:22px}.pb p{margin:0;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.meta span{display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:99px;padding:4px 12px;font-size:13px;color:var(--muted)}
+.meta .ic{width:15px;height:15px}
+.pf{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px}
+.price{font:800 24px 'Bricolage Grotesque';color:var(--brand)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--brand);color:var(--brand);border-radius:12px;padding:8px 16px;font-weight:600;font-size:14px;transition:.15s}
+.btn:hover{background:var(--brand);color:#fff}
+.side{display:flex;flex-direction:column;gap:24px}
+.qs a{display:flex;align-items:center;gap:12px;padding:10px 6px;border-radius:12px;transition:background .15s}
+.qs a:hover{background:var(--bg)}
+.qs a .ib{width:38px;height:38px}.qs a span{flex:1;font-weight:500}.qs a b{font:700 17px 'Bricolage Grotesque'}.qs a .ic:last-child{width:16px;color:var(--muted)}
+.feed li{list-style:none;display:flex;gap:12px;align-items:flex-start;padding:6px 0}
+.feed ul{margin:0;padding:0}.feed b{display:block}.feed small{color:var(--muted)}.feed time{margin-left:auto;color:var(--muted);font-size:12.5px;white-space:nowrap}
+@media(max-width:1100px){.stats,.acts{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+@media(max-width:900px){.app{grid-template-columns:1fr}
+ aside{position:fixed;bottom:0;left:0;right:0;top:auto;height:auto;z-index:20;flex-direction:row;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));border-right:0;border-top:1px solid var(--line)}
+ .logo,.tip{display:none}nav{display:flex;width:100%;justify-content:space-around}nav a{flex-direction:column;gap:2px;font-size:11px;padding:6px 8px;margin:0}
+ .page{padding:20px 16px 96px}.top{padding:12px 16px}.who div{display:none}}
+@media(max-width:560px){.stats,.acts{grid-template-columns:1fr}.pack{grid-template-columns:1fr}.pb{padding:0 18px 18px}.thumb{min-height:170px}.trial{font-size:13px;flex-wrap:wrap}.search kbd{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</div>
+  <nav>
+    <a href="/creator/dashboard" class="on"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="/creator/packs"><svg class="ic" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>My Packs</a>
+    <a href="/creator/create"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Pack</a>
+    <a href="/creator/enrollments"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Enrollments</a>
+    <a href="/creator/settings"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Settings</a>
+  </nav>
+  <div class="tip"><b>Grow your audience</b>Share your courses with the world and make a bigger impact.<button>View tips</button></div>
+</aside>
+
+<main>
+  <div class="top">
+    <label class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search courses, packs, students…" aria-label="Search"><kbd>Ctrl K</kbd></label>
+    <div class="who"><button class="bell" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4"/></svg></button><div class="av">BD</div><div><b>Binuka Dinsara</b><small>Creator</small></div></div>
+  </div>
+
+  <div class="page">
+    <div class="trial" id="trial"><span class="dot"></span><p><b>Free trial active</b> · 18 days remaining. Enjoying Lora? Subscribe to keep going after your trial.</p><a href="/creator/settings#plan">Subscribe now</a><button id="closeTrial" aria-label="Dismiss">×</button></div>
+
+    <div class="hello"><h1>Welcome back, Binuka</h1><p>Here's what's happening with your courses today.</p></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="acts">
+      <a class="card act dark" href="/creator/create"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><div><b>Create new pack</b><span>Start a new course pack</span></div></a>
+      <a class="card act" href="/creator/enrollments"><span class="ib" style="background:var(--c2s);color:var(--c2)"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><div><b>Manage enrollments</b><span>View &amp; manage your students</span></div></a>
+      <a class="card act" href="/creator/payouts"><span class="ib" style="background:var(--c3s);color:var(--c3)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5"/></svg></span><div><b>View payouts</b><span>Track your earnings</span></div></a>
+      <a class="card act" href="/creator/settings"><span class="ib" style="background:var(--bg);color:var(--muted)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span><div><b>Settings</b><span>Update your profile &amp; preferences</span></div></a>
+    </div>
+
+    <div class="cols">
+      <section class="card sec">
+        <div class="sh"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><path d="M6 20V10M12 20V4M18 20v-7"/></svg></span><div><h2>Recent packs</h2><p>Your latest course packs and their performance.</p></div><a class="va" href="/creator/packs">View all <svg class="ic" viewBox="0 0 24 24" style="width:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+        <article class="pack">
+          <div class="thumb"><span class="badge">Published</span></div>
+          <div class="pb">
+            <h3>frcymrfy</h3><p>ubvgjguilv</p>
+            <div class="meta"><span><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.5V16c3 2 7 2 10 0v-4.5"/></svg>2 lessons</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Learn at your own pace</span><span><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Music</span></div>
+            <div class="pf"><span class="price">LKR 3000</span><a class="btn" href="/creator/pack/1">View details <svg class="ic" viewBox="0 0 24 24" style="width:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          </div>
+        </article>
+      </section>
+
+      <div class="side">
+        <section class="card sec qs">
+          <div class="sh"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><path d="M6 20V10M12 20V4M18 20v-7"/></svg></span><h2>Quick stats</h2></div>
+          <div id="qs"></div>
+        </section>
+        <section class="card sec feed">
+          <div class="sh"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><h2>Recent activity</h2><a class="va" href="/creator/activity">View all</a></div>
+          <ul><li><span class="ib" style="background:var(--c3s);color:var(--c3);width:38px;height:38px"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span><div><b>New enrollment</b><small>Someone enrolled in your course</small></div><time>2 days ago</time></li></ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+// Demo data: bind these to your real dashboard data (same values/handlers as today)
+const S=[
+ {k:'Total packs',v:'1',c:'c1',up:1,p:0,d:[3,4,3.6,4.6,4.2,5,5.4],ic:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'},
+ {k:'Students',v:'0',c:'c2',up:1,p:0,d:[3,3.6,3,4,3.5,4.4,4.2],ic:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>'},
+ {k:'Revenue',v:'$0',c:'c3',up:1,p:0,d:[2,3,2.6,3.8,3.2,4.4,5],ic:'<path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5"/>'},
+ {k:'Pending',v:'0',c:'c4',up:0,p:0,d:[5,4.4,4.8,3.8,4,3.2,3],ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}];
+function spark(d,col){const w=200,h=54,m=Math.max(...d),n=Math.min(...d),x=i=>i*w/(d.length-1),y=v=>h-6-(v-n)/(m-n||1)*(h-14);
+ const pts=d.map((v,i)=>`${x(i)},${y(v)}`),line='M'+pts.join(' L');
+ return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${line} L${w},${h} L0,${h}Z" fill="var(--${col}s)"/><path d="${line}" fill="none" stroke="var(--${col})" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`}
+$('#stats').innerHTML=S.map(s=>`<div class="card stat"><div class="r"><span class="ib" style="background:var(--${s.c}s);color:var(--${s.c})"><svg class="ic" viewBox="0 0 24 24">${s.ic}</svg></span><div><small>${s.k}</small><div class="big">${s.v}</div></div></div><div class="trend"><b class="${s.up?'up':'down'}">${s.up?'↗':'↘'} ${s.p}%</b>vs last 7 days</div>${spark(s.d,s.c)}</div>`).join('');
+$('#qs').innerHTML=[['Total packs','1','c1',S[0].ic],['Total students','0','c2',S[1].ic],['Total revenue','$0','c3',S[2].ic],['Pending payouts','0','c4',S[3].ic]].map(q=>`<a href="#"><span class="ib" style="background:var(--${q[2]}s);color:var(--${q[2]})"><svg class="ic" viewBox="0 0 24 24">${q[3]}</svg></span><span>${q[0]}</span><b>${q[1]}</b><svg class="ic" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></a>`).join('');
+function $(s){return document.querySelector(s)}
+$('#closeTrial').onclick=()=>$('#trial').remove();
+</script>
+</body>
+</html>

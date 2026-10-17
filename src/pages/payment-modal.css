@@ -1,0 +1,662 @@
+/* ================================================================
+   Lora Payment Modal — light-mode-only scoped styles
+   All selectors are prefixed with .lora-pay to avoid collisions
+   with app-level .btn, .card, .tabs, .row, .note, .total, .file
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+/* ── Design tokens — light only, no dark blocks ── */
+.lora-pay {
+  --pm-bg:         #e9edf7;
+  --pm-surface:    #fff;
+  --pm-soft:       #f4f6fb;
+  --pm-ink:        #0e1733;
+  --pm-muted:      #68728d;
+  --pm-line:       #e3e7f1;
+  --pm-brand:      #2f5bff;
+  --pm-brand-soft: #e9eeff;
+  --pm-ok:         #0f9d6b;
+  --pm-bad:        #d6334a;
+  --pm-card1:      #0e1733;
+  --pm-card2:      #1d2f78;
+}
+
+/* ── Box-sizing reset ── */
+.lora-pay *,
+.lora-pay *::before,
+.lora-pay *::after {
+  box-sizing: border-box !important;
+}
+
+/* ── Fonts ── */
+.lora-pay h1,
+.lora-pay h2,
+.lora-pay h3,
+.lora-pay .pm-bricolage {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+/* ── Backdrop ── */
+.lora-pay-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(14, 23, 51, 0.55) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px !important;
+  z-index: 9999 !important;
+}
+
+/* ── Modal shell ── */
+.lora-pay {
+  width: 100% !important;
+  max-width: 540px !important;
+  max-height: calc(100vh - 32px) !important;
+  background: var(--pm-surface) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 30px 80px -20px rgba(14, 23, 51, 0.35) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  color: var(--pm-ink) !important;
+  font-family: 'Figtree', system-ui, sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+/* ── Modal head ── */
+.lora-pay .pm-head {
+  padding: 24px 26px 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+.lora-pay .pm-head h1 {
+  font-size: 24px !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-head p {
+  margin: 2px 0 0 !important;
+  color: var(--pm-muted) !important;
+  font-size: 14px !important;
+}
+
+.lora-pay .pm-close {
+  border: 0 !important;
+  background: var(--pm-soft) !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  color: var(--pm-muted) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  display: grid !important;
+  place-items: center !important;
+  flex-shrink: 0 !important;
+  font-family: system-ui, sans-serif !important;
+  transition: background 0.15s, color 0.15s !important;
+}
+
+.lora-pay .pm-close:hover {
+  background: var(--pm-line) !important;
+  color: var(--pm-ink) !important;
+}
+
+/* ── Modal body ── */
+.lora-pay .pm-body {
+  padding: 20px 26px 8px !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+/* ── Total amount row ── */
+.lora-pay .pm-total {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-end !important;
+  background: var(--pm-soft) !important;
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
+}
+
+.lora-pay .pm-total small {
+  color: var(--pm-muted) !important;
+  font-weight: 500 !important;
+}
+
+.lora-pay .pm-amt {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-amt span {
+  font-size: 15px !important;
+  color: var(--pm-muted) !important;
+  font-weight: 600 !important;
+  margin-right: 6px !important;
+  font-family: 'Figtree', sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+/* ── Tabs ── */
+.lora-pay .pm-tabs {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  background: var(--pm-soft) !important;
+  padding: 4px !important;
+  border-radius: 14px !important;
+  gap: 4px !important;
+}
+
+.lora-pay .pm-tabs button {
+  border: 0 !important;
+  background: none !important;
+  border-radius: 11px !important;
+  padding: 10px !important;
+  font-weight: 600 !important;
+  color: var(--pm-muted) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+}
+
+.lora-pay .pm-tabs button.on {
+  background: var(--pm-surface) !important;
+  color: var(--pm-ink) !important;
+  box-shadow: 0 1px 3px rgba(14, 23, 51, 0.12) !important;
+}
+
+.lora-pay .pm-tabs svg {
+  width: 17px !important;
+  height: 17px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ── Generic inline icon ── */
+.lora-pay .pm-ic {
+  width: 17px !important;
+  height: 17px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Pane show/hide ── */
+.lora-pay .pm-pane {
+  display: none !important;
+}
+
+.lora-pay .pm-pane.show {
+  display: block !important;
+  animation: pm-in 0.2s ease !important;
+}
+
+@keyframes pm-in {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+
+/* ── Pay-via-link button ── */
+.lora-pay .pm-btn-link {
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 14px 20px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  background: var(--pm-brand) !important;
+  color: #fff !important;
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  transition: filter 0.15s, transform 0.1s !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+  text-decoration: none !important;
+}
+
+.lora-pay .pm-btn-link:hover {
+  filter: brightness(1.08) !important;
+}
+
+.lora-pay .pm-btn-link:active {
+  transform: scale(0.99) !important;
+}
+
+.lora-pay .pm-btn-link svg {
+  width: 17px !important;
+  height: 17px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.lora-pay .pm-helper {
+  color: var(--pm-muted) !important;
+  font-size: 13px !important;
+  margin: 10px 2px 0 !important;
+  text-align: center !important;
+}
+
+/* ── Bank card ── */
+.lora-pay .pm-bank {
+  background: linear-gradient(135deg, var(--pm-card1), var(--pm-card2)) !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  padding: 20px 22px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.lora-pay .pm-bank::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -50px !important;
+  top: -70px !important;
+  width: 220px !important;
+  height: 220px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 34px rgba(255, 255, 255, 0.04), 0 0 0 68px rgba(255, 255, 255, 0.03) !important;
+  pointer-events: none !important;
+}
+
+.lora-pay .pm-bank dl {
+  margin: 0 !important;
+  display: grid !important;
+  gap: 14px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.lora-pay .pm-bank dt {
+  font-size: 12px !important;
+  opacity: 0.65 !important;
+  margin-bottom: 1px !important;
+  color: #fff !important;
+}
+
+.lora-pay .pm-bank dd {
+  margin: 0 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: #fff !important;
+}
+
+.lora-pay .pm-bank .pm-bn {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  color: #fff !important;
+}
+
+/* ── Row ── */
+.lora-pay .pm-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* ── Account number ── */
+.lora-pay .pm-num {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  font-variant-numeric: tabular-nums !important;
+  color: #fff !important;
+}
+
+/* ── Two-column grid ── */
+.lora-pay .pm-two {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 14px !important;
+}
+
+/* ── Copy button ── */
+.lora-pay .pm-copy {
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  padding: 7px 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  font-family: 'Figtree', sans-serif !important;
+  transition: background 0.15s !important;
+}
+
+.lora-pay .pm-copy:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+.lora-pay .pm-copy.done {
+  background: var(--pm-ok) !important;
+  border-color: var(--pm-ok) !important;
+}
+
+.lora-pay .pm-copy svg {
+  width: 15px !important;
+  height: 15px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ── Creator note ── */
+.lora-pay .pm-note {
+  margin-top: 12px !important;
+  background: var(--pm-brand-soft) !important;
+  border-radius: 14px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-note b {
+  color: var(--pm-brand) !important;
+}
+
+/* ── Section heading ── */
+.lora-pay .pm-sec h2 {
+  font-size: 17px !important;
+  margin-bottom: 10px !important;
+  color: var(--pm-ink) !important;
+}
+
+/* ── Method pick ── */
+.lora-pay .pm-pick {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+}
+
+.lora-pay .pm-pick label {
+  cursor: pointer !important;
+  position: relative !important;
+}
+
+.lora-pay .pm-pick input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.lora-pay .pm-pick span {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border: 1.5px solid var(--pm-line) !important;
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+  font-weight: 500 !important;
+  transition: border-color 0.15s, background 0.15s !important;
+  color: var(--pm-ink) !important;
+  background: var(--pm-surface) !important;
+}
+
+.lora-pay .pm-pick span::before {
+  content: "" !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--pm-line) !important;
+  flex: none !important;
+  transition: border-color 0.15s, background 0.15s !important;
+}
+
+.lora-pay .pm-pick input:checked + span {
+  border-color: var(--pm-brand) !important;
+  background: var(--pm-brand-soft) !important;
+  font-weight: 600 !important;
+}
+
+.lora-pay .pm-pick input:checked + span::before {
+  border-color: var(--pm-brand) !important;
+  background: radial-gradient(var(--pm-brand) 45%, transparent 50%) !important;
+}
+
+.lora-pay .pm-pick input:focus-visible + span {
+  outline: 2px solid var(--pm-brand) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Upload drop zone ── */
+.lora-pay .pm-drop {
+  border: 2px dashed var(--pm-line) !important;
+  border-radius: 18px !important;
+  padding: 26px 16px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: border-color 0.15s, background 0.15s !important;
+  background: var(--pm-soft) !important;
+  display: block !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-drop:hover,
+.lora-pay .pm-drop.over {
+  border-color: var(--pm-brand) !important;
+  background: var(--pm-brand-soft) !important;
+}
+
+.lora-pay .pm-drop.err {
+  border-color: var(--pm-bad) !important;
+}
+
+.lora-pay .pm-drop-icon {
+  width: 30px !important;
+  height: 30px !important;
+  color: var(--pm-brand) !important;
+  margin-bottom: 6px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.lora-pay .pm-drop b {
+  display: block !important;
+  color: var(--pm-ink) !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-weight: 600 !important;
+}
+
+.lora-pay .pm-drop small {
+  color: var(--pm-muted) !important;
+}
+
+/* ── File preview ── */
+.lora-pay .pm-file {
+  display: none !important;
+  align-items: center !important;
+  gap: 14px !important;
+  border: 1.5px solid var(--pm-ok) !important;
+  border-radius: 16px !important;
+  padding: 10px !important;
+  background: var(--pm-soft) !important;
+}
+
+.lora-pay .pm-file.show {
+  display: flex !important;
+}
+
+.lora-pay .pm-file img {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 10px !important;
+  object-fit: cover !important;
+  flex: none !important;
+}
+
+.lora-pay .pm-file .pm-file-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.lora-pay .pm-file .pm-file-info b {
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-file .pm-file-info small {
+  color: var(--pm-muted) !important;
+}
+
+.lora-pay .pm-file .pm-rm {
+  border: 0 !important;
+  background: none !important;
+  color: var(--pm-bad) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  font-family: 'Figtree', sans-serif !important;
+}
+
+/* ── Error message ── */
+.lora-pay .pm-msg {
+  color: var(--pm-bad) !important;
+  font-size: 13px !important;
+  margin: 8px 2px 0 !important;
+  min-height: 0 !important;
+}
+
+/* ── Footer ── */
+.lora-pay .pm-foot {
+  padding: 16px 26px 22px !important;
+  border-top: 1px solid var(--pm-line) !important;
+  display: flex !important;
+  gap: 10px !important;
+  background: var(--pm-surface) !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Buttons (foot) ── */
+.lora-pay .pm-btn {
+  flex: 1 !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 14px 20px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  background: var(--pm-brand) !important;
+  color: #fff !important;
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  transition: filter 0.15s, transform 0.1s !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 15px !important;
+}
+
+.lora-pay .pm-btn:hover:not(:disabled) {
+  filter: brightness(1.08) !important;
+}
+
+.lora-pay .pm-btn:active:not(:disabled) {
+  transform: scale(0.99) !important;
+}
+
+.lora-pay .pm-btn:disabled {
+  background: var(--pm-line) !important;
+  color: var(--pm-muted) !important;
+  cursor: not-allowed !important;
+}
+
+.lora-pay .pm-btn.ghost {
+  flex: none !important;
+  background: none !important;
+  border: 1.5px solid var(--pm-line) !important;
+  color: var(--pm-ink) !important;
+}
+
+.lora-pay .pm-btn.ghost:hover:not(:disabled) {
+  background: var(--pm-soft) !important;
+  filter: none !important;
+}
+
+/* ── Loader spinner ── */
+.lora-pay .pm-spin {
+  animation: pm-spin 1s linear infinite !important;
+}
+
+@keyframes pm-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Bottom sheet on narrow screens ── */
+@media (max-width: 560px) {
+  .lora-pay-backdrop {
+    padding: 0 !important;
+    place-items: end stretch !important;
+  }
+  .lora-pay {
+    max-width: none !important;
+    max-height: 94vh !important;
+    border-radius: 26px 26px 0 0 !important;
+  }
+  .lora-pay .pm-pick,
+  .lora-pay .pm-two {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-pay .pm-num {
+    font-size: 22px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-pay *,
+  .lora-pay-backdrop {
+    animation: none !important;
+    transition: none !important;
+  }
+}

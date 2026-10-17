@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Session details</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#0f9d6b;--ok-soft:#e3f7ee;--gold:#f5a400;--shadow:0 1px 2px rgba(14,23,51,.05),0 12px 30px -18px rgba(14,23,51,.2);box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Figtree,system-ui,sans-serif}
+h1,h2,h3,.price{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1160px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top,0px)) 24px 64px}
+.crumbs{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:22px;flex-wrap:wrap}
+.crumbs a{color:var(--brand);font-weight:500}.crumbs a:hover{text-decoration:underline}.crumbs b{color:var(--ink);font-weight:600}
+.layout{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:5px 12px}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.05;margin:14px 0 18px}
+.by{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8a5cff);color:#fff;display:grid;place-items:center;font-weight:700}
+.by small{display:block;color:var(--muted);line-height:1.2}.by b{font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 24px}
+.meta span{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:14px;color:var(--muted)}
+.meta .ic{width:16px;height:16px;color:var(--brand)}.meta b{color:var(--ink)}.meta .star{color:var(--gold);fill:var(--gold)}
+.hero{aspect-ratio:16/9;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#0e1733,#3b2fb8);position:relative;box-shadow:0 30px 60px -30px rgba(14,23,51,.5)}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover} /* use the pack's real thumbnail here */
+.sec{margin-top:36px}.sec h2{font-size:26px;margin-bottom:14px}
+.sec>p{margin:0;color:var(--muted);font-size:16px}
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:22px}
+.learn div{display:flex;gap:10px;align-items:flex-start}
+.chk{width:22px;height:22px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center;flex:none;margin-top:1px}
+.chk .ic{width:13px;height:13px;stroke-width:2.6}
+.list{display:flex;flex-direction:column;gap:12px}
+.sess{display:flex;align-items:center;gap:16px;padding:16px 18px;position:relative}
+.sess .n{width:44px;height:44px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font:800 17px 'Bricolage Grotesque';flex:none}
+.sess.lock .n{background:var(--bg);color:var(--muted)}
+.sess .t{flex:1;min-width:0}
+.sess .d{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:600}
+.pv{background:var(--brand-soft);color:var(--brand);border-radius:99px;padding:1px 9px;font-size:11px;font-weight:800;letter-spacing:.06em}
+.sess h3{font-size:19px;margin:2px 0}
+.sess .s{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--muted)}
+.sess .s .ic{width:15px;height:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:12px 20px;font-weight:600;cursor:pointer;border:1.5px solid var(--brand);color:var(--brand);background:var(--surface);white-space:nowrap;transition:.15s}
+.btn:hover{background:var(--brand);color:#fff}
+.btn.pri{background:var(--brand);color:#fff;width:100%;padding:15px;font-size:16px;box-shadow:0 12px 26px -12px rgba(47,91,255,.8)}
+.btn.pri:hover{background:var(--brand2)}
+.lk{color:var(--muted);font-size:13px;display:flex;gap:6px;align-items:center}
+/* sidebar */
+.side{position:sticky;top:20px;display:flex;flex-direction:column;gap:18px}
+.buy{padding:26px}
+.buy small{color:var(--muted);font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase}
+.price{font-size:42px;font-weight:800;line-height:1.1;margin:2px 0 18px}
+.ul{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ul li{display:flex;gap:10px;align-items:center}
+.secure{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:center;gap:6px;color:var(--muted);font-size:13px}
+.secure .ic{width:15px;height:15px;color:var(--ok)}
+.box{padding:22px}.box h3{font-size:18px;margin-bottom:12px}
+.row{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
+.row+.row{border-top:1px dashed var(--line)}
+.row .ib{width:36px;height:36px;border-radius:11px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:none}
+.row small{display:block;color:var(--muted);line-height:1.2}.row b{font-weight:600}
+.inc li{display:flex;gap:12px;align-items:center;color:var(--ink)}.inc .ic{color:var(--brand)}
+.help{text-align:center;padding:24px}
+.help .ib{width:48px;height:48px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin:0 auto 10px}
+.help h3{font-size:18px}.help p{margin:4px 0 10px;color:var(--muted);font-size:14px}.help a{color:var(--brand);font-weight:700}
+.mbar{display:none}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.side{position:static}.wrap{padding:20px 16px 110px}
+ .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));align-items:center;gap:14px}
+ .mbar .price{font-size:24px;margin:0}.mbar small{display:block;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}.mbar .btn{flex:1;width:auto;padding:13px}}
+@media(max-width:560px){.learn{grid-template-columns:1fr}.sess{flex-wrap:wrap}.sess .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/sessions">Sessions</a><span>›</span><b>frcymrfy</b></nav>
+
+  <div class="layout">
+    <main>
+      <span class="tag"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z"/></svg>Free preview session</span>
+      <h1>frcymrfy</h1>
+      <div class="by"><div class="av">BD</div><div><small>Created by</small><b>Binuka Dinsara</b></div></div>
+      <div class="meta">
+        <span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 5 3.5-5 3.5z"/></svg><b>2</b> sessions</span>
+        <span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>120</b> min total</span>
+        <span><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>All levels</span>
+        <span><svg class="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z"/></svg><b>4.9</b> (128 reviews)</span>
+      </div>
+
+      <div class="hero"><!-- <img src="REAL_THUMBNAIL" alt="frcymrfy"> --></div>
+
+      <section class="sec"><h2>About this session</h2><p>ubvgjguilv</p></section>
+
+      <section class="sec"><h2>What you'll learn</h2>
+        <div class="card learn">
+          <div><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Master the core concepts from scratch</div>
+          <div><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Practical hands-on exercises &amp; projects</div>
+          <div><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Live Q&amp;A and community support</div>
+          <div><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Access to exclusive resources and templates</div>
+        </div>
+      </section>
+
+      <section class="sec"><h2>Session schedule</h2>
+        <div class="list">
+          <!-- Unlocked / free-preview session -->
+          <div class="card sess"><div class="n">1</div><div class="t"><div class="d">Oct 13 <span class="pv">Free preview</span></div><h3>free simnar</h3><div class="s"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>8:00 PM<span>·</span>60m duration</div></div><button class="btn" type="button"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>Watch recording</button></div>
+          <!-- Locked session -->
+          <div class="card sess lock"><div class="n"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div class="t"><div class="d">Oct 12</div><h3>day 02</h3><div class="s"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>8:11 PM<span>·</span>60m duration</div></div><span class="lk"><svg class="ic" viewBox="0 0 24 24" style="width:15px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Unlocks after enrollment</span></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="side">
+      <div class="card buy">
+        <small>Total price</small>
+        <div class="price">LKR 3000</div>
+        <button class="btn pri" type="button" id="join">Join this session</button><!-- opens the existing "Complete payment" modal -->
+        <ul class="ul">
+          <li><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Full lifetime access</li>
+          <li><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Access on mobile and desktop</li>
+          <li><span class="chk"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Certificate of completion</li>
+        </ul>
+        <div class="secure"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></svg>Secure checkout · 7-day refund</div>
+      </div>
+
+      <div class="card box"><h3>Session details</h3>
+        <div class="row"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><div><small>Starts on</small><b>October 13, 2026</b></div></div>
+        <div class="row"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><small>Time</small><b>8:00 PM</b></div></div>
+        <div class="row"><span class="ib"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div><small>Category</small><b>Music</b></div></div>
+      </div>
+
+      <div class="card box"><h3>What's included</h3>
+        <ul class="ul inc" style="margin-top:0">
+          <li><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>120 minutes of live content</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>Access on TV &amp; mobile</li>
+          <li><svg class="ic" viewBox="0 0 24 24"><path d="M4 12a4 4 0 0 1 4-4c4 0 4 8 8 8a4 4 0 0 0 0-8c-4 0-4 8-8 8a4 4 0 0 1-4-4z"/></svg>Replay availability</li>
+        </ul>
+      </div>
+
+      <div class="card help"><div class="ib"><svg class="ic" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg></div><h3>Need help?</h3><p>Having trouble with your enrollment or have questions?</p><a href="/support">Contact support</a></div>
+    </aside>
+  </div>
+</div>
+
+<!-- Mobile sticky purchase bar -->
+<div class="mbar"><div><small>Total price</small><div class="price">LKR 3000</div></div><button class="btn pri" type="button" id="join2">Join this session</button></div>
+<script>
+// Both Join buttons must call your existing handler that opens the payment modal
+document.querySelectorAll('#join,#join2').forEach(b=>b.onclick=()=>{/* openPaymentModal() */});
+</script>
+</body>
+</html>

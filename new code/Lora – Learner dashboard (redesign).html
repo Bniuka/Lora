@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – My dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#0f9d6b;--ok-soft:#e3f7ee;--warn:#b86a00;--warn-soft:#fff2da;--shadow:0 1px 2px rgba(14,23,51,.05),0 12px 30px -18px rgba(14,23,51,.2);box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{max-width:1160px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:24px}
+.logo{display:flex;align-items:center;gap:9px;font:800 22px 'Bricolage Grotesque'}
+.logo i{width:32px;height:32px;border-radius:10px;background:var(--brand);display:grid;place-items:center}.logo svg{width:15px;fill:#fff}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:0 14px;transition:.15s}
+.search:focus-within{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px var(--brand-soft)}
+.search input{flex:1;border:0;background:none;padding:11px 0;outline:0;min-width:0;font:inherit}
+.search .ic{color:var(--muted)}
+.links{margin-left:auto;display:flex;align-items:center;gap:6px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:600;color:var(--muted)}
+.links a:hover{background:var(--bg);color:var(--ink)}.links a.on{color:var(--brand);background:var(--brand-soft)}
+.bell{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--muted);cursor:pointer;position:relative;margin-left:6px}
+.bell:after{content:"";position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#e5484d;border:2px solid #fff;display:none}
+.bell.has:after{display:block}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8a5cff);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;margin-left:4px}
+.wrap{max-width:1160px;margin:0 auto;padding:36px 24px 72px}
+.hello{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:34px}
+.hello h1{font-size:clamp(32px,5vw,46px);line-height:1.05}.hello p{margin:6px 0 0;color:var(--muted);font-size:16px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sh h2{font-size:24px}.sh .cnt{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;border-radius:99px;padding:2px 10px}
+.va{margin-left:auto;color:var(--brand);font-weight:600;display:flex;align-items:center;gap:5px}.va:hover{gap:8px}.va .ic{width:16px;transition:.15s}
+.sec{margin-bottom:46px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+/* empty state */
+.empty{display:grid;justify-items:center;text-align:center;padding:52px 24px;background:radial-gradient(500px 220px at 50% 0,#e4ebff,transparent 70%),var(--surface)}
+.empty .ring{width:92px;height:92px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;color:var(--brand);box-shadow:0 0 0 12px rgba(47,91,255,.06);margin-bottom:22px}
+.empty .ring .ic{width:40px;height:40px}
+.empty h3{font-size:24px}.empty p{margin:6px 0 22px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;border:0;border-radius:14px;padding:13px 26px;font-weight:600;cursor:pointer;box-shadow:0 12px 26px -14px rgba(47,91,255,.9);transition:.15s}
+.btn:hover{background:var(--brand2);transform:translateY(-1px)}
+.btn.sm{padding:9px 16px;font-size:14px;box-shadow:none;border-radius:11px}
+/* grid + cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.course{overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.course:hover{transform:translateY(-5px);box-shadow:0 26px 50px -26px rgba(14,23,51,.4)}
+.th{aspect-ratio:16/9;position:relative;background:linear-gradient(135deg,#0e1733,#3b2fb8);overflow:hidden}
+.th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.course:hover .th img{transform:scale(1.04)}
+.chip{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.95);color:var(--brand);font-weight:700;font-size:12px;border-radius:99px;padding:4px 11px;box-shadow:0 4px 12px -4px rgba(14,23,51,.3)}
+.chip .ic{width:13px;height:13px}
+.chip.ok{color:var(--ok)}.chip.wait{color:var(--warn)}
+.cb{padding:16px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
+.cb h3{font-size:19px}.cb .by{color:var(--muted);font-size:14px;display:flex;gap:6px;align-items:center}
+.cb .by i{width:3px;height:3px;border-radius:50%;background:var(--muted)}
+.cf{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between}
+.price{font:800 20px 'Bricolage Grotesque';color:var(--brand)}
+.arrow{width:36px;height:36px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;transition:.2s}
+.course:hover .arrow{background:var(--brand);color:#fff}
+.preview{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;border-radius:12px;padding:8px 12px;font-size:12px;display:flex;gap:8px;align-items:center;z-index:20}
+.preview button{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer}
+@media(max-width:760px){.bar{flex-wrap:wrap;height:auto;padding:12px 16px;gap:12px}.search{order:3;flex:1 1 100%;max-width:none}.links{margin-left:auto}.links a{padding:8px 10px}.wrap{padding:24px 16px 64px}}
+@media(max-width:420px){.links a:not(.on){display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a class="logo" href="/learner/dashboard"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</a>
+  <label class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search courses, creators…" aria-label="Search courses and creators"></label>
+  <nav class="links"><a class="on" href="/learner/dashboard">My courses</a><a href="/discover">Discover</a><button class="bell" id="bell" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4"/></svg></button><div class="av" title="Profile">NL</div></nav>
+</div></header>
+
+<div class="wrap">
+  <div class="hello"><div><h1>My dashboard</h1><p>Pick up where you left off, or find your next course.</p></div></div>
+
+  <section class="sec">
+    <div class="sh"><h2>My enrolled packs</h2><span class="cnt" id="cnt" hidden></span></div>
+    <div id="enrolled"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sh"><h2>Discover new courses</h2><a class="va" href="/discover">See all <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    <div class="grid">
+      <a class="card course" href="/learner/pack/1">
+        <div class="th"><span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z"/></svg>Free preview</span></div><!-- add <img src="REAL_THUMBNAIL" alt=""> inside .th -->
+        <div class="cb"><h3>frcymrfy</h3><div class="by">Binuka Dinsara<i></i>Music</div>
+        <div class="cf"><span class="price">LKR 3000</span><span class="arrow"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- Design-only toggle: delete when porting -->
+<div class="preview">Preview state <button id="tg">Show enrolled</button></div>
+
+<script>
+const E=[{t:'frcymrfy',by:'Binuka Dinsara',cat:'Music',s:'enrolled'},{t:'Photography basics',by:'Amaya Perera',cat:'Design',s:'pending'}];
+const empty=`<div class="card empty"><div class="ring"><svg class="ic" viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-8-2v13c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v13"/></svg></div><h3>No enrollments yet</h3><p>Discover courses and start learning today!</p><a class="btn" href="/discover">Discover courses <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>`;
+const card=c=>`<a class="card course" href="/learner/pack/1"><div class="th"><span class="chip ${c.s==='enrolled'?'ok':'wait'}">${c.s==='enrolled'?'Enrolled':'Pending approval'}</span></div><div class="cb"><h3>${c.t}</h3><div class="by">${c.by}<i></i>${c.cat}</div><div class="cf"><span class="btn sm">${c.s==='enrolled'?'Continue':'View status'}</span></div></div></a>`;
+let on=false;
+function render(){const el=document.getElementById('enrolled'),cnt=document.getElementById('cnt');
+ el.innerHTML=on?`<div class="grid">${E.map(card).join('')}</div>`:empty;cnt.hidden=!on;cnt.textContent=E.length;
+ document.getElementById('bell').classList.toggle('has',on);
+ document.getElementById('tg').textContent=on?'Show empty':'Show enrolled'}
+document.getElementById('tg').onclick=()=>{on=!on;render()};render();
+</script>
+</body>
+</html>
