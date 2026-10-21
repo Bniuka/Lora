@@ -140,7 +140,7 @@ export default function LearnerSignup() {
               <label className="form-label">Phone Number</label>
               <PhoneInput
                 international
-                defaultCountry="US"
+                defaultCountry="LK"
                 value={phone}
                 onChange={setPhone}
               />

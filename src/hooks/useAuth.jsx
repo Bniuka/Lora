@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
             last_name: meta.last_name || 'Learner',
             email: email,
             contact_number: meta.contact_number || '0000000000',
-            country_code: meta.country_code || 'US'
+            country_code: meta.country_code || 'LK'
           };
           
           // Attempt to insert the missing profile
