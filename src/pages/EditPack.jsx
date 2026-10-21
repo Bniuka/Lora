@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import {
   ArrowLeft, Save, Upload, X, Plus, Trash2, Video,
-  Clock, Loader2, Sparkles, ExternalLink
+  Clock, Loader2, Sparkles, ExternalLink, Phone
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
@@ -16,7 +18,7 @@ const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP
 export default function EditPack() {
   useSubscriptionGuard();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -89,7 +91,7 @@ export default function EditPack() {
 
       const hasFree = sessions.some(s => s.is_free_session);
 
-      await supabase.from('session_packs').update({
+      const packUpdate = {
         title: pack.title,
         description: pack.description,
         category: pack.category,
@@ -97,10 +99,19 @@ export default function EditPack() {
         currency: pack.currency,
         thumbnail_url: thumbnailUrl,
         intro_video_url: pack.intro_video_url || null,
+        whatsapp_number: pack.whatsapp_number || null,
         whatsapp_link: pack.whatsapp_link || null,
         telegram_link: pack.telegram_link || null,
         has_free_session: hasFree,
-      }).eq('id', id);
+      };
+
+      let { error: updateErr } = await supabase.from('session_packs').update(packUpdate).eq('id', id);
+      if (updateErr && updateErr.message?.includes('whatsapp_number')) {
+        delete packUpdate.whatsapp_number;
+        const retry = await supabase.from('session_packs').update(packUpdate).eq('id', id);
+        updateErr = retry.error;
+      }
+      if (updateErr) throw updateErr;
 
       for (const s of sessions) {
         const sessionData = {
@@ -204,23 +215,50 @@ export default function EditPack() {
             )}
           </div>
 
-          {/* Links */}
-          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] space-y-5">
-            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-4">Links</h2>
+          {/* Contact & Community Links */}
+          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] space-y-6">
+            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-2">Inquiry Contact &amp; Links</h2>
+            
             <div>
-              <label className="form-label">Intro Video URL</label>
-              <input className="input-field" value={pack.intro_video_url || ''}
-                onChange={e => updatePack('intro_video_url', e.target.value)} />
+              <label className="form-label">WhatsApp &amp; Contact Number for Inquiries</label>
+              <p className="text-xs text-[#94A6B8] mb-3">
+                Learners can use this to chat on WhatsApp or call you directly if they need more info or trust before joining.
+              </p>
+              <PhoneInput
+                international
+                defaultCountry="LK"
+                value={pack.whatsapp_number || ''}
+                onChange={v => updatePack('whatsapp_number', v || '')}
+              />
+              {profile?.contact_number && pack.whatsapp_number !== profile.contact_number && (
+                <button
+                  type="button"
+                  onClick={() => updatePack('whatsapp_number', profile.contact_number)}
+                  className="mt-2 text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1"
+                >
+                  Use my profile number ({profile.contact_number})
+                </button>
+              )}
             </div>
-            <div>
-              <label className="form-label">WhatsApp Group</label>
-              <input className="input-field" value={pack.whatsapp_link || ''}
-                onChange={e => updatePack('whatsapp_link', e.target.value)} />
-            </div>
-            <div>
-              <label className="form-label">Telegram Channel</label>
-              <input className="input-field" value={pack.telegram_link || ''}
-                onChange={e => updatePack('telegram_link', e.target.value)} />
+
+            <div className="pt-5 border-t border-[#F1F5F9] space-y-4">
+              <div>
+                <label className="form-label">Intro Video URL (YouTube/Vimeo)</label>
+                <input className="input-field" value={pack.intro_video_url || ''}
+                  onChange={e => updatePack('intro_video_url', e.target.value)} />
+              </div>
+              <div>
+                <label className="form-label">WhatsApp Group (For enrolled students)</label>
+                <input className="input-field" value={pack.whatsapp_link || ''}
+                  placeholder="https://chat.whatsapp.com/..."
+                  onChange={e => updatePack('whatsapp_link', e.target.value)} />
+              </div>
+              <div>
+                <label className="form-label">Telegram Channel (For enrolled students)</label>
+                <input className="input-field" value={pack.telegram_link || ''}
+                  placeholder="https://t.me/..."
+                  onChange={e => updatePack('telegram_link', e.target.value)} />
+              </div>
             </div>
           </div>
 

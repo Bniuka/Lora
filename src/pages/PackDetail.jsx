@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
   Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
-  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -13,6 +13,30 @@ import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
 import './payment-modal.css';
 import './course-detail.css';
+
+function WhatsAppIcon({ size = 18, className = "" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      style={{ flexShrink: 0 }}
+    >
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.11 7.42C8.94 7.42 8.67 7.48 8.44 7.73C8.21 7.98 7.57 8.58 7.57 9.81C7.57 11.04 8.47 12.22 8.6 12.39C8.72 12.56 10.38 15.25 13 16.28C15.19 17.14 15.63 16.97 16.1 16.93C16.58 16.88 17.63 16.3 17.85 15.68C18.07 15.06 18.07 14.53 18.01 14.42C17.95 14.31 17.78 14.25 17.53 14.12C17.28 14 16.05 13.39 15.82 13.31C15.59 13.23 15.43 13.19 15.26 13.44C15.09 13.69 14.62 14.25 14.48 14.42C14.34 14.58 14.2 14.6 13.95 14.48C13.7 14.36 12.89 14.09 11.94 13.24C11.2 12.58 10.7 11.76 10.55 11.51C10.4 11.26 10.53 11.13 10.66 11C10.77 10.89 10.91 10.71 11.04 10.56C11.17 10.41 11.21 10.3 11.3 10.12C11.38 9.94 11.34 9.79 11.28 9.67C11.22 9.55 10.73 8.35 10.52 7.85C10.32 7.37 10.12 7.43 9.96 7.42C9.81 7.42 9.64 7.42 9.11 7.42Z" />
+    </svg>
+  );
+}
+
+function getSanitizedPhone(rawNumber) {
+  if (!rawNumber) return '';
+  let cleaned = String(rawNumber).replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('0') && cleaned.length === 10) {
+    cleaned = '94' + cleaned.slice(1);
+  }
+  return cleaned;
+}
 
 function SessionButton({ session }) {
   const now = new Date();
@@ -318,7 +342,7 @@ export default function PackDetail() {
     const fetch = async () => {
       const [packRes, sessRes] = await Promise.all([
         supabase.from('session_packs')
-          .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url))')
+          .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url, contact_number, country_code))')
           .eq('id', id).single(),
         supabase.from('sessions').select('*').eq('pack_id', id).order('order_index'),
       ]);
@@ -469,6 +493,14 @@ export default function PackDetail() {
 
   const embedUrl = getVideoEmbedUrl(pack.intro_video_url);
   const hasFreePreview = pack.has_free_session || sessions.some(s => s.is_free_session);
+
+  const inquiryNumber = pack.whatsapp_number || creator?.profiles?.contact_number;
+  const sanitizedPhone = getSanitizedPhone(inquiryNumber);
+  const whatsappMessage = encodeURIComponent(
+    `Hi ${creator?.profiles?.first_name || ''}! I'm interested in your course "${pack.title}" on Lora and would like more details.`
+  );
+  const whatsappUrl = sanitizedPhone ? `https://wa.me/${sanitizedPhone}?text=${whatsappMessage}` : null;
+  const callUrl = inquiryNumber ? `tel:${inquiryNumber}` : null;
 
   const renderJoinAction = (isMobile = false) => {
     if (!user) {
@@ -699,6 +731,49 @@ export default function PackDetail() {
                   </div>
                 )}
               </section>
+
+              {/* Direct Instructor Contact Section */}
+              {inquiryNumber && (
+                <section className="sec">
+                  <div className="card trust-card">
+                    <div className="trust-head">
+                      <div className="trust-av">
+                        {creator?.profiles?.avatar_url ? (
+                          <img src={creator.profiles.avatar_url} alt="" />
+                        ) : (
+                          `${creator?.profiles?.first_name?.[0] || 'C'}${creator?.profiles?.last_name?.[0] || ''}`
+                        )}
+                      </div>
+                      <div className="trust-info">
+                        <span className="trust-badge">
+                          <ShieldCheck size={14} /> Direct Instructor Support
+                        </span>
+                        <h3>Have questions about this course?</h3>
+                        <p>
+                          Connect directly with {creator?.profiles?.first_name} {creator?.profiles?.last_name} to clarify course outlines, live session schedules, or requirements before you enroll.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="trust-actions">
+                      {whatsappUrl && (
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-wa"
+                        >
+                          <WhatsAppIcon size={18} /> Chat on WhatsApp
+                        </a>
+                      )}
+                      {callUrl && (
+                        <a href={callUrl} className="btn-call">
+                          <Phone size={16} /> Call {inquiryNumber}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </section>
+              )}
             </main>
 
             {/* SIDEBAR */}
@@ -709,6 +784,31 @@ export default function PackDetail() {
                 <div className="price">{pack.currency} {pack.price}</div>
 
                 {renderJoinAction()}
+
+                {inquiryNumber && (
+                  <div className="buy-inquiry">
+                    <div className="buy-inquiry-div">
+                      <span>Questions before joining?</span>
+                    </div>
+                    <div className="buy-inquiry-btns">
+                      {whatsappUrl && (
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-wa"
+                        >
+                          <WhatsAppIcon size={17} /> Chat on WhatsApp
+                        </a>
+                      )}
+                      {callUrl && (
+                        <a href={callUrl} className="btn-call">
+                          <Phone size={15} /> Call for details
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <ul className="ul">
                   <li>
@@ -830,6 +930,26 @@ export default function PackDetail() {
             <small>Total price</small>
             <div className="price">{pack.currency} {pack.price}</div>
           </div>
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-mbar-wa"
+              title="Chat on WhatsApp"
+            >
+              <WhatsAppIcon size={20} />
+            </a>
+          )}
+          {callUrl && (
+            <a
+              href={callUrl}
+              className="btn-mbar-call"
+              title="Call for details"
+            >
+              <Phone size={18} />
+            </a>
+          )}
           {renderJoinAction(true)}
         </div>
 

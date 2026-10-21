@@ -1,16 +1,18 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import {
   ArrowLeft, ArrowRight, Upload, X, Plus, Trash2,
-  Clock, Video, Link2, MessageCircle, Sparkles, Loader2, Check
+  Clock, Video, Link2, MessageCircle, Sparkles, Loader2, Check, Phone
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, StepProgress, ToggleSwitch, GoldBadge } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 
-const STEPS = ['Basic Info', 'Media', 'Community', 'Sessions', 'Review'];
+const STEPS = ['Basic Info', 'Media', 'Contact & Community', 'Sessions', 'Review'];
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
 
@@ -25,7 +27,7 @@ const emptySession = () => ({
 
 export default function CreatePack() {
   useSubscriptionGuard();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -33,6 +35,7 @@ export default function CreatePack() {
   const [form, setForm] = useState({
     title: '', description: '', category: '', price: '', currency: 'USD',
     thumbnail: null, thumbnailPreview: null, intro_video_url: '',
+    whatsapp_number: profile?.contact_number || '',
     whatsapp_link: '', telegram_link: '',
     has_free_session: false,
     freeSession: { title: '', zoom_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '' },
@@ -93,7 +96,7 @@ export default function CreatePack() {
         }
       }
 
-      const { data: pack, error: packErr } = await supabase.from('session_packs').insert({
+      const packPayload = {
         creator_id: user.id,
         title: form.title,
         description: form.description,
@@ -102,11 +105,22 @@ export default function CreatePack() {
         currency: form.currency,
         thumbnail_url: thumbnailUrl,
         intro_video_url: form.intro_video_url || null,
+        whatsapp_number: form.whatsapp_number || null,
         whatsapp_link: form.whatsapp_link || null,
         telegram_link: form.telegram_link || null,
         has_free_session: form.has_free_session,
         is_published: publish,
-      }).select().single();
+      };
+
+      let { data: pack, error: packErr } = await supabase.from('session_packs').insert(packPayload).select().single();
+
+      // Gracefully retry without whatsapp_number if the column is not yet present in Supabase
+      if (packErr && packErr.message?.includes('whatsapp_number')) {
+        delete packPayload.whatsapp_number;
+        const retry = await supabase.from('session_packs').insert(packPayload).select().single();
+        pack = retry.data;
+        packErr = retry.error;
+      }
 
       if (packErr) throw packErr;
 
@@ -239,19 +253,52 @@ export default function CreatePack() {
               </div>
             )}
 
-            {/* STEP 2: Community */}
+            {/* STEP 2: Contact & Community */}
             {step === 2 && (
-              <div className="space-y-6">
-                <p className="text-sm text-[#94A6B8] leading-relaxed">Optional links for your student community</p>
+              <div className="space-y-7">
                 <div>
-                  <label className="form-label">WhatsApp Group Link</label>
-                  <input className="input-field" placeholder="https://chat.whatsapp.com/..."
-                    value={form.whatsapp_link} onChange={e => update('whatsapp_link', e.target.value)} />
+                  <h3 className="text-base font-semibold text-[#0F172A] mb-1">Inquiry Contact Details</h3>
+                  <p className="text-sm text-[#94A6B8] leading-relaxed mb-4">
+                    Allow interested learners to chat on WhatsApp or call you directly if they need more information or guidance before enrolling.
+                  </p>
+                  <label className="form-label">WhatsApp &amp; Contact Number</label>
+                  <PhoneInput
+                    international
+                    defaultCountry="LK"
+                    value={form.whatsapp_number}
+                    onChange={v => update('whatsapp_number', v || '')}
+                  />
+                  {profile?.contact_number && form.whatsapp_number !== profile.contact_number && (
+                    <button
+                      type="button"
+                      onClick={() => update('whatsapp_number', profile.contact_number)}
+                      className="mt-2 text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1"
+                    >
+                      Use my profile number ({profile.contact_number})
+                    </button>
+                  )}
+                  <p className="text-xs text-[#94A6B8] mt-2">
+                    Displayed prominently on your course detail page with "Chat on WhatsApp" and "Call for details" buttons.
+                  </p>
                 </div>
-                <div>
-                  <label className="form-label">Telegram Channel Link</label>
-                  <input className="input-field" placeholder="https://t.me/..."
-                    value={form.telegram_link} onChange={e => update('telegram_link', e.target.value)} />
+
+                <div className="pt-6 border-t border-[#E2E8F0]">
+                  <h3 className="text-base font-semibold text-[#0F172A] mb-1">Enrolled Community Links</h3>
+                  <p className="text-sm text-[#94A6B8] leading-relaxed mb-4">
+                    Optional links visible to students once their enrollment is confirmed.
+                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="form-label">WhatsApp Group Link</label>
+                      <input className="input-field" placeholder="https://chat.whatsapp.com/..."
+                        value={form.whatsapp_link} onChange={e => update('whatsapp_link', e.target.value)} />
+                    </div>
+                    <div>
+                      <label className="form-label">Telegram Channel Link</label>
+                      <input className="input-field" placeholder="https://t.me/..."
+                        value={form.telegram_link} onChange={e => update('telegram_link', e.target.value)} />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -361,9 +408,14 @@ export default function CreatePack() {
                     {form.title}
                   </h3>
                   <p className="text-sm text-[#475569] leading-relaxed">{form.description}</p>
-                  <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex flex-wrap gap-4 text-sm items-center">
                     <span className="badge badge-gold">{form.category}</span>
                     <span className="text-[#0F172A] font-semibold">{form.currency} {form.price}</span>
+                    {(form.whatsapp_number || profile?.contact_number) && (
+                      <span className="text-[#475569] flex items-center gap-1.5 text-xs bg-[#F1F5F9] px-3 py-1.5 rounded-full">
+                        <Phone size={13} className="text-[#0f9d6b]" /> WhatsApp: {form.whatsapp_number || profile?.contact_number}
+                      </span>
+                    )}
                   </div>
                   {form.thumbnailPreview && (
                     <img src={form.thumbnailPreview} alt="Thumb" className="w-full h-40 object-cover rounded-lg" />
