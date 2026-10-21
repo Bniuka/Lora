@@ -1,0 +1,419 @@
+/* ================================================================
+   Lora Verify Email — light-mode-only scoped styles
+   All selectors are prefixed with .lora-verify to avoid collisions
+   with app-level .card, .btn, .logo, .steps
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-verify {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --ok: #12a46f;
+  --shadow: 0 30px 70px -30px rgba(14,23,51,.28);
+
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  background: radial-gradient(700px 420px at 15% 0, #d6e2ff, transparent 70%),
+              radial-gradient(600px 420px at 100% 100%, #e5dcff, transparent 70%),
+              var(--bg) !important;
+  color: var(--ink) !important;
+  font: 16px/1.6 'Figtree', system-ui, sans-serif !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.lora-verify *,
+.lora-verify *::before,
+.lora-verify *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-verify h1,
+.lora-verify h2 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.03em !important;
+  margin: 0 !important;
+}
+
+.lora-verify a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-verify button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-verify :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 3px !important;
+}
+
+.lora-verify .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+.lora-verify .shell {
+  width: 100% !important;
+  max-width: 520px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 22px !important;
+}
+
+.lora-verify .logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  font: 800 22px 'Bricolage Grotesque', sans-serif !important;
+  color: var(--ink) !important;
+}
+
+.lora-verify .logo i {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  background: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-verify .logo svg {
+  width: 15px !important;
+  fill: #fff !important;
+}
+
+.lora-verify .card {
+  width: 100% !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--shadow) !important;
+  padding: 40px 34px 30px !important;
+  text-align: center !important;
+}
+
+.lora-verify .mail {
+  position: relative !important;
+  width: 104px !important;
+  height: 104px !important;
+  margin: 0 auto 22px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--brand) !important;
+  box-shadow: 0 0 0 12px rgba(47,91,255,.07), 0 0 0 26px rgba(47,91,255,.04) !important;
+  animation: lora-verify-float 4s ease-in-out infinite !important;
+}
+
+.lora-verify .mail .ic {
+  width: 48px !important;
+  height: 48px !important;
+  stroke-width: 1.6 !important;
+}
+
+.lora-verify .mail b {
+  position: absolute !important;
+  right: -2px !important;
+  bottom: 2px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: var(--ok) !important;
+  border: 4px solid #fff !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-verify .mail b .ic {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 3 !important;
+}
+
+@keyframes lora-verify-float {
+  50% { transform: translateY(-6px); }
+}
+
+.lora-verify h1 {
+  font-size: clamp(30px, 6vw, 38px) !important;
+  line-height: 1.1 !important;
+  color: var(--ink) !important;
+}
+
+.lora-verify .lead {
+  margin: 10px 0 12px !important;
+  color: var(--muted) !important;
+  font-size: 16px !important;
+}
+
+.lora-verify .em {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: var(--bg) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 99px !important;
+  padding: 8px 18px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  color: var(--ink) !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.lora-verify .em .ic {
+  color: var(--brand) !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.lora-verify .sub {
+  margin: 16px auto 0 !important;
+  max-width: 400px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+.lora-verify .sub b {
+  color: var(--ink) !important;
+}
+
+.lora-verify .steps {
+  margin: 26px 0 0 !important;
+  padding: 20px 20px 6px !important;
+  background: var(--bg) !important;
+  border-radius: 20px !important;
+  text-align: left !important;
+  list-style: none !important;
+  counter-reset: s !important;
+}
+
+.lora-verify .steps h2 {
+  font: 700 12px 'Figtree', sans-serif !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  margin-bottom: 14px !important;
+}
+
+.lora-verify .steps ol {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  counter-reset: s !important;
+}
+
+.lora-verify .steps li {
+  counter-increment: s !important;
+  display: flex !important;
+  gap: 14px !important;
+  align-items: flex-start !important;
+  position: relative !important;
+  padding-bottom: 18px !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+  line-height: 1.4 !important;
+}
+
+.lora-verify .steps li::before {
+  content: counter(s) !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: var(--brand) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  flex: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.lora-verify .steps li:not(:last-child)::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 13px !important;
+  top: 28px !important;
+  bottom: 0 !important;
+  width: 2px !important;
+  background: linear-gradient(var(--brand), var(--line)) !important;
+}
+
+.lora-verify .steps li span {
+  padding-top: 2px !important;
+}
+
+.lora-verify .btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  padding: 15px 20px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  background: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -14px rgba(47,91,255,.9) !important;
+  transition: 0.15s !important;
+  margin-top: 22px !important;
+  text-decoration: none !important;
+}
+
+.lora-verify .btn:hover {
+  background: var(--brand2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.lora-verify .btn:hover .ic {
+  transform: translateX(3px) !important;
+}
+
+.lora-verify .btn .ic {
+  transition: 0.2s !important;
+}
+
+.lora-verify .btn.ghost {
+  background: #fff !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--line) !important;
+  box-shadow: none !important;
+  margin-top: 10px !important;
+}
+
+.lora-verify .btn.ghost:hover {
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+  background: #fff !important;
+}
+
+.lora-verify .resend {
+  margin-top: 18px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-verify .resend button {
+  border: 0 !important;
+  background: none !important;
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+  padding: 4px 6px !important;
+  border-radius: 8px !important;
+  transition: 0.15s !important;
+}
+
+.lora-verify .resend button:hover:not(:disabled) {
+  background: var(--brand-soft) !important;
+}
+
+.lora-verify .resend button:disabled {
+  color: var(--muted) !important;
+  cursor: not-allowed !important;
+}
+
+.lora-verify .resend .ic {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.lora-verify .spin .ic {
+  animation: lora-verify-sp 1s linear infinite !important;
+}
+
+@keyframes lora-verify-sp {
+  to { transform: rotate(360deg); }
+}
+
+.lora-verify .spam {
+  margin: 14px 0 0 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+}
+
+.lora-verify .spam b {
+  color: var(--ink) !important;
+}
+
+.lora-verify .toast {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  transform: translate(-50%, 30px) !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  padding: 12px 20px !important;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: 0.25s !important;
+  z-index: 20 !important;
+  box-shadow: 0 10px 24px rgba(14, 23, 51, 0.25) !important;
+}
+
+.lora-verify .toast.show {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Spinner for direct token verification */
+.lora-verify .direct-spin {
+  width: 54px !important;
+  height: 54px !important;
+  border: 4px solid var(--brand-soft) !important;
+  border-top-color: var(--brand) !important;
+  border-radius: 50% !important;
+  animation: lora-verify-sp 0.8s linear infinite !important;
+  margin: 0 auto 20px !important;
+}
+
+@media(max-width: 480px) {
+  .lora-verify .card {
+    padding: 32px 20px 24px !important;
+    border-radius: 24px !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-verify * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

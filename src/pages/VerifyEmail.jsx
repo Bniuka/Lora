@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, RefreshCw, ArrowRight, CheckCircle, AlertCircle, Clock, CheckCircle2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { PageTransition } from "../components/ui";
+import "./verify-email.css";
 
 const COOLDOWN_SECONDS = 60;
+
+const PROVIDER_MAP = {
+  "gmail.com": "https://mail.google.com",
+  "outlook.com": "https://outlook.live.com",
+  "hotmail.com": "https://outlook.live.com",
+  "yahoo.com": "https://mail.yahoo.com",
+  "icloud.com": "https://www.icloud.com/mail",
+};
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -16,16 +22,32 @@ export default function VerifyEmail() {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") || "signup";
 
-  const email = location.state?.email || "";
-  const [resent, setResent] = useState(false);
+  // Real email address from navigation state, query params, or localStorage
+  const emailParam = searchParams.get("email");
+  const stateEmail = location.state?.email;
+  const storedEmail = typeof window !== "undefined" ? localStorage.getItem("pending_verify_email") : "";
+  const email = stateEmail || emailParam || storedEmail || "";
+
+  // Save pending verify email so refresh preserves it
+  useEffect(() => {
+    if (stateEmail || emailParam) {
+      localStorage.setItem("pending_verify_email", stateEmail || emailParam);
+    }
+  }, [stateEmail, emailParam]);
+
   const [resending, setResending] = useState(false);
-  const [resendError, setResendError] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [toastMsg, setToastMsg] = useState("");
 
   // Direct verification states
   const [verifying, setVerifying] = useState(!!tokenHash);
   const [verified, setVerified] = useState(false);
   const [verifyError, setVerifyError] = useState("");
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 2600);
+  };
 
   useEffect(() => {
     if (!tokenHash) return;
@@ -65,8 +87,6 @@ export default function VerifyEmail() {
   const handleResend = async () => {
     if (!email || resending || cooldown > 0) return;
     setResending(true);
-    setResendError("");
-    setResent(false);
 
     try {
       const { error } = await supabase.auth.resend({
@@ -91,189 +111,195 @@ export default function VerifyEmail() {
         }
       }
 
-      setResent(true);
+      showToast("Verification email sent. Check your inbox.");
       setCooldown(COOLDOWN_SECONDS);
-      setTimeout(() => setResent(false), 6000);
     } catch (err) {
       console.error("Resend error:", err);
-      setResendError("Could not resend the email. Please wait a moment and try again.");
+      showToast("Could not send the email. Please try again.");
     } finally {
       setResending(false);
     }
   };
 
-  // If directly verifying via token_hash
+  const domain = email.split("@")[1]?.toLowerCase() || "";
+  const inboxUrl = PROVIDER_MAP[domain] || null;
+  const displayEmail = email || "your registered email";
+
+  // Direct verification screen if token_hash is in URL
   if (tokenHash) {
     return (
-      <PageTransition>
-        <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-md w-full text-center bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-sm"
-          >
+      <div className="lora-verify">
+        <div className="shell">
+          <Link className="logo" to="/">
+            <i>
+              <svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z" /></svg>
+            </i>
+            Lora
+          </Link>
+
+          <main className="card">
             {verifying && (
               <>
-                <div className="w-16 h-16 border-4 border-[#2563EB]/20 border-t-[#2563EB] rounded-full animate-spin mx-auto mb-6" />
-                <h1 className="text-2xl font-bold text-[#0F172A] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                  Verifying your email...
-                </h1>
-                <p className="text-[#64748B] text-sm">Please wait a moment while we activate your account.</p>
+                <div className="direct-spin" aria-hidden="true" />
+                <h1>Verifying your email...</h1>
+                <p className="lead">Please wait a moment while we activate your account.</p>
               </>
             )}
 
             {verified && (
               <>
-                <div className="w-16 h-16 bg-[#F0FDF4] text-[#16A34A] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 size={36} />
+                <div className="mail" aria-hidden="true" style={{ animation: "none" }}>
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="14" rx="3" />
+                    <path d="m4 8 8 6 8-6" />
+                  </svg>
+                  <b style={{ width: 38, height: 38 }}>
+                    <svg className="ic" viewBox="0 0 24 24" style={{ width: 20, height: 20 }}>
+                      <path d="m5 12 5 5 9-10" />
+                    </svg>
+                  </b>
                 </div>
-                <h1 className="text-2xl font-bold text-[#0F172A] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                  Email Verified!
-                </h1>
-                <p className="text-[#64748B] text-sm mb-6">Your account is active. Redirecting you to login...</p>
-                <Link
-                  to="/login"
-                  className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-3 px-6 rounded-xl inline-flex items-center justify-center gap-2 transition-all"
-                >
-                  Go to Login <ArrowRight size={16} />
+                <h1>Email Verified!</h1>
+                <p className="lead">Your account is active. Redirecting you to login...</p>
+                <Link className="btn" to="/login">
+                  Go to login{" "}
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
                 </Link>
               </>
             )}
 
             {verifyError && (
               <>
-                <div className="w-16 h-16 bg-red-50 text-[#C0392B] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <AlertCircle size={36} />
+                <div className="mail" aria-hidden="true" style={{ animation: "none", color: "var(--bad)" }}>
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
                 </div>
-                <h1 className="text-2xl font-bold text-[#0F172A] mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                  Verification Failed
-                </h1>
-                <p className="text-[#64748B] text-sm mb-6">{verifyError}</p>
-                <Link
-                  to="/login"
-                  className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-3 px-6 rounded-xl inline-flex items-center justify-center gap-2 transition-all"
-                >
-                  Return to Login <ArrowRight size={16} />
+                <h1>Verification Failed</h1>
+                <p className="sub" style={{ color: "var(--bad)", marginTop: 12, marginBottom: 20 }}>
+                  {verifyError}
+                </p>
+                <Link className="btn" to="/login">
+                  Return to Login{" "}
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
                 </Link>
               </>
             )}
-          </motion.div>
+          </main>
         </div>
-      </PageTransition>
+      </div>
     );
   }
 
+  // Standard "Check your inbox" screen
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-md w-full text-center"
-        >
-          {/* Icon */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="relative">
-              <div className="w-24 h-24 bg-[#DBEAFE] rounded-full flex items-center justify-center shadow-lg shadow-blue-100">
-                <Mail size={44} className="text-[#2563EB]" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#16A34A] rounded-full flex items-center justify-center border-2 border-white">
-                <CheckCircle size={18} className="text-white" />
-              </div>
-            </div>
+    <div className="lora-verify">
+      <div className="shell">
+        <Link className="logo" to="/">
+          <i>
+            <svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z" /></svg>
+          </i>
+          Lora
+        </Link>
+
+        <main className="card">
+          {/* Animated Mail Icon with Green Check Badge */}
+          <div className="mail" aria-hidden="true">
+            <svg className="ic" viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="14" rx="3" />
+              <path d="m4 8 8 6 8-6" />
+            </svg>
+            <b>
+              <svg className="ic" viewBox="0 0 24 24">
+                <path d="m5 12 5 5 9-10" />
+              </svg>
+            </b>
           </div>
 
-          {/* Heading */}
-          <h1 className="text-3xl font-extrabold text-[#0F172A] mb-3" style={{ fontFamily: "var(--font-heading)" }}>
-            Check your inbox!
-          </h1>
-          <p className="text-[#475569] text-base leading-relaxed mb-2">
-            We sent a verification email to:
-          </p>
-          {email && (
-            <div className="inline-block bg-[#F1F5F9] border border-[#E2E8F0] text-[#0F172A] font-bold px-4 py-2 rounded-xl text-sm mb-6">
-              {email}
-            </div>
-          )}
-          <p className="text-[#64748B] text-sm leading-relaxed mb-8">
-            Click the <strong>"Verify Email"</strong> button in the email to activate
-            your account. Then come back and log in to get started.
+          <h1>Check your inbox!</h1>
+          <p className="lead">We sent a verification email to:</p>
+
+          <span className="em">
+            <svg className="ic" viewBox="0 0 24 24">
+              <path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" />
+            </svg>
+            <span id="addr">{displayEmail}</span>
+          </span>
+
+          <p className="sub">
+            Click the <b>"Verify Email"</b> button in the email to activate your account. Then come back and log in to get started.
           </p>
 
           {/* Steps */}
-          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 text-left mb-8 shadow-sm">
-            <p className="text-xs font-bold text-[#94A6B8] uppercase tracking-wider mb-4">What to do next</p>
-            <div className="space-y-3">
-              {[
-                "Open the email from Lora in your inbox",
-                'Click the "Verify Email" button inside the email',
-                "You will be taken to the login page — sign in to get started!",
-              ].map((text, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    {i + 1}
-                  </div>
-                  <p className="text-sm text-[#475569]">{text}</p>
-                </div>
-              ))}
-            </div>
+          <div className="steps">
+            <h2>What to do next</h2>
+            <ol>
+              <li><span>Open the email from Lora in your inbox (check Spam too)</span></li>
+              <li><span>Click the "Verify Email" button inside the email</span></li>
+              <li><span>You will be taken to the login page. Sign in to get started!</span></li>
+            </ol>
           </div>
 
-          {/* CTA */}
-          <Link
-            to="/login"
-            className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all mb-5"
-          >
-            Go to Login <ArrowRight size={18} />
+          {/* Primary CTA */}
+          <Link className="btn" to="/login">
+            Go to login{" "}
+            <svg className="ic" viewBox="0 0 24 24">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </Link>
 
-          {/* Resend feedback */}
-          <AnimatePresence>
-            {resent && (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center gap-2 text-sm text-[#16A34A] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-4 py-3 mb-3"
-              >
-                <CheckCircle size={16} />
-                Email resent! Check your inbox.
-              </motion.div>
-            )}
-            {resendError && (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center gap-2 text-sm text-[#C0392B] bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-3"
-              >
-                <AlertCircle size={16} />
-                {resendError}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Resend button */}
-          {cooldown > 0 ? (
-            <div className="flex items-center justify-center gap-1.5 text-sm text-[#94A6B8]">
-              <Clock size={14} />
-              Resend available in {cooldown}s
-            </div>
-          ) : (
-            <button
-              onClick={handleResend}
-              disabled={resending || !email}
-              className="text-sm text-[#64748B] hover:text-[#2563EB] flex items-center justify-center gap-1.5 mx-auto transition-colors disabled:opacity-40"
+          {/* Optional Direct Inbox Provider CTA */}
+          {inboxUrl && (
+            <a
+              className="btn ghost"
+              id="openMail"
+              href={inboxUrl}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <RefreshCw size={14} className={resending ? "animate-spin" : ""} />
-              {resending ? "Sending..." : "Didn't receive it? Resend email"}
-            </button>
+              Open your inbox
+            </a>
           )}
-        </motion.div>
+
+          {/* Resend Button with Cooldown Timer */}
+          <div className="resend">
+            <span>Didn't receive it?</span>
+            <button
+              id="resend"
+              type="button"
+              onClick={handleResend}
+              disabled={resending || cooldown > 0}
+              className={resending ? "spin" : ""}
+            >
+              <svg className="ic" viewBox="0 0 24 24">
+                <path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5" />
+              </svg>
+              <span id="rl">
+                {resending
+                  ? "Sending..."
+                  : cooldown > 0
+                  ? `Resend in ${cooldown}s`
+                  : "Resend email"}
+              </span>
+            </button>
+          </div>
+
+          <p className="spam">
+            Also check your <b>Spam</b> or <b>Junk</b> folder if you do not see it.
+          </p>
+        </main>
       </div>
-    </PageTransition>
+
+      {/* Toast Feedback */}
+      <div className={`toast${toastMsg ? " show" : ""}`} role="status">
+        {toastMsg}
+      </div>
+    </div>
   );
 }
