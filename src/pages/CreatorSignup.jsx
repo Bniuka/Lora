@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -47,15 +47,27 @@ function friendlyError(msg) {
 }
 
 export default function CreatorSignup() {
-  const { signUp } = useAuth();
+  const { signUp, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem('lora_remember_me') !== 'false');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user && profile) {
+      if (profile.role === 'creator') navigate('/creator/dashboard', { replace: true });
+      else navigate('/learner/dashboard', { replace: true });
+    }
+  }, [user, profile, authLoading, navigate]);
+
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      email: localStorage.getItem('lora_remembered_email') || '',
+    },
   });
 
   const password = watch('password', '');
@@ -66,6 +78,12 @@ export default function CreatorSignup() {
     if (!phone) { setError('Phone number is required'); return; }
     setLoading(true);
     setError('');
+
+    if (rememberMe) {
+      localStorage.setItem('lora_remembered_email', data.email.trim());
+      localStorage.setItem('lora_remember_me', 'true');
+    }
+
     try {
       await signUp({
         email: data.email,
@@ -203,6 +221,20 @@ export default function CreatorSignup() {
                 rows={3}
               />
               {errors.about && <p className="form-error">{errors.about.message}</p>}
+            </div>
+
+            <div className="mb-6">
+              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded text-[#2563EB] border-[#CBD5E1] focus:ring-[#2563EB] cursor-pointer accent-[#2563EB]"
+                />
+                <span className="text-sm text-[#475569] group-hover:text-[#0F172A] transition-colors">
+                  Remember me on this device
+                </span>
+              </label>
             </div>
 
             <button type="submit" className="btn-primary w-full py-4 mt-2 text-base" disabled={loading}>

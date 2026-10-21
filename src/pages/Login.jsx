@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 
@@ -20,19 +20,42 @@ function friendlyError(msg) {
 }
 
 export default function Login() {
-  const { signIn } = useAuth();
+  const { signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const location = useLocation();
+  const [email, setEmail] = useState(() => localStorage.getItem('lora_remembered_email') || '');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem('lora_remember_me') !== 'false');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState('');
 
+  // Auto-redirect if already logged in so user never has to re-login repeatedly
+  useEffect(() => {
+    if (!authLoading && user && profile) {
+      if (profile.role === 'creator') {
+        navigate('/creator/dashboard', { replace: true });
+      } else {
+        navigate('/learner/dashboard', { replace: true });
+      }
+    }
+  }, [user, profile, authLoading, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Save or clear remembered email
+    if (rememberMe) {
+      localStorage.setItem('lora_remembered_email', email.trim());
+      localStorage.setItem('lora_remember_me', 'true');
+    } else {
+      localStorage.removeItem('lora_remembered_email');
+      localStorage.setItem('lora_remember_me', 'false');
+    }
+
     try {
       const result = await signIn({ email, password }, setStep);
       const role = result?.profile?.role;
@@ -60,6 +83,17 @@ export default function Login() {
             </h1>
             <p className="text-sm text-[#475569]">Log in to your Lora account</p>
           </motion.div>
+
+          {location.state?.verified && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] text-[#16A34A] text-sm font-medium flex items-center gap-3"
+            >
+              <CheckCircle2 size={18} className="shrink-0" />
+              Email verified successfully! You can now log in.
+            </motion.div>
+          )}
 
           <motion.form
             onSubmit={handleSubmit}
@@ -108,6 +142,20 @@ export default function Login() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between mb-6">
+              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded text-[#2563EB] border-[#CBD5E1] focus:ring-[#2563EB] cursor-pointer accent-[#2563EB]"
+                />
+                <span className="text-sm text-[#475569] group-hover:text-[#0F172A] transition-colors">
+                  Remember me
+                </span>
+              </label>
             </div>
 
             <button type="submit" className="btn-primary w-full py-4 text-base" disabled={loading}>

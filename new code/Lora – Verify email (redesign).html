@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Check your inbox</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#12a46f;--shadow:0 30px 70px -30px rgba(14,23,51,.28);box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(700px 420px at 15% 0,#d6e2ff,transparent 70%),radial-gradient(600px 420px at 100% 100%,#e5dcff,transparent 70%),var(--bg);color:var(--ink);font:16px/1.6 Figtree,system-ui,sans-serif;display:grid;place-items:center;padding:calc(24px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
+h1,h2{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.03em;margin:0}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.shell{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:22px}
+.logo{display:flex;align-items:center;gap:9px;font:800 22px 'Bricolage Grotesque'}
+.logo i{width:32px;height:32px;border-radius:10px;background:var(--brand);display:grid;place-items:center}.logo svg{width:15px;fill:#fff}
+.card{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:40px 34px 30px;text-align:center}
+.mail{position:relative;width:104px;height:104px;margin:0 auto 22px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;color:var(--brand);box-shadow:0 0 0 12px rgba(47,91,255,.07),0 0 0 26px rgba(47,91,255,.04);animation:float 4s ease-in-out infinite}
+.mail .ic{width:48px;height:48px;stroke-width:1.6}
+.mail b{position:absolute;right:-2px;bottom:2px;width:34px;height:34px;border-radius:50%;background:var(--ok);border:4px solid #fff;color:#fff;display:grid;place-items:center}
+.mail b .ic{width:16px;height:16px;stroke-width:3}
+@keyframes float{50%{transform:translateY(-6px)}}
+h1{font-size:clamp(30px,6vw,38px);line-height:1.1}
+.lead{margin:10px 0 12px;color:var(--muted)}
+.em{display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:8px 18px;font-weight:700;max-width:100%;overflow-wrap:anywhere}
+.em .ic{color:var(--brand);width:16px;height:16px}
+.sub{margin:16px auto 0;max-width:400px;color:var(--muted);font-size:15px}
+.sub b{color:var(--ink)}
+.steps{margin:26px 0 0;padding:20px 20px 6px;background:var(--bg);border-radius:20px;text-align:left;list-style:none;counter-reset:s}
+.steps h2{font:700 12px Figtree;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.steps ol{margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;position:relative;padding-bottom:18px}
+.steps li:before{content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none;position:relative;z-index:1}
+.steps li:not(:last-child):after{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:linear-gradient(var(--brand),var(--line))}
+.steps li span{padding-top:2px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:15px;padding:15px 20px;font-weight:600;font-size:16px;cursor:pointer;background:var(--brand);color:#fff;box-shadow:0 14px 28px -14px rgba(47,91,255,.9);transition:.15s;margin-top:22px}
+.btn:hover{background:var(--brand2);transform:translateY(-1px)}.btn:hover .ic{transform:translateX(3px)}.btn .ic{transition:.2s}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none;margin-top:10px}
+.btn.ghost:hover{border-color:var(--brand);color:var(--brand);background:#fff}
+.resend{margin-top:18px;display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:15px;flex-wrap:wrap}
+.resend button{border:0;background:none;color:var(--brand);font-weight:700;cursor:pointer;display:inline-flex;gap:6px;align-items:center;padding:4px 6px;border-radius:8px}
+.resend button:hover:not(:disabled){background:var(--brand-soft)}
+.resend button:disabled{color:var(--muted);cursor:not-allowed}
+.resend .ic{width:16px;height:16px}.spin .ic{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spam{margin:14px 0 0;font-size:13px;color:var(--muted)}.spam b{color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:480px){.card{padding:32px 20px 24px;border-radius:24px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <a class="logo" href="/"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</a>
+
+  <main class="card">
+    <div class="mail" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 8 8 6 8-6"/></svg><b><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></b></div>
+    <h1>Check your inbox!</h1>
+    <p class="lead">We sent a verification email to:</p>
+    <span class="em"><svg class="ic" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg><span id="addr">kankunpancha@gmail.com</span></span>
+    <p class="sub">Click the <b>"Verify Email"</b> button in the email to activate your account. Then come back and log in to get started.</p>
+
+    <div class="steps">
+      <h2>What to do next</h2><ol>
+      <li><span>Open the email from Lora in your inbox (check Spam too)</span></li>
+      <li><span>Click the "Verify Email" button inside the email</span></li>
+      <li><span>You will be taken to the login page. Sign in to get started!</span></li>
+    </ol></div>
+
+    <a class="btn" href="/login">Go to login <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="btn ghost" id="openMail" href="https://mail.google.com" target="_blank" rel="noopener" hidden>Open your inbox</a>
+
+    <div class="resend"><span>Didn't receive it?</span><button id="resend" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg><span id="rl">Resend email</span></button></div>
+    <p class="spam">Also check your <b>Spam</b> or <b>Junk</b> folder if you do not see it.</p>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2400)};
+
+// Optional shortcut: link to the user's mail provider (hidden for unknown domains)
+const d=$('#addr').textContent.split('@')[1]||'',M={'gmail.com':'https://mail.google.com','outlook.com':'https://outlook.live.com','hotmail.com':'https://outlook.live.com','yahoo.com':'https://mail.yahoo.com','icloud.com':'https://www.icloud.com/mail'};
+if(M[d]){const a=$('#openMail');a.href=M[d];a.hidden=false}
+
+// Resend with a 60s cooldown (prevents spam clicks). Replace the body with your existing resend call.
+let t=0,iv;
+function tick(){const b=$('#resend');if(t>0){b.disabled=true;$('#rl').textContent='Resend in '+t+'s';t--}else{clearInterval(iv);b.disabled=false;$('#rl').textContent='Resend email'}}
+$('#resend').onclick=async()=>{
+  const b=$('#resend');b.classList.add('spin');b.disabled=true;
+  try{/* await yourExistingResendVerificationEmail(); */await new Promise(r=>setTimeout(r,700));toast('Verification email sent. Check your inbox.')}
+  catch(e){toast('Could not send the email. Please try again.');b.disabled=false;b.classList.remove('spin');return}
+  b.classList.remove('spin');t=60;tick();iv=setInterval(tick,1000)};
+</script>
+</body>
+</html>

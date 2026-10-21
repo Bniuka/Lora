@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 import blueLogo from '../../Logo/Blue_Logo_Cropped.png';
 import './home.css';
 
 export default function LandingPage() {
+  const { user, profile } = useAuth();
+  const dashboardLink = profile?.role === 'creator' ? '/creator/dashboard' : '/learner/dashboard';
+
   /* Scroll-reveal observer (visual effect) */
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -32,8 +36,14 @@ export default function LandingPage() {
               <img src={blueLogo} alt="Lora" />
             </Link>
             <nav>
-              <Link className="ln" to="/login">Log in</Link>
-              <Link className="btn pri sm" to="/signup">Get started</Link>
+              {user ? (
+                <Link className="btn pri sm" to={dashboardLink}>Dashboard</Link>
+              ) : (
+                <>
+                  <Link className="ln" to="/login">Log in</Link>
+                  <Link className="btn pri sm" to="/signup">Get started</Link>
+                </>
+              )}
             </nav>
           </div>
         </header>
