@@ -279,10 +279,10 @@ export default function CreatorDashboard() {
   ];
 
   const quickStats = [
-    { label: 'Total packs',    value: stats.packs,                      colorVar: 'c1', icon: <IcPack /> },
-    { label: 'Total students', value: stats.students,                    colorVar: 'c2', icon: <IcStudents /> },
-    { label: 'Total revenue',  value: `LKR ${stats.revenue.toFixed(0)}`, colorVar: 'c3', icon: <IcRevenue /> },
-    { label: 'Pending',        value: stats.pending,                     colorVar: 'c4', icon: <IcPending /> },
+    { label: 'Total packs',    value: stats.packs,                      colorVar: 'c1', icon: <IcPack />,     to: '/creator/packs' },
+    { label: 'Total students', value: stats.students,                    colorVar: 'c2', icon: <IcStudents />, to: '/creator/enrollments' },
+    { label: 'Total revenue',  value: `LKR ${stats.revenue.toFixed(0)}`, colorVar: 'c3', icon: <IcRevenue />,  to: '/creator/enrollments' },
+    { label: 'Pending',        value: stats.pending,                     colorVar: 'c4', icon: <IcPending />,  to: '/creator/enrollments' },
   ];
 
   return (
@@ -420,7 +420,7 @@ export default function CreatorDashboard() {
                     <span className="ld-price">
                       {latestPack.currency} {latestPack.price}
                     </span>
-                    <Link className="ld-btn" to={`/creator/packs/edit/${latestPack.id}`}>
+                    <Link className="ld-btn" to={`/learner/pack/${latestPack.id}`}>
                       View details <IcArrowRight />
                     </Link>
                   </div>
@@ -449,7 +449,7 @@ export default function CreatorDashboard() {
               </div>
 
               {quickStats.map((q, i) => (
-                <Link key={i} to="#">
+                <Link key={i} to={q.to || '#'}>
                   <span
                     className="ld-ib"
                     style={{ background: `var(--${q.colorVar}s)`, color: `var(--${q.colorVar})` }}

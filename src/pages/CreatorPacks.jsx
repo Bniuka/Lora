@@ -104,7 +104,7 @@ export default function CreatorPacks() {
                   </p>
                   <p className="text-sm font-semibold text-[#2563EB] mb-4">{pack.currency} {pack.price}</p>
                   <div className="flex items-center gap-2">
-                    <Link to={`/creator/packs/edit/${pack.id}`} className="btn-ghost text-xs px-3 py-2 flex-1 justify-center border-[#E2E8F0] border">
+                    <Link to={`/creator/packs/${pack.id}/edit`} className="btn-ghost text-xs px-3 py-2 flex-1 justify-center border-[#E2E8F0] border">
                       <Edit3 size={13} /> Edit
                     </Link>
                     <button

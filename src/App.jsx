@@ -45,6 +45,9 @@ export default function App() {
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/learner/pack/:id" element={<PackDetail />} />
+        <Route path="/pack/:id" element={<PackDetail />} />
+        <Route path="/creator/pack/:id" element={<PackDetail />} />
+        <Route path="/creator/packs/:id" element={<PackDetail />} />
         <Route path="/creator/:id" element={<CreatorPublicProfile />} />
 
         {/* Creator routes (protected, with sidebar layout) */}
@@ -64,6 +67,11 @@ export default function App() {
           </ProtectedRoute>
         } />
         <Route path="/creator/packs/:id/edit" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><EditPack /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/packs/edit/:id" element={
           <ProtectedRoute allowedRole="creator">
             <CreatorLayout><EditPack /></CreatorLayout>
           </ProtectedRoute>

@@ -512,7 +512,7 @@ export default function PackDetail() {
     }
     if (user.id === pack.creator_id) {
       return (
-        <Link to={`/creator/packs/edit/${pack.id}`} className="btn pri" style={{ textAlign: 'center' }}>
+        <Link to={`/creator/packs/${pack.id}/edit`} className="btn pri" style={{ textAlign: 'center' }}>
           Edit pack
         </Link>
       );
