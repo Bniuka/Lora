@@ -1,0 +1,762 @@
+/* ================================================================
+   Lora Learner Dashboard — light-mode-only scoped styles
+   All selectors scoped under .lora-learner to prevent clashes
+   with app-level utilities and global styles.
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+/* ── Root scoped variables & container ── */
+.lora-learner {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --ok: #0f9d6b;
+  --ok-soft: #e3f7ee;
+  --warn: #b86a00;
+  --warn-soft: #fff2da;
+  --shadow: 0 1px 2px rgba(14,23,51,.05), 0 12px 30px -18px rgba(14,23,51,.2);
+  box-sizing: border-box !important;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  font: 15px/1.5 Figtree, system-ui, sans-serif !important;
+  margin: 0;
+}
+
+/* ── Universal box-sizing reset inside .lora-learner ── */
+.lora-learner,
+.lora-learner *,
+.lora-learner *::before,
+.lora-learner *::after {
+  box-sizing: border-box !important;
+}
+
+/* ── Typography resets ── */
+.lora-learner h1,
+.lora-learner h2,
+.lora-learner h3 {
+  font-family: 'Bricolage Grotesque', Figtree, sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+.lora-learner a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-learner button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-learner :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-learner .ic {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* ── Header & Navbar ── */
+.lora-learner header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line) !important;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.lora-learner .bar {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.lora-learner .logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font: 800 22px 'Bricolage Grotesque', sans-serif !important;
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.lora-learner .logo i {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--brand);
+  display: grid;
+  place-items: center;
+}
+
+.lora-learner .logo svg {
+  width: 15px;
+  height: 15px;
+  fill: #fff;
+}
+
+.lora-learner .search {
+  flex: 1;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 14px;
+  transition: 0.15s;
+}
+
+.lora-learner .search:focus-within {
+  border-color: var(--brand);
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+
+.lora-learner .search input {
+  flex: 1;
+  border: 0 !important;
+  background: none !important;
+  padding: 11px 0 !important;
+  outline: 0 !important;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+}
+
+.lora-learner .search .ic {
+  color: var(--muted);
+}
+
+.lora-learner .links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lora-learner .links a {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  font-size: 15px;
+  transition: 0.15s;
+}
+
+.lora-learner .links a:hover {
+  background: var(--bg);
+  color: var(--ink) !important;
+}
+
+.lora-learner .links a.on {
+  color: var(--brand) !important;
+  background: var(--brand-soft) !important;
+}
+
+.lora-learner .bell {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  margin-left: 6px;
+  padding: 0;
+  transition: 0.15s;
+}
+
+.lora-learner .bell:hover {
+  color: var(--ink);
+}
+
+.lora-learner .bell:after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5484d;
+  border: 2px solid #fff;
+  display: none;
+}
+
+.lora-learner .bell.has:after {
+  display: block;
+}
+
+.lora-learner .av {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), #8a5cff);
+  color: #fff !important;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  margin-left: 4px;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+/* ── Page Wrapper & Hero Heading ── */
+.lora-learner .wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 36px 24px 72px;
+}
+
+.lora-learner .hello {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
+}
+
+.lora-learner .hello h1 {
+  font-size: clamp(32px, 5vw, 46px) !important;
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+
+.lora-learner .hello p {
+  margin: 6px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 16px !important;
+}
+
+.lora-learner .sh {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.lora-learner .sh h2 {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+}
+
+.lora-learner .sh .cnt {
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 99px;
+  padding: 2px 10px;
+}
+
+.lora-learner .va {
+  margin-left: auto;
+  color: var(--brand) !important;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: gap 0.15s;
+}
+
+.lora-learner .va:hover {
+  gap: 8px;
+}
+
+.lora-learner .va .ic {
+  width: 16px;
+  height: 16px;
+  transition: 0.15s;
+}
+
+.lora-learner .sec {
+  margin-bottom: 46px;
+}
+
+.lora-learner .card {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 22px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* ── Empty State ── */
+.lora-learner .empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 52px 24px;
+  background: radial-gradient(500px 220px at 50% 0, #e4ebff, transparent 70%), var(--surface) !important;
+}
+
+.lora-learner .empty .ring {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  box-shadow: 0 0 0 12px rgba(47, 91, 255, 0.06);
+  margin-bottom: 22px;
+}
+
+.lora-learner .empty .ring .ic {
+  width: 40px;
+  height: 40px;
+}
+
+.lora-learner .empty h3 {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+}
+
+.lora-learner .empty p {
+  margin: 6px 0 22px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+}
+
+/* ── Buttons ── */
+.lora-learner .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 13px 26px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -14px rgba(47, 91, 255, 0.9) !important;
+  transition: 0.15s;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.lora-learner .btn:hover {
+  background: var(--brand2) !important;
+  transform: translateY(-1px);
+}
+
+.lora-learner .btn.sm {
+  padding: 9px 16px !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+  border-radius: 11px !important;
+}
+
+/* ── Grid & Course Cards ── */
+.lora-learner .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 22px;
+}
+
+.lora-learner .course {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s, box-shadow 0.25s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.lora-learner .course:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 26px 50px -26px rgba(14, 23, 51, 0.4) !important;
+}
+
+.lora-learner .th {
+  aspect-ratio: 16 / 9;
+  position: relative;
+  background: linear-gradient(135deg, #0e1733, #3b2fb8);
+  overflow: hidden;
+}
+
+.lora-learner .th img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.lora-learner .course:hover .th img {
+  transform: scale(1.04);
+}
+
+.lora-learner .chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 99px;
+  padding: 4px 11px;
+  box-shadow: 0 4px 12px -4px rgba(14, 23, 51, 0.3);
+  z-index: 2;
+}
+
+.lora-learner .chip .ic {
+  width: 13px;
+  height: 13px;
+}
+
+.lora-learner .chip.ok {
+  color: var(--ok);
+}
+
+.lora-learner .chip.wait {
+  color: var(--warn);
+}
+
+.lora-learner .chip.err {
+  color: #e5484d;
+}
+
+.lora-learner .cb {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.lora-learner .cb h3 {
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.lora-learner .cb .by {
+  color: var(--muted);
+  font-size: 14px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.lora-learner .cb .by i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--muted);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.lora-learner .cf {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lora-learner .price {
+  font: 800 20px 'Bricolage Grotesque', sans-serif !important;
+  color: var(--brand);
+}
+
+.lora-learner .arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  display: grid;
+  place-items: center;
+  transition: 0.2s;
+}
+
+.lora-learner .course:hover .arrow {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* ── Dropdowns for Profile & Notifications ── */
+.lora-learner .dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(14, 23, 51, 0.12);
+  padding: 8px;
+  z-index: 50;
+}
+
+.lora-learner .dropdown-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+
+.lora-learner .dropdown-name {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.lora-learner .dropdown-email {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lora-learner .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: 0.15s;
+}
+
+.lora-learner .dropdown-item:hover {
+  background: var(--bg);
+}
+
+.lora-learner .dropdown-item.danger {
+  color: #e5484d;
+}
+
+.lora-learner .dropdown-item.danger:hover {
+  background: #fdf2f2;
+}
+
+/* ── Skeletons for Loading State ── */
+.lora-learner .skel-card {
+  pointer-events: none;
+}
+
+.lora-learner .skel-th {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(90deg, #e3e7f1 25%, #f4f6fb 50%, #e3e7f1 75%);
+  background-size: 200% 100%;
+  animation: lora-shimmer 1.5s infinite;
+}
+
+.lora-learner .skel-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e3e7f1 25%, #f4f6fb 50%, #e3e7f1 75%);
+  background-size: 200% 100%;
+  animation: lora-shimmer 1.5s infinite;
+  margin-top: 8px;
+}
+
+.lora-learner .skel-btn {
+  height: 36px;
+  width: 80px;
+  border-radius: 11px;
+  background: linear-gradient(90deg, #e3e7f1 25%, #f4f6fb 50%, #e3e7f1 75%);
+  background-size: 200% 100%;
+  animation: lora-shimmer 1.5s infinite;
+}
+
+.lora-learner .skel-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e3e7f1 25%, #f4f6fb 50%, #e3e7f1 75%);
+  background-size: 200% 100%;
+  animation: lora-shimmer 1.5s infinite;
+}
+
+@keyframes lora-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Bank Reference & Rejection details in Enrolled Cards ── */
+.lora-learner .card-alert {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.lora-learner .card-alert.pending-bank {
+  background: var(--warn-soft);
+  border: 1px solid rgba(184, 106, 0, 0.2);
+}
+
+.lora-learner .card-alert.rejected {
+  background: #fdf2f2;
+  border: 1px solid #ffd0d0;
+}
+
+.lora-learner .card-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.lora-learner .card-alert.pending-bank .card-alert-title {
+  color: var(--warn);
+}
+
+.lora-learner .card-alert.rejected .card-alert-title {
+  color: #c0392b;
+}
+
+.lora-learner .card-alert-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.lora-learner .card-alert-code {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.lora-learner .card-alert-copy {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  transition: 0.15s;
+}
+
+.lora-learner .card-alert-copy:hover {
+  color: var(--brand);
+  background: rgba(47, 91, 255, 0.08);
+}
+
+.lora-learner .card-alert-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.lora-learner .card-alert-btn:hover {
+  background: var(--brand2);
+}
+
+/* ── Responsive rules ── */
+@media (max-width: 760px) {
+  .lora-learner .bar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .lora-learner .search {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .lora-learner .links {
+    margin-left: auto;
+  }
+  .lora-learner .links a {
+    padding: 8px 10px;
+  }
+  .lora-learner .wrap {
+    padding: 24px 16px 64px;
+  }
+}
+
+@media (max-width: 420px) {
+  .lora-learner .links a:not(.on) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-learner * {
+    transition: none !important;
+  }
+}

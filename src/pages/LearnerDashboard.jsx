@@ -1,27 +1,29 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Package, ArrowRight, BookOpen, Sparkles, Clock, XCircle, Copy } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition, StatusBadge, GoldBadge, Skeleton, EmptyState } from '../components/ui';
 import { generatePaymentReference } from '../lib/utils';
+import './learner-dashboard.css';
 
 export default function LearnerDashboard() {
   const { user, profile } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
   const [discover, setDiscover] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState(null);
+  const [regeneratingId, setRegeneratingId] = useState(null);
 
   useEffect(() => {
     if (!user) return;
-    const fetch = async () => {
+    const fetchData = async () => {
       const [enrRes, discRes] = await Promise.all([
-        supabase.from('enrollments')
-          .select('*, session_packs(id, title, thumbnail_url, category, has_free_session, sessions(count))')
+        supabase
+          .from('enrollments')
+          .select('*, session_packs(id, title, thumbnail_url, category, has_free_session, sessions(count), creator_profiles(id, profiles(first_name, last_name)))')
           .eq('learner_id', user.id)
           .order('created_at', { ascending: false }),
-        supabase.from('session_packs')
+        supabase
+          .from('session_packs')
           .select('*, creator_profiles(id, profiles(first_name, last_name))')
           .eq('is_published', true)
           .order('created_at', { ascending: false })
@@ -31,175 +33,367 @@ export default function LearnerDashboard() {
       setDiscover(discRes.data || []);
       setLoading(false);
     };
-    fetch();
+    fetchData();
   }, [user]);
 
   const handleRegenerateCode = async (enrollmentId) => {
     const code = await generatePaymentReference(profile?.first_name);
     const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
-    
-    await supabase.from('enrollments').update({
-      payment_reference_code: code,
-      code_expires_at: expiresAt,
-    }).eq('id', enrollmentId);
-    
-    // Refresh enrollments locally
-    setEnrollments(prev => prev.map(enr => 
-      enr.id === enrollmentId 
-        ? { ...enr, payment_reference_code: code, code_expires_at: expiresAt } 
-        : enr
-    ));
+
+    await supabase
+      .from('enrollments')
+      .update({
+        payment_reference_code: code,
+        code_expires_at: expiresAt,
+      })
+      .eq('id', enrollmentId);
+
+    setEnrollments((prev) =>
+      prev.map((enr) =>
+        enr.id === enrollmentId
+          ? { ...enr, payment_reference_code: code, code_expires_at: expiresAt }
+          : enr
+      )
+    );
+  };
+
+  const handleCopyCode = (e, code, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(code);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleRegenerate = async (e, enrollmentId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setRegeneratingId(enrollmentId);
+    try {
+      await handleRegenerateCode(enrollmentId);
+    } finally {
+      setRegeneratingId(null);
+    }
+  };
+
+  const renderCreatorName = (creatorProfiles) => {
+    const p = creatorProfiles?.profiles;
+    if (!p) return '';
+    return `${p.first_name || ''} ${p.last_name || ''}`.trim();
   };
 
   return (
-    <PageTransition>
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-10" style={{ fontFamily: 'var(--font-heading)' }}>
-          My Dashboard
-        </h1>
+    <div className="lora-learner">
+      <div className="wrap">
+        {/* Welcome Heading */}
+        <div className="hello">
+          <div>
+            <h1>My dashboard</h1>
+            <p>Pick up where you left off, or find your next course.</p>
+          </div>
+        </div>
 
-        {/* Enrolled Packs */}
-        <section className="mb-14">
-          <h2 className="text-lg font-semibold text-[#0F172A] mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-            My Enrolled Packs
-          </h2>
+        {/* Section 1: My enrolled packs */}
+        <section className="sec">
+          <div className="sh">
+            <h2>My enrolled packs</h2>
+            {enrollments.length > 0 && <span className="cnt">{enrollments.length}</span>}
+          </div>
 
           {loading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-52" />)}
+            <div className="grid">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="card course skel-card">
+                  <div className="th skel-th" />
+                  <div className="cb">
+                    <div className="skel-line" style={{ width: '70%', height: '18px' }} />
+                    <div className="skel-line" style={{ width: '45%' }} />
+                    <div className="cf" style={{ marginTop: '16px' }}>
+                      <div className="skel-btn" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : enrollments.length === 0 ? (
-            <EmptyState
-              icon={BookOpen}
-              title="No enrollments yet"
-              description="Discover courses and start learning today!"
-              action={<Link to="/learner/discover" className="btn-primary text-sm py-2.5 px-6">Discover Courses</Link>}
-            />
+            <div className="card empty">
+              <div className="ring">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M12 6c-2-1.5-5-2-8-2v13c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v13" />
+                </svg>
+              </div>
+              <h3>No enrollments yet</h3>
+              <p>Discover courses and start learning today!</p>
+              <Link className="btn" to="/learner/discover">
+                Discover courses{' '}
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {enrollments.map((enr, i) => {
-                const pack = enr.session_packs;
+            <div className="grid">
+              {enrollments.map((enr) => {
+                const pack = enr.session_packs || {};
+                const creatorName = renderCreatorName(pack.creator_profiles);
+                const isConfirmed = enr.status === 'confirmed';
+                const isPending = enr.status === 'pending';
+                const isRejected = enr.status === 'rejected';
+                const isExpired = enr.code_expires_at && new Date(enr.code_expires_at) < new Date();
+                const targetLink = isConfirmed
+                  ? `/learner/pack/${pack.id}/sessions`
+                  : `/learner/pack/${pack.id}`;
+
                 return (
-                  <motion.div
-                    key={enr.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                  >
-                    <Link
-                      to={enr.status === 'confirmed' ? `/learner/pack/${pack.id}/sessions` : `/learner/pack/${pack.id}`}
-                      className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block"
-                    >
-                      <div className="h-36 bg-[#F8FAFC] relative">
-                        {pack.thumbnail_url ? (
-                          <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Package size={32} className="text-[#E2E8F0]" />
-                          </div>
-                        )}
-                        <div className="absolute top-3 right-3">
-                          <StatusBadge status={enr.status === 'confirmed' ? 'confirmed' : enr.status === 'pending' ? 'pending' : 'rejected'} />
-                        </div>
+                  <Link key={enr.id} className="card course" to={targetLink}>
+                    <div className="th">
+                      {isConfirmed && (
+                        <span className="chip ok">
+                          <svg className="ic" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                          Enrolled
+                        </span>
+                      )}
+                      {isPending && (
+                        <span className="chip wait">
+                          <svg className="ic" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                          </svg>
+                          Pending approval
+                        </span>
+                      )}
+                      {isRejected && (
+                        <span className="chip err">
+                          <svg className="ic" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="15" y1="9" x2="9" y2="15" />
+                            <line x1="9" y1="9" x2="15" y2="15" />
+                          </svg>
+                          Payment rejected
+                        </span>
+                      )}
+                      {!isConfirmed && !isPending && !isRejected && (
+                        <span className="chip">{enr.status}</span>
+                      )}
+                      {pack.thumbnail_url && (
+                        <img src={pack.thumbnail_url} alt={pack.title || 'Course'} />
+                      )}
+                    </div>
+
+                    <div className="cb">
+                      <h3>{pack.title}</h3>
+                      <div className="by">
+                        {creatorName && <span>{creatorName}</span>}
+                        {creatorName && pack.category && <i />}
+                        {pack.category && <span>{pack.category}</span>}
                       </div>
-                      <div className="p-5">
-                        <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-1">{pack.title}</h3>
-                        <p className="text-xs text-[#475569] mt-1 mb-4">{pack.category}</p>
-                        
-                        {enr.status === 'pending' && enr.payment_method_used === 'bank' && (
-                          <div className="p-3 rounded-lg bg-[#DBEAFE]/20 border border-[#DBEAFE] mb-2">
-                            <p className="text-[11px] font-medium text-[#1D4ED8] mb-1 flex items-center gap-1">
-                              <Clock size={10} /> Awaiting verification
-                            </p>
-                            <div className="flex items-center justify-between mt-2">
-                              <p className="text-xs font-mono text-[#0F172A]">{enr.payment_reference_code}</p>
-                              {new Date(enr.code_expires_at) < new Date() ? (
-                                <span className="text-[10px] text-white font-semibold bg-[#C0392B] px-2 py-0.5 rounded">Expired</span>
-                              ) : (
-                                <button onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(enr.payment_reference_code); }} className="text-[#475569] hover:text-[#2563EB]">
-                                  <Copy size={12} />
-                                </button>
-                              )}
-                            </div>
-                            
-                            {new Date(enr.code_expires_at) < new Date() && (
-                              <button 
-                                onClick={(e) => { e.preventDefault(); handleRegenerateCode(enr.id); }}
-                                className="w-full mt-3 py-1.5 btn-primary text-xs"
+
+                      {/* Bank transfer payment verification reference */}
+                      {isPending && enr.payment_method_used === 'bank' && (
+                        <div
+                          className="card-alert pending-bank"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <div className="card-alert-title">
+                            <svg
+                              className="ic"
+                              style={{ width: 12, height: 12 }}
+                              viewBox="0 0 24 24"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            Awaiting verification
+                          </div>
+                          <div className="card-alert-row">
+                            <span className="card-alert-code">
+                              {enr.payment_reference_code}
+                            </span>
+                            {isExpired ? (
+                              <span
+                                style={{
+                                  fontSize: '10px',
+                                  color: '#fff',
+                                  background: '#c0392b',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  fontWeight: 700,
+                                }}
                               >
-                                Request New Code
+                                Expired
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={(e) =>
+                                  handleCopyCode(e, enr.payment_reference_code, enr.id)
+                                }
+                                className="card-alert-copy"
+                                title="Copy reference code"
+                              >
+                                {copiedId === enr.id ? 'Copied!' : 'Copy'}
                               </button>
                             )}
                           </div>
-                        )}
+                          {isExpired && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleRegenerate(e, enr.id)}
+                              className="card-alert-btn"
+                              disabled={regeneratingId === enr.id}
+                            >
+                              {regeneratingId === enr.id
+                                ? 'Requesting...'
+                                : 'Request New Code'}
+                            </button>
+                          )}
+                        </div>
+                      )}
 
-                        {enr.status === 'rejected' && (
-                          <div className="p-3 rounded-lg bg-red-50 border border-red-100">
-                            <p className="text-[11px] font-medium text-[#C0392B] flex items-center gap-1">
-                              <XCircle size={10} /> Payment rejected
-                            </p>
-                            {enr.rejection_reason && (
-                              <p className="text-xs text-[#475569] mt-1 leading-relaxed">Reason: {enr.rejection_reason}</p>
-                            )}
-                            <Link to={`/learner/pack/${pack.id}`} className="mt-2 text-xs text-[#2563EB] font-medium underline inline-block">
-                              Try Again
-                            </Link>
+                      {/* Rejection notice */}
+                      {isRejected && (
+                        <div
+                          className="card-alert rejected"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <div className="card-alert-title">
+                            <svg
+                              className="ic"
+                              style={{ width: 12, height: 12 }}
+                              viewBox="0 0 24 24"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <line x1="15" y1="9" x2="9" y2="15" />
+                              <line x1="9" y1="9" x2="15" y2="15" />
+                            </svg>
+                            Payment rejected
                           </div>
-                        )}
+                          {enr.rejection_reason && (
+                            <p
+                              style={{
+                                margin: '4px 0 0',
+                                fontSize: '12px',
+                                color: 'var(--muted)',
+                              }}
+                            >
+                              Reason: {enr.rejection_reason}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="cf">
+                        <span className="btn sm">
+                          {isConfirmed
+                            ? 'Continue'
+                            : isRejected
+                            ? 'Try Again'
+                            : 'View status'}
+                        </span>
                       </div>
-                    </Link>
-                  </motion.div>
+                    </div>
+                  </Link>
                 );
               })}
             </div>
           )}
         </section>
 
-        {/* Discover */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-[#0F172A]" style={{ fontFamily: 'var(--font-heading)' }}>
-              Discover New Courses
-            </h2>
-            <Link to="/learner/discover" className="text-sm text-[#2563EB] hover:text-[#1D4ED8] font-semibold flex items-center gap-1">
-              See all <ArrowRight size={14} />
+        {/* Section 2: Discover new courses */}
+        <section className="sec">
+          <div className="sh">
+            <h2>Discover new courses</h2>
+            <Link className="va" to="/learner/discover">
+              See all{' '}
+              <svg className="ic" viewBox="0 0 24 24">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
             </Link>
           </div>
+
           {loading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-52" />)}
+            <div className="grid">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="card course skel-card">
+                  <div className="th skel-th" />
+                  <div className="cb">
+                    <div className="skel-line" style={{ width: '70%', height: '18px' }} />
+                    <div className="skel-line" style={{ width: '45%' }} />
+                    <div className="cf" style={{ marginTop: '16px' }}>
+                      <div className="skel-line" style={{ width: '35%', height: '22px' }} />
+                      <div className="skel-circle" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : discover.length === 0 ? (
+            <div className="card empty">
+              <div className="ring">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M4.93 19.07l4.24-4.24" />
+                </svg>
+              </div>
+              <h3>No courses to discover</h3>
+              <p>Check back soon for new courses.</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-              {discover.map((pack, i) => (
-                <motion.div key={pack.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
-                  <Link to={`/learner/pack/${pack.id}`} className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block">
-                    <div className="h-36 bg-[#F8FAFC] relative">
-                      {pack.thumbnail_url ? (
-                        <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package size={32} className="text-[#E2E8F0]" />
-                        </div>
-                      )}
+            <div className="grid">
+              {discover.map((pack) => {
+                const creatorName = renderCreatorName(pack.creator_profiles);
+                return (
+                  <Link
+                    key={pack.id}
+                    className="card course"
+                    to={`/learner/pack/${pack.id}`}
+                  >
+                    <div className="th">
                       {pack.has_free_session && (
-                        <div className="absolute top-3 left-3"><GoldBadge icon={Sparkles}>Free Preview</GoldBadge></div>
+                        <span className="chip">
+                          <svg className="ic" viewBox="0 0 24 24">
+                            <path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z" />
+                          </svg>
+                          Free preview
+                        </span>
+                      )}
+                      {pack.thumbnail_url && (
+                        <img src={pack.thumbnail_url} alt={pack.title || 'Course'} />
                       )}
                     </div>
-                    <div className="p-5">
-                      <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-1">{pack.title}</h3>
-                      <p className="text-xs text-[#94A6B8] mb-3">
-                        {pack.creator_profiles?.profiles?.first_name} {pack.creator_profiles?.profiles?.last_name} · {pack.category}
-                      </p>
-                      <p className="text-sm font-semibold text-[#2563EB]">{pack.currency} {pack.price}</p>
+                    <div className="cb">
+                      <h3>{pack.title}</h3>
+                      <div className="by">
+                        {creatorName && <span>{creatorName}</span>}
+                        {creatorName && pack.category && <i />}
+                        {pack.category && <span>{pack.category}</span>}
+                      </div>
+                      <div className="cf">
+                        <span className="price">
+                          {pack.currency || 'USD'} {pack.price}
+                        </span>
+                        <span className="arrow">
+                          <svg className="ic" viewBox="0 0 24 24">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
+                        </span>
+                      </div>
                     </div>
                   </Link>
-                </motion.div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
       </div>
-    </PageTransition>
+    </div>
   );
 }

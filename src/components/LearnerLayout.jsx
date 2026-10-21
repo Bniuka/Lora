@@ -1,17 +1,23 @@
-import { NavLink, useNavigate, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Bell, LogOut, User, Menu, X } from 'lucide-react';
+import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { User, LogOut, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import '../pages/learner-dashboard.css';
 
 export default function LearnerLayout({ children }) {
   const { profile, signOut, user } = useAuth();
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const userMenuRef = useRef(null);
+  const notifRef = useRef(null);
+
+  const isDashboard = location.pathname === '/learner/dashboard';
 
   useEffect(() => {
     if (!user) return;
@@ -26,6 +32,33 @@ export default function LearnerLayout({ children }) {
     fetchUnread();
   }, [user]);
 
+  useEffect(() => {
+    if (!user || !notifOpen) return;
+    const fetchNotifications = async () => {
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      setNotifications(data || []);
+    };
+    fetchNotifications();
+  }, [user, notifOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -39,149 +72,211 @@ export default function LearnerLayout({ children }) {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-white border-b border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-[68px] flex items-center gap-6">
-          {/* Logo */}
-          <Link to="/learner/dashboard" className="flex-shrink-0 pl-2">
-            <span className="text-2xl font-bold text-[#2563EB]" style={{ fontFamily: 'var(--font-heading)' }}>
-              Lora
-            </span>
-          </Link>
+  const markAllRead = async () => {
+    if (!user) return;
+    await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false);
+    setUnreadCount(0);
+    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+  };
 
-          {/* Search */}
-          <form onSubmit={handleSearch} className="hidden sm:flex flex-1 max-w-md mx-6">
-            <div className="relative w-full">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A6B8]" />
+  const initials =
+    ((profile?.first_name?.[0] || 'L') + (profile?.last_name?.[0] || '')).toUpperCase();
+
+  return (
+    <div className="min-h-screen bg-[#f4f6fb]">
+      {/* Redesigned Learner Top Bar */}
+      <div className="lora-learner">
+        <header>
+          <div className="bar">
+            {/* Logo */}
+            <Link className="logo" to="/learner/dashboard">
+              <i>
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3 22 21H2z" />
+                </svg>
+              </i>
+              Lora
+            </Link>
+
+            {/* Search Input */}
+            <form onSubmit={handleSearch} className="search">
+              <svg className="ic" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search courses, creators..."
-                className="w-full bg-[#F5F5F5] rounded-xl px-4 py-2.5 pl-10 text-sm text-[#0F172A] placeholder:text-[#94A6B8] focus:bg-white focus:border focus:border-[#2563EB] focus:outline-none transition-all duration-200"
+                placeholder="Search courses, creators…"
+                aria-label="Search courses and creators"
               />
-            </div>
-          </form>
+            </form>
 
-          {/* Right side */}
-          <div className="flex items-center gap-4 ml-auto">
-            {/* Nav links - desktop */}
-            <div className="hidden md:flex items-center gap-6">
+            {/* Links and Actions */}
+            <nav className="links">
               <NavLink
                 to="/learner/dashboard"
                 end
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${
-                    isActive ? 'text-[#2563EB]' : 'text-[#475569] hover:text-[#2563EB]'
-                  }`
-                }
+                className={({ isActive }) => (isActive ? 'on' : '')}
               >
-                My Courses
+                My courses
               </NavLink>
               <NavLink
                 to="/learner/discover"
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${
-                    isActive ? 'text-[#2563EB]' : 'text-[#475569] hover:text-[#2563EB]'
-                  }`
-                }
+                className={({ isActive }) => (isActive ? 'on' : '')}
               >
                 Discover
               </NavLink>
-            </div>
 
-            {/* Notifications */}
-            <button className="relative p-2 text-[#475569] hover:text-[#2563EB] transition-colors">
-              <Bell size={20} />
-              {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2563EB] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
+              {/* Notification Bell */}
+              <div className="relative" ref={notifRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  className={`bell ${unreadCount > 0 ? 'has' : ''}`}
+                  id="bell"
+                  aria-label="Notifications"
+                  onClick={() => {
+                    setNotifOpen(!notifOpen);
+                    setUserMenuOpen(false);
+                  }}
+                >
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" />
+                  </svg>
+                </button>
 
-            {/* Avatar dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="w-10 h-10 rounded-full bg-[#2563EB] flex items-center justify-center text-white text-sm font-bold hover:bg-[#1D4ED8] transition-colors"
-              >
-                {profile?.first_name?.[0]}{profile?.last_name?.[0]}
-              </button>
-
-              <AnimatePresence>
-                {userMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-48 bg-white border border-[#E2E8F0] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] py-2 z-50"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    <div className="px-4 py-3 border-b border-[#E2E8F0] mb-1">
-                      <p className="text-sm font-medium text-[#0F172A]">{profile?.first_name} {profile?.last_name}</p>
-                      <p className="text-xs text-[#94A6B8] truncate mt-1">{profile?.email}</p>
-                    </div>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#475569] hover:text-[#C0392B] hover:bg-[#F8FAFC] transition-colors"
+                {notifOpen && (
+                  <div className="dropdown" style={{ width: '300px', right: 0 }}>
+                    <div
+                      className="dropdown-header"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
                     >
-                      <LogOut size={14} /> Sign out
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Mobile menu toggle */}
-            <button
-              className="md:hidden text-[#475569] hover:text-[#0F172A]"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-[#E2E8F0] bg-white overflow-hidden"
-            >
-              <div className="p-5 space-y-3">
-                <form onSubmit={handleSearch} className="mb-3">
-                  <div className="relative">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A6B8]" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search..."
-                      className="input-field pl-10 py-2 text-sm"
-                    />
+                      <span className="dropdown-name">Notifications</span>
+                      {unreadCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={markAllRead}
+                          style={{
+                            fontSize: '11px',
+                            color: 'var(--brand)',
+                            background: 'none',
+                            border: '0',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            padding: 0,
+                          }}
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                    </div>
+                    {notifications.length === 0 ? (
+                      <div
+                        style={{
+                          padding: '20px 12px',
+                          textAlign: 'center',
+                          color: 'var(--muted)',
+                          fontSize: '13px',
+                        }}
+                      >
+                        No notifications yet
+                      </div>
+                    ) : (
+                      <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
+                        {notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            style={{
+                              padding: '8px 10px',
+                              borderRadius: '8px',
+                              background: n.is_read ? 'transparent' : 'var(--brand-soft)',
+                              marginBottom: '4px',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <p
+                              style={{
+                                margin: '0 0 2px',
+                                fontWeight: n.is_read ? 500 : 700,
+                                color: 'var(--ink)',
+                              }}
+                            >
+                              {n.title || n.message}
+                            </p>
+                            {n.title && (
+                              <p style={{ margin: 0, color: 'var(--muted)', fontSize: '11px' }}>
+                                {n.message}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </form>
-                <NavLink to="/learner/dashboard" end onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) => `block px-3 py-2 rounded-xl text-sm font-medium ${isActive ? 'text-[#2563EB] bg-[#DBEAFE]/30' : 'text-[#475569]'}`}
-                >My Courses</NavLink>
-                <NavLink to="/learner/discover" onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) => `block px-3 py-2 rounded-xl text-sm font-medium ${isActive ? 'text-[#2563EB] bg-[#DBEAFE]/30' : 'text-[#475569]'}`}
-                >Discover</NavLink>
+                )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
 
-      <main className="max-w-7xl mx-auto px-6 md:px-10 py-8 lg:py-12">
-        {children}
-      </main>
+              {/* Avatar & User Dropdown */}
+              <div className="relative" ref={userMenuRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  className="av"
+                  title="Profile"
+                  onClick={() => {
+                    setUserMenuOpen(!userMenuOpen);
+                    setNotifOpen(false);
+                  }}
+                >
+                  {initials}
+                </button>
+
+                {userMenuOpen && (
+                  <div className="dropdown">
+                    <div className="dropdown-header">
+                      <div className="dropdown-name">
+                        {profile?.first_name} {profile?.last_name}
+                      </div>
+                      <div className="dropdown-email">{profile?.email || user?.email}</div>
+                    </div>
+                    <Link
+                      to="/learner/dashboard"
+                      className="dropdown-item"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <User size={15} /> My dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="dropdown-item danger"
+                    >
+                      <LogOut size={15} /> Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </nav>
+          </div>
+        </header>
+      </div>
+
+      {/* Main Content Area */}
+      {isDashboard ? (
+        children
+      ) : (
+        <main className="max-w-7xl mx-auto px-6 md:px-10 py-8 lg:py-12">
+          {children}
+        </main>
+      )}
     </div>
   );
 }
