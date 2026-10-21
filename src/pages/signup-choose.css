@@ -1,0 +1,324 @@
+/* ================================================================
+   Lora Choose Sign Up Role — light-mode-only scoped styles
+   All selectors are prefixed with .lora-signup to avoid collisions
+   with app-level .card, .btn, .grid, .logo, .top
+   ================================================================ */
+
+
+.lora-signup {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --violet: #7a4dff;
+
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  background: radial-gradient(760px 460px at 12% -5%, #cfdcff, transparent 70%),
+              radial-gradient(640px 440px at 100% 100%, #e4dbff, transparent 70%),
+              var(--bg) !important;
+  color: var(--ink) !important;
+  font: 16px/1.6 'Figtree', system-ui, sans-serif !important;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(32px + env(safe-area-inset-bottom, 0px)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.lora-signup *,
+.lora-signup *::before,
+.lora-signup *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-signup h1,
+.lora-signup h2 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.03em !important;
+  margin: 0 !important;
+}
+
+.lora-signup a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-signup button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-signup :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 3px !important;
+}
+
+.lora-signup .ic {
+  width: 20px !important;
+  height: 20px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+.lora-signup .top {
+  width: 100% !important;
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.lora-signup .back {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  padding: 8px 14px 8px 10px !important;
+  border-radius: 12px !important;
+  transition: 0.15s !important;
+  font-size: 15px !important;
+}
+
+.lora-signup .back:hover {
+  background: #fff !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup .back .ic {
+  width: 18px !important;
+  transition: transform 0.2s !important;
+}
+
+.lora-signup .back:hover .ic {
+  transform: translateX(-3px) !important;
+}
+
+.lora-signup .logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  font: 800 22px 'Bricolage Grotesque', sans-serif !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup .logo i {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  background: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-signup .logo svg {
+  width: 15px !important;
+  fill: #fff !important;
+}
+
+.lora-signup main {
+  width: 100% !important;
+  max-width: 860px !important;
+  margin: clamp(24px, 7vh, 80px) auto 0 !important;
+  text-align: center !important;
+}
+
+.lora-signup h1 {
+  font-size: clamp(40px, 7vw, 64px) !important;
+  line-height: 1 !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup h1 em {
+  font-style: normal !important;
+  background: linear-gradient(100deg, var(--brand), var(--violet)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+.lora-signup .lead {
+  margin: 14px 0 40px !important;
+  color: var(--muted) !important;
+  font-size: 18px !important;
+}
+
+.lora-signup .grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 22px !important;
+  text-align: left !important;
+}
+
+.lora-signup .role {
+  position: relative !important;
+  background: var(--surface) !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 28px !important;
+  padding: 30px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  box-shadow: 0 20px 50px -34px rgba(14,23,51,.4) !important;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s !important;
+  overflow: hidden !important;
+}
+
+.lora-signup .role:hover,
+.lora-signup .role:focus-within {
+  transform: translateY(-6px) !important;
+  border-color: var(--brand) !important;
+  box-shadow: 0 34px 60px -30px rgba(47,91,255,.5) !important;
+}
+
+.lora-signup .role::before {
+  content: "" !important;
+  position: absolute !important;
+  right: -70px !important;
+  top: -70px !important;
+  width: 200px !important;
+  height: 200px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  opacity: 0.7 !important;
+  transition: transform 0.4s !important;
+  pointer-events: none !important;
+}
+
+.lora-signup .role:hover::before {
+  transform: scale(1.25) !important;
+}
+
+.lora-signup .ico {
+  position: relative !important;
+  width: 68px !important;
+  height: 68px !important;
+  border-radius: 20px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  margin-bottom: 6px !important;
+  transition: 0.25s !important;
+}
+
+.lora-signup .ico .ic {
+  width: 32px !important;
+  height: 32px !important;
+  stroke-width: 1.6 !important;
+}
+
+.lora-signup .role:hover .ico {
+  background: var(--brand) !important;
+  color: #fff !important;
+  transform: rotate(-6deg) !important;
+}
+
+.lora-signup .role h2 {
+  position: relative !important;
+  font-size: 28px !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup .role p {
+  position: relative !important;
+  margin: 0 0 14px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+.lora-signup .cta {
+  position: relative !important;
+  margin-top: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: 15px !important;
+  padding: 14px 20px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  border: 2px solid var(--brand) !important;
+  transition: 0.2s !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+.lora-signup .cta::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: -400px -30px -30px -30px !important; /* makes the whole card clickable */
+}
+
+.lora-signup .cta .ic {
+  width: 18px !important;
+  transition: transform 0.2s !important;
+}
+
+.lora-signup .role:hover .cta .ic {
+  transform: translateX(4px) !important;
+}
+
+.lora-signup .cta.fill {
+  background: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -14px rgba(47,91,255,.9) !important;
+}
+
+.lora-signup .role:hover .cta.fill {
+  background: var(--brand2) !important;
+}
+
+.lora-signup .cta.line {
+  background: #fff !important;
+  color: var(--brand) !important;
+}
+
+.lora-signup .role:hover .cta.line {
+  background: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-signup .have {
+  margin-top: 30px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+}
+
+.lora-signup .have a {
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+}
+
+.lora-signup .have a:hover {
+  text-decoration: underline !important;
+}
+
+@media(max-width: 700px) {
+  .lora-signup .grid {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-signup .role {
+    padding: 24px !important;
+  }
+  .lora-signup .lead {
+    font-size: 16px !important;
+    margin-bottom: 28px !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-signup * {
+    transition: none !important;
+  }
+}
