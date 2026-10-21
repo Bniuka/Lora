@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Loader2 } from 'lucide-react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition } from '../components/ui';
+import './creator-subscription.css';
 
 const LKR_TO_USD_RATE = 0.0034;
 const AMOUNT_LKR = 3499;
@@ -20,8 +20,8 @@ export default function CreatorSubscription() {
   // Wait for profile to load before determining trial status
   if (creatorProfile === undefined) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 text-[#C9A84C] animate-spin" />
+      <div className="lora-sub" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Loader2 className="w-10 h-10 animate-spin" style={{ color: 'var(--brand)' }} />
       </div>
     );
   }
@@ -129,103 +129,102 @@ export default function CreatorSubscription() {
   ];
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-gradient-to-b from-[#FAFAFA] to-[#F5EDD8] flex flex-col items-center justify-center px-6 py-16">
-        
-        <div className="text-center mb-10">
-          <span className="inline-block px-3 py-1 bg-[#F0E0B0] text-[#A0782A] text-xs font-bold rounded-full mb-4 tracking-wider">
-            LORA PRO FOR CREATORS
-          </span>
-          <h1 className="text-5xl font-bold text-[#1A1A1A] mb-4 font-['Playfair_Display']">
-            {isTrialView ? "Start your free month" : "Your free trial has ended"}
-          </h1>
-          <p className="text-gray-500 text-lg max-w-md mx-auto">
-            {isTrialView 
-              ? "No payment needed today. Enjoy full access for 30 days, on us."
-              : "Subscribe to keep your courses live and continue earning."}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-3xl p-10 max-w-md w-full mx-auto shadow-[0_8px_40px_rgba(0,0,0,0.10)] border border-[#F0E0B0] relative">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-            <span className="bg-[#C9A84C] text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">
-              CREATOR PLAN
-            </span>
-          </div>
-
-          <div className="text-center my-8">
-            <div className="flex items-start justify-center gap-1">
-              <span className="text-2xl font-bold text-gray-500 mt-3">Rs.</span>
-              <span className="text-7xl font-bold text-[#1A1A1A] font-['Playfair_Display'] leading-none">3,499</span>
-              <span className="text-2xl font-bold text-gray-500 mt-3">.00</span>
-            </div>
-            <p className="text-gray-400 text-sm mt-2">per month after free trial</p>
-          </div>
-
-          <div className="border-t border-[#E8E8E8] my-6"></div>
-
-          <div className="space-y-4 mb-8">
-            {features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#F0E0B0] flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-[#C9A84C]" />
-                </div>
-                <span className="text-gray-700 text-sm">{feature}</span>
-              </div>
-            ))}
-          </div>
-
-          {isTrialView && (
-            <div className="bg-[#F0E0B0]/40 rounded-2xl p-4 text-center mb-6">
-              <p className="text-[#A0782A] font-bold text-lg">
-                🎉 First month completely FREE
-              </p>
-              <p className="text-[#A0782A]/80 text-sm mt-1">
-                No credit card required to start
-              </p>
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 text-red-600 text-sm text-center font-medium bg-red-50 py-2 rounded-lg">
-              {error}
-            </div>
-          )}
-
-          {isTrialView ? (
-            <button 
-              onClick={handleStartTrial}
-              className="w-full group relative overflow-hidden bg-[#C9A84C] hover:bg-[#A0782A] text-white font-bold text-lg py-5 rounded-2xl shadow-[0_8px_32px_rgba(201,168,76,0.4)] hover:shadow-[0_12px_40px_rgba(201,168,76,0.6)] hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              Start My Free Month →
-            </button>
-          ) : (
-            <div className="relative">
-              {loading && (
-                <div className="absolute inset-0 z-10 bg-white/80 flex items-center justify-center rounded-2xl">
-                  <Loader2 className="w-8 h-8 text-[#C9A84C] animate-spin" />
-                </div>
+    <div className="lora-sub">
+      <div className="wrap">
+        <div className="grid">
+          <div className="text">
+            <Link className="logo" to="/creator/dashboard">
+              <i>
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3 22 21H2z" />
+                </svg>
+              </i>
+              Lora
+            </Link>
+            <br />
+            <span className="eyebrow">Lora Pro for creators</span>
+            <h1>
+              {isTrialView ? (
+                <>Start your free <em>month</em></>
+              ) : (
+                <>Your free trial has <em>ended</em></>
               )}
-              <div id="paypal-button-container" className="min-h-[50px]"></div>
-            </div>
-          )}
+            </h1>
+            <p className="lead">
+              {isTrialView
+                ? "No payment needed today. Enjoy full access for 30 days, on us."
+                : "Subscribe to keep your courses live and continue earning."}
+            </p>
+          </div>
 
-          <p className="text-center text-xs text-gray-400 mt-4">
-            {isTrialView 
-              ? "After 30 days, Rs. 3,499/month. Cancel anytime."
-              : "Your courses will go live again immediately after payment."}
+          <section className="card" aria-label="Creator plan">
+            <div className="head">
+              <span className="plan">Creator plan</span>
+              <div className="price">
+                <span className="cur">Rs.</span>
+                <span className="num">3,499</span>
+                <span className="dec">.00</span>
+              </div>
+              <div className="per">per month after free trial</div>
+            </div>
+            <div className="pay">
+              {isTrialView ? (
+                <>
+                  <div className="trial-banner">
+                    <b>🎉 First month completely FREE</b>
+                    <small>No credit card required to start</small>
+                  </div>
+                  <button onClick={handleStartTrial} className="trial-btn">
+                    Start My Free Month →
+                  </button>
+                  <p className="live" style={{ marginTop: '14px' }}>
+                    After 30 days, Rs. 3,499/month. Cancel anytime.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {error && <div className="sub-error">{error}</div>}
+                  <div style={{ position: 'relative' }}>
+                    {loading && (
+                      <div className="loading-overlay">
+                        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--brand)' }} />
+                      </div>
+                    )}
+                    <div className="pp" id="paypal-button-container" style={{ minHeight: '50px' }}></div>
+                  </div>
+                  <p className="powered">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <rect x="5" y="11" width="14" height="9" rx="2" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    </svg>
+                    Secure payment · Powered by <b>PayPal</b>
+                  </p>
+                  <p className="live">Your courses will go live again immediately after payment.</p>
+                </>
+              )}
+            </div>
+          </section>
+
+          <div className="featwrap">
+            <ul className="feat">
+              {features.map((feature, idx) => (
+                <li key={idx}>
+                  <span className="ck">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <path d="m5 12 5 5 9-10" />
+                    </svg>
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="foot">
+            Questions? <a href="mailto:support@lora.com">Contact us</a> · © 2026 Lora
           </p>
         </div>
-
-        <div className="mt-12 text-center">
-          <a href="mailto:support@lora.com" className="text-sm text-gray-500 hover:text-[#C9A84C] transition-colors mb-2 inline-block">
-            Questions? Contact us
-          </a>
-          <p className="text-xs text-gray-400 font-bold">© 2026 Lora</p>
-        </div>
-
       </div>
-    </PageTransition>
+    </div>
   );
 }

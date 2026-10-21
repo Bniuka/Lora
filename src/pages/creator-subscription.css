@@ -1,0 +1,429 @@
+/* ================================================================
+   Lora Pro Subscription Page — Scoped light/navy theme
+   Scoped under .lora-sub wrapper
+   ================================================================ */
+
+.lora-sub {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --violet: #7a4dff;
+  --ok: #0f9d6b;
+  --ok-soft: #e3f7ee;
+  --navy: #0e1733;
+
+  box-sizing: border-box;
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(700px 420px at 10% -5%, #cfdcff, transparent 70%),
+              radial-gradient(600px 420px at 100% 100%, #e4dbff, transparent 70%),
+              var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 'Figtree', system-ui, sans-serif;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+.lora-sub *,
+.lora-sub *::before,
+.lora-sub *::after {
+  box-sizing: border-box;
+}
+
+.lora-sub h1,
+.lora-sub .price {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.lora-sub a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lora-sub :focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.lora-sub .ic {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* Capped width: the page never stretches on wide screens */
+.lora-sub .wrap {
+  width: 100%;
+  max-width: 980px;
+}
+
+.lora-sub .grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  grid-template-areas: "text card" "feat card";
+  column-gap: 56px;
+  row-gap: 22px;
+  align-items: start;
+}
+
+.lora-sub .text {
+  grid-area: text;
+}
+
+.lora-sub .card {
+  grid-area: card;
+}
+
+.lora-sub .featwrap {
+  grid-area: feat;
+}
+
+.lora-sub .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font: 800 22px 'Bricolage Grotesque', sans-serif;
+  text-decoration: none;
+  margin-bottom: 22px;
+}
+
+.lora-sub .logo i {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--brand);
+  display: grid;
+  place-items: center;
+}
+
+.lora-sub .logo svg {
+  width: 15px;
+  fill: #fff;
+}
+
+.lora-sub .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 99px;
+  padding: 5px 14px;
+}
+
+.lora-sub h1 {
+  font-size: clamp(34px, 4.4vw, 52px);
+  line-height: 1.04;
+  margin: 14px 0 10px;
+  color: var(--ink);
+}
+
+.lora-sub h1 em {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--brand), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lora-sub .lead {
+  margin: 0;
+  max-width: 430px;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.lora-sub .feat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.lora-sub .feat li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.lora-sub .ck {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ok-soft);
+  color: var(--ok);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.lora-sub .ck .ic {
+  width: 12px;
+  height: 12px;
+  stroke-width: 3.2;
+}
+
+/* Plan card (no overflow/transform so PayPal buttons are never clipped) */
+.lora-sub .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  box-shadow: 0 36px 70px -36px rgba(14, 23, 51, 0.45);
+}
+
+.lora-sub .head {
+  padding: 26px 26px 22px;
+  text-align: center;
+  color: #fff;
+  border-radius: 25px 25px 0 0;
+  background: radial-gradient(260px 160px at 100% 0, rgba(122, 77, 255, 0.5), transparent 70%),
+              linear-gradient(135deg, #0e1733, #1f3a9e);
+}
+
+.lora-sub .plan {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.14);
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 99px;
+  padding: 4px 14px;
+}
+
+.lora-sub .price {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 12px 0 2px;
+  line-height: 1;
+}
+
+.lora-sub .price .cur,
+.lora-sub .price .dec {
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+.lora-sub .price .num {
+  font-size: clamp(56px, 6vw, 76px);
+  font-weight: 800;
+}
+
+.lora-sub .per {
+  opacity: 0.75;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.lora-sub .pay {
+  padding: 20px 24px 22px;
+}
+
+/* PayPal-owned containers: do NOT style anything inside these. Keep your real ids/SDK code. */
+.lora-sub .pp {
+  width: 100%;
+}
+
+.lora-sub .pp + .pp {
+  margin-top: 10px;
+}
+
+.lora-sub .powered {
+  margin: 14px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.lora-sub .powered .ic {
+  width: 14px;
+  height: 14px;
+  color: var(--ok);
+}
+
+.lora-sub .live {
+  margin: 10px 0 0;
+  text-align: center;
+  font-weight: 600;
+  color: var(--brand);
+  font-size: 13.5px;
+  background: var(--brand-soft);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.lora-sub .foot {
+  grid-column: 1 / -1;
+  margin: 26px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.lora-sub .foot a {
+  color: var(--ink);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.lora-sub .foot a:hover {
+  text-decoration: underline;
+}
+
+/* Trial View & Helpers */
+.lora-sub .trial-banner {
+  background: var(--brand-soft);
+  border-radius: 16px;
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.lora-sub .trial-banner b {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand2);
+}
+
+.lora-sub .trial-banner small {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.lora-sub .trial-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand);
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgba(47, 91, 255, 0.8);
+  transition: background 0.2s;
+}
+
+.lora-sub .trial-btn:hover {
+  background: var(--brand2);
+}
+
+.lora-sub .sub-error {
+  margin-bottom: 12px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.lora-sub .loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+/* short desktop screens: tighten so everything still fits without scrolling */
+@media (min-width: 900px) and (max-height: 760px) {
+  .lora-sub .logo {
+    margin-bottom: 14px;
+  }
+  .lora-sub h1 {
+    margin: 10px 0 8px;
+  }
+  .lora-sub .lead {
+    font-size: 15.5px;
+  }
+  .lora-sub .feat {
+    gap: 6px;
+  }
+  .lora-sub .head {
+    padding: 20px 22px 16px;
+  }
+  .lora-sub .price .num {
+    font-size: 56px;
+  }
+  .lora-sub .pay {
+    padding: 16px 22px 18px;
+  }
+  .lora-sub .foot {
+    margin-top: 16px;
+  }
+  .lora-sub .grid {
+    row-gap: 16px;
+  }
+}
+
+/* tablets & phones: single column, normal scrolling */
+@media (max-width: 899px) {
+  .lora-sub {
+    place-items: start center;
+  }
+  .lora-sub .grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "text" "card" "feat";
+    max-width: 520px;
+    margin: 0 auto;
+    row-gap: 24px;
+  }
+  .lora-sub .text {
+    text-align: center;
+  }
+  .lora-sub .lead {
+    margin: 0 auto;
+  }
+  .lora-sub .foot {
+    margin-top: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-sub * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
