@@ -113,6 +113,17 @@ export default function CreatorSubscription() {
     }
   }, [isTrialView, scriptLoaded, creatorProfile, navigate, refreshProfile]);
 
+  const isCreatorInTrial = creatorProfile?.subscription_status === 'trial' &&
+    (!creatorProfile.trial_ends_at || new Date(creatorProfile.trial_ends_at) > new Date());
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/creator/dashboard');
+    }
+  };
+
   const handleStartTrial = () => {
     navigate('/creator/dashboard');
   };
@@ -133,15 +144,29 @@ export default function CreatorSubscription() {
       <div className="wrap">
         <div className="grid">
           <div className="text">
-            <Link className="logo" to="/creator/dashboard">
-              <i>
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 3 22 21H2z" />
-                </svg>
-              </i>
-              Lora
-            </Link>
-            <br />
+            <div className="top-nav">
+              <Link className="logo" to="/creator/dashboard">
+                <i>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3 22 21H2z" />
+                  </svg>
+                </i>
+                Lora
+              </Link>
+              {isCreatorInTrial && (
+                <button
+                  type="button"
+                  onClick={handleGoBack}
+                  className="back-btn"
+                  aria-label="Go back to previous page"
+                >
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M19 12H5M11 6l-6 6 6 6" />
+                  </svg>
+                  Go back
+                </button>
+              )}
+            </div>
             <span className="eyebrow">Lora Pro for creators</span>
             <h1>
               {isTrialView ? (
