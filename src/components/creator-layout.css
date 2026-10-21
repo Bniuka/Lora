@@ -1,0 +1,386 @@
+/* ================================================================
+   Lora Creator Layout — light-mode-only shared shell styles
+   Sidebar & Top bar matching the redesign mockup
+   Scoped under .lora-creator
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-creator {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --shadow: 0 1px 2px rgba(14,23,51,.05), 0 10px 28px -16px rgba(14,23,51,.16);
+
+  box-sizing: border-box !important;
+  font: 15px/1.5 'Figtree', system-ui, sans-serif !important;
+  color: var(--ink) !important;
+  background: var(--bg) !important;
+  min-height: 100vh !important;
+}
+
+.lora-creator *,
+.lora-creator *::before,
+.lora-creator *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-creator a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-creator button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-creator :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-creator .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+.lora-creator .app {
+  display: grid !important;
+  grid-template-columns: 248px 1fr !important;
+  min-height: 100vh !important;
+}
+
+.lora-creator aside {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--line) !important;
+  padding: 22px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: sticky !important;
+  top: 0 !important;
+  height: 100vh !important;
+  z-index: 10 !important;
+}
+
+.lora-creator .logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font: 800 22px 'Bricolage Grotesque', sans-serif !important;
+  padding: 0 10px 22px !important;
+  color: var(--ink) !important;
+}
+
+.lora-creator .logo i {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 11px !important;
+  background: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-creator .logo svg {
+  width: 16px !important;
+  fill: #fff !important;
+}
+
+.lora-creator nav {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.lora-creator nav a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+  font-size: 14.5px !important;
+  margin-bottom: 2px !important;
+  transition: 0.15s !important;
+}
+
+.lora-creator nav a:hover {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.lora-creator nav a.on {
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  font-weight: 600 !important;
+}
+
+.lora-creator .tip {
+  margin-top: auto !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  background: var(--brand-soft) !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  line-height: 1.4 !important;
+}
+
+.lora-creator .tip b {
+  display: block !important;
+  color: var(--ink) !important;
+  font: 700 15px 'Bricolage Grotesque', sans-serif !important;
+  margin-bottom: 4px !important;
+}
+
+.lora-creator .tip button {
+  margin-top: 10px !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  padding: 8px 14px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  transition: 0.15s !important;
+}
+
+.lora-creator .tip button:hover {
+  opacity: 0.9 !important;
+}
+
+.lora-creator main {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--bg) !important;
+}
+
+.lora-creator .top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 14px 32px !important;
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--line) !important;
+  position: sticky !important;
+  top: env(safe-area-inset-top, 0px) !important;
+  z-index: 25 !important;
+}
+
+.lora-creator .gsearch {
+  flex: 1 !important;
+  max-width: 460px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: var(--bg) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 0 14px !important;
+  transition: 0.15s !important;
+}
+
+.lora-creator .gsearch:focus-within {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+}
+
+.lora-creator .gsearch input {
+  flex: 1 !important;
+  border: 0 !important;
+  background: none !important;
+  padding: 10px 0 !important;
+  outline: 0 !important;
+  min-width: 0 !important;
+  font: inherit !important;
+  color: var(--ink) !important;
+}
+
+.lora-creator .gsearch kbd {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  padding: 1px 6px !important;
+  background: var(--surface) !important;
+}
+
+.lora-creator .who {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.lora-creator .bell {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: 0.15s !important;
+}
+
+.lora-creator .bell:hover {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.lora-creator .unread-dot {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  border-radius: 99px !important;
+  background: #ef4444 !important;
+  color: #fff !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 2px solid var(--surface) !important;
+  padding: 0 4px !important;
+}
+
+.lora-creator .av {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, var(--brand), #8a5cff) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  flex: none !important;
+  cursor: pointer !important;
+}
+
+.lora-creator .who b {
+  font-size: 14px !important;
+  color: var(--ink) !important;
+  display: block !important;
+  line-height: 1.2 !important;
+}
+
+.lora-creator .who small {
+  display: block !important;
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+}
+
+/* Dropdown menu */
+.lora-creator .user-dropdown {
+  position: absolute !important;
+  right: 0 !important;
+  top: calc(100% + 8px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(14, 23, 51, 0.12) !important;
+  min-width: 200px !important;
+  padding: 6px !important;
+  z-index: 40 !important;
+}
+
+.lora-creator .user-dropdown button {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  border: 0 !important;
+  background: none !important;
+  border-radius: 8px !important;
+  font-size: 13.5px !important;
+  color: var(--ink) !important;
+  cursor: pointer !important;
+  text-align: left !important;
+}
+
+.lora-creator .user-dropdown button:hover {
+  background: var(--bg) !important;
+}
+
+.lora-creator .user-dropdown button.danger {
+  color: #c0283f !important;
+}
+
+.lora-creator .user-dropdown button.danger:hover {
+  background: #fde8ec !important;
+}
+
+/* Responsive bottom bar */
+@media(max-width: 900px) {
+  .lora-creator .app {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-creator aside {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    height: auto !important;
+    z-index: 40 !important;
+    flex-direction: row !important;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    border-right: 0 !important;
+    border-top: 1px solid var(--line) !important;
+    box-shadow: 0 -4px 16px rgba(14, 23, 51, 0.06) !important;
+  }
+  .lora-creator .logo,
+  .lora-creator .tip {
+    display: none !important;
+  }
+  .lora-creator nav {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    justify-content: space-around !important;
+  }
+  .lora-creator nav a {
+    flex-direction: column !important;
+    gap: 2px !important;
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    text-align: center !important;
+  }
+  .lora-creator nav a .ic {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .lora-creator .top {
+    padding: 12px 16px !important;
+  }
+  .lora-creator .who div:not(.relative) {
+    display: none !important;
+  }
+}
+
+@media(max-width: 560px) {
+  .lora-creator .gsearch kbd {
+    display: none !important;
+  }
+}

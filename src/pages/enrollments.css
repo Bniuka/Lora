@@ -1,0 +1,706 @@
+/* ================================================================
+   Lora Creator Enrollments & Payments — light-mode-only scoped styles
+   All selectors are prefixed with .lora-enroll to avoid collisions
+   with app-level .card, .tabs, .btn, .top, .page, .list
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-enroll {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --ok: #0b7f55;
+  --ok-soft: #e3f7ee;
+  --warn: #a35d00;
+  --warn-soft: #fff2da;
+  --bad: #c0283f;
+  --bad-soft: #fde8ec;
+  --gray: #5d6783;
+  --gray-soft: #eef0f6;
+  --shadow: 0 1px 2px rgba(14,23,51,.05), 0 10px 28px -16px rgba(14,23,51,.16);
+
+  box-sizing: border-box !important;
+  font: 15px/1.5 'Figtree', system-ui, sans-serif !important;
+  color: var(--ink) !important;
+  background: var(--bg) !important;
+  min-height: 100% !important;
+  width: 100% !important;
+}
+
+.lora-enroll *,
+.lora-enroll *::before,
+.lora-enroll *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-enroll h1,
+.lora-enroll h2,
+.lora-enroll h3,
+.lora-enroll .amt {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+.lora-enroll a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-enroll button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-enroll :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-enroll .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+/* Page container */
+.lora-enroll .page {
+  max-width: 1120px !important;
+  padding: 30px 32px 56px !important;
+  margin: 0 auto !important;
+}
+
+.lora-enroll .hd h1 {
+  font-size: clamp(30px, 4vw, 40px) !important;
+  line-height: 1.1 !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .hd p {
+  margin: 4px 0 22px !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+}
+
+.lora-enroll .tools {
+  display: flex !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  margin-bottom: 20px !important;
+}
+
+.lora-enroll .q {
+  flex: 1 !important;
+  min-width: 240px !important;
+  max-width: 380px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: var(--surface) !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 14px !important;
+  padding: 0 14px !important;
+  transition: 0.15s !important;
+}
+
+.lora-enroll .q:focus-within {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-enroll .q input {
+  flex: 1 !important;
+  border: 0 !important;
+  background: none !important;
+  padding: 12px 0 !important;
+  outline: 0 !important;
+  font: inherit !important;
+  min-width: 0 !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .q .ic {
+  color: var(--muted) !important;
+}
+
+.lora-enroll .tabs {
+  display: flex !important;
+  gap: 4px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  padding: 4px !important;
+  border-radius: 14px !important;
+  overflow-x: auto !important;
+  max-width: 100% !important;
+}
+
+.lora-enroll .tabs button {
+  border: 0 !important;
+  background: none !important;
+  border-radius: 10px !important;
+  padding: 8px 14px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  gap: 7px !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  transition: 0.15s !important;
+}
+
+.lora-enroll .tabs button:hover:not(.on) {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .tabs button.on {
+  background: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-enroll .tabs i {
+  font-style: normal !important;
+  font-size: 12px !important;
+  background: var(--gray-soft) !important;
+  color: var(--gray) !important;
+  border-radius: 99px !important;
+  padding: 0 7px !important;
+  font-weight: 700 !important;
+}
+
+.lora-enroll .tabs .on i {
+  background: rgba(255, 255, 255, 0.24) !important;
+  color: #fff !important;
+}
+
+.lora-enroll .list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+.lora-enroll .card {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.lora-enroll .en {
+  display: grid !important;
+  grid-template-columns: minmax(210px, 1.2fr) 2fr auto !important;
+  gap: 22px !important;
+  align-items: center !important;
+  padding: 18px 20px !important;
+  transition: box-shadow 0.2s !important;
+}
+
+.lora-enroll .en:hover {
+  box-shadow: 0 18px 38px -22px rgba(14, 23, 51, 0.35) !important;
+}
+
+.lora-enroll .l {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  min-width: 0 !important;
+}
+
+.lora-enroll .l .av {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, var(--brand), #8a5cff) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  flex: none !important;
+}
+
+.lora-enroll .l b {
+  display: block !important;
+  font-size: 16px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .l small {
+  display: block !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.lora-enroll .d {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.lora-enroll .d small {
+  display: block !important;
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 2px !important;
+}
+
+.lora-enroll .d b {
+  font-weight: 600 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: block !important;
+  color: var(--ink) !important;
+  font-size: 14.5px !important;
+}
+
+.lora-enroll .ref-code {
+  font-size: 11.5px !important;
+  font-family: monospace !important;
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+}
+
+.lora-enroll .amt {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .r {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-enroll .st {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border-radius: 99px !important;
+  padding: 4px 12px !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  text-transform: capitalize !important;
+}
+
+.lora-enroll .st::before {
+  content: "" !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: currentColor !important;
+}
+
+.lora-enroll .st.pending {
+  background: var(--warn-soft) !important;
+  color: var(--warn) !important;
+}
+
+.lora-enroll .st.confirmed {
+  background: var(--ok-soft) !important;
+  color: var(--ok) !important;
+}
+
+.lora-enroll .st.rejected {
+  background: var(--bad-soft) !important;
+  color: var(--bad) !important;
+}
+
+.lora-enroll .st.expired {
+  background: var(--gray-soft) !important;
+  color: var(--gray) !important;
+}
+
+.lora-enroll .proof {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid var(--line) !important;
+  background-color: var(--bg) !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  transition: 0.15s !important;
+  padding: 0 !important;
+}
+
+.lora-enroll .proof:hover {
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+.lora-enroll .b {
+  border: 0 !important;
+  border-radius: 11px !important;
+  padding: 9px 16px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: 0.15s !important;
+  display: inline-flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+}
+
+.lora-enroll .b:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+.lora-enroll .b.ok {
+  background: var(--ok) !important;
+  color: #fff !important;
+}
+
+.lora-enroll .b.ok:hover:not(:disabled) {
+  filter: brightness(1.1) !important;
+}
+
+.lora-enroll .b.no {
+  background: var(--bad-soft) !important;
+  color: var(--bad) !important;
+}
+
+.lora-enroll .b.no:hover:not(:disabled) {
+  background: var(--bad) !important;
+  color: #fff !important;
+}
+
+.lora-enroll .rej-badge {
+  font-size: 11.5px !important;
+  color: var(--bad) !important;
+  background: var(--bad-soft) !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  font-weight: 500 !important;
+}
+
+/* Empty State */
+.lora-enroll .empty {
+  display: grid !important;
+  justify-items: center !important;
+  text-align: center !important;
+  padding: 56px 20px !important;
+  background: radial-gradient(460px 200px at 50% 0, #e4ebff, transparent 70%), var(--surface) !important;
+}
+
+.lora-enroll .empty .ring {
+  width: 84px !important;
+  height: 84px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  box-shadow: 0 0 0 12px rgba(47, 91, 255, 0.06) !important;
+  margin-bottom: 20px !important;
+}
+
+.lora-enroll .empty .ring .ic {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.lora-enroll .empty h3 {
+  font-size: 22px !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .empty p {
+  margin: 4px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 14.5px !important;
+}
+
+/* Lightbox Preview Dialog */
+.lora-enroll .lb {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(14, 23, 51, 0.7) !important;
+  backdrop-filter: blur(6px) !important;
+  display: none !important;
+  place-items: center !important;
+  z-index: 50 !important;
+  padding: 20px !important;
+}
+
+.lora-enroll .lb.show {
+  display: grid !important;
+}
+
+.lora-enroll .lb-card {
+  background: var(--surface) !important;
+  border-radius: 22px !important;
+  max-width: 480px !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 48px -12px rgba(14, 23, 51, 0.4) !important;
+}
+
+.lora-enroll .lb header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+
+.lora-enroll .lb header b {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 17px !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .lb header button {
+  border: 0 !important;
+  background: var(--bg) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--muted) !important;
+  transition: 0.15s !important;
+}
+
+.lora-enroll .lb header button:hover {
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+}
+
+.lora-enroll .lb .img {
+  aspect-ratio: 3/4 !important;
+  max-height: 60vh !important;
+  width: 100% !important;
+  background-color: var(--bg) !important;
+  background-position: center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--muted) !important;
+}
+
+/* Toast */
+.lora-enroll .toast {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  transform: translate(-50%, 30px) !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  padding: 11px 18px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: 0.25s !important;
+  z-index: 60 !important;
+  box-shadow: 0 10px 24px rgba(14, 23, 51, 0.25) !important;
+}
+
+.lora-enroll .toast.show {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Rejection Modal */
+.lora-enroll .reject-card {
+  background: var(--surface) !important;
+  border-radius: 22px !important;
+  max-width: 480px !important;
+  width: 100% !important;
+  padding: 24px !important;
+  box-shadow: 0 20px 48px -12px rgba(14, 23, 51, 0.4) !important;
+}
+
+.lora-enroll .reject-card h3 {
+  font-size: 20px !important;
+  margin-bottom: 6px !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .reject-card p {
+  color: var(--muted) !important;
+  font-size: 14px !important;
+  margin: 0 0 16px !important;
+}
+
+.lora-enroll .reject-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.lora-enroll .reject-chip {
+  padding: 6px 12px !important;
+  border-radius: 99px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: 0.15s !important;
+}
+
+.lora-enroll .reject-chip:hover,
+.lora-enroll .reject-chip.active {
+  background: var(--brand-soft) !important;
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+.lora-enroll .reject-textarea {
+  width: 100% !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  resize: vertical !important;
+  min-height: 80px !important;
+  outline: none !important;
+  color: var(--ink) !important;
+  background: var(--surface) !important;
+}
+
+.lora-enroll .reject-textarea:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+}
+
+.lora-enroll .reject-actions {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 20px !important;
+}
+
+.lora-enroll .reject-actions button {
+  flex: 1 !important;
+  padding: 11px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+}
+
+.lora-enroll .btn-cancel {
+  background: var(--bg) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--ink) !important;
+}
+
+.lora-enroll .btn-reject-confirm {
+  background: var(--bad) !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+.lora-enroll .btn-reject-confirm:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Helper Banner */
+.lora-enroll .helper-banner {
+  margin-bottom: 20px !important;
+  padding: 14px 18px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--brand-soft) !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.lora-enroll .helper-banner p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  color: var(--ink) !important;
+  line-height: 1.4 !important;
+}
+
+.lora-enroll .helper-banner button {
+  border: 0 !important;
+  background: none !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  font-size: 16px !important;
+}
+
+/* Responsive adjustments */
+@media(max-width: 1100px) {
+  .lora-enroll .en {
+    grid-template-columns: 1fr auto !important;
+  }
+  .lora-enroll .d {
+    grid-column: 1 / -1 !important;
+    order: 3 !important;
+    padding-top: 14px !important;
+    border-top: 1px dashed var(--line) !important;
+  }
+}
+
+@media(max-width: 900px) {
+  .lora-enroll .page {
+    padding: 20px 16px 96px !important;
+  }
+}
+
+@media(max-width: 560px) {
+  .lora-enroll .en {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-enroll .r {
+    justify-content: flex-start !important;
+  }
+  .lora-enroll .d {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .lora-enroll .q {
+    max-width: none !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-enroll * {
+    transition: none !important;
+  }
+}

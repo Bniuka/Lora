@@ -1,15 +1,40 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter, CheckCircle, XCircle, Eye, Loader2, Clock, Copy, X } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition, StatusBadge, Modal, Skeleton, EmptyState } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import './enrollments.css';
+
+const TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'confirmed', label: 'Confirmed' },
+  { key: 'rejected', label: 'Rejected' },
+  { key: 'expired', label: 'Expired' },
+];
+
+const STATUS_LABELS = {
+  all: 'All',
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  rejected: 'Rejected',
+  expired: 'Expired',
+};
+
+const QUICK_REASONS = [
+  'Wrong amount',
+  'Code not found in bank',
+  'Screenshot unclear',
+  'Payment not received',
+];
 
 export default function Enrollments() {
   useSubscriptionGuard();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -18,7 +43,13 @@ export default function Enrollments() {
   const [rejectModal, setRejectModal] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [processing, setProcessing] = useState(null);
+  const [toastMsg, setToastMsg] = useState('');
   const [showBanner, setShowBanner] = useState(() => localStorage.getItem('hideRefBanner') !== 'true');
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 2500);
+  };
 
   const dismissBanner = () => {
     localStorage.setItem('hideRefBanner', 'true');
@@ -26,12 +57,13 @@ export default function Enrollments() {
   };
 
   const fetchEnrollments = async () => {
+    if (!user) return;
     const { data } = await supabase
       .from('enrollments')
       .select(`
         *,
         profiles!enrollments_learner_id_fkey(first_name, last_name, email),
-        session_packs!inner(title, creator_id)
+        session_packs!inner(title, creator_id, price, currency)
       `)
       .eq('session_packs.creator_id', user.id)
       .order('submitted_at', { ascending: false });
@@ -43,23 +75,47 @@ export default function Enrollments() {
     if (user) fetchEnrollments();
   }, [user]);
 
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
+
+  /* Keyboard listener for Escape key */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setScreenshotModal(null);
+        setRejectModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const confirmPayment = async (enrollmentId) => {
     setProcessing(enrollmentId);
     const enrollment = enrollments.find(e => e.id === enrollmentId);
 
-    await supabase.from('enrollments').update({
+    const { error } = await supabase.from('enrollments').update({
       status: 'confirmed',
       confirmed_at: new Date().toISOString(),
     }).eq('id', enrollmentId);
+
+    if (error) {
+      showToast('Error confirming payment: ' + error.message);
+      setProcessing(null);
+      return;
+    }
 
     if (enrollment) {
       await supabase.from('notifications').insert({
         user_id: enrollment.learner_id,
         title: 'Payment Confirmed! 🎉',
-        message: `Your payment for "${enrollment.session_packs.title}" has been confirmed. You can now access all sessions.`,
+        message: `Your payment for "${enrollment.session_packs?.title}" has been confirmed. You can now access all sessions.`,
       });
     }
 
+    showToast('Enrollment approved');
     setProcessing(null);
     fetchEnrollments();
   };
@@ -69,19 +125,26 @@ export default function Enrollments() {
     setProcessing(rejectModal);
     const enrollment = enrollments.find(e => e.id === rejectModal);
 
-    await supabase.from('enrollments').update({
+    const { error } = await supabase.from('enrollments').update({
       status: 'rejected',
       rejection_reason: rejectReason || null,
     }).eq('id', rejectModal);
+
+    if (error) {
+      showToast('Error rejecting payment: ' + error.message);
+      setProcessing(null);
+      return;
+    }
 
     if (enrollment) {
       await supabase.from('notifications').insert({
         user_id: enrollment.learner_id,
         title: 'Payment Issue',
-        message: `Your payment for "${enrollment.session_packs.title}" was rejected. Reason: ${rejectReason || 'None given'}. Please try again.`,
+        message: `Your payment for "${enrollment.session_packs?.title}" was rejected. Reason: ${rejectReason || 'None given'}. Please try again.`,
       });
     }
 
+    showToast('Enrollment rejected');
     setRejectModal(null);
     setRejectReason('');
     setProcessing(null);
@@ -90,201 +153,314 @@ export default function Enrollments() {
 
   const filtered = enrollments.filter(e => {
     if (filter !== 'all' && e.status !== filter) return false;
-    if (searchQuery) {
-      const name = `${e.profiles?.first_name} ${e.profiles?.last_name}`.toLowerCase();
-      return name.includes(searchQuery.toLowerCase());
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const name = `${e.profiles?.first_name || ''} ${e.profiles?.last_name || ''}`.toLowerCase();
+      const email = (e.profiles?.email || '').toLowerCase();
+      const packTitle = (e.session_packs?.title || '').toLowerCase();
+      return name.includes(q) || email.includes(q) || packTitle.includes(q);
     }
     return true;
   });
 
+  const getInitials = (firstName, lastName) => {
+    const f = (firstName?.[0] || 'L').toUpperCase();
+    const l = (lastName?.[0] || '').toUpperCase();
+    return `${f}${l}`;
+  };
+
   return (
-    <PageTransition>
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
-          Enrollments & Payments
-        </h1>
+    <div className="lora-enroll">
+      <div className="page">
+        {/* Header */}
+        <div className="hd">
+          <h1>Enrollments &amp; payments</h1>
+          <p>Review payment proofs and approve or reject learner enrollments.</p>
+        </div>
 
         {/* Helper Banner */}
         {showBanner && (
-          <div className="mb-8 p-4 rounded-xl border border-[#DBEAFE] bg-[#DBEAFE]/10 flex items-start justify-between gap-4">
-            <p className="text-sm text-[#0F172A]">
-              <span className="mr-2">💡</span> For bank transfer payments — check your bank statement for the reference code shown below, verify the amount matches, then click Verify & Unlock.
+          <div className="helper-banner">
+            <p>
+              💡 <b>Tip for bank transfer payments:</b> Check your bank statement for the reference code shown on each card, verify the amount matches, then click <b>Approve</b>.
             </p>
-            <button onClick={dismissBanner} className="text-[#94A6B8] hover:text-[#0F172A]">
-              <X size={16} />
-            </button>
+            <button type="button" onClick={dismissBanner} aria-label="Dismiss banner">×</button>
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-10 z-10 relative">
-          <div className="relative w-full lg:max-w-md group">
-            {/* Cinematic Light Decoration */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#2563EB] via-[#93C5FD] to-[#3B82F6] rounded-[20px] blur-lg opacity-30 group-focus-within:opacity-70 group-hover:opacity-50 transition duration-700"></div>
-            
-            <div className="relative flex items-center bg-white rounded-2xl border border-[#E2E8F0] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-hidden h-[54px]">
-              <div className="pl-5 pr-3">
-                <Search size={20} className="text-[#2563EB]" />
-              </div>
-              <input
-                className="w-full h-full text-sm sm:text-base text-[#0F172A] placeholder-[#94A6B8] focus:outline-none bg-transparent"
-                placeholder="Search by learner name..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 w-full lg:w-auto">
-            {['all', 'pending', 'confirmed', 'rejected', 'expired'].map(f => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-2 rounded-lg text-xs font-medium capitalize transition-colors ${
-                  filter === f ? 'bg-[#DBEAFE]/30 text-[#2563EB] border border-[#DBEAFE]' : 'text-[#94A6B8] hover:bg-[#F5F5F5] border border-transparent'
-                }`}
-              >
-                {f}
-                {f === 'pending' && enrollments.filter(e => e.status === 'pending').length > 0 && (
-                  <span className="ml-1.5 px-1.5 py-0.5 bg-[#2563EB] text-white rounded-full text-[10px] font-bold">
-                    {enrollments.filter(e => e.status === 'pending').length}
-                  </span>
-                )}
-              </button>
-            ))}
+        {/* Tools: Search + Tabs */}
+        <div className="tools">
+          <label className="q">
+            <svg className="ic" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              id="q"
+              placeholder="Search by learner name…"
+              aria-label="Search by learner name"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </label>
+
+          <div className="tabs" role="tablist">
+            {TABS.map(t => {
+              const count = t.key === 'all'
+                ? enrollments.length
+                : enrollments.filter(e => e.status === t.key).length;
+              const isActive = filter === t.key;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  role="tab"
+                  className={isActive ? 'on' : ''}
+                  onClick={() => setFilter(t.key)}
+                >
+                  {t.label}
+                  <i>{count}</i>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Table */}
-        {loading ? (
-          <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
-        ) : filtered.length === 0 ? (
-          <EmptyState icon={Clock} title="No enrollments found" description="No enrollment records match your current filters." />
-        ) : (
-          <div className="overflow-x-auto bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[#E2E8F0]">
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Learner</th>
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Pack</th>
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Method & Ref</th>
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Date</th>
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Proof</th>
-                  <th className="text-left py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Status</th>
-                  <th className="text-right py-4 px-6 text-xs text-[#94A6B8] font-medium uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((e, i) => (
-                  <motion.tr
-                    key={e.id}
-                    className="border-b border-[#F1F5F9] hover:bg-[#F8FAFC] transition-colors"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.03 }}
-                  >
-                    <td className="py-4 px-6">
-                      <p className="text-[#0F172A] font-medium">{e.profiles?.first_name} {e.profiles?.last_name}</p>
-                      <p className="text-xs text-[#94A6B8] mt-1">{e.profiles?.email}</p>
-                    </td>
-                    <td className="py-4 px-6 text-[#475569]">{e.session_packs?.title}</td>
-                    <td className="py-4 px-6">
-                      {e.payment_method_used === 'bank' ? (
-                        <div>
-                          <span className="badge badge-gold mb-1 inline-block">Bank Transfer</span>
-                          <div className="flex items-center gap-2 text-xs font-mono text-[#0F172A]">
-                            {e.payment_reference_code}
-                            <button onClick={() => navigator.clipboard.writeText(e.payment_reference_code)} className="text-[#94A6B8] hover:text-[#2563EB]">
-                              <Copy size={12} />
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="px-2 py-1 bg-[#F5F5F5] border border-[#E2E8F0] rounded-md text-[10px] text-[#94A6B8]">Via Link</span>
+        {/* List of Enrollment Cards */}
+        <div className="list">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => (
+                <article key={i} className="card en" style={{ opacity: 0.6 }}>
+                  <div className="l">
+                    <div className="av" style={{ background: '#e3e7f1' }} />
+                    <div>
+                      <div style={{ height: 16, width: 120, background: '#e3e7f1', borderRadius: 4, marginBottom: 6 }} />
+                      <div style={{ height: 12, width: 160, background: '#e3e7f1', borderRadius: 4 }} />
+                    </div>
+                  </div>
+                  <div className="d">
+                    <div><small>Pack</small><div style={{ height: 14, width: 80, background: '#e3e7f1', borderRadius: 4, marginTop: 4 }} /></div>
+                    <div><small>Amount</small><div style={{ height: 14, width: 60, background: '#e3e7f1', borderRadius: 4, marginTop: 4 }} /></div>
+                    <div><small>Method</small><div style={{ height: 14, width: 70, background: '#e3e7f1', borderRadius: 4, marginTop: 4 }} /></div>
+                    <div><small>Submitted</small><div style={{ height: 14, width: 90, background: '#e3e7f1', borderRadius: 4, marginTop: 4 }} /></div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : filtered.length > 0 ? (
+            filtered.map(x => {
+              const learnerName = `${x.profiles?.first_name || ''} ${x.profiles?.last_name || ''}`.trim() || 'Learner';
+              const learnerEmail = x.profiles?.email || 'No email provided';
+              const packTitle = x.session_packs?.title || 'Course Pack';
+              const amount = `${x.session_packs?.currency || 'LKR'} ${x.session_packs?.price != null ? Number(x.session_packs.price).toFixed(0) : '0'}`;
+              const method = x.payment_method_used === 'bank' ? 'Bank transfer' : (x.payment_method_used || 'Payment link');
+              const submittedText = x.submitted_at ? format(new Date(x.submitted_at), 'MMM dd, yyyy · h:mm a') : 'N/A';
+              const isPending = x.status === 'pending';
+              const isProcessing = processing === x.id;
+
+              return (
+                <article key={x.id} className="card en">
+                  {/* Learner Info */}
+                  <div className="l">
+                    <div className="av">{getInitials(x.profiles?.first_name, x.profiles?.last_name)}</div>
+                    <div style={{ minWidth: 0 }}>
+                      <b>{learnerName}</b>
+                      <small>{learnerEmail}</small>
+                    </div>
+                  </div>
+
+                  {/* Details Grid */}
+                  <div className="d">
+                    <div>
+                      <small>Pack</small>
+                      <b>{packTitle}</b>
+                    </div>
+                    <div>
+                      <small>Amount</small>
+                      <b className="amt">{amount}</b>
+                    </div>
+                    <div>
+                      <small>Method</small>
+                      <b>
+                        {method}
+                        {x.payment_reference_code && (
+                          <span className="ref-code" title="Payment reference code"> · {x.payment_reference_code}</span>
+                        )}
+                      </b>
+                    </div>
+                    <div>
+                      <small>Submitted</small>
+                      <b>{submittedText}</b>
+                      {x.rejection_reason && (
+                        <span className="rej-badge" title={x.rejection_reason}>
+                          Reason: {x.rejection_reason}
+                        </span>
                       )}
-                    </td>
-                    <td className="py-4 px-6 text-[#94A6B8] text-xs">
-                      {format(new Date(e.submitted_at), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="py-4 px-6">
-                      {e.payment_screenshot_url ? (
+                    </div>
+                  </div>
+
+                  {/* Actions & Proof */}
+                  <div className="r">
+                    <span className={`st ${x.status}`}>
+                      {STATUS_LABELS[x.status] || x.status}
+                    </span>
+
+                    {/* Proof thumbnail button */}
+                    <button
+                      type="button"
+                      className="proof"
+                      onClick={() => setScreenshotModal({
+                        url: x.payment_screenshot_url,
+                        learnerName: learnerName,
+                      })}
+                      aria-label="View payment proof"
+                      style={x.payment_screenshot_url ? { backgroundImage: `url(${x.payment_screenshot_url})` } : {}}
+                      title={x.payment_screenshot_url ? 'Click to view payment proof' : 'No screenshot uploaded'}
+                    >
+                      {!x.payment_screenshot_url && (
+                        <svg className="ic" viewBox="0 0 24 24">
+                          <rect x="3" y="4" width="18" height="16" rx="2" />
+                          <circle cx="9" cy="10" r="2" />
+                          <path d="m21 16-5-5-9 9" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Pending Approve & Reject Buttons */}
+                    {isPending && (
+                      <>
                         <button
-                          onClick={() => setScreenshotModal(e.payment_screenshot_url)}
-                          className="text-[#2563EB] text-xs hover:text-[#1D4ED8] flex items-center gap-1"
+                          type="button"
+                          className="b no"
+                          onClick={() => setRejectModal(x.id)}
+                          disabled={isProcessing}
                         >
-                          <Eye size={13} /> View
+                          Reject
                         </button>
-                      ) : (
-                        <span className="text-xs text-[#94A6B8]">None</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6"><StatusBadge status={e.status} /></td>
-                    <td className="py-4 px-6 text-right">
-                      {e.status === 'pending' && (
-                        <div className="flex items-center justify-end gap-3">
-                          <button
-                            onClick={() => confirmPayment(e.id)}
-                            className="btn-primary text-xs py-1.5 px-3"
-                            disabled={processing === e.id}
-                          >
-                            {processing === e.id ? <Loader2 size={12} className="animate-spin" /> : <><CheckCircle size={12} /> Confirm</>}
-                          </button>
-                          <button
-                            onClick={() => setRejectModal(e.id)}
-                            className="btn-danger text-xs py-1.5 px-3"
-                          >
-                            <XCircle size={12} /> Reject
-                          </button>
-                        </div>
-                      )}
-                      {e.status === 'rejected' && e.rejection_reason && (
-                        <span className="text-xs text-[#C0392B]" title={e.rejection_reason}>Reason given</span>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Screenshot modal */}
-        <Modal isOpen={!!screenshotModal} onClose={() => setScreenshotModal(null)} title="Payment Proof">
-          {screenshotModal && (
-            <img src={screenshotModal} alt="Payment screenshot" className="w-full rounded-lg" />
+                        <button
+                          type="button"
+                          className="b ok"
+                          onClick={() => confirmPayment(x.id)}
+                          disabled={isProcessing}
+                        >
+                          {isProcessing ? (
+                            <Loader2 size={15} className="animate-spin" />
+                          ) : (
+                            <svg className="ic" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
+                              <path d="m5 12 5 5 9-10" />
+                            </svg>
+                          )}
+                          Approve
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </article>
+              );
+            })
+          ) : (
+            <div className="card empty">
+              <div className="ring">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </div>
+              <h3>No enrollments found</h3>
+              <p>No enrollment records match your current filters.</p>
+            </div>
           )}
-        </Modal>
+        </div>
+      </div>
 
-        {/* Reject modal */}
-        <Modal isOpen={!!rejectModal} onClose={() => setRejectModal(null)} title="Reject Payment">
-          <p className="text-sm text-[#475569] mb-4">Provide a reason so the learner can re-upload a correct screenshot.</p>
-          
-          <div className="flex flex-wrap gap-2 mb-4">
-            {["Wrong amount", "Code not found in bank", "Screenshot unclear", "Payment not received"].map(reason => (
-              <button 
-                key={reason}
-                onClick={() => setRejectReason(reason)}
-                className="px-3 py-1.5 rounded-full border border-[#E2E8F0] text-xs text-[#475569] hover:bg-[#F5F5F5] hover:text-[#0F172A] transition-colors"
+      {/* Lightbox Proof Preview Dialog */}
+      <div
+        className={`lb${screenshotModal ? ' show' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        onClick={e => {
+          if (e.target.classList.contains('lb')) setScreenshotModal(null);
+        }}
+      >
+        <div className="lb-card">
+          <header>
+            <b>Payment proof {screenshotModal?.learnerName ? `· ${screenshotModal.learnerName}` : ''}</b>
+            <button type="button" onClick={() => setScreenshotModal(null)} aria-label="Close">×</button>
+          </header>
+          <div
+            className="img"
+            style={screenshotModal?.url ? { backgroundImage: `url(${screenshotModal.url})` } : {}}
+          >
+            {!screenshotModal?.url && 'No screenshot uploaded'}
+          </div>
+        </div>
+      </div>
+
+      {/* Rejection Reason Modal */}
+      <div
+        className={`lb${rejectModal ? ' show' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        onClick={e => {
+          if (e.target.classList.contains('lb')) {
+            setRejectModal(null);
+            setRejectReason('');
+          }
+        }}
+      >
+        <div className="reject-card">
+          <h3>Reject Payment</h3>
+          <p>Provide a reason so the learner can re-upload a correct screenshot or payment proof.</p>
+
+          <div className="reject-chips">
+            {QUICK_REASONS.map(r => (
+              <button
+                key={r}
+                type="button"
+                className={`reject-chip${rejectReason === r ? ' active' : ''}`}
+                onClick={() => setRejectReason(r)}
               >
-                {reason}
+                {r}
               </button>
             ))}
           </div>
 
           <textarea
-            className="textarea-field mb-6"
-            placeholder="Reason for rejection (optional)..."
+            className="reject-textarea"
+            placeholder="Type reason for rejection (optional)..."
             value={rejectReason}
             onChange={e => setRejectReason(e.target.value)}
             rows={3}
           />
-          <div className="flex gap-4 mt-8">
-            <button onClick={() => setRejectModal(null)} className="btn-ghost flex-1 border border-[#E2E8F0]">Cancel</button>
-            <button onClick={rejectPayment} className="btn-danger flex-1 bg-[#C0392B] text-white border-[#C0392B]" disabled={processing === rejectModal}>
+
+          <div className="reject-actions">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={() => {
+                setRejectModal(null);
+                setRejectReason('');
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn-reject-confirm"
+              onClick={rejectPayment}
+              disabled={processing === rejectModal}
+            >
               {processing === rejectModal ? 'Rejecting...' : 'Reject Payment'}
             </button>
           </div>
-        </Modal>
+        </div>
       </div>
-    </PageTransition>
+
+      {/* Toast Notification */}
+      <div className={`toast${toastMsg ? ' show' : ''}`} role="status">
+        {toastMsg}
+      </div>
+    </div>
   );
 }
