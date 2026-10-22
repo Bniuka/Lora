@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
@@ -199,6 +200,104 @@ function DashTrialBanner({ creatorProfile }) {
   );
 }
 
+/* ════════════════ MISSING RECORDINGS ALERT ════════════════ */
+function MissingRecordingsAlert({ missingSessions, onSaveRecording, savingSessionId }) {
+  const [inputs, setInputs] = useState({});
+
+  if (!missingSessions || missingSessions.length === 0) return null;
+
+  const handleInputChange = (id, val) => {
+    setInputs(prev => ({ ...prev, [id]: val }));
+  };
+
+  const handleFormSubmit = (e, id) => {
+    e.preventDefault();
+    const val = (inputs[id] || '').trim();
+    if (!val) return;
+    onSaveRecording(id, val);
+  };
+
+  return (
+    <div className="ld-missing-rec">
+      <div className="ld-missing-rec-header">
+        <div className="ld-missing-rec-title-group">
+          <div className="ld-missing-rec-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M15 10l5-3v10l-5-3v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v4z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="ld-missing-rec-title">
+              Action Required: Missing Recordings
+              <span className="ld-missing-rec-badge">{missingSessions.length} pending</span>
+            </h2>
+            <p className="ld-missing-rec-desc">
+              The following scheduled sessions have ended without a recording link. Upload your recording so learners can watch it.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="ld-missing-rec-list">
+        {missingSessions.map(sess => {
+          const isSaving = savingSessionId === sess.id;
+          const urlVal = inputs[sess.id] ?? '';
+          const sched = new Date(sess.scheduled_at);
+          const endTime = new Date(sched.getTime() + (sess.duration_minutes || 60) * 60000);
+
+          return (
+            <div key={sess.id} className="ld-missing-rec-item">
+              <div className="ld-missing-rec-meta">
+                <span className="ld-missing-rec-pack">{sess.pack_title}</span>
+                <div className="ld-missing-rec-name" title={sess.title}>
+                  {sess.title}
+                </div>
+                <div className="ld-missing-rec-time">
+                  <svg className="ld-ic" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                  Ended {formatDistanceToNow(endTime, { addSuffix: true })}
+                </div>
+              </div>
+
+              <form className="ld-missing-rec-form" onSubmit={(e) => handleFormSubmit(e, sess.id)}>
+                <input
+                  type="url"
+                  className="ld-missing-rec-input"
+                  placeholder="Paste recording link (Zoom, YouTube, Drive, Loom...)"
+                  value={urlVal}
+                  onChange={(e) => handleInputChange(sess.id, e.target.value)}
+                  disabled={isSaving}
+                  required
+                />
+                <button
+                  type="submit"
+                  className="ld-missing-rec-btn"
+                  disabled={isSaving || !urlVal.trim()}
+                >
+                  {isSaving ? (
+                    'Saving...'
+                  ) : (
+                    <>
+                      <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, fill: 'none', stroke: 'currentColor', strokeWidth: 2 }}>
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                      </svg>
+                      Save Recording
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ════════════════ MAIN COMPONENT ════════════════ */
 export default function CreatorDashboard() {
   useSubscriptionGuard();
@@ -207,6 +306,9 @@ export default function CreatorDashboard() {
   const [stats, setStats] = useState({ packs: 0, students: 0, revenue: 0, pending: 0 });
   const [recentPacks, setRecentPacks] = useState([]);
   const [activity, setActivity] = useState([]);
+  const [missingRecordings, setMissingRecordings] = useState([]);
+  const [savingSessionId, setSavingSessionId] = useState(null);
+  const [toastMsg, setToastMsg] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -236,13 +338,85 @@ export default function CreatorDashboard() {
       const pending = enrollments.filter(e => e.status === 'pending');
       const revenue = confirmed.reduce((sum, e) => sum + (e.session_packs?.price || 0), 0);
 
+      // Check for past sessions with missing recording_url across all creator's packs
+      const packIds = packs.map(p => p.id);
+      let missingList = [];
+      if (packIds.length > 0) {
+        const { data: sessData } = await supabase
+          .from('sessions')
+          .select('id, title, scheduled_at, duration_minutes, recording_url, order_index, pack_id')
+          .in('pack_id', packIds)
+          .order('scheduled_at', { ascending: false });
+
+        if (sessData) {
+          const now = new Date();
+          const packMap = Object.fromEntries(packs.map(p => [p.id, p.title]));
+          missingList = sessData.filter(s => {
+            if (s.recording_url && s.recording_url.trim()) return false;
+            if (!s.scheduled_at) return false;
+            const end = new Date(new Date(s.scheduled_at).getTime() + (s.duration_minutes || 60) * 60000);
+            return end < now;
+          }).map(s => ({
+            ...s,
+            pack_title: packMap[s.pack_id] || 'Course'
+          }));
+        }
+      }
+
       setStats({ packs: packs.length, students: confirmed.length, revenue, pending: pending.length });
       setRecentPacks(packs);
       setActivity(notifRes.data || []);
+      setMissingRecordings(missingList);
       setLoading(false);
     };
     loadData();
   }, [user]);
+
+  const handleSaveRecording = async (sessionId, recordingUrl) => {
+    if (!recordingUrl || !recordingUrl.trim()) return;
+    const session = missingRecordings.find(s => s.id === sessionId);
+    if (!session) return;
+
+    setSavingSessionId(sessionId);
+    try {
+      const { error } = await supabase
+        .from('sessions')
+        .update({ recording_url: recordingUrl.trim() })
+        .eq('id', sessionId);
+
+      if (error) throw error;
+
+      // Notify all confirmed enrolled learners for this pack
+      try {
+        const { data: enrollments } = await supabase
+          .from('enrollments')
+          .select('learner_id')
+          .eq('pack_id', session.pack_id)
+          .eq('status', 'confirmed');
+
+        if (enrollments && enrollments.length > 0) {
+          const notifs = enrollments.map(e => ({
+            user_id: e.learner_id,
+            title: 'Recording Available! 🎥',
+            message: `The recording for "${session.title}" in "${session.pack_title}" is now available to watch.`,
+          }));
+          await supabase.from('notifications').insert(notifs);
+        }
+      } catch (notifErr) {
+        console.warn('Could not dispatch learner notifications:', notifErr);
+      }
+
+      // Remove from missing list
+      setMissingRecordings(prev => prev.filter(s => s.id !== sessionId));
+      setToastMsg(`Recording saved for "${session.title}"! Enrolled learners were notified.`);
+      setTimeout(() => setToastMsg(null), 5000);
+    } catch (err) {
+      console.error('Error saving recording:', err);
+      alert('Failed to save recording: ' + (err.message || 'Unknown error'));
+    } finally {
+      setSavingSessionId(null);
+    }
+  };
 
   /* ── Loading skeleton ── */
   if (loading) {
@@ -289,6 +463,17 @@ export default function CreatorDashboard() {
     <div className="lora-dash">
       <div className="ld-page">
 
+        {/* ── Toast message ── */}
+        {toastMsg && (
+          <div className="ld-rec-toast" role="alert">
+            <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, fill: 'none', stroke: '#12a46f', strokeWidth: 2.5, flex: 'none' }}>
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <span>{toastMsg}</span>
+          </div>
+        )}
+
         {/* ── Trial banner ── */}
         <DashTrialBanner creatorProfile={creatorProfile} />
 
@@ -297,6 +482,13 @@ export default function CreatorDashboard() {
           <h1>Welcome back, {firstName}</h1>
           <p>Here's what's happening with your courses today.</p>
         </div>
+
+        {/* ── Missing Recordings Alert ── */}
+        <MissingRecordingsAlert
+          missingSessions={missingRecordings}
+          onSaveRecording={handleSaveRecording}
+          savingSessionId={savingSessionId}
+        />
 
         {/* ── KPI stat cards ── */}
         <div className="ld-stats">

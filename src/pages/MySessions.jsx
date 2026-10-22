@@ -9,13 +9,55 @@ import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
 import './course-sessions.css';
 
-function SessionCard({ session, index, packThumbnail }) {
+function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }) {
+  const [requested, setRequested] = useState(() => {
+    try {
+      return localStorage.getItem(`lora_rec_req_${session.id}`) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [requestToast, setRequestToast] = useState(false);
+
   const now = new Date();
   const scheduled = new Date(session.scheduled_at);
+  const duration = session.duration_minutes || 60;
+  const sessionEndTime = new Date(scheduled.getTime() + duration * 60000);
   const minutesDiff = differenceInMinutes(scheduled, now);
-  const isLive = minutesDiff <= 15 && minutesDiff >= -session.duration_minutes;
-  const hasPassed = isPast(scheduled) && !isLive;
-  const isCompleted = hasPassed && Boolean(session.recording_url);
+  const isLive = minutesDiff <= 15 && minutesDiff >= -duration;
+  const hasEnded = (isPast(scheduled) || now > sessionEndTime) && !isLive;
+  const hasRecording = Boolean(session.recording_url && session.recording_url.trim());
+  const isCompleted = hasEnded && hasRecording;
+
+  // Concluded session without recording
+  const hoursSinceEnd = (now.getTime() - sessionEndTime.getTime()) / (1000 * 60 * 60);
+  const isProcessing = hasEnded && !hasRecording && hoursSinceEnd <= 24;
+  const isPending = hasEnded && !hasRecording && hoursSinceEnd > 24;
+
+  const handleRequestRecording = async () => {
+    if (requested || isRequesting) return;
+    setIsRequesting(true);
+    try {
+      if (packCreatorId) {
+        await supabase.from('notifications').insert({
+          user_id: packCreatorId,
+          title: 'Recording Requested! 🔔',
+          message: `Learners are waiting for the recording of Day ${index + 1}: "${session.title}" in "${packTitle || 'your course'}".`,
+        });
+      }
+      try {
+        localStorage.setItem(`lora_rec_req_${session.id}`, 'true');
+      } catch {}
+      setRequested(true);
+      setRequestToast(true);
+      setTimeout(() => setRequestToast(false), 4500);
+    } catch (err) {
+      console.error('Failed to request recording:', err);
+    } finally {
+      setIsRequesting(false);
+    }
+  };
 
   return (
     <article className={`card sess ${isCompleted ? 'ok' : ''}`}>
@@ -125,6 +167,54 @@ function SessionCard({ session, index, packThumbnail }) {
             </svg>
             Watch recording
           </a>
+        ) : isProcessing ? (
+          <div className="processing-wrap">
+            <span className="pill processing">
+              <svg className="ic spin" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" fill="none" strokeDasharray="30" strokeDashoffset="12" strokeLinecap="round" />
+              </svg>
+              Recording being processed — available soon
+            </span>
+          </div>
+        ) : isPending ? (
+          <div className="pending-wrap">
+            <span className="pill pending">
+              <svg className="ic" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Recording pending
+            </span>
+            <button
+              type="button"
+              className={`btn req-btn ${requested ? 'done' : ''}`}
+              onClick={handleRequestRecording}
+              disabled={requested || isRequesting}
+              title={requested ? 'Creator has been notified' : 'Notify creator to upload the recording'}
+            >
+              {requested ? (
+                <>
+                  <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="m5 12 5 5 9-10" />
+                  </svg>
+                  Requested ✓
+                </>
+              ) : isRequesting ? (
+                'Requesting...'
+              ) : (
+                <>
+                  <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  Request recording
+                </>
+              )}
+            </button>
+            {requestToast && (
+              <div className="req-toast">Creator notified! We'll alert you once uploaded.</div>
+            )}
+          </div>
         ) : (
           <span className="pill">
             <svg className="ic" viewBox="0 0 24 24">
@@ -338,7 +428,14 @@ export default function MySessions() {
           {/* Sessions List */}
           <div className="list">
             {sessions.map((s, i) => (
-              <SessionCard key={s.id} session={s} index={i} packThumbnail={pack.thumbnail_url} />
+              <SessionCard
+                key={s.id}
+                session={s}
+                index={i}
+                packThumbnail={pack.thumbnail_url}
+                packCreatorId={pack.creator_id}
+                packTitle={pack.title}
+              />
             ))}
           </div>
 

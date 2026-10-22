@@ -607,6 +607,96 @@
   height: 15px;
 }
 
+/* Processing and Pending Recording Statuses */
+.lora-sessions .processing-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lora-sessions .pill.processing {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-color: #fde68a;
+  color: #92400e;
+  font-weight: 600;
+  white-space: normal;
+  text-align: right;
+  line-height: 1.35;
+  padding: 8px 14px;
+}
+
+.lora-sessions .spin {
+  animation: loraSpin 1.6s linear infinite;
+  flex: none;
+}
+
+@keyframes loraSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.lora-sessions .pending-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  position: relative;
+}
+
+.lora-sessions .pill.pending {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #be123c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lora-sessions .btn.req-btn {
+  background: #ffffff;
+  border: 1.5px solid var(--brand);
+  color: var(--brand);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 38px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lora-sessions .btn.req-btn:hover:not(:disabled) {
+  background: var(--brand);
+  color: #fff;
+}
+
+.lora-sessions .btn.req-btn.done {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+  cursor: default;
+}
+
+.lora-sessions .req-toast {
+  position: absolute;
+  top: 100%;
+  margin-top: 6px;
+  right: 0;
+  background: #0e1733;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  animation: loraFadeIn 0.2s ease;
+  z-index: 10;
+}
+
+@keyframes loraFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Community section */
 .lora-sessions .comm {
   margin-top: 32px;
@@ -736,6 +826,26 @@
   }
   .lora-sessions .act {
     padding: 0;
+  }
+  .lora-sessions .processing-wrap,
+  .lora-sessions .pending-wrap {
+    width: 100%;
+    align-items: stretch;
+  }
+  .lora-sessions .pill.processing {
+    text-align: center;
+    justify-content: center;
+  }
+  .lora-sessions .pending-wrap .pill {
+    justify-content: center;
+  }
+  .lora-sessions .btn.req-btn {
+    justify-content: center;
+  }
+  .lora-sessions .req-toast {
+    position: static;
+    margin-top: 6px;
+    text-align: center;
   }
 }
 
