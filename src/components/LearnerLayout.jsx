@@ -270,7 +270,7 @@ export default function LearnerLayout({ children }) {
       </div>
 
       {/* Main Content Area */}
-      {isDashboard ? (
+      {isDashboard || location.pathname.includes('/sessions') ? (
         children
       ) : (
         <main className="max-w-7xl mx-auto px-6 md:px-10 py-8 lg:py-12">

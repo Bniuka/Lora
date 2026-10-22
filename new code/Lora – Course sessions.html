@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Course sessions</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#0b7f55;--ok-soft:#e3f7ee;--gold:#a35d00;--gold-soft:#fff2da;--shadow:0 1px 2px rgba(14,23,51,.05),0 12px 30px -18px rgba(14,23,51,.2);box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(720px 420px at 0 0,#d6e3ff,transparent 70%),radial-gradient(640px 420px at 100% 35%,#e6dcff,transparent 70%),#e9eefb;background-attachment:fixed;color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{max-width:1160px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:24px}
+.logo{display:flex;align-items:center;gap:9px;font:800 22px 'Bricolage Grotesque'}
+.logo i{width:32px;height:32px;border-radius:10px;background:var(--brand);display:grid;place-items:center}.logo svg{width:15px;fill:#fff}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:0 14px}
+.search:focus-within{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px var(--brand-soft)}
+.search input{flex:1;border:0;background:none;padding:11px 0;outline:0;min-width:0;font:inherit}.search .ic{color:var(--muted)}
+.links{margin-left:auto;display:flex;align-items:center;gap:6px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:600;color:var(--muted)}.links a:hover{background:var(--bg);color:var(--ink)}
+.bell{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--muted);cursor:pointer;position:relative;margin-left:6px}
+.bell:after{content:"";position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#e5484d;border:2px solid #fff}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8a5cff);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;margin-left:4px}
+.wrap{max-width:1160px;margin:0 auto;padding:22px 24px 72px}
+.backl{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-weight:600;padding:6px 12px 6px 6px;border-radius:10px;margin-bottom:16px}
+.backl:hover{color:var(--ink);background:#fff}.backl .ic{transition:transform .2s}.backl:hover .ic{transform:translateX(-3px)}
+.card{background:linear-gradient(180deg,#fff,#f1f5ff);border:1.5px solid #cdd8f6;border-radius:24px;box-shadow:0 2px 4px rgba(14,23,51,.06),0 22px 40px -20px rgba(47,91,255,.38)}
+/* course header */
+.hero{display:grid;grid-template-columns:380px 1fr;overflow:hidden;background:linear-gradient(135deg,#eaf0ff,#fff 52%,#f2eaff)}
+.th{position:relative;background:linear-gradient(135deg,#0e1733,#3b2fb8);min-height:240px}
+.th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--brand);box-shadow:0 10px 24px -8px rgba(0,0,0,.5);transition:.2s;border:0;cursor:pointer}
+.play .ic{width:24px;height:24px;fill:currentColor;stroke:none;margin-left:3px}
+.th:hover .play,.sess:hover .play{transform:translate(-50%,-50%) scale(1.08)}
+.hb{padding:26px 28px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.prem{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:4px 12px}
+.save{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 14px;font-weight:600;cursor:pointer;min-height:40px;white-space:nowrap;transition:.15s}
+.save:hover{border-color:var(--brand);color:var(--brand)}.save.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}.save.on .ic{fill:currentColor}
+.hb h1{font-size:clamp(30px,4vw,42px);line-height:1.05}
+.by{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted)}
+.by .a{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--muted)}
+.by b{color:var(--ink)}.by .v{color:var(--brand);width:17px;height:17px}
+.by .d{width:4px;height:4px;border-radius:50%;background:var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:13.5px;font-weight:500;color:var(--muted)}
+.chips .ic{width:15px;height:15px}
+.enr{margin-top:auto;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#e6f8ef,#eef6ff);border:1px solid #c9ecd9;border-radius:18px;padding:14px 16px}
+.enr .ck{width:40px;height:40px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;flex:none}.enr .ck .ic{stroke-width:2.6}
+.enr b{display:block;color:var(--ok);font:700 16px 'Bricolage Grotesque'}.enr small{color:var(--muted)}
+.enr .pg{margin-left:auto;min-width:150px;text-align:right;font-size:13px;color:var(--muted);font-weight:600}
+.bar2{height:7px;border-radius:99px;background:#fff;margin-top:6px;overflow:hidden;border:1px solid #cfe9dc}.bar2 i{display:block;height:100%;width:50%;background:var(--ok);border-radius:99px}
+/* sessions */
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:34px 0 18px}
+.sh h2{font-size:28px}.sh p{margin:4px 0 0;color:var(--muted);max-width:620px}
+.tot{display:flex;gap:10px;align-items:center;color:var(--brand);font-weight:700;background:var(--brand-soft);border-radius:99px;padding:6px 16px}
+.tot .d{width:4px;height:4px;border-radius:50%;background:#9db3ff}
+.list{display:flex;flex-direction:column;gap:16px}
+.sess{position:relative;overflow:hidden;display:grid;grid-template-columns:270px 1fr auto;gap:22px;align-items:center;padding:14px 14px 14px 24px;transition:transform .2s,box-shadow .2s;background:linear-gradient(100deg,#e8efff,#fff 48%)}
+.sess:before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(180deg,#2f5bff,#7a4dff)}
+.sess.ok{background:linear-gradient(100deg,#e2f7ec,#fff 48%)}.sess.ok:before{background:linear-gradient(180deg,#12a46f,#5cd6a6)}
+.sess:hover{transform:translateY(-3px);border-color:var(--brand)}
+.sess:hover{box-shadow:0 22px 44px -26px rgba(14,23,51,.4)}
+.sess .th{border-radius:16px;min-height:0;aspect-ratio:16/9;overflow:hidden}
+.day{position:absolute;left:10px;top:10px;background:rgba(14,23,51,.75);color:#fff;font-weight:800;font-size:12px;letter-spacing:.08em;border-radius:8px;padding:2px 9px}
+.done{position:absolute;left:10px;bottom:10px;display:inline-flex;align-items:center;gap:5px;background:var(--ok);color:#fff;font-weight:700;font-size:12px;border-radius:99px;padding:3px 10px}
+.done .ic{width:13px;height:13px;stroke-width:3}
+.sess .play{width:48px;height:48px}.sess .play .ic{width:20px;height:20px}
+.sb{min-width:0}
+.tags{display:flex;gap:8px;align-items:center;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.fp{background:var(--gold-soft);color:var(--gold);border-radius:99px;padding:1px 10px}
+.sb h3{font-size:22px;margin:4px 0}.sb p{margin:0 0 10px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mt{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:14px}
+.mt span{display:inline-flex;gap:6px;align-items:center}.mt .ic{width:16px;height:16px}
+.act{min-width:190px;display:flex;justify-content:flex-end;padding-right:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:12px 20px;font-weight:600;border:1.5px solid var(--brand);color:var(--brand);background:#fff;cursor:pointer;min-height:46px;white-space:nowrap;transition:.15s}
+.btn:hover{background:var(--brand);color:#fff}
+.btn.live{background:#e5484d;border-color:#e5484d;color:#fff}.btn.live:hover{background:#c93a3f}
+.pill{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--line);color:var(--muted);font-weight:600;border-radius:99px;padding:8px 16px;white-space:nowrap}
+.pill .ic{width:15px;height:15px}
+@media(max-width:980px){.hero{grid-template-columns:1fr}.th{min-height:0;aspect-ratio:16/9}.sess{grid-template-columns:230px 1fr}.act{grid-column:1/-1;justify-content:stretch;padding:0}.act .btn,.act .pill{width:100%}.pill{justify-content:center}}
+@media(max-width:760px){.bar{flex-wrap:wrap;height:auto;padding:12px 16px;gap:12px}.search{order:3;flex:1 1 100%;max-width:none}.links{margin-left:auto}.links a{padding:8px 10px}.wrap{padding:16px 16px 64px}}
+@media(max-width:600px){.sess{grid-template-columns:1fr;gap:14px;padding:12px}.hb{padding:20px 18px}.top{flex-direction:column-reverse;gap:10px;align-items:flex-start}.save{align-self:stretch;justify-content:center}.enr{flex-wrap:wrap}.enr .pg{min-width:100%;text-align:left}.sh h2{font-size:25px}.sb h3{font-size:20px}.act{padding:0}}
+@media(max-width:420px){.links a:not(.keep){display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a class="logo" href="/learner/dashboard"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</a>
+  <label class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search courses, creators…" aria-label="Search courses and creators"></label>
+  <nav class="links"><a class="keep" href="/learner/dashboard">My courses</a><a href="/discover">Discover</a><button class="bell" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4"/></svg></button><div class="av">KP</div></nav>
+</div></header>
+
+<div class="wrap">
+  <a class="backl" href="/learner/pack/1"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to course details</a>
+
+  <section class="card hero">
+    <div class="th"><button class="play" aria-label="Play course intro"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></svg></button></div><!-- add the real thumbnail <img> inside .th -->
+    <div class="hb">
+      <div class="top"><span class="prem"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></svg>Premium course</span>
+        <button class="save" id="save" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span>Save course</span></button></div>
+      <h1>frcymrfy</h1>
+      <div class="by"><span class="a">BD</span>by <b>Binuka Dinsara</b><svg class="ic v" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg><span class="d"></span><b>2 sessions</b></div>
+      <div class="chips"><span><svg class="ic" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Course</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>Beginner</span><span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Music</span><span><svg class="ic" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg>Learn at your own pace</span></div>
+      <div class="enr"><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span><div><b>Enrolled</b><small>You have access to this course</small></div>
+        <div class="pg">1 of 2 completed<div class="bar2"><i></i></div></div></div>
+    </div>
+  </section>
+
+  <div class="sh"><div><h2>Course sessions</h2><p>Watch the recorded sessions and learn at your own pace. You can also join the live sessions when available.</p></div>
+    <div class="tot"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>2 sessions<span class="d"></span>120 min total</div></div>
+
+  <div class="list">
+    <article class="card sess ok">
+      <div class="th"><span class="day">DAY 1</span><button class="play" aria-label="Play recording"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></svg></button><span class="done"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>Completed</span></div>
+      <div class="sb"><div class="tags">Day 1 <span class="fp">Free preview</span></div><h3>free simnar</h3><p>In this session, you'll get a complete overview and dive into practical strategies. Join the live interactive session or watch the recording at your own pace.</p>
+        <div class="mt"><span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Oct 13, 2026</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>8:00 PM</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4M9 2h6"/></svg>60 min</span></div></div>
+      <div class="act"><a class="btn" href="#"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>Watch recording</a></div>
+    </article>
+
+    <article class="card sess">
+      <div class="th"><span class="day">DAY 2</span><button class="play" aria-label="Play session"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></svg></button></div>
+      <div class="sb"><div class="tags">Day 2</div><h3>day 02</h3><p>In this session, you'll get a complete overview and dive into practical strategies. Join the live interactive session or watch the recording at your own pace.</p>
+        <div class="mt"><span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Oct 12, 2026</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>8:11 PM</span><span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4M9 2h6"/></svg>60 min</span></div></div>
+      <div class="act"><span class="pill"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Starts 10 days ago</span></div>
+    </article>
+  </div>
+</div>
+
+<script>
+// Save toggle (keep your existing save/unsave logic)
+const s=document.getElementById('save');s.onclick=()=>{const on=s.classList.toggle('on');s.setAttribute('aria-pressed',on);s.querySelector('span').textContent=on?'Saved':'Save course'};
+</script>
+</body>
+</html>
