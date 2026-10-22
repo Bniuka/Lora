@@ -229,73 +229,175 @@ export function ToggleSwitch({ checked, onChange, label }) {
 /* ============================================================
    SHARE MENU
    ============================================================ */
-import { Share2, Link as LinkIcon, MessageCircle, Send, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Share2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import './share-modal.css';
 
-const TwitterIcon = ({ size = 24 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
-  </svg>
-);
-
-const InstagramIcon = ({ size = 24 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-  </svg>
-);
-
-export function ShareMenu({ url, title }) {
+export function ShareMenu({ url, title, thumbnail, subtitle, creatorName, price, currency, pack, course }) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+  const [hasNativeShare, setHasNativeShare] = useState(false);
 
-  const shareUrl = url || window.location.href;
+  const modalRef = useRef(null);
+  const gripRef = useRef(null);
+  const hdRef = useRef(null);
+  const toastTimeoutRef = useRef(null);
+
+  const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const shareTitle = title || 'Check out this session pack on Lora!';
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Clean title for display in preview strip
+  const cleanTitle = (t) => {
+    if (!t) return 'Course';
+    return t.replace(/^Check out "(.*?)" on Loraspace!?$/i, '$1').replace(/^Check out this session pack on Lora!?$/i, 'Course');
   };
 
-  const shareLinks = [
-    {
-      name: 'WhatsApp',
-      icon: MessageCircle,
-      href: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`,
-      color: 'text-[#25D366]',
-      bg: 'bg-[#25D366]/10',
-      border: 'border-[#25D366]/20'
-    },
-    {
-      name: 'Telegram',
-      icon: Send,
-      href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
-      color: 'text-[#0088cc]',
-      bg: 'bg-[#0088cc]/10',
-      border: 'border-[#0088cc]/20'
-    },
-    {
-      name: 'Twitter',
-      icon: TwitterIcon,
-      href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
-      color: 'text-[#1DA1F2]',
-      bg: 'bg-[#1DA1F2]/10',
-      border: 'border-[#1DA1F2]/20'
-    },
-    {
-      name: 'Instagram',
-      icon: InstagramIcon,
-      onClick: () => {
-        handleCopy();
-      },
-      color: 'text-[#E1306C]',
-      bg: 'bg-[#E1306C]/10',
-      border: 'border-[#E1306C]/20'
+  const displayTitle = pack?.title || course?.title || cleanTitle(title);
+  const displayThumbnail = thumbnail || pack?.thumbnail_url || course?.thumbnail_url;
+
+  const creatorFirst = pack?.creator_profiles?.profiles?.first_name || '';
+  const creatorLast = pack?.creator_profiles?.profiles?.last_name || '';
+  const creatorDisplay = (creatorFirst + ' ' + creatorLast).trim() || creatorName || '';
+  const packPrice = pack?.price || price;
+  const packCurrency = pack?.currency || currency || 'LKR';
+
+  let displaySubtitle = subtitle;
+  if (!displaySubtitle) {
+    if (creatorDisplay && packPrice) {
+      displaySubtitle = `${creatorDisplay} · ${packCurrency} ${packPrice}`;
+    } else if (creatorDisplay) {
+      displaySubtitle = creatorDisplay;
+    } else if (packPrice) {
+      displaySubtitle = `${packCurrency} ${packPrice}`;
     }
-  ];
+  }
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  // Check for native share support (mobile only where supported)
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      setHasNativeShare(true);
+    }
+  }, []);
+
+  // Escape key closes modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  // Swipe-down-to-close on grab handle and header (passive touch listeners)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const m = modalRef.current;
+    const grip = gripRef.current;
+    const hd = hdRef.current;
+    if (!m) return;
+
+    let y0 = null;
+    let dy = 0;
+
+    const handleTouchStart = (e) => {
+      if (window.innerWidth > 520) return;
+      y0 = e.touches[0].clientY;
+      dy = 0;
+      m.style.animation = 'none';
+      m.style.transition = 'none';
+    };
+
+    const handleTouchMove = (e) => {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      m.style.transform = `translateY(${dy}px)`;
+    };
+
+    const handleTouchEnd = () => {
+      if (y0 === null) return;
+      m.style.transition = 'transform .2s';
+      if (dy > 90) {
+        handleClose();
+      }
+      m.style.transform = '';
+      y0 = null;
+      dy = 0;
+    };
+
+    const targets = [grip, hd].filter(Boolean);
+    targets.forEach((el) => {
+      el.addEventListener('touchstart', handleTouchStart, { passive: true });
+      el.addEventListener('touchmove', handleTouchMove, { passive: true });
+      el.addEventListener('touchend', handleTouchEnd);
+    });
+
+    return () => {
+      targets.forEach((el) => {
+        el.removeEventListener('touchstart', handleTouchStart);
+        el.removeEventListener('touchmove', handleTouchMove);
+        el.removeEventListener('touchend', handleTouchEnd);
+      });
+    };
+  }, [isOpen]);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastVisible(false);
+    }, 2200);
+  };
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
+    } catch (_) {
+      const input = document.getElementById('lora-share-url-input');
+      if (input) {
+        input.select();
+        document.execCommand('copy');
+      }
+    }
+    setCopied(true);
+    showToast('Link copied to clipboard!');
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const handleInstagramClick = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    setCopied(true);
+    showToast('Link copied. Paste it in Instagram.');
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const handleNativeShare = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: displayTitle,
+          url: shareUrl,
+        });
+      } catch (_) {}
+    }
+  };
 
   return (
     <>
@@ -312,82 +414,155 @@ export function ShareMenu({ url, title }) {
       </button>
 
       {isOpen && typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#0F172A]/40 backdrop-blur-md"
-              onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-6 sm:p-8 overflow-hidden"
+        <div className="lora-share">
+          <div className="back" onClick={handleClose}>
+            <div
+              className="modal"
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="lora-share-ttl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-[#2563EB]/10 to-transparent rounded-full blur-3xl" />
-              
-              <div className="flex items-center justify-between mb-8 relative z-10">
+              {/* Grab handle for swipe-down on mobile */}
+              <div className="grip" ref={gripRef} aria-hidden="true" />
+
+              {/* Header */}
+              <div className="hd" ref={hdRef}>
                 <div>
-                  <h3 className="text-2xl font-black text-[#0F172A] mb-1" style={{ fontFamily: 'var(--font-heading)' }}>Share Course</h3>
-                  <p className="text-sm text-[#64748B]">Spread the word with your friends!</p>
+                  <h2 id="lora-share-ttl">Share course</h2>
+                  <p>Spread the word with your friends!</p>
                 </div>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="w-10 h-10 rounded-full bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0F172A] flex items-center justify-center transition-colors"
+                <button
+                  className="x"
+                  type="button"
+                  onClick={handleClose}
+                  aria-label="Close"
                 >
-                  <X size={20} />
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="M6 6l12 12M18 6 6 18" />
+                  </svg>
                 </button>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 mb-8 relative z-10">
-                {shareLinks.map((link) => {
-                  const LinkWrapper = link.href ? 'a' : 'button';
-                  return (
-                    <LinkWrapper
-                      key={link.name}
-                      href={link.href}
-                      target={link.href ? "_blank" : undefined}
-                      rel={link.href ? "noopener noreferrer" : undefined}
-                      onClick={link.onClick}
-                      className="flex flex-col items-center gap-2 group"
-                    >
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${link.bg} border ${link.border} ${link.color} group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}>
-                        <link.icon size={24} />
-                      </div>
-                      <span className="text-[11px] font-bold text-[#475569] group-hover:text-[#0F172A] transition-colors">{link.name}</span>
-                    </LinkWrapper>
-                  );
-                })}
-              </div>
-
-              <div className="relative z-10">
-                <p className="text-xs font-bold text-[#94A6B8] uppercase tracking-wider mb-3">Or copy link</p>
-                <div className="flex items-center gap-2 p-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl">
-                  <div className="flex-1 truncate px-3 text-sm text-[#475569] font-medium">
-                    {shareUrl}
-                  </div>
-                  <button
-                    onClick={handleCopy}
-                    className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all shadow-sm ${
-                      copied 
-                        ? 'bg-[#2D7A4F] text-white' 
-                        : 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white hover:shadow-md hover:-translate-y-0.5'
-                    }`}
-                  >
-                    <LinkIcon size={16} />
-                    {copied ? 'Copied!' : 'Copy'}
-                  </button>
+              {/* Course preview strip */}
+              <div className="pv">
+                <div
+                  className="th"
+                  style={displayThumbnail ? { backgroundImage: `url(${displayThumbnail})` } : undefined}
+                />
+                <div>
+                  <b>{displayTitle}</b>
+                  {displaySubtitle && <small>{displaySubtitle}</small>}
                 </div>
               </div>
-            </motion.div>
+
+              {/* Share Channels */}
+              <div className="ch">
+                <a
+                  className="c wa"
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="t">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z" />
+                    </svg>
+                  </span>
+                  WhatsApp
+                </a>
+
+                <a
+                  className="c tg"
+                  href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="t">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />
+                    </svg>
+                  </span>
+                  Telegram
+                </a>
+
+                <a
+                  className="c tw"
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="t">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                    </svg>
+                  </span>
+                  Twitter
+                </a>
+
+                <button
+                  className="c ig"
+                  type="button"
+                  onClick={handleInstagramClick}
+                >
+                  <span className="t">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="18" height="18" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r=".8" fill="currentColor" />
+                    </svg>
+                  </span>
+                  Instagram
+                </button>
+              </div>
+
+              {/* Or copy link */}
+              <div className="or">Or copy link</div>
+
+              <div className="copy">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" />
+                  <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
+                </svg>
+                <input
+                  id="lora-share-url-input"
+                  readOnly
+                  value={shareUrl}
+                  aria-label="Course link"
+                  onFocus={(e) => e.target.select()}
+                />
+                <button
+                  className={`cp ${copied ? 'done' : ''}`}
+                  type="button"
+                  onClick={handleCopy}
+                >
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <rect x="9" y="9" width="11" height="11" rx="2" />
+                    <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+                  </svg>
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+
+              {/* More sharing options (native share sheet on supported devices) */}
+              {hasNativeShare && (
+                <button
+                  className="more"
+                  type="button"
+                  onClick={handleNativeShare}
+                >
+                  More sharing options
+                </button>
+              )}
+            </div>
           </div>
-        </AnimatePresence>,
+
+          {/* Toast Notification */}
+          <div className={`toast ${toastVisible ? 'show' : ''}`} role="status">
+            {toastMsg}
+          </div>
+        </div>,
         document.body
       )}
     </>

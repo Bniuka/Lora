@@ -137,7 +137,7 @@ export default function Discover() {
                       <div className="absolute top-3 left-3"><GoldBadge icon={Sparkles}>Free Preview</GoldBadge></div>
                     )}
                     <div className="absolute top-3 right-3">
-                      <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} />
+                      <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} pack={pack} />
                     </div>
                   </div>
                   <div className="p-5">

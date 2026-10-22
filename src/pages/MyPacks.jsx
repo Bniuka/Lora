@@ -99,7 +99,7 @@ export default function MyPacks() {
                   )}
                   <div className="absolute top-3 right-3 flex items-center gap-2">
                     {pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
-                    <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} />
+                    <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} pack={pack} />
                   </div>
                 </div>
 

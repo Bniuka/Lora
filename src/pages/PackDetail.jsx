@@ -586,6 +586,7 @@ export default function PackDetail() {
                   <ShareMenu
                     url={`${window.location.origin}/learner/pack/${pack.id}`}
                     title={`Check out "${pack.title}" on Loraspace!`}
+                    pack={pack}
                   />
                 </div>
               </div>
