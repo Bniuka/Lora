@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora Pro – Subscribe</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--violet:#7a4dff;--ok:#0f9d6b;--ok-soft:#e3f7ee;--navy:#0e1733;box-sizing:border-box}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;min-height:100vh;min-height:100dvh;display:grid;place-items:center;background:radial-gradient(700px 420px at 10% -5%,#cfdcff,transparent 70%),radial-gradient(600px 420px at 100% 100%,#e4dbff,transparent 70%),var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px))}
+h1,.price{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.03em;margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* Capped width: the page never stretches on wide screens */
+.wrap{width:100%;max-width:980px}
+.grid{display:grid;grid-template-columns:1fr 400px;grid-template-areas:"text card" "feat card";column-gap:56px;row-gap:22px;align-items:start}
+.text{grid-area:text}.card{grid-area:card}.featwrap{grid-area:feat}
+.logo{display:inline-flex;align-items:center;gap:9px;font:800 22px 'Bricolage Grotesque';text-decoration:none;margin-bottom:22px}
+.logo i{width:32px;height:32px;border-radius:10px;background:var(--brand);display:grid;place-items:center}.logo svg{width:15px;fill:#fff}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;border-radius:99px;padding:5px 14px}
+h1{font-size:clamp(34px,4.4vw,52px);line-height:1.04;margin:14px 0 10px}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--brand),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:0;max-width:430px;color:var(--muted);font-size:17px}
+.feat{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.feat li{display:flex;gap:10px;align-items:center;font-weight:500}
+.ck{width:22px;height:22px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center;flex:none}
+.ck .ic{width:12px;height:12px;stroke-width:3.2}
+/* Plan card (no overflow/transform so PayPal buttons are never clipped) */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:26px;box-shadow:0 36px 70px -36px rgba(14,23,51,.45)}
+.head{padding:26px 26px 22px;text-align:center;color:#fff;border-radius:25px 25px 0 0;background:radial-gradient(260px 160px at 100% 0,rgba(122,77,255,.5),transparent 70%),linear-gradient(135deg,#0e1733,#1f3a9e)}
+.plan{display:inline-block;background:rgba(255,255,255,.14);font-weight:700;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;border-radius:99px;padding:4px 14px}
+.price{display:flex;justify-content:center;align-items:flex-start;gap:6px;margin:12px 0 2px;line-height:1}
+.price .cur,.price .dec{font-size:20px;font-weight:700;opacity:.7;margin-top:10px}
+.price .num{font-size:clamp(56px,6vw,76px);font-weight:800}
+.per{opacity:.75;font-weight:500;font-size:14px}
+.pay{padding:20px 24px 22px}
+/* PayPal-owned containers: do NOT style anything inside these. Keep your real ids/SDK code. */
+.pp{width:100%}.pp+.pp{margin-top:10px}
+.slot{height:46px;border-radius:23px;display:grid;place-items:center;font-weight:800;font-size:18px} /* placeholder look only */
+.slot.gold{background:#ffc439;color:#003087;font-style:italic}.slot.dark{background:#2c2e2f;color:#fff;font-size:15px;font-weight:600}
+.powered{margin:14px 0 0;text-align:center;color:var(--muted);font-size:13px;display:flex;justify-content:center;align-items:center;gap:6px}
+.powered .ic{width:14px;height:14px;color:var(--ok)}
+.live{margin:10px 0 0;text-align:center;font-weight:600;color:var(--brand);font-size:13.5px;background:var(--brand-soft);border-radius:12px;padding:8px 12px}
+.foot{grid-column:1/-1;margin:26px 0 0;text-align:center;color:var(--muted);font-size:14px}
+.foot a{color:var(--ink);font-weight:700;text-underline-offset:3px}
+/* short desktop screens: tighten so everything still fits without scrolling */
+@media(min-width:900px) and (max-height:760px){.logo{margin-bottom:14px}h1{margin:10px 0 8px}.lead{font-size:15.5px}.feat{gap:6px}.head{padding:20px 22px 16px}.price .num{font-size:56px}.pay{padding:16px 22px 18px}.foot{margin-top:16px}.grid{row-gap:16px}}
+/* tablets & phones: single column, normal scrolling */
+@media(max-width:899px){body{place-items:start center}.grid{grid-template-columns:1fr;grid-template-areas:"text" "card" "feat";max-width:520px;margin:0 auto;row-gap:24px}.text{text-align:center}.lead{margin:0 auto}.foot{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="grid">
+  <div class="text">
+    <a class="logo" href="/creator/dashboard"><i><svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg></i>Lora</a><br>
+    <span class="eyebrow">Lora Pro for creators</span>
+    <h1>Your free trial has <em>ended</em></h1>
+    <p class="lead">Subscribe to keep your courses live and continue earning.</p>
+  </div>
+
+  <section class="card" aria-label="Creator plan">
+    <div class="head">
+      <span class="plan">Creator plan</span>
+      <div class="price"><span class="cur">Rs.</span><span class="num">3,499</span><span class="dec">.00</span></div>
+      <div class="per">per month after free trial</div>
+    </div>
+    <div class="pay">
+      <!-- KEEP your existing PayPal containers/ids and SDK code here. Only the placeholders below are for this mockup. -->
+      <div class="pp" id="paypal-button-container"><div class="slot gold">PayPal</div></div>
+      <div class="pp" id="paypal-card-container"><div class="slot dark">Debit or Credit Card</div></div>
+      <p class="powered"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure payment · Powered by <b>PayPal</b></p>
+      <p class="live">Your courses will go live again immediately after payment.</p>
+    </div>
+  </section>
+
+  <div class="featwrap"><ul class="feat">
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Unlimited session packs</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Manual payment verification system</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Free preview session feature</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>WhatsApp &amp; Telegram community links</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Scheduled Zoom session management</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Learner enrollment dashboard</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Bank transfer + payment link support</li>
+    <li><span class="ck"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></span>Recording links for missed sessions</li>
+  </ul></div>
+
+  <p class="foot">Questions? <a href="/contact">Contact us</a> · © 2026 Lora</p>
+</div></div>
+</body>
+</html>

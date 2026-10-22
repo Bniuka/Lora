@@ -10,7 +10,7 @@ import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-f
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
-import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton } from '../components/ui';
+import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 import './payment-modal.css';
 import './course-detail.css';
 
@@ -579,8 +579,16 @@ export default function PackDetail() {
                 </span>
               )}
 
-              {/* Title */}
-              <h1>{pack.title}</h1>
+              {/* Title & Share */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+                <h1 style={{ margin: 0, flex: 1 }}>{pack.title}</h1>
+                <div style={{ marginTop: 6, flexShrink: 0 }}>
+                  <ShareMenu
+                    url={`${window.location.origin}/learner/pack/${pack.id}`}
+                    title={`Check out "${pack.title}" on Loraspace!`}
+                  />
+                </div>
+              </div>
 
               {/* Creator Byline */}
               {creator && (

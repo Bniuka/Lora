@@ -1,5 +1,63 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/learner/pack/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=pack"
+    },
+    {
+      "source": "/pack/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=pack"
+    },
+    {
+      "source": "/creator/pack/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=pack"
+    },
+    {
+      "source": "/creator/packs/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=pack"
+    },
+    {
+      "source": "/creator/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=creator"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Share course</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9edf7;--surface:#fff;--soft:#f4f6fb;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#0f9d6b;box-sizing:border-box}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(600px 380px at 20% 10%,#cfdcff,transparent 70%),radial-gradient(520px 380px at 90% 90%,#e4dbff,transparent 70%),var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif;display:grid;place-items:center;padding:16px}
+h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.back{position:fixed;inset:0;background:rgba(14,23,51,.45);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;z-index:10}
+.back[hidden]{display:none}
+.modal{width:100%;max-width:440px;background:var(--surface);border-radius:28px;box-shadow:0 36px 80px -24px rgba(14,23,51,.45);padding:26px 26px 24px;animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hd h2{font-size:26px}.hd p{margin:2px 0 0;color:var(--muted)}
+.x{border:0;background:var(--soft);width:36px;height:36px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center;flex:none;transition:.15s}
+.x:hover{background:var(--ink);color:#fff}.x .ic{width:18px;height:18px}
+.pv{display:flex;align-items:center;gap:12px;margin:20px 0 22px;padding:10px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
+.pv .th{width:64px;height:48px;border-radius:10px;background:linear-gradient(135deg,#0e1733,#3b2fb8) center/cover;flex:none} /* real course thumbnail */
+.pv b{display:block;font:700 16px 'Bricolage Grotesque';overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv small{color:var(--muted)}.pv div{min-width:0}
+.ch{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.c{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:6px 2px;border-radius:16px;font-weight:600;font-size:13px;color:var(--ink);transition:.2s}
+.c .t{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;transition:.2s}
+.c:hover{transform:translateY(-3px)}.c:hover .t{box-shadow:0 14px 24px -12px currentColor}
+.wa .t{background:#e3f7ee;color:#0f9d6b}.tg .t{background:#e1f0fb;color:#229ed9}.tw .t{background:#e4f3fd;color:#1d9bf0}.ig .t{background:#fde8f1;color:#d6249f}
+.wa:hover .t{background:#0f9d6b;color:#fff}.tg:hover .t{background:#229ed9;color:#fff}.tw:hover .t{background:#1d9bf0;color:#fff}.ig:hover .t{background:linear-gradient(45deg,#f5a623,#d6249f,#6a3df0);color:#fff}
+.or{display:flex;align-items:center;gap:12px;margin:22px 0 12px;color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.copy{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:16px;padding:6px 6px 6px 14px;background:var(--soft);transition:.15s}
+.copy:focus-within{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px var(--brand-soft)}
+.copy .ic{width:18px;height:18px;color:var(--muted)}
+.copy input{flex:1;min-width:0;border:0;background:none;outline:0;padding:8px 0;text-overflow:ellipsis;color:var(--muted)}
+.cp{border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:600;padding:10px 18px;cursor:pointer;display:flex;gap:6px;align-items:center;transition:.15s;white-space:nowrap}
+.cp:hover{background:var(--brand2)}.cp.done{background:var(--ok)}.cp .ic{width:16px;height:16px;color:#fff}
+.reopen{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.grip{display:none}.more{display:flex;width:100%;justify-content:center;margin-top:12px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:12px;font-weight:600;cursor:pointer;color:var(--ink)}.more[hidden]{display:none}.more:hover{border-color:var(--brand);color:var(--brand)}
+.modal{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+@media(max-width:520px){.back{place-items:end stretch;padding:0}
+.modal{max-width:none;max-height:92dvh;border-radius:28px 28px 0 0;padding:10px 20px calc(22px + env(safe-area-inset-bottom,0px));animation:up .28s cubic-bezier(.2,.8,.2,1);touch-action:pan-y}
+@keyframes up{from{transform:translateY(100%)}}
+.grip{display:block;width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 14px;touch-action:none}
+.hd h2{font-size:24px}.x{width:44px;height:44px}
+.pv{margin:16px 0 18px}
+.ch{gap:6px}.c{padding:8px 0;min-height:88px;font-size:12.5px}.c .t{width:60px;height:60px}
+.copy{padding:6px 6px 6px 12px}.copy input{font-size:16px}.cp{min-height:44px;padding:10px 16px}
+.more{min-height:48px}
+.reopen{bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:360px){.c .t{width:52px;height:52px}.c{font-size:12px}.hd p{font-size:14px}}
+@media(max-height:560px){.pv{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<button class="reopen" id="reopen" hidden>Reopen popup (design preview only)</button>
+
+<div class="back" id="back">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ttl">
+    <div class="grip" id="grip" aria-hidden="true"></div>
+    <div class="hd"><div><h2 id="ttl">Share course</h2><p>Spread the word with your friends!</p></div><button class="x" id="close" aria-label="Close"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+
+    <div class="pv"><div class="th"></div><div><b>frcymrfy</b><small>Binuka Dinsara · LKR 3000</small></div></div>
+
+    <!-- Keep your existing share URLs/handlers for each channel -->
+    <div class="ch">
+      <a class="c wa" id="wa" href="https://wa.me/?text=" target="_blank" rel="noopener"><span class="t"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span>WhatsApp</a>
+      <a class="c tg" id="tg" href="https://t.me/share/url?url=" target="_blank" rel="noopener"><span class="t"><svg class="ic" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span>Telegram</a>
+      <a class="c tw" id="tw" href="https://twitter.com/intent/tweet?url=" target="_blank" rel="noopener"><span class="t"><svg class="ic" viewBox="0 0 24 24"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></span>Twitter</a>
+      <button class="c ig" id="ig" type="button"><span class="t"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></span>Instagram</button>
+    </div>
+
+    <div class="or">Or copy link</div>
+    <div class="copy"><svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><input id="url" readonly value="https://www.loraspace.com/learner/pack/e33c11d1-a331-4555-8493-d0e39e40d90f" aria-label="Course link"><button class="cp" id="cp" type="button"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span>Copy</span></button></div>
+    <button class="more" id="more" type="button" hidden>More sharing options</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2200)};
+const url=$('#url').value,enc=encodeURIComponent(url);
+$('#wa').href='https://wa.me/?text='+enc;$('#tg').href='https://t.me/share/url?url='+enc;$('#tw').href='https://twitter.com/intent/tweet?url='+enc;
+$('#cp').onclick=async()=>{const b=$('#cp');
+ try{await navigator.clipboard.writeText(url)}catch(_){$('#url').select();document.execCommand('copy')}
+ b.classList.add('done');b.querySelector('span').textContent='Copied';setTimeout(()=>{b.classList.remove('done');b.querySelector('span').textContent='Copy'},1800)};
+$('#url').onfocus=e=>e.target.select();
+// Instagram has no web share URL: keep your existing behavior (this demo just copies the link)
+$('#ig').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(url);toast('Link copied. Paste it in Instagram.')};
+const close=()=>{$('#back').hidden=true;$('#reopen').hidden=false},open=()=>{$('#back').hidden=false;$('#reopen').hidden=true;$('#close').focus()};
+$('#close').onclick=close;$('#back').onclick=e=>{if(e.target.id==='back')close()};$('#reopen').onclick=open;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#back').hidden)close()});
+// Phone only: native share sheet (shown only where the browser supports it) and swipe-down-to-close
+if(navigator.share){const m=$('#more');m.hidden=false;m.onclick=()=>navigator.share({title:document.querySelector('.pv b').textContent,url}).catch(()=>{})}
+(()=>{const m=document.querySelector('.modal');let y0=null,dy=0;
+const st=e=>{if(innerWidth>520)return;y0=e.touches[0].clientY;dy=0;m.style.animation='none';m.style.transition='none'};
+const mv=e=>{if(y0===null)return;dy=Math.max(0,e.touches[0].clientY-y0);m.style.transform='translateY('+dy+'px)'};
+const en=()=>{if(y0===null)return;m.style.transition='transform .2s';if(dy>90)close();m.style.transform='';y0=null};
+[$('#grip'),document.querySelector('.hd')].forEach(el=>{el.addEventListener('touchstart',st,{passive:true});el.addEventListener('touchmove',mv,{passive:true});el.addEventListener('touchend',en)})})();
+</script>
+</body>
+</html>
