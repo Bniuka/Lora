@@ -1,0 +1,367 @@
+/* ================================================================
+   Lora Payment Reference Code Popup — light-mode-only scoped styles
+   All selectors are prefixed with .lora-code
+   Matches new code/Lora – Payment reference code popup (redesign).html
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-code {
+  --bg: #e9edf7;
+  --surface: #fff;
+  --soft: #f4f6fb;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --ok: #0f9d6b;
+  --warn: #a35d00;
+  --warn-soft: #fff2da;
+  box-sizing: border-box;
+}
+
+.lora-code *,
+.lora-code *::before,
+.lora-code *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-code h2 {
+  font-family: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 14px 0 8px !important;
+  font-size: 28px !important;
+  color: var(--ink) !important;
+  line-height: 1.2 !important;
+}
+
+.lora-code button {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-code :focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.lora-code .ic {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+.lora-code.back,
+.lora-code .back {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(14, 23, 51, 0.45) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px !important;
+  z-index: 1000 !important;
+  font-family: 'Figtree', system-ui, sans-serif !important;
+  color: var(--ink) !important;
+}
+
+.lora-code .modal {
+  width: 100% !important;
+  max-width: 470px !important;
+  max-height: calc(100dvh - 32px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  background: var(--surface) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 36px 80px -24px rgba(14, 23, 51, 0.45) !important;
+  padding: 28px 28px 26px !important;
+  animation: loraCodeIn 0.22s ease !important;
+  position: relative !important;
+  font-family: 'Figtree', system-ui, sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  color: var(--ink) !important;
+}
+
+@keyframes loraCodeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+.lora-code .grip {
+  display: none;
+}
+
+.lora-code .step {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  border-radius: 99px !important;
+  padding: 4px 12px !important;
+}
+
+.lora-code .dots {
+  display: inline-flex !important;
+  gap: 4px !important;
+}
+
+.lora-code .dots i {
+  width: 16px !important;
+  height: 4px !important;
+  border-radius: 99px !important;
+  background: #c5d2ff !important;
+  display: inline-block !important;
+}
+
+.lora-code .dots i.on {
+  background: var(--brand) !important;
+}
+
+.lora-code .msg {
+  margin: 0 !important;
+  color: var(--muted) !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+}
+
+.lora-code .msg b {
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+}
+
+.lora-code .ticket {
+  position: relative !important;
+  margin: 22px 0 0 !important;
+  background: linear-gradient(135deg, #f4f7ff, #ecefff) !important;
+  border: 1.5px dashed #b9c7ff !important;
+  border-radius: 22px !important;
+  padding: 20px 18px 18px !important;
+  text-align: center !important;
+}
+
+.lora-code .ticket::before,
+.lora-code .ticket::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: var(--surface) !important;
+  border: 1.5px dashed #b9c7ff !important;
+  transform: translateY(-50%) !important;
+}
+
+.lora-code .ticket::before {
+  left: -10px !important;
+  clip-path: inset(0 0 0 50%) !important;
+}
+
+.lora-code .ticket::after {
+  right: -10px !important;
+  clip-path: inset(0 50% 0 0) !important;
+}
+
+.lora-code .lbl {
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--brand) !important;
+}
+
+.lora-code .code {
+  margin: 8px 0 14px !important;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  font-size: clamp(18px, 6vw, 32px) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.08em !important;
+  overflow-wrap: anywhere !important;
+  white-space: nowrap !important;
+  user-select: all !important;
+  color: var(--ink) !important;
+}
+
+.lora-code .copy {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border: 1.5px solid var(--brand) !important;
+  background: #fff !important;
+  color: var(--brand) !important;
+  border-radius: 14px !important;
+  padding: 11px 22px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  min-height: 46px !important;
+  transition: 0.15s !important;
+}
+
+.lora-code .copy:hover {
+  background: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-code .copy.done {
+  background: var(--ok) !important;
+  border-color: var(--ok) !important;
+  color: #fff !important;
+}
+
+.lora-code .exp {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin: 14px 0 20px !important;
+  color: var(--warn) !important;
+  background: var(--warn-soft) !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+}
+
+.lora-code .exp .ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.lora-code .next {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  padding: 15px 20px !important;
+  min-height: 52px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  background: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -14px rgba(47, 91, 255, 0.9) !important;
+  transition: 0.15s !important;
+}
+
+.lora-code .next:hover {
+  background: var(--brand2) !important;
+}
+
+.lora-code .next:hover .ic {
+  transform: translateX(3px) !important;
+}
+
+.lora-code .next .ic {
+  transition: 0.2s !important;
+}
+
+.lora-code .toast {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  transform: translate(-50%, 30px) !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  padding: 11px 18px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: 0.25s !important;
+  z-index: 1050 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.lora-code .toast.show {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Mobile responsive bottom sheet (< 520px) */
+@media (max-width: 520px) {
+  .lora-code.back,
+  .lora-code .back {
+    place-items: end stretch !important;
+    padding: 0 !important;
+  }
+
+  .lora-code .modal {
+    max-width: none !important;
+    max-height: 92dvh !important;
+    border-radius: 28px 28px 0 0 !important;
+    padding: 10px 20px calc(22px + env(safe-area-inset-bottom, 0px)) !important;
+    animation: loraCodeUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    touch-action: pan-y !important;
+  }
+
+  @keyframes loraCodeUp {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  .lora-code .grip {
+    display: block !important;
+    width: 44px !important;
+    height: 5px !important;
+    border-radius: 99px !important;
+    background: var(--line) !important;
+    margin: 0 auto 16px !important;
+    cursor: grab !important;
+    touch-action: none !important;
+  }
+
+  .lora-code h2 {
+    font-size: 25px !important;
+  }
+
+  .lora-code .ticket {
+    padding: 18px 14px 16px !important;
+  }
+
+  .lora-code .copy {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Very narrow screens (320px - 360px) */
+@media (max-width: 360px) {
+  .lora-code .code {
+    font-size: 20px !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .lora-code h2 {
+    font-size: 23px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-code * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription, slugify } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
+import './payment-code-modal.css';
 import './payment-modal.css';
 import './course-detail.css';
 
@@ -82,6 +83,188 @@ function SessionButton({ session }) {
     <span style={{ fontSize: '13px', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
       <Clock size={13} /> Starts {formatDistanceToNow(scheduled, { addSuffix: true })}
     </span>
+  );
+}
+
+function PaymentStep1({ refCode, onClose, onNext, expiryText = "This code expires in 48 hours" }) {
+  const [copied, setCopied] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+  const toastTimeoutRef = useRef(null);
+
+  const modalRef = useRef(null);
+  const gripRef = useRef(null);
+  const previousActiveElement = useRef(null);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastVisible(false);
+    }, 2200);
+  };
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(refCode);
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
+    } catch (_) {
+      const codeEl = document.getElementById('lora-ref-code-text');
+      if (codeEl) {
+        const r = document.createRange();
+        r.selectNodeContents(codeEl);
+        const s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(r);
+        document.execCommand('copy');
+      }
+    }
+    setCopied(true);
+    showToast('Reference code copied');
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  // Focus management & Escape key listener
+  useEffect(() => {
+    previousActiveElement.current = document.activeElement;
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      if (previousActiveElement.current && previousActiveElement.current.focus) {
+        previousActiveElement.current.focus();
+      }
+    };
+  }, [onClose]);
+
+  // Mobile swipe-down-to-close on grab handle
+  useEffect(() => {
+    const m = modalRef.current;
+    const grip = gripRef.current;
+    if (!m || !grip) return;
+
+    let y0 = null;
+    let dy = 0;
+
+    const handleTouchStart = (e) => {
+      if (window.innerWidth > 520) return;
+      y0 = e.touches[0].clientY;
+      dy = 0;
+      m.style.animation = 'none';
+      m.style.transition = 'none';
+    };
+
+    const handleTouchMove = (e) => {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      m.style.transform = `translateY(${dy}px)`;
+    };
+
+    const handleTouchEnd = () => {
+      if (y0 === null) return;
+      m.style.transition = 'transform .2s';
+      if (dy > 90) {
+        onClose();
+      }
+      m.style.transform = '';
+      y0 = null;
+      dy = 0;
+    };
+
+    grip.addEventListener('touchstart', handleTouchStart, { passive: true });
+    grip.addEventListener('touchmove', handleTouchMove, { passive: true });
+    grip.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      grip.removeEventListener('touchstart', handleTouchStart);
+      grip.removeEventListener('touchmove', handleTouchMove);
+      grip.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="lora-code">
+      <div 
+        className="back" 
+        onClick={onClose}
+      >
+        <div 
+          className="modal" 
+          ref={modalRef}
+          role="dialog" 
+          aria-modal="true" 
+          aria-labelledby="ttl"
+          tabIndex={-1}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="grip" ref={gripRef} aria-hidden="true" />
+          
+          <span className="step">
+            Step 1 of 2 <span className="dots" aria-hidden="true"><i className="on"></i><i></i></span>
+          </span>
+
+          <h2 id="ttl">Complete payment</h2>
+          
+          <p className="msg">
+            When making your payment, paste or type <b>this exact code</b> in the payment description/reference field. This is how the creator identifies your payment.
+          </p>
+
+          <div className="ticket">
+            <div className="lbl">Your reference code</div>
+            <div className="code" id="lora-ref-code-text">{refCode}</div>
+            <button 
+              className={`copy ${copied ? 'done' : ''}`} 
+              id="copy" 
+              type="button" 
+              onClick={handleCopy}
+            >
+              <svg className="ic" viewBox="0 0 24 24">
+                <rect x="9" y="9" width="11" height="11" rx="2" />
+                <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+              </svg>
+              <span>{copied ? 'Copied' : 'Copy code'}</span>
+            </button>
+          </div>
+
+          <div className="exp">
+            <svg className="ic" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+            {expiryText}
+          </div>
+
+          <button 
+            className="next" 
+            id="next" 
+            type="button" 
+            onClick={onNext}
+          >
+            Next: view payment instructions{' '}
+            <svg className="ic" viewBox="0 0 24 24">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className={`toast ${toastVisible ? 'show' : ''}`} role="status">
+        {toastMsg}
+      </div>
+    </div>
   );
 }
 
@@ -989,54 +1172,40 @@ export default function PackDetail() {
           {renderJoinAction(true)}
         </div>
 
-        {/* Payment Modal — steps 1 & 3 use the app Modal; step 2 uses its own overlay */}
+        {/* Step 1: full-screen overlay with scoped lora-code design */}
+        {paymentModal && paymentStep === 1 && (
+          <PaymentStep1
+            refCode={refCode}
+            onClose={() => { setPaymentModal(false); setPaymentStep(1); setScreenshot(null); }}
+            onNext={() => setPaymentStep(2)}
+          />
+        )}
+
+        {/* Step 3: Confirmation modal */}
         <Modal
-          isOpen={paymentModal && paymentStep !== 2}
-          onClose={() => { setPaymentModal(false); setPaymentStep(1); setScreenshot(null); }}
-          title={paymentStep === 3 ? 'Payment Submitted!' : 'Complete Payment'}
+          isOpen={paymentModal && paymentStep === 3}
+          onClose={() => { setPaymentModal(false); window.location.reload(); }}
+          title="Payment Submitted!"
         >
-          {paymentStep === 1 && (
-            <div className="space-y-6">
-              <p className="text-sm text-[#475569]">
-                When making your payment, paste or type this exact code in the payment description/reference field. This is how the creator identifies your payment.
-              </p>
-              <div className="p-6 rounded-xl border-2 border-[#DBEAFE] bg-[#F8FAFC] text-center">
-                <p className="text-xs text-[#2563EB] uppercase tracking-wider font-semibold mb-2">Your Reference Code</p>
-                <div className="text-3xl font-mono font-bold text-[#0F172A] mb-4 tracking-widest">{refCode}</div>
-                <button onClick={() => navigator.clipboard.writeText(refCode)} className="btn-secondary text-xs mx-auto py-2 px-4">
-                  <Copy size={14} className="mr-2 inline" /> Copy Code
-                </button>
-              </div>
-              <p className="text-xs text-center text-[#C0392B] font-medium flex items-center justify-center gap-1">
-                <Clock size={12} /> This code expires in 48 hours
-              </p>
-              <button onClick={() => setPaymentStep(2)} className="btn-primary w-full py-4 mt-2">
-                Next: View Payment Instructions →
-              </button>
+          <div className="text-center py-4">
+            <div className="w-16 h-16 rounded-full bg-[#2D7A4F]/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={32} className="text-[#2D7A4F]" />
             </div>
-          )}
+            <h3 className="text-xl font-bold text-[#0F172A] mb-2">Payment Submitted!</h3>
 
-          {paymentStep === 3 && (
-            <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-full bg-[#2D7A4F]/10 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle size={32} className="text-[#2D7A4F]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#0F172A] mb-2">Payment Submitted!</h3>
-
-              <div className="my-6 p-4 rounded-xl border border-[#DBEAFE] bg-[#F8FAFC] inline-block">
-                <p className="text-xs text-[#94A6B8] mb-1 uppercase tracking-wider">Reference Code</p>
-                <p className="text-lg font-mono font-bold text-[#2563EB]">{refCode}</p>
-              </div>
-
-              <p className="text-sm text-[#475569] mb-8 leading-relaxed max-w-sm mx-auto">
-                The creator will verify your payment using this code. You'll be notified once access is granted.
-              </p>
-
-              <button onClick={() => { setPaymentModal(false); window.location.reload(); }} className="btn-primary w-full py-4">
-                Close
-              </button>
+            <div className="my-6 p-4 rounded-xl border border-[#DBEAFE] bg-[#F8FAFC] inline-block">
+              <p className="text-xs text-[#94A6B8] mb-1 uppercase tracking-wider">Reference Code</p>
+              <p className="text-lg font-mono font-bold text-[#2563EB]">{refCode}</p>
             </div>
-          )}
+
+            <p className="text-sm text-[#475569] mb-8 leading-relaxed max-w-sm mx-auto">
+              The creator will verify your payment using this code. You'll be notified once access is granted.
+            </p>
+
+            <button onClick={() => { setPaymentModal(false); window.location.reload(); }} className="btn-primary w-full py-4">
+              Close
+            </button>
+          </div>
         </Modal>
 
         {/* Step 2: full-screen overlay with scoped lora-pay design */}

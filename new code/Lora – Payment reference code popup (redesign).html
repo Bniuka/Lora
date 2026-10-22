@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lora – Payment reference code</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9edf7;--surface:#fff;--soft:#f4f6fb;--ink:#0e1733;--muted:#68728d;--line:#e3e7f1;--brand:#2f5bff;--brand2:#1d3fd1;--brand-soft:#e9eeff;--ok:#0f9d6b;--warn:#a35d00;--warn-soft:#fff2da;box-sizing:border-box}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(600px 380px at 20% 10%,#cfdcff,transparent 70%),radial-gradient(520px 380px at 90% 90%,#e4dbff,transparent 70%),var(--bg);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif}
+h2{font-family:'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.02em;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.back{position:fixed;inset:0;background:rgba(14,23,51,.45);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.modal{width:100%;max-width:470px;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border-radius:28px;box-shadow:0 36px 80px -24px rgba(14,23,51,.45);padding:28px 28px 26px;animation:in .22s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.grip{display:none}
+.step{display:inline-flex;align-items:center;gap:8px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:4px 12px}
+.dots{display:inline-flex;gap:4px}.dots i{width:16px;height:4px;border-radius:99px;background:#c5d2ff}.dots i.on{background:var(--brand)}
+h2{font-size:28px;margin:14px 0 8px}
+.msg{margin:0;color:var(--muted)}.msg b{color:var(--ink)}
+.ticket{position:relative;margin:22px 0 0;background:linear-gradient(135deg,#f4f7ff,#ecefff);border:1.5px dashed #b9c7ff;border-radius:22px;padding:20px 18px 18px;text-align:center}
+.ticket:before,.ticket:after{content:"";position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:1.5px dashed #b9c7ff;transform:translateY(-50%)}
+.ticket:before{left:-10px;clip-path:inset(0 0 0 50%)}.ticket:after{right:-10px;clip-path:inset(0 50% 0 0)}
+.lbl{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.code{margin:8px 0 14px;font:800 clamp(18px,6vw,32px)/1.15 'Bricolage Grotesque',sans-serif;letter-spacing:.08em;overflow-wrap:anywhere;user-select:all;color:var(--ink)}
+.copy{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--brand);background:#fff;color:var(--brand);border-radius:14px;padding:11px 22px;font-weight:600;cursor:pointer;min-height:46px;transition:.15s}
+.copy:hover{background:var(--brand);color:#fff}
+.copy.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.exp{display:flex;justify-content:center;align-items:center;gap:7px;margin:14px 0 20px;color:var(--warn);background:var(--warn-soft);border-radius:12px;padding:8px 12px;font-weight:600;font-size:13.5px}
+.exp .ic{width:15px;height:15px}
+.next{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:15px;padding:15px 20px;min-height:52px;font-weight:600;font-size:16px;cursor:pointer;background:var(--brand);color:#fff;box-shadow:0 14px 28px -14px rgba(47,91,255,.9);transition:.15s}
+.next:hover{background:var(--brand2)}.next:hover .ic{transform:translateX(3px)}.next .ic{transition:.2s}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:520px){.back{place-items:end stretch;padding:0}
+.modal{max-width:none;max-height:92dvh;border-radius:28px 28px 0 0;padding:10px 20px calc(22px + env(safe-area-inset-bottom,0px));animation:up .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(100%)}}
+.grip{display:block;width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+h2{font-size:25px}.ticket{padding:18px 14px 16px}.copy{width:100%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="back">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ttl">
+    <div class="grip" aria-hidden="true"></div>
+    <span class="step">Step 1 of 2 <span class="dots" aria-hidden="true"><i class="on"></i><i></i></span></span><!-- adjust or remove to match your real flow -->
+    <h2 id="ttl">Complete payment</h2>
+    <p class="msg">When making your payment, paste or type <b>this exact code</b> in the payment description/reference field. This is how the creator identifies your payment.</p>
+
+    <div class="ticket">
+      <div class="lbl">Your reference code</div>
+      <div class="code" id="code">LORA_KANKUN_5866</div>
+      <button class="copy" id="copy" type="button"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span>Copy code</span></button>
+    </div>
+
+    <div class="exp"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>This code expires in 48 hours</div>
+
+    <button class="next" id="next" type="button">Next: view payment instructions <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2200)};
+// Copy the real reference code (keep your existing copy logic; this has a fallback for blocked clipboards)
+$('#copy').onclick=async()=>{const b=$('#copy'),v=$('#code').textContent.trim();
+  try{await navigator.clipboard.writeText(v)}catch(_){const r=document.createRange();r.selectNodeContents($('#code'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}
+  b.classList.add('done');b.querySelector('span').textContent='Copied';toast('Reference code copied');
+  setTimeout(()=>{b.classList.remove('done');b.querySelector('span').textContent='Copy code'},1800)};
+// Call your existing "go to payment instructions" handler here
+$('#next').onclick=()=>{/* goToPaymentInstructions() */toast('Opens the payment instructions step')};
+</script>
+</body>
+</html>
