@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, StepProgress, ToggleSwitch, GoldBadge } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { generateUniquePackSlug } from '../lib/utils';
 
 const STEPS = ['Basic Info', 'Media', 'Contact & Community', 'Sessions', 'Review'];
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -96,9 +97,12 @@ export default function CreatePack() {
         }
       }
 
+      const slug = await generateUniquePackSlug(form.title);
+
       const packPayload = {
         creator_id: user.id,
         title: form.title,
+        slug: slug,
         description: form.description,
         category: form.category,
         price: parseFloat(form.price),
@@ -114,9 +118,10 @@ export default function CreatePack() {
 
       let { data: pack, error: packErr } = await supabase.from('session_packs').insert(packPayload).select().single();
 
-      // Gracefully retry without whatsapp_number if the column is not yet present in Supabase
-      if (packErr && packErr.message?.includes('whatsapp_number')) {
-        delete packPayload.whatsapp_number;
+      // Gracefully retry without optional columns if not yet present in Supabase
+      if (packErr && (packErr.message?.includes('whatsapp_number') || packErr.message?.includes('slug'))) {
+        if (packErr.message?.includes('whatsapp_number')) delete packPayload.whatsapp_number;
+        if (packErr.message?.includes('slug')) delete packPayload.slug;
         const retry = await supabase.from('session_packs').insert(packPayload).select().single();
         pack = retry.data;
         packErr = retry.error;

@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState, Modal, ShareMenu } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { slugify } from '../lib/utils';
 
 export default function MyPacks() {
   useSubscriptionGuard();
@@ -99,7 +100,7 @@ export default function MyPacks() {
                   )}
                   <div className="absolute top-3 right-3 flex items-center gap-2">
                     {pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
-                    <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} pack={pack} />
+                    <ShareMenu url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`} title={pack.title} pack={pack} />
                   </div>
                 </div>
 

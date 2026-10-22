@@ -1,6 +1,17 @@
 {
   "rewrites": [
     {
+      "source": "/p/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([wW]hats[aA]pp|[tT]elegram|[fF]acebook|[tT]witter|[lL]inked[iI]n|[sS]lack|[dD]iscord|[sS]kype|[pP]interest|[aA]pplebot|[mM]eta-[eE]xternal|[bB]ot|[cC]rawler|[sS]pider|[eE]mbedly).*"
+        }
+      ],
+      "destination": "/api/preview?id=:id&type=pack"
+    },
+    {
       "source": "/learner/pack/:id",
       "has": [
         {

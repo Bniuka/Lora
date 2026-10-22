@@ -32,3 +32,43 @@ export function hasValidSubscription(creatorProfile) {
   }
   return false;
 }
+
+export function slugify(text) {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w-]+/g, '')        // Remove all non-word chars except -
+    .replace(/--+/g, '-')           // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+}
+
+export async function generateUniquePackSlug(title, currentPackId = null) {
+  const base = slugify(title) || 'course';
+  let slug = base;
+  let counter = 1;
+  let isUnique = false;
+
+  while (!isUnique) {
+    try {
+      let query = supabase.from('session_packs').select('id').eq('slug', slug);
+      if (currentPackId) {
+        query = query.neq('id', currentPackId);
+      }
+      const { data, error } = await query.maybeSingle();
+      if (error || !data) {
+        isUnique = true;
+      } else {
+        counter++;
+        slug = `${base}-${counter}`;
+      }
+    } catch (_) {
+      isUnique = true;
+    }
+  }
+  return slug;
+}
+

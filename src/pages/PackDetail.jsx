@@ -9,7 +9,7 @@ import {
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { generatePaymentReference, hasValidSubscription } from '../lib/utils';
+import { generatePaymentReference, hasValidSubscription, slugify } from '../lib/utils';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 import './payment-modal.css';
 import './course-detail.css';
@@ -340,28 +340,55 @@ export default function PackDetail() {
 
   useEffect(() => {
     const fetch = async () => {
-      const [packRes, sessRes] = await Promise.all([
-        supabase.from('session_packs')
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+      let packData = null;
+
+      if (isUuid) {
+        const { data } = await supabase.from('session_packs')
           .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url, contact_number, country_code))')
-          .eq('id', id).single(),
-        supabase.from('sessions').select('*').eq('pack_id', id).order('order_index'),
-      ]);
+          .eq('id', id).maybeSingle();
+        packData = data;
+      } else {
+        // Look up by slug
+        const { data: bySlug } = await supabase.from('session_packs')
+          .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url, contact_number, country_code))')
+          .eq('slug', id).maybeSingle();
+        packData = bySlug;
 
-      if (packRes.data) {
-        setPack(packRes.data);
-        setCreator(packRes.data.creator_profiles);
+        // Fallback: If not found by slug (e.g. before migration), search by slugified title
+        if (!packData) {
+          const cleanSearch = id.replace(/-/g, ' ');
+          const { data: byTitle } = await supabase.from('session_packs')
+            .select('*, creator_profiles(id, subscription_status, trial_ends_at, payment_link, payment_option, about, category, profiles(first_name, last_name, avatar_url, contact_number, country_code))')
+            .ilike('title', cleanSearch)
+            .limit(1);
+          if (byTitle && byTitle.length > 0) {
+            packData = byTitle[0];
+          }
+        }
       }
-      setSessions(sessRes.data || []);
 
-      if (user) {
-        const { data: enr } = await supabase.from('enrollments')
-          .select('*').eq('learner_id', user.id).eq('pack_id', id).maybeSingle();
-        setEnrollment(enr);
-      }
+      if (packData) {
+        setPack(packData);
+        setCreator(packData.creator_profiles);
 
-      if (packRes.data?.creator_profiles) {
-        supabase.from('creator_bank_details').select('*').eq('creator_id', packRes.data.creator_profiles.id).maybeSingle()
-          .then(({ data }) => setBankDetails(data));
+        const realId = packData.id;
+
+        const [sessRes, enrRes] = await Promise.all([
+          supabase.from('sessions').select('*').eq('pack_id', realId).order('order_index'),
+          user ? supabase.from('enrollments').select('*').eq('learner_id', user.id).eq('pack_id', realId).maybeSingle() : Promise.resolve({ data: null })
+        ]);
+
+        setSessions(sessRes.data || []);
+        if (enrRes.data) {
+          setEnrollment(enrRes.data);
+        }
+
+        if (packData.creator_profiles) {
+          supabase.from('creator_bank_details').select('*').eq('creator_id', packData.creator_profiles.id).maybeSingle()
+            .then(({ data }) => setBankDetails(data));
+        }
       }
 
       setLoading(false);
@@ -400,7 +427,7 @@ export default function PackDetail() {
       const { error: enrErr } = await supabase.from('enrollments').upsert({
         id: enrollment?.id || undefined,
         learner_id: user.id,
-        pack_id: id,
+        pack_id: pack?.id || id,
         status: 'pending',
         payment_screenshot_url: urlData?.publicUrl || null,
         payment_method_used: paymentMethod || 'manual',
@@ -584,7 +611,7 @@ export default function PackDetail() {
                 <h1 style={{ margin: 0, flex: 1 }}>{pack.title}</h1>
                 <div style={{ marginTop: 6, flexShrink: 0 }}>
                   <ShareMenu
-                    url={`${window.location.origin}/learner/pack/${pack.id}`}
+                    url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`}
                     title={`Check out "${pack.title}" on Loraspace!`}
                     pack={pack}
                   />

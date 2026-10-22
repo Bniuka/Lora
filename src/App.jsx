@@ -44,6 +44,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/p/:id" element={<PackDetail />} />
         <Route path="/learner/pack/:id" element={<PackDetail />} />
         <Route path="/pack/:id" element={<PackDetail />} />
         <Route path="/creator/pack/:id" element={<PackDetail />} />

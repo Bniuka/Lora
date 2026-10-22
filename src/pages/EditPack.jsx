@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, ToggleSwitch, GoldBadge, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { generateUniquePackSlug } from '../lib/utils';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
@@ -105,9 +106,14 @@ export default function EditPack() {
         has_free_session: hasFree,
       };
 
+      if (!pack.slug && pack.title) {
+        packUpdate.slug = await generateUniquePackSlug(pack.title, id);
+      }
+
       let { error: updateErr } = await supabase.from('session_packs').update(packUpdate).eq('id', id);
-      if (updateErr && updateErr.message?.includes('whatsapp_number')) {
-        delete packUpdate.whatsapp_number;
+      if (updateErr && (updateErr.message?.includes('whatsapp_number') || updateErr.message?.includes('slug'))) {
+        if (updateErr.message?.includes('whatsapp_number')) delete packUpdate.whatsapp_number;
+        if (updateErr.message?.includes('slug')) delete packUpdate.slug;
         const retry = await supabase.from('session_packs').update(packUpdate).eq('id', id);
         updateErr = retry.error;
       }

@@ -7,7 +7,7 @@ import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch, ShareMen
 
 const CATEGORIES = ['All', 'Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
-import { hasValidSubscription } from '../lib/utils';
+import { hasValidSubscription, slugify } from '../lib/utils';
 
 export default function Discover() {
   const [searchParams] = useSearchParams();
@@ -137,7 +137,7 @@ export default function Discover() {
                       <div className="absolute top-3 left-3"><GoldBadge icon={Sparkles}>Free Preview</GoldBadge></div>
                     )}
                     <div className="absolute top-3 right-3">
-                      <ShareMenu url={`${window.location.origin}/learner/pack/${pack.id}`} title={pack.title} pack={pack} />
+                      <ShareMenu url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`} title={pack.title} pack={pack} />
                     </div>
                   </div>
                   <div className="p-5">

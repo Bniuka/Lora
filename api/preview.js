@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   const userAgent = req.headers['user-agent'] || '';
   const isBot = /bot|whatsapp|telegram|facebook|twitter|slack|discord|linkedin|skype|meta-external|applebot|curl|wget|preview|pinterest/i.test(userAgent);
 
-  const targetPath = type === 'creator' ? `/creator/${id}` : `/learner/pack/${id}`;
+  let targetPath = type === 'creator' ? `/creator/${id}` : `/p/${id}`;
 
   // If a human visitor reaches here directly via browser, redirect them immediately to the SPA
   if (!isBot && req.query.force_preview !== 'true') {
@@ -67,14 +67,33 @@ export default async function handler(req, res) {
         imageUrl = ensureAbsoluteUrl(creator.avatar_url);
       }
     } else {
-      // Session pack lookup
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/session_packs?id=eq.${id}&select=id,title,description,thumbnail_url,price`, {
+      // Session pack lookup by UUID or slug
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const queryParam = isUuid ? `id=eq.${id}` : `slug=eq.${encodeURIComponent(id)}`;
+
+      let resp = await fetch(`${SUPABASE_URL}/rest/v1/session_packs?${queryParam}&select=id,title,description,thumbnail_url,price`, {
         headers: {
           apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${SUPABASE_ANON_KEY}`
         }
       });
-      const data = await resp.json();
+      let data = await resp.json();
+
+      // Fallback: If not found by slug (e.g. before backfill), search by title
+      if ((!Array.isArray(data) || data.length === 0) && !isUuid) {
+        const titleSearch = encodeURIComponent(id.replace(/-/g, ' '));
+        const resp2 = await fetch(`${SUPABASE_URL}/rest/v1/session_packs?title=ilike.*${titleSearch}*&select=id,title,description,thumbnail_url,price&limit=1`, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+        const data2 = await resp2.json();
+        if (Array.isArray(data2) && data2.length > 0) {
+          data = data2;
+        }
+      }
+
       if (Array.isArray(data) && data.length > 0) {
         const pack = data[0];
         if (pack.title) {
@@ -82,6 +101,7 @@ export default async function handler(req, res) {
         }
         description = cleanDescription(pack.description, 180);
         imageUrl = ensureAbsoluteUrl(pack.thumbnail_url);
+        targetPath = `/p/${id}`;
       }
     }
   } catch (err) {
