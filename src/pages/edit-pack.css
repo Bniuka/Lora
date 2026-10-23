@@ -681,6 +681,118 @@
   }
 }
 
+/* Switch for Edit Pack */
+.lora-edit .sw {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  cursor: pointer !important;
+  margin-bottom: 14px !important;
+  font-weight: 600 !important;
+}
+
+.lora-edit .sw input {
+  position: absolute !important;
+  opacity: 0 !important;
+}
+
+.lora-edit .sw .tg {
+  width: 50px !important;
+  height: 30px !important;
+  border-radius: 99px !important;
+  background: #cdd5ea !important;
+  position: relative !important;
+  transition: 0.2s !important;
+  flex: none !important;
+}
+
+.lora-edit .sw .tg:after {
+  content: "" !important;
+  position: absolute !important;
+  left: 3px !important;
+  top: 3px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: 0.2s !important;
+}
+
+.lora-edit .sw input:checked + .tg {
+  background: #10b981 !important;
+}
+
+.lora-edit .sw input:checked + .tg:after {
+  left: 23px !important;
+}
+
+.lora-edit .sw.free-banner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  background: #ffffff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
+  margin-bottom: 22px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.lora-edit .sw.free-banner:hover {
+  border-color: #93c5fd !important;
+}
+
+.lora-edit .sw.free-banner.active {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border-color: #86efac !important;
+  box-shadow: 0 4px 16px -4px rgba(16, 185, 129, 0.15) !important;
+}
+
+.lora-edit .sw.free-banner .sw-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.lora-edit .sw.free-banner .sw-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 15.5px !important;
+  color: var(--ink) !important;
+}
+
+.lora-edit .sw.free-banner .sw-pill {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  padding: 2px 8px !important;
+  border-radius: 99px !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+.lora-edit .sw.free-banner.active .sw-pill {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+}
+
+.lora-edit .sw.free-banner .sw-desc {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+}
+
 @media(prefers-reduced-motion: reduce) {
   .lora-edit * {
     transition: none !important;

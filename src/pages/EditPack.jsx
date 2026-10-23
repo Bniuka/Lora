@@ -25,6 +25,7 @@ export default function EditPack() {
   const [sessions, setSessions] = useState([]);
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbPreview, setThumbPreview] = useState(null);
+  const [previousPrice, setPreviousPrice] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const toastTimeoutRef = useRef(null);
@@ -286,6 +287,36 @@ export default function EditPack() {
                 <p>The title, description and price learners see.</p>
               </div>
             </div>
+
+            {/* Top Switch for 100% Free Pack */}
+            <label className={`sw free-banner ${Number(pack.price) === 0 ? 'active' : ''}`}>
+              <div className="sw-info">
+                <div className="sw-title">
+                  <b>Offer this pack 100% Free</b>
+                  <span className="sw-pill">{Number(pack.price) === 0 ? 'FREE PACK' : 'OPTIONAL'}</span>
+                </div>
+                <p className="sw-desc">
+                  Learners get 1-click instant enrollment without payment. Perfect for free workshops, client acquisition, and audience building!
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={Number(pack.price) === 0}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  if (checked) {
+                    if (pack.price && Number(pack.price) !== 0) {
+                      setPreviousPrice(pack.price);
+                    }
+                    updatePack('price', 0);
+                  } else {
+                    updatePack('price', previousPrice || 29.99);
+                  }
+                }}
+              />
+              <span className="tg"></span>
+            </label>
+
             <div className="g">
               <div className="f">
                 <label htmlFor="title">Title</label>
@@ -321,38 +352,24 @@ export default function EditPack() {
                   </select>
                 </div>
                 <div className="f">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label htmlFor="price">Price</label>
-                    <button
-                      type="button"
-                      onClick={() => updatePack('price', Number(pack.price) === 0 ? '' : '0')}
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        background: Number(pack.price) === 0 ? '#10b981' : '#f1f5f9',
-                        color: Number(pack.price) === 0 ? '#ffffff' : '#64748b',
-                        border: '1px solid ' + (Number(pack.price) === 0 ? '#059669' : '#cbd5e1'),
-                        padding: '2px 8px',
-                        borderRadius: '999px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {Number(pack.price) === 0 ? '✓ 100% Free' : 'Make 100% Free'}
-                    </button>
-                  </div>
+                  <label htmlFor="price">
+                    Price {Number(pack.price) === 0 ? <span style={{ color: '#059669', fontWeight: 700 }}>(Free)</span> : <em>*</em>}
+                  </label>
                   <input
                     id="price"
                     name="price"
                     type="number"
                     inputMode="decimal"
-                    placeholder="29.99 (or 0 for Free)"
+                    placeholder="29.99"
                     value={pack.price ?? ''}
+                    disabled={Number(pack.price) === 0}
                     onChange={e => updatePack('price', e.target.value)}
+                    style={Number(pack.price) === 0 ? { background: '#f0fdf4', borderColor: '#86efac', color: '#047857', fontWeight: 700 } : {}}
                     required
                   />
                   {Number(pack.price) === 0 && (
                     <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
-                      ✨ Learners get instant 1-click free enrollment without payment.
+                      ✓ 100% Free mode is ON. Toggle switch above to set a price.
                     </small>
                   )}
                 </div>
@@ -362,6 +379,7 @@ export default function EditPack() {
                     id="cur"
                     name="currency"
                     value={pack.currency || 'USD'}
+                    disabled={Number(pack.price) === 0}
                     onChange={e => updatePack('currency', e.target.value)}
                   >
                     {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}

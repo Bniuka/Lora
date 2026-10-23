@@ -517,6 +517,71 @@
   font-weight: 600 !important;
 }
 
+.lora-wizard .sw.free-banner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  background: #ffffff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
+  margin-bottom: 22px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.lora-wizard .sw.free-banner:hover {
+  border-color: #93c5fd !important;
+}
+
+.lora-wizard .sw.free-banner.active {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border-color: #86efac !important;
+  box-shadow: 0 4px 16px -4px rgba(16, 185, 129, 0.15) !important;
+}
+
+.lora-wizard .sw.free-banner .sw-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.lora-wizard .sw.free-banner .sw-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 15.5px !important;
+  color: var(--ink) !important;
+}
+
+.lora-wizard .sw.free-banner .sw-pill {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  padding: 2px 8px !important;
+  border-radius: 99px !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+.lora-wizard .sw.free-banner.active .sw-pill {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+}
+
+.lora-wizard .sw.free-banner .sw-desc {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+}
+
+.lora-wizard .sw.free-banner input:checked + .tg {
+  background: #10b981 !important;
+}
+
 .lora-wizard .sw input {
   position: absolute !important;
   opacity: 0 !important;

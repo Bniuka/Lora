@@ -76,6 +76,7 @@ export default function CreatePack() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [previousPrice, setPreviousPrice] = useState('29.99');
   const [toastMsg, setToastMsg] = useState('');
   const toastTimeoutRef = useRef(null);
 
@@ -333,95 +334,114 @@ export default function CreatePack() {
               </div>
 
               {/* STEP 0: Basic Info */}
-              {step === 0 && (
-                <div className="g">
-                  <div className="f">
-                    <label htmlFor="title">Title <em>*</em></label>
-                    <input
-                      id="title"
-                      name="title"
-                      placeholder="e.g. Advanced React Masterclass"
-                      value={form.title}
-                      onChange={e => update('title', e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="f">
-                    <label htmlFor="desc">Description</label>
-                    <textarea
-                      id="desc"
-                      name="description"
-                      rows={4}
-                      placeholder="Describe what students will learn..."
-                      value={form.description}
-                      onChange={e => update('description', e.target.value)}
-                    />
-                  </div>
-                  <div className="g g3">
-                    <div className="f">
-                      <label htmlFor="cat">Category</label>
-                      <select
-                        id="cat"
-                        name="category"
-                        value={form.category}
-                        onChange={e => update('category', e.target.value)}
-                      >
-                        <option value="">Select category</option>
-                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    <div className="f">
-                      <label htmlFor="cur">Currency</label>
-                      <select
-                        id="cur"
-                        name="currency"
-                        value={form.currency}
-                        onChange={e => update('currency', e.target.value)}
-                      >
-                        {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    <div className="f">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <label htmlFor="price">Price <em>*</em></label>
-                        <button
-                          type="button"
-                          onClick={() => update('price', form.price === '0' ? '' : '0')}
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: form.price === '0' ? '#10b981' : '#f1f5f9',
-                            color: form.price === '0' ? '#ffffff' : '#64748b',
-                            border: '1px solid ' + (form.price === '0' ? '#059669' : '#cbd5e1'),
-                            padding: '2px 8px',
-                            borderRadius: '999px',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {form.price === '0' ? '✓ 100% Free' : 'Make 100% Free'}
-                        </button>
+              {step === 0 && (() => {
+                const isFreePack = form.price === '0' || form.price === 0;
+                return (
+                  <div className="g">
+                    {/* Top Switch for 100% Free Pack */}
+                    <label className={`sw free-banner ${isFreePack ? 'active' : ''}`}>
+                      <div className="sw-info">
+                        <div className="sw-title">
+                          <b>Offer this pack 100% Free</b>
+                          <span className="sw-pill">{isFreePack ? 'FREE PACK' : 'OPTIONAL'}</span>
+                        </div>
+                        <p className="sw-desc">
+                          Learners get 1-click instant enrollment without payment. Perfect for free workshops, client acquisition, and audience building!
+                        </p>
                       </div>
                       <input
-                        id="price"
-                        name="price"
-                        type="number"
-                        inputMode="decimal"
-                        placeholder="29.99 (or 0 for Free)"
-                        min="0"
-                        step="0.01"
-                        value={form.price}
-                        onChange={e => update('price', e.target.value)}
+                        type="checkbox"
+                        checked={isFreePack}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          if (checked) {
+                            if (form.price && form.price !== '0') {
+                              setPreviousPrice(form.price);
+                            }
+                            update('price', '0');
+                          } else {
+                            update('price', previousPrice || '');
+                          }
+                        }}
+                      />
+                      <span className="tg"></span>
+                    </label>
+
+                    <div className="f">
+                      <label htmlFor="title">Title <em>*</em></label>
+                      <input
+                        id="title"
+                        name="title"
+                        placeholder="e.g. Advanced React Masterclass"
+                        value={form.title}
+                        onChange={e => update('title', e.target.value)}
                         required
                       />
-                      {form.price === '0' && (
-                        <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
-                          ✨ Learners get instant 1-click free enrollment without payment.
-                        </small>
-                      )}
+                    </div>
+                    <div className="f">
+                      <label htmlFor="desc">Description</label>
+                      <textarea
+                        id="desc"
+                        name="description"
+                        rows={4}
+                        placeholder="Describe what students will learn..."
+                        value={form.description}
+                        onChange={e => update('description', e.target.value)}
+                      />
+                    </div>
+                    <div className="g g3">
+                      <div className="f">
+                        <label htmlFor="cat">Category</label>
+                        <select
+                          id="cat"
+                          name="category"
+                          value={form.category}
+                          onChange={e => update('category', e.target.value)}
+                        >
+                          <option value="">Select category</option>
+                          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                      <div className="f">
+                        <label htmlFor="cur">Currency</label>
+                        <select
+                          id="cur"
+                          name="currency"
+                          value={form.currency}
+                          disabled={isFreePack}
+                          onChange={e => update('currency', e.target.value)}
+                        >
+                          {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                      <div className="f">
+                        <label htmlFor="price">
+                          Price {isFreePack ? <span style={{ color: '#059669', fontWeight: 700 }}>(Free)</span> : <em>*</em>}
+                        </label>
+                        <input
+                          id="price"
+                          name="price"
+                          type="number"
+                          inputMode="decimal"
+                          placeholder="29.99"
+                          min="0"
+                          step="0.01"
+                          value={form.price}
+                          disabled={isFreePack}
+                          onChange={e => update('price', e.target.value)}
+                          style={isFreePack ? { background: '#f0fdf4', borderColor: '#86efac', color: '#047857', fontWeight: 700 } : {}}
+                          required
+                        />
+                        {isFreePack && (
+                          <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
+                            ✓ 100% Free mode is ON. Toggle switch above to set a price.
+                          </small>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* STEP 1: Media */}
               {step === 1 && (
