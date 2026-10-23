@@ -277,28 +277,46 @@ export default function AdminPanel() {
               </div>
             )}
 
-            <form onSubmit={handleUnlock} className="lora-admin-lock-form">
+            <form onSubmit={handleUnlock} className="lora-admin-lock-form" autoComplete="off" noValidate>
+              {/* Dummy decoy inputs to deflect aggressive browser autofill engines */}
+              <input type="text" name="decoy_username" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true" autoComplete="off" />
+              <input type="password" name="decoy_password" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true" autoComplete="off" />
+
               <div className="lora-admin-lock-field">
-                <label htmlFor="admin-email">Founder Email Address</label>
+                <label htmlFor="sec-fd-user">Founder Email Address</label>
                 <input
-                  id="admin-email"
+                  id="sec-fd-user"
+                  name="sec_fd_user"
                   type="email"
                   required
-                  placeholder="binukadin2009@gmail.com"
-                  autoComplete="email"
+                  placeholder="Enter founder email"
+                  autoComplete="new-password"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  data-1p-ignore="true"
+                  data-bwignore="true"
+                  readOnly
+                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   value={verifyEmail}
                   onChange={e => setVerifyEmail(e.target.value)}
                 />
               </div>
 
               <div className="lora-admin-lock-field pw-field">
-                <label htmlFor="admin-pw">Password</label>
+                <label htmlFor="sec-fd-pass">Password</label>
                 <input
-                  id="admin-pw"
+                  id="sec-fd-pass"
+                  name="sec_fd_pass"
                   type={showVerifyPassword ? 'text' : 'password'}
                   required
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
+                  placeholder="Enter password"
+                  autoComplete="new-password"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  data-1p-ignore="true"
+                  data-bwignore="true"
+                  readOnly
+                  onFocus={(e) => e.target.removeAttribute('readonly')}
                   value={verifyPassword}
                   onChange={e => setVerifyPassword(e.target.value)}
                 />
