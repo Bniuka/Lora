@@ -95,7 +95,7 @@ export default function LearnerLayout({ children }) {
           <div className="bar">
             {/* Logo */}
             <div className="logo">
-              <AppLogo role="learner" to="/learner/dashboard" height={36} />
+              <AppLogo role="learner" to="/learner/dashboard" height={52} />
             </div>
 
             {/* Search Input */}

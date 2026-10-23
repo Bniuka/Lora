@@ -109,6 +109,16 @@
   gap: 9px !important;
   font: 800 22px 'Bricolage Grotesque', sans-serif !important;
   color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.lora-signup .logo img {
+  height: 52px !important;
+  max-height: 54px !important;
+  max-width: 220px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
 .lora-signup .logo i {

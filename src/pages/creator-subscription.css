@@ -147,8 +147,9 @@
 }
 
 .lora-sub .logo img {
-  height: 36px !important;
-  max-width: 165px !important;
+  height: 52px !important;
+  max-height: 54px !important;
+  max-width: 220px !important;
   width: auto !important;
   object-fit: contain !important;
   display: block !important;

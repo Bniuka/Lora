@@ -105,11 +105,12 @@
 }
 
 .lora-learner .logo img {
-  height: 36px;
-  max-width: 165px;
-  width: auto;
-  object-fit: contain;
-  display: block;
+  height: 52px !important;
+  max-height: 54px !important;
+  max-width: 220px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
 .lora-learner .logo i {

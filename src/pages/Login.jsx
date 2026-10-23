@@ -79,7 +79,7 @@ export default function Login() {
           </Link>
 
           <div className="flex justify-center mb-6">
-            <AppLogo to="/" height={40} />
+            <AppLogo to="/" height={52} />
           </div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">

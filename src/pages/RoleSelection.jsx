@@ -13,7 +13,7 @@ export default function RoleSelection() {
           Back to home
         </Link>
         <div className="logo">
-          <AppLogo to="/" height={36} />
+          <AppLogo to="/" height={52} />
         </div>
       </header>
 
@@ -26,7 +26,7 @@ export default function RoleSelection() {
         <div className="grid">
           <article className="role">
             <div className="mb-4">
-              <img src={creatorLogo} alt="Lora Creator" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+              <img src={creatorLogo} alt="Lora Creator" style={{ height: 44, width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2>I'm a Creator</h2>
             <p>
@@ -42,7 +42,7 @@ export default function RoleSelection() {
 
           <article className="role">
             <div className="mb-4">
-              <img src={learnerLogo} alt="Lora Learner" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+              <img src={learnerLogo} alt="Lora Learner" style={{ height: 44, width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2>I'm a Learner</h2>
             <p>

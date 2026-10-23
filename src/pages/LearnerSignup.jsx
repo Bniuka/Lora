@@ -108,7 +108,7 @@ export default function LearnerSignup() {
 
           <div className="flex justify-center mb-6">
             <Link to="/">
-              <img src={learnerLogo} alt="Lora Learner" className="h-11 w-auto object-contain" />
+              <img src={learnerLogo} alt="Lora Learner" className="h-14 w-auto object-contain" />
             </Link>
           </div>
 

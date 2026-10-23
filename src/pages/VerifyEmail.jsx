@@ -132,7 +132,7 @@ export default function VerifyEmail() {
       <div className="lora-verify">
         <div className="shell">
           <div className="logo" style={{ display: 'flex', justifyContent: 'center' }}>
-            <AppLogo to="/" height={38} />
+            <AppLogo to="/" height={52} />
           </div>
 
           <main className="card">
@@ -200,7 +200,7 @@ export default function VerifyEmail() {
     <div className="lora-verify">
       <div className="shell">
         <div className="logo" style={{ display: 'flex', justifyContent: 'center' }}>
-          <AppLogo to="/" height={38} />
+          <AppLogo to="/" height={52} />
         </div>
 
         <main className="card">

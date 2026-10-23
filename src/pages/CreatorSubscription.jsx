@@ -147,7 +147,7 @@ export default function CreatorSubscription() {
           <div className="text">
             <div className="top-nav">
               <div className="logo">
-                <AppLogo role="creator" to="/creator/dashboard" height={36} />
+                <AppLogo role="creator" to="/creator/dashboard" height={52} />
               </div>
               {isCreatorInTrial && (
                 <button

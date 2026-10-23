@@ -4,7 +4,7 @@ import creatorLogo from '../../Logo/Creator logo.png';
 import learnerLogo from '../../Logo/Leaner logo.png';
 import defaultLogo from '../../Logo/Blue_Logo_Cropped.png';
 
-export default function AppLogo({ role: roleProp, to, className = '', height = 36, style = {} }) {
+export default function AppLogo({ role: roleProp, to, className = '', height = 52, style = {} }) {
   const { profile } = useAuth();
   const location = useLocation();
 
@@ -43,7 +43,8 @@ export default function AppLogo({ role: roleProp, to, className = '', height = 3
       alt={alt}
       style={{
         height: typeof height === 'number' ? `${height}px` : height,
-        maxWidth: '175px',
+        maxHeight: typeof height === 'number' ? `${height + 2}px` : height,
+        maxWidth: '240px',
         width: 'auto',
         objectFit: 'contain',
         display: 'block',

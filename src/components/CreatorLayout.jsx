@@ -257,8 +257,8 @@ export default function CreatorLayout({ children }) {
       <div className="app">
         {/* ══════════════ SIDEBAR ══════════════ */}
         <aside>
-          <div className="logo" style={{ padding: '0 10px 22px' }}>
-            <AppLogo role="creator" to="/creator/dashboard" height={38} />
+          <div className="logo">
+            <AppLogo role="creator" to="/creator/dashboard" height={52} />
           </div>
           <nav>
             <NavLink to="/creator/dashboard" end className={({ isActive }) => isActive ? 'on' : ''}>
