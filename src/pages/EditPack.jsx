@@ -598,14 +598,24 @@ export default function EditPack() {
                         {isFree ? '✓ ' : ''}FREE PREVIEW
                       </button>
 
-                      <button
-                        type="button"
-                        className={`rec-t ${s.is_past_session ? 'on' : ''}`}
-                        onClick={() => updateSession(idx, 'is_past_session', !s.is_past_session)}
-                        aria-pressed={s.is_past_session}
-                      >
-                        {s.is_past_session ? '📼 Catch-up Recording' : '🔴 Live Upcoming'}
-                      </button>
+                      <div className="session-type-toggle" role="radiogroup" aria-label="Session mode">
+                        <button
+                          type="button"
+                          className={`st-opt ${!s.is_past_session ? 'active live' : ''}`}
+                          onClick={() => updateSession(idx, 'is_past_session', false)}
+                        >
+                          <span className="st-dot live"></span>
+                          Live Upcoming
+                        </button>
+                        <button
+                          type="button"
+                          className={`st-opt ${s.is_past_session ? 'active past' : ''}`}
+                          onClick={() => updateSession(idx, 'is_past_session', true)}
+                        >
+                          <span>📼</span>
+                          Past Recording
+                        </button>
+                      </div>
 
                       {isPast && !s.recording_url && !s.is_past_session && (
                         <span className="needs-rec-pill">Needs Recording</span>

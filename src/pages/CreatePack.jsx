@@ -618,14 +618,24 @@ export default function CreatePack() {
                     <div className={`sess free ${form.freeSession.is_past_session ? 'past' : ''}`}>
                       <div className="sh2">
                         <span className="tag">FREE PREVIEW</span>
-                        <button
-                          type="button"
-                          className={`rec-t ${form.freeSession.is_past_session ? 'on' : ''}`}
-                          onClick={() => updateFreeSession('is_past_session', !form.freeSession.is_past_session)}
-                          aria-pressed={form.freeSession.is_past_session}
-                        >
-                          {form.freeSession.is_past_session ? '📼 Catch-up Recording' : '🔴 Live Upcoming'}
-                        </button>
+                        <div className="session-type-toggle" role="radiogroup" aria-label="Session mode">
+                          <button
+                            type="button"
+                            className={`st-opt ${!form.freeSession.is_past_session ? 'active live' : ''}`}
+                            onClick={() => updateFreeSession('is_past_session', false)}
+                          >
+                            <span className="st-dot live"></span>
+                            Live Upcoming
+                          </button>
+                          <button
+                            type="button"
+                            className={`st-opt ${form.freeSession.is_past_session ? 'active past' : ''}`}
+                            onClick={() => updateFreeSession('is_past_session', true)}
+                          >
+                            <span>📼</span>
+                            Past Recording
+                          </button>
+                        </div>
                       </div>
                       <p className="hint">
                         This session is visible and joinable by anyone, even before they pay.
@@ -741,14 +751,24 @@ export default function CreatePack() {
                       <div className="sh2">
                         <span className="num">{idx + 1}</span>
                         <b>Session {idx + 1}</b>
-                        <button
-                          type="button"
-                          className={`rec-t ${s.is_past_session ? 'on' : ''}`}
-                          onClick={() => updateSession(idx, 'is_past_session', !s.is_past_session)}
-                          aria-pressed={s.is_past_session}
-                        >
-                          {s.is_past_session ? '📼 Catch-up Recording' : '🔴 Live Upcoming'}
-                        </button>
+                        <div className="session-type-toggle" role="radiogroup" aria-label="Session mode">
+                          <button
+                            type="button"
+                            className={`st-opt ${!s.is_past_session ? 'active live' : ''}`}
+                            onClick={() => updateSession(idx, 'is_past_session', false)}
+                          >
+                            <span className="st-dot live"></span>
+                            Live Upcoming
+                          </button>
+                          <button
+                            type="button"
+                            className={`st-opt ${s.is_past_session ? 'active past' : ''}`}
+                            onClick={() => updateSession(idx, 'is_past_session', true)}
+                          >
+                            <span>📼</span>
+                            Past Recording
+                          </button>
+                        </div>
                         {form.sessions.length > 1 && (
                           <button
                             type="button"
