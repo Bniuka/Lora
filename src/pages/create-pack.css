@@ -1,0 +1,887 @@
+/* ================================================================
+   Lora Create Pack Wizard — light-mode-only scoped styles
+   All selectors prefixed with .lora-wizard to avoid collisions
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-wizard {
+  --bg: #e9eefb;
+  --surface: #fff;
+  --soft: #f4f6fb;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --edge: #cdd8f6;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --violet: #7a4dff;
+  --ok: #0f9d6b;
+  --ok-soft: #e3f7ee;
+  --bad: #d6334a;
+  --gold: #a35d00;
+  --gold-soft: #fff2da;
+
+  box-sizing: border-box !important;
+  color: var(--ink) !important;
+  font: 15px/1.5 'Figtree', system-ui, sans-serif !important;
+  background: radial-gradient(720px 420px at 0 0, #d6e3ff, transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, #e6dcff, transparent 70%),
+              var(--bg) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+}
+
+.lora-wizard *,
+.lora-wizard *::before,
+.lora-wizard *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-wizard h1,
+.lora-wizard h2,
+.lora-wizard h3 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+.lora-wizard a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-wizard button,
+.lora-wizard input,
+.lora-wizard select,
+.lora-wizard textarea {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-wizard :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-wizard .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+.lora-wizard .page {
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  padding: 28px 32px 72px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+}
+
+.lora-wizard .page > h1 {
+  font-size: clamp(30px, 4vw, 40px) !important;
+  color: var(--ink) !important;
+}
+
+.lora-wizard .page > h1 + p {
+  margin: -14px 0 0 !important;
+  color: var(--muted) !important;
+}
+
+.lora-wizard .card {
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, #fff, #f1f5ff) !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 2px 4px rgba(14, 23, 51, 0.06), 0 22px 40px -20px rgba(47, 91, 255, 0.38) !important;
+}
+
+/* ── Stepper ── */
+.lora-wizard .stp {
+  padding: 22px 24px 16px !important;
+}
+
+.lora-wizard .steps {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+}
+
+.lora-wizard .track {
+  position: absolute !important;
+  left: 10% !important;
+  right: 10% !important;
+  top: 17px !important;
+  height: 4px !important;
+  border-radius: 99px !important;
+  background: #dbe3f8 !important;
+}
+
+.lora-wizard .track i {
+  display: block !important;
+  height: 100% !important;
+  border-radius: 99px !important;
+  background: linear-gradient(90deg, var(--brand), var(--violet)) !important;
+  transition: width 0.4s ease !important;
+}
+
+.lora-wizard .st {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--muted) !important;
+}
+
+.lora-wizard .dot {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 2px solid #cdd8f6 !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 800 !important;
+  color: var(--muted) !important;
+  transition: 0.25s !important;
+}
+
+.lora-wizard .dot .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke-width: 3 !important;
+}
+
+.lora-wizard .st.done .dot {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-wizard .st.cur .dot {
+  background: linear-gradient(135deg, var(--brand), var(--violet)) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 6px rgba(47, 91, 255, 0.18) !important;
+}
+
+.lora-wizard .st.cur,
+.lora-wizard .st.done {
+  color: var(--brand) !important;
+}
+
+.lora-wizard .mob {
+  display: none !important;
+  margin: 14px 0 0 !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  color: var(--brand) !important;
+}
+
+/* ── Step Content ── */
+.lora-wizard .body {
+  position: relative !important;
+  padding: 26px 28px 24px 34px !important;
+}
+
+.lora-wizard .body:before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 7px !important;
+  background: linear-gradient(180deg, var(--a1, #2f5bff), var(--a2, #7a4dff)) !important;
+}
+
+.lora-wizard .s1 {
+  --a1: #2f5bff;
+  --a2: #7a4dff;
+}
+
+.lora-wizard .s2 {
+  --a1: #7a4dff;
+  --a2: #c06bff;
+}
+
+.lora-wizard .s3 {
+  --a1: #12a46f;
+  --a2: #5cd6a6;
+}
+
+.lora-wizard .s4 {
+  --a1: #f2820f;
+  --a2: #ffc04d;
+}
+
+.lora-wizard .s5 {
+  --a1: #0e1733;
+  --a2: #2f5bff;
+}
+
+.lora-wizard .sh {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 20px !important;
+}
+
+.lora-wizard .sh .ib {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 14px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: none !important;
+}
+
+.lora-wizard .s2 .ib {
+  background: #f1eaff !important;
+  color: var(--violet) !important;
+}
+
+.lora-wizard .s3 .ib {
+  background: var(--ok-soft) !important;
+  color: var(--ok) !important;
+}
+
+.lora-wizard .s4 .ib {
+  background: var(--gold-soft) !important;
+  color: #d9730a !important;
+}
+
+.lora-wizard .s5 .ib {
+  background: #e5e9f7 !important;
+  color: var(--ink) !important;
+}
+
+.lora-wizard .sh h2 {
+  font-size: 23px !important;
+  color: var(--ink) !important;
+}
+
+.lora-wizard .sh p {
+  margin: 0 !important;
+  color: var(--muted) !important;
+  font-size: 14px !important;
+}
+
+.lora-wizard .g {
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.lora-wizard .g3 {
+  grid-template-columns: 1.2fr 1fr 1fr !important;
+}
+
+.lora-wizard .g2 {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+.lora-wizard .f label {
+  display: block !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  margin-bottom: 6px !important;
+  color: var(--ink) !important;
+}
+
+.lora-wizard .f label span {
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+}
+
+.lora-wizard .f label em {
+  color: var(--bad) !important;
+  font-style: normal !important;
+}
+
+.lora-wizard .f .h {
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  margin: 5px 0 0 !important;
+}
+
+.lora-wizard .f input,
+.lora-wizard .f select,
+.lora-wizard .f textarea {
+  width: 100% !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 13px !important;
+  padding: 12px 14px !important;
+  min-height: 48px !important;
+  outline: 0 !important;
+  color: var(--ink) !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .f textarea {
+  min-height: 110px !important;
+  resize: vertical !important;
+}
+
+.lora-wizard .f input:focus,
+.lora-wizard .f select:focus,
+.lora-wizard .f textarea:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-wizard .f input::placeholder {
+  color: #9aa5c4 !important;
+}
+
+/* Phone input */
+.lora-wizard .PhoneInput {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.lora-wizard .PhoneInputCountry {
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 13px !important;
+  padding: 0 12px !important;
+  min-height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .PhoneInputCountry:focus-within {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-wizard .PhoneInputCountrySelect {
+  cursor: pointer !important;
+}
+
+.lora-wizard .PhoneInputInput {
+  flex: 1 !important;
+  width: 100% !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 13px !important;
+  padding: 12px 14px !important;
+  min-height: 48px !important;
+  outline: 0 !important;
+  color: var(--ink) !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .PhoneInputInput:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-wizard .use-profile-num {
+  margin-top: 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--brand) !important;
+  background: none !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.lora-wizard .use-profile-num:hover {
+  text-decoration: underline !important;
+}
+
+.lora-wizard .sub {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font: 700 17px 'Bricolage Grotesque', sans-serif !important;
+  margin: 6px 0 2px !important;
+}
+
+.lora-wizard .sub:after {
+  content: "" !important;
+  flex: 1 !important;
+  height: 1px !important;
+  background: var(--edge) !important;
+}
+
+.lora-wizard .note {
+  margin: -6px 0 4px !important;
+  color: var(--muted) !important;
+  font-size: 14px !important;
+}
+
+/* Upload dropzone */
+.lora-wizard .drop {
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+  gap: 6px !important;
+  aspect-ratio: 16 / 7 !important;
+  border: 2px dashed #b9a6ff !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: var(--violet) !important;
+  cursor: pointer !important;
+  transition: 0.15s !important;
+  padding: 16px !important;
+}
+
+.lora-wizard .drop:hover {
+  background: #f6f1ff !important;
+  border-color: var(--violet) !important;
+}
+
+.lora-wizard .drop b {
+  font-size: 16px !important;
+}
+
+.lora-wizard .drop small {
+  color: var(--muted) !important;
+}
+
+.lora-wizard .drop .ic {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+.lora-wizard .drop input {
+  display: none !important;
+}
+
+.lora-wizard .thumb {
+  position: relative !important;
+  aspect-ratio: 16 / 7 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  border: 1.5px solid var(--edge) !important;
+  background: center / cover no-repeat !important;
+}
+
+.lora-wizard .thumb button {
+  position: absolute !important;
+  right: 12px !important;
+  top: 12px !important;
+  width: 40px !important;
+  height: 40px !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--bad) !important;
+  cursor: pointer !important;
+  display: grid !important;
+  place-items: center !important;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.5) !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .thumb button:hover {
+  background: var(--bad) !important;
+  color: #fff !important;
+}
+
+/* Switch */
+.lora-wizard .sw {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  cursor: pointer !important;
+  margin-bottom: 14px !important;
+  font-weight: 600 !important;
+}
+
+.lora-wizard .sw input {
+  position: absolute !important;
+  opacity: 0 !important;
+}
+
+.lora-wizard .sw .tg {
+  width: 50px !important;
+  height: 30px !important;
+  border-radius: 99px !important;
+  background: #cdd5ea !important;
+  position: relative !important;
+  transition: 0.2s !important;
+  flex: none !important;
+}
+
+.lora-wizard .sw .tg:after {
+  content: "" !important;
+  position: absolute !important;
+  left: 3px !important;
+  top: 3px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: 0.2s !important;
+}
+
+.lora-wizard .sw input:checked + .tg {
+  background: var(--brand) !important;
+}
+
+.lora-wizard .sw input:checked + .tg:after {
+  left: 23px !important;
+}
+
+.lora-wizard .sw input:focus-visible + .tg {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+/* Sessions */
+.lora-wizard .sess {
+  border: 1.5px solid #f2d9a8 !important;
+  background: linear-gradient(100deg, #fff6e2, #fff 50%) !important;
+  border-radius: 20px !important;
+  padding: 16px 16px 18px !important;
+  margin-bottom: 14px !important;
+}
+
+.lora-wizard .sess.free {
+  border-color: #bcd0ff !important;
+  background: linear-gradient(100deg, #e8efff, #fff 50%) !important;
+}
+
+.lora-wizard .sh2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-wizard .tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-radius: 99px !important;
+  padding: 4px 12px !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.06em !important;
+}
+
+.lora-wizard .num {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font: 800 13px 'Bricolage Grotesque', sans-serif !important;
+}
+
+.lora-wizard .hint {
+  color: var(--muted) !important;
+  font-size: 13.5px !important;
+  margin: 0 0 12px !important;
+}
+
+.lora-wizard .del {
+  margin-left: auto !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  background: #fde8ec !important;
+  color: var(--bad) !important;
+  cursor: pointer !important;
+  display: grid !important;
+  place-items: center !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .del:hover {
+  background: var(--bad) !important;
+  color: #fff !important;
+}
+
+.lora-wizard .add {
+  width: 100% !important;
+  min-height: 50px !important;
+  border: 2px dashed #9db3ff !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 16px !important;
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: 0.15s !important;
+}
+
+.lora-wizard .add:hover {
+  background: var(--brand-soft) !important;
+  border-color: var(--brand) !important;
+}
+
+.lora-wizard .hd2 {
+  font: 800 12.5px 'Figtree', sans-serif !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  margin: 18px 0 10px !important;
+}
+
+/* Review */
+.lora-wizard .rv h3 {
+  font-size: 26px !important;
+}
+
+.lora-wizard .rv p {
+  margin: 4px 0 12px !important;
+  color: var(--muted) !important;
+}
+
+.lora-wizard .chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.lora-wizard .chips span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border-radius: 99px !important;
+  padding: 5px 14px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+}
+
+.lora-wizard .chips .pr {
+  background: var(--ink) !important;
+  color: #fff !important;
+}
+
+.lora-wizard .chips .wa {
+  background: var(--ok-soft) !important;
+  color: var(--ok) !important;
+}
+
+.lora-wizard .rv .thumb {
+  margin-bottom: 16px !important;
+}
+
+.lora-wizard .ri {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+  margin-bottom: 8px !important;
+}
+
+.lora-wizard .ri b {
+  font-weight: 600 !important;
+}
+
+.lora-wizard .ri small {
+  color: var(--muted) !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+}
+
+.lora-wizard .ri .tag {
+  font-size: 11px !important;
+  padding: 2px 10px !important;
+}
+
+/* Footer & Buttons */
+.lora-wizard .foot {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 28px 26px 34px !important;
+}
+
+.lora-wizard .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: 14px !important;
+  padding: 13px 24px !important;
+  min-height: 50px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border: 1.5px solid transparent !important;
+  transition: 0.15s !important;
+  text-decoration: none !important;
+}
+
+.lora-wizard .btn.back {
+  background: none !important;
+  color: var(--muted) !important;
+  padding-left: 10px !important;
+}
+
+.lora-wizard .btn.back:hover {
+  color: var(--ink) !important;
+  background: #fff !important;
+}
+
+.lora-wizard .btn.pri {
+  background: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 24px -12px rgba(47, 91, 255, 0.9) !important;
+  min-width: 130px !important;
+}
+
+.lora-wizard .btn.pri:hover:not(:disabled) {
+  background: var(--brand2) !important;
+}
+
+.lora-wizard .btn.pri:disabled {
+  background: #b9c5ee !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+.lora-wizard .btn.out {
+  background: #fff !important;
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+.lora-wizard .btn.out:hover:not(:disabled) {
+  background: var(--brand-soft) !important;
+}
+
+.lora-wizard .foot.last .btn {
+  flex: 1 !important;
+}
+
+/* Toast */
+.lora-wizard .toast {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  transform: translate(-50%, 30px) !important;
+  background: var(--ink) !important;
+  color: #fff !important;
+  padding: 11px 18px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: 0.25s !important;
+  z-index: 60 !important;
+  box-shadow: 0 10px 25px -5px rgba(14, 23, 51, 0.4) !important;
+}
+
+.lora-wizard .toast.show {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Responsive styles */
+@media(max-width: 900px) {
+  .lora-wizard .page {
+    padding: 20px 16px 110px !important;
+  }
+}
+
+@media(max-width: 640px) {
+  .lora-wizard .st span {
+    display: none !important;
+  }
+  .lora-wizard .mob {
+    display: block !important;
+  }
+  .lora-wizard .dot {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .lora-wizard .track {
+    top: 15px !important;
+  }
+  .lora-wizard .stp {
+    padding: 18px 14px 14px !important;
+  }
+  .lora-wizard .g3,
+  .lora-wizard .g2 {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-wizard .g2.keep {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .lora-wizard .body {
+    padding: 20px 16px 18px 22px !important;
+  }
+  .lora-wizard .body:before {
+    width: 6px !important;
+  }
+  .lora-wizard .foot {
+    padding: 0 16px 20px 22px !important;
+  }
+  .lora-wizard .f input,
+  .lora-wizard .f select,
+  .lora-wizard .f textarea,
+  .lora-wizard .PhoneInputInput {
+    font-size: 16px !important;
+  }
+  .lora-wizard .drop,
+  .lora-wizard .thumb {
+    aspect-ratio: 16 / 9 !important;
+  }
+  .lora-wizard .sess {
+    padding: 14px 12px 16px !important;
+  }
+  .lora-wizard .btn {
+    padding: 12px 18px !important;
+  }
+  .lora-wizard .ri {
+    flex-wrap: wrap !important;
+  }
+  .lora-wizard .ri small {
+    margin-left: 0 !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-wizard * {
+    transition: none !important;
+  }
+}
