@@ -268,6 +268,43 @@
   color: var(--s-hero-ink) !important;
 }
 
+/* ── VIP Plan Badges & Styles ── */
+.lora-settings .s-badge.s-badge-vip {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(217, 119, 6, 0.55)) !important;
+  color: #fff !important;
+  border: 1px solid rgba(254, 240, 138, 0.6) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.25) !important;
+}
+
+.lora-settings .s-ring .ring-progress.ring-progress-vip {
+  stroke: #fbbf24 !important;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
+}
+
+.lora-settings .s-ring-label.s-ring-label-vip span {
+  color: #fef08a !important;
+}
+
+.lora-settings .s-plan-vip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(254, 240, 138, 0.5) !important;
+  color: #fff !important;
+  padding: 8px 16px !important;
+  border-radius: 99px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+.lora-settings .s-plan-vip-pill svg {
+  color: #fde047;
+}
+
 /* ────────── Buttons ────────── */
 .lora-settings .s-btn {
   border: 0 !important;

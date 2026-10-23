@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Crown, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { isUserAdmin } from '../lib/admin';
 import { Link } from 'react-router-dom';
 import './settings.css';
 
@@ -230,12 +231,37 @@ export default function CreatorSettings() {
     return () => sections.forEach(s => observer.unobserve(s));
   }, []);
 
-  /* ── Trial ring ── */
+  /* ── Subscription Status & Calculations ── */
+  const isFounder = isUserAdmin(user?.email);
+  const subStatus = isFounder ? 'active' : (creatorProfile?.subscription_status || 'trial');
+  const nextBilling = creatorProfile?.next_billing_date ? new Date(creatorProfile.next_billing_date) : null;
   const trialEnd = new Date(creatorProfile?.trial_ends_at || Date.now());
-  const daysLeft = Math.max(0, Math.ceil((trialEnd - new Date()) / 864e5));
-  const total = 30;
+
+  // Lifetime VIP (Founder, or active with no expiration, or date > 2090)
+  const isLifetime = isFounder || (subStatus === 'active' && (!nextBilling || nextBilling.getFullYear() >= 2090));
+
+  // Promotional/Granted Access (e.g. 6 months, 10 months, 1 year granted by founder)
+  const isGrantedAccess = !isLifetime && subStatus === 'active' && nextBilling && (nextBilling - new Date() > 32 * 864e5);
+
+  // Paid Monthly PayPal Subscription
+  const isPaidActive = !isLifetime && !isGrantedAccess && subStatus === 'active';
+
+  // Target expiry date
+  const targetDate = isLifetime
+    ? null
+    : subStatus === 'trial'
+      ? trialEnd
+      : nextBilling;
+
+  const daysLeft = targetDate
+    ? Math.max(0, Math.ceil((targetDate - new Date()) / 864e5))
+    : null;
+
+  const total = subStatus === 'trial' ? 30 : Math.max(30, daysLeft || 30);
   const circumference = 264;
-  const offset = circumference * (1 - daysLeft / total);
+  const offset = isLifetime
+    ? 0
+    : circumference * (1 - Math.min(1, (daysLeft || 0) / total));
 
   const payOpt = form.payment_option;
   const showLink = payOpt === 'link' || payOpt === 'both';
@@ -270,45 +296,72 @@ export default function CreatorSettings() {
 
           {/* ════ SUBSCRIPTION ════ */}
           <section className="s-section s-plan" id="plan">
-            <div className="s-ring" aria-hidden="true">
+            <div className={`s-ring ${isLifetime ? 's-ring-vip' : ''}`} aria-hidden="true">
               <svg viewBox="0 0 100 100">
                 <circle className="ring-track" cx="50" cy="50" r="42" />
                 <circle
-                  className="ring-progress"
+                  className={`ring-progress ${isLifetime ? 'ring-progress-vip' : ''}`}
                   cx="50" cy="50" r="42"
                   strokeDasharray={circumference}
                   strokeDashoffset={offset}
                 />
               </svg>
-              <div className="s-ring-label">
-                <span>{daysLeft}</span>
-                <small>days left</small>
+              <div className={`s-ring-label ${isLifetime ? 's-ring-label-vip' : ''}`}>
+                {isLifetime ? (
+                  <>
+                    <span style={{ fontSize: 32, lineHeight: 1 }}>∞</span>
+                    <small>Lifetime</small>
+                  </>
+                ) : (
+                  <>
+                    <span>{daysLeft}</span>
+                    <small>days left</small>
+                  </>
+                )}
               </div>
             </div>
 
             <div>
-              <span className="s-badge">
-                {creatorProfile?.subscription_status === 'trial' ? 'Free trial'
-                  : creatorProfile?.subscription_status === 'active' ? 'Active'
-                  : 'Expired'}
+              <span className={`s-badge ${isLifetime ? 's-badge-vip' : ''}`}>
+                {isLifetime
+                  ? (isFounder ? '👑 Founder Lifetime VIP' : '👑 Lifetime VIP Access')
+                  : isGrantedAccess
+                    ? '🎉 Complimentary Access'
+                    : subStatus === 'trial'
+                      ? 'Free trial'
+                      : subStatus === 'active'
+                        ? 'Active Subscription'
+                        : 'Expired'}
               </span>
               <h2>Lora Creator Plan</h2>
               <p>
-                {creatorProfile?.subscription_status === 'trial'
-                  ? `Trial ends on ${trialEnd.toLocaleDateString()}, then Rs.\u00a03,499/month.`
-                  : creatorProfile?.subscription_status === 'active' && creatorProfile.next_billing_date
-                    ? `Next billing: ${new Date(creatorProfile.next_billing_date).toLocaleDateString()} · Rs.\u00a03,499/month`
-                    : 'Rs.\u00a03,499/month'}
+                {isLifetime
+                  ? 'You have permanent, unrestricted access to all Lora Creator features. No renewals or payments needed.'
+                  : isGrantedAccess && nextBilling
+                    ? `Complimentary creator access active until ${nextBilling.toLocaleDateString()}.`
+                    : subStatus === 'trial'
+                      ? `Trial ends on ${trialEnd.toLocaleDateString()}, then Rs.\u00a03,499/month.`
+                      : isPaidActive && nextBilling
+                        ? `Next billing: ${nextBilling.toLocaleDateString()} · Rs.\u00a03,499/month`
+                        : 'Rs.\u00a03,499/month'}
               </p>
             </div>
 
             <div>
-              {(creatorProfile?.subscription_status === 'trial' || creatorProfile?.subscription_status === 'expired' || creatorProfile?.subscription_status === 'cancelled') && (
+              {isLifetime ? (
+                <div className="s-plan-vip-pill">
+                  <Sparkles size={16} />
+                  <span>VIP Status Active</span>
+                </div>
+              ) : isGrantedAccess ? (
+                <div className="s-plan-vip-pill" style={{ borderColor: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)' }}>
+                  <span>{daysLeft} Days Remaining</span>
+                </div>
+              ) : (subStatus === 'trial' || subStatus === 'expired' || subStatus === 'cancelled') ? (
                 <Link to="/creator/subscription?upgrade=true" className="s-btn-light">
                   Upgrade now
                 </Link>
-              )}
-              {creatorProfile?.subscription_status === 'active' && (
+              ) : isPaidActive ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <a href="https://www.paypal.com/myaccount/autopay/" target="_blank" rel="noopener noreferrer" className="s-plan-manage">
                     Manage PayPal
@@ -326,7 +379,7 @@ export default function CreatorSettings() {
                     Cancel Subscription
                   </button>
                 </div>
-              )}
+              ) : null}
             </div>
           </section>
 
