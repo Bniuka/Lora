@@ -579,13 +579,55 @@ export default function PackDetail() {
     fetch();
   }, [id, user]);
 
+  const [enrollingFree, setEnrollingFree] = useState(false);
+
   const handleFreeJoin = async (session) => {
     if (!user) { setLoginPrompt(true); return; }
     await supabase.from('free_session_joins').insert({
       session_id: session.id,
       learner_id: user.id,
     });
-    window.open(session.zoom_link, '_blank');
+    window.open(session.zoom_link || session.youtube_live_link, '_blank');
+  };
+
+  const handleFreeEnrollment = async () => {
+    if (!user) {
+      setLoginPrompt(true);
+      return;
+    }
+    setEnrollingFree(true);
+    try {
+      const code = 'FREE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const { error: enrErr } = await supabase.from('enrollments').upsert({
+        id: enrollment?.id || undefined,
+        learner_id: user.id,
+        pack_id: pack.id,
+        status: 'confirmed',
+        payment_method_used: 'free',
+        payment_reference_code: code,
+        submitted_at: new Date().toISOString(),
+      }, { onConflict: enrollment?.id ? 'id' : undefined });
+
+      if (enrErr) throw enrErr;
+
+      // Notify creator
+      try {
+        await supabase.from('notifications').insert({
+          user_id: pack.creator_id,
+          title: 'New Free Enrollment! 🎉',
+          message: `${profile?.first_name || 'A student'} enrolled in your free course "${pack.title}".`,
+        });
+      } catch (notifErr) {
+        console.warn('Could not dispatch notification:', notifErr);
+      }
+
+      navigate(`/learner/pack/${pack.slug || pack.id}/sessions`);
+    } catch (err) {
+      console.error('Free enrollment error:', err);
+      alert('Failed to enroll: ' + err.message);
+    } finally {
+      setEnrollingFree(false);
+    }
   };
 
   const handleStartPaymentFlow = async () => {
@@ -731,7 +773,33 @@ export default function PackDetail() {
       return (
         <div className="status-banner confirmed">
           <b>✓ You are enrolled in this pack</b>
+          <Link
+            to={`/learner/pack/${pack.slug || id}/sessions`}
+            className="btn ok"
+            style={{ width: '100%', marginTop: 8, textAlign: 'center', display: 'block' }}
+          >
+            Go to Course Sessions →
+          </Link>
         </div>
+      );
+    }
+    if (Number(pack?.price) === 0) {
+      return (
+        <button
+          className="btn pri"
+          type="button"
+          onClick={handleFreeEnrollment}
+          disabled={enrollingFree}
+          style={{ background: '#0f9d6b', borderColor: '#0f9d6b' }}
+        >
+          {enrollingFree ? (
+            <Loader2 className="ic animate-spin" />
+          ) : (
+            <>
+              <Sparkles size={16} /> Enroll Free (Instant Access)
+            </>
+          )}
+        </button>
       );
     }
     if (enrollment?.status === 'pending') {
@@ -1000,7 +1068,7 @@ export default function PackDetail() {
               {/* Buy card */}
               <div className="card buy">
                 <small>Total price</small>
-                <div className="price">{pack.currency} {pack.price}</div>
+                <div className="price">{Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}</div>
 
                 {renderJoinAction()}
 
@@ -1147,7 +1215,7 @@ export default function PackDetail() {
         <div className="mbar">
           <div>
             <small>Total price</small>
-            <div className="price">{pack.currency} {pack.price}</div>
+            <div className="price">{Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}</div>
           </div>
           {whatsappUrl && (
             <a

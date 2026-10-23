@@ -152,6 +152,8 @@ export default function EditPack() {
         whatsapp_number: pack.whatsapp_number || null,
         whatsapp_link: pack.whatsapp_link || null,
         telegram_link: pack.telegram_link || null,
+        upsell_title: pack.upsell_title || null,
+        upsell_link: pack.upsell_link || null,
         has_free_session: hasFree,
       };
 
@@ -160,9 +162,13 @@ export default function EditPack() {
       }
 
       let { error: updateErr } = await supabase.from('session_packs').update(packUpdate).eq('id', id);
-      if (updateErr && (updateErr.message?.includes('whatsapp_number') || updateErr.message?.includes('slug'))) {
+      if (updateErr && (updateErr.message?.includes('whatsapp_number') || updateErr.message?.includes('slug') || updateErr.message?.includes('upsell_'))) {
         if (updateErr.message?.includes('whatsapp_number')) delete packUpdate.whatsapp_number;
         if (updateErr.message?.includes('slug')) delete packUpdate.slug;
+        if (updateErr.message?.includes('upsell_')) {
+          delete packUpdate.upsell_title;
+          delete packUpdate.upsell_link;
+        }
         const retry = await supabase.from('session_packs').update(packUpdate).eq('id', id);
         updateErr = retry.error;
       }
@@ -172,7 +178,8 @@ export default function EditPack() {
         const sessionData = {
           pack_id: id,
           title: s.title,
-          zoom_link: s.zoom_link,
+          zoom_link: s.zoom_link || '',
+          youtube_live_link: s.youtube_live_link || null,
           scheduled_at: s.scheduled_at ? new Date(s.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(s.duration_minutes) || 60,
           order_index: s.order_index,
@@ -181,9 +188,21 @@ export default function EditPack() {
         };
 
         if (s._isNew || !s.id) {
-          await supabase.from('sessions').insert(sessionData);
+          let { error: inErr } = await supabase.from('sessions').insert(sessionData);
+          if (inErr && inErr.message?.includes('youtube_live_link')) {
+            delete sessionData.youtube_live_link;
+            await supabase.from('sessions').insert(sessionData);
+          } else if (inErr) {
+            throw inErr;
+          }
         } else {
-          await supabase.from('sessions').update(sessionData).eq('id', s.id);
+          let { error: upErr } = await supabase.from('sessions').update(sessionData).eq('id', s.id);
+          if (upErr && upErr.message?.includes('youtube_live_link')) {
+            delete sessionData.youtube_live_link;
+            await supabase.from('sessions').update(sessionData).eq('id', s.id);
+          } else if (upErr) {
+            throw upErr;
+          }
         }
       }
 
@@ -302,16 +321,40 @@ export default function EditPack() {
                   </select>
                 </div>
                 <div className="f">
-                  <label htmlFor="price">Price</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label htmlFor="price">Price</label>
+                    <button
+                      type="button"
+                      onClick={() => updatePack('price', Number(pack.price) === 0 ? '' : '0')}
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        background: Number(pack.price) === 0 ? '#10b981' : '#f1f5f9',
+                        color: Number(pack.price) === 0 ? '#ffffff' : '#64748b',
+                        border: '1px solid ' + (Number(pack.price) === 0 ? '#059669' : '#cbd5e1'),
+                        padding: '2px 8px',
+                        borderRadius: '999px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {Number(pack.price) === 0 ? '✓ 100% Free' : 'Make 100% Free'}
+                    </button>
+                  </div>
                   <input
                     id="price"
                     name="price"
                     type="number"
                     inputMode="decimal"
+                    placeholder="29.99 (or 0 for Free)"
                     value={pack.price ?? ''}
                     onChange={e => updatePack('price', e.target.value)}
                     required
                   />
+                  {Number(pack.price) === 0 && (
+                    <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
+                      ✨ Learners get instant 1-click free enrollment without payment.
+                    </small>
+                  )}
                 </div>
                 <div className="f">
                   <label htmlFor="cur">Currency</label>
@@ -458,6 +501,30 @@ export default function EditPack() {
                   onChange={e => updatePack('telegram_link', e.target.value)}
                 />
               </div>
+
+              <div className="f" style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 16 }}>
+                <label htmlFor="upsell_title">Upsell: Next course title <span>(optional)</span></label>
+                <input
+                  id="upsell_title"
+                  placeholder="e.g. Master Full-Stack Development 12-Week Bootcamp"
+                  value={pack.upsell_title || ''}
+                  onChange={e => updatePack('upsell_title', e.target.value)}
+                />
+                <div className="h">
+                  Displayed as a prominent next-step banner to students inside their sessions view.
+                </div>
+              </div>
+
+              <div className="f">
+                <label htmlFor="upsell_link">Upsell: Next course link <span>(optional)</span></label>
+                <input
+                  id="upsell_link"
+                  type="url"
+                  placeholder="https://lora.live/p/next-course-slug or full URL"
+                  value={pack.upsell_link || ''}
+                  onChange={e => updatePack('upsell_link', e.target.value)}
+                />
+              </div>
             </div>
           </section>
 
@@ -527,6 +594,16 @@ export default function EditPack() {
                           placeholder="https://zoom.us/j/..."
                           value={s.zoom_link || ''}
                           onChange={e => updateSession(idx, 'zoom_link', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="f">
+                        <label>YouTube Live link <span>(optional)</span></label>
+                        <input
+                          type="url"
+                          placeholder="https://youtube.com/live/... or unlisted stream"
+                          value={s.youtube_live_link || ''}
+                          onChange={e => updateSession(idx, 'youtube_live_link', e.target.value)}
                         />
                       </div>
 

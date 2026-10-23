@@ -64,6 +64,7 @@ const emptySession = () => ({
   id: crypto.randomUUID(),
   title: '',
   zoom_link: '',
+  youtube_live_link: '',
   scheduled_at: '',
   duration_minutes: 60,
   is_free_session: false,
@@ -96,8 +97,10 @@ export default function CreatePack() {
     whatsapp_number: profile?.contact_number || '',
     whatsapp_link: '',
     telegram_link: '',
+    upsell_title: '',
+    upsell_link: '',
     has_free_session: false,
-    freeSession: { title: '', zoom_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '' },
+    freeSession: { title: '', zoom_link: '', youtube_live_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '' },
     sessions: [emptySession()],
   });
 
@@ -128,7 +131,14 @@ export default function CreatePack() {
   const canNext = () => {
     switch (step) {
       case 0:
-        return Boolean(form.title.trim() && form.description.trim() && form.category && form.price);
+        return Boolean(
+          form.title.trim() &&
+          form.description.trim() &&
+          form.category &&
+          form.price !== '' &&
+          form.price !== undefined &&
+          Number(form.price) >= 0
+        );
       case 1:
         return true;
       case 2:
@@ -136,9 +146,9 @@ export default function CreatePack() {
       case 3: {
         if (form.has_free_session) {
           const fs = form.freeSession;
-          if (!fs.title.trim() || !fs.zoom_link.trim() || !fs.scheduled_at) return false;
+          if (!fs.title.trim() || (!fs.zoom_link.trim() && !fs.youtube_live_link?.trim()) || !fs.scheduled_at) return false;
         }
-        return form.sessions.every(s => s.title.trim() && s.zoom_link.trim() && s.scheduled_at);
+        return form.sessions.every(s => s.title.trim() && (s.zoom_link.trim() || s.youtube_live_link?.trim()) && s.scheduled_at);
       }
       default:
         return true;
@@ -186,6 +196,8 @@ export default function CreatePack() {
         whatsapp_number: form.whatsapp_number || null,
         whatsapp_link: form.whatsapp_link || null,
         telegram_link: form.telegram_link || null,
+        upsell_title: form.upsell_title || null,
+        upsell_link: form.upsell_link || null,
         has_free_session: form.has_free_session,
         is_published: publish,
       };
@@ -193,9 +205,13 @@ export default function CreatePack() {
       let { data: pack, error: packErr } = await supabase.from('session_packs').insert(packPayload).select().single();
 
       // Gracefully retry without optional columns if not yet present in Supabase
-      if (packErr && (packErr.message?.includes('whatsapp_number') || packErr.message?.includes('slug'))) {
+      if (packErr && (packErr.message?.includes('whatsapp_number') || packErr.message?.includes('slug') || packErr.message?.includes('upsell_'))) {
         if (packErr.message?.includes('whatsapp_number')) delete packPayload.whatsapp_number;
         if (packErr.message?.includes('slug')) delete packPayload.slug;
+        if (packErr.message?.includes('upsell_')) {
+          delete packPayload.upsell_title;
+          delete packPayload.upsell_link;
+        }
         const retry = await supabase.from('session_packs').insert(packPayload).select().single();
         pack = retry.data;
         packErr = retry.error;
@@ -210,7 +226,8 @@ export default function CreatePack() {
         sessionsToInsert.push({
           pack_id: pack.id,
           title: form.freeSession.title,
-          zoom_link: form.freeSession.zoom_link,
+          zoom_link: form.freeSession.zoom_link || '',
+          youtube_live_link: form.freeSession.youtube_live_link || null,
           scheduled_at: form.freeSession.scheduled_at ? new Date(form.freeSession.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(form.freeSession.duration_minutes) || 60,
           order_index: orderIdx++,
@@ -223,7 +240,8 @@ export default function CreatePack() {
         sessionsToInsert.push({
           pack_id: pack.id,
           title: s.title,
-          zoom_link: s.zoom_link,
+          zoom_link: s.zoom_link || '',
+          youtube_live_link: s.youtube_live_link || null,
           scheduled_at: s.scheduled_at ? new Date(s.scheduled_at).toISOString() : null,
           duration_minutes: parseInt(s.duration_minutes) || 60,
           order_index: orderIdx++,
@@ -232,7 +250,12 @@ export default function CreatePack() {
       }
 
       if (sessionsToInsert.length > 0) {
-        const { error: sessErr } = await supabase.from('sessions').insert(sessionsToInsert);
+        let { error: sessErr } = await supabase.from('sessions').insert(sessionsToInsert);
+        if (sessErr && sessErr.message?.includes('youtube_live_link')) {
+          const fallback = sessionsToInsert.map(({ youtube_live_link, ...rest }) => rest);
+          const retrySess = await supabase.from('sessions').insert(fallback);
+          sessErr = retrySess.error;
+        }
         if (sessErr) throw sessErr;
       }
 
@@ -359,19 +382,42 @@ export default function CreatePack() {
                       </select>
                     </div>
                     <div className="f">
-                      <label htmlFor="price">Price <em>*</em></label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label htmlFor="price">Price <em>*</em></label>
+                        <button
+                          type="button"
+                          onClick={() => update('price', form.price === '0' ? '' : '0')}
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            background: form.price === '0' ? '#10b981' : '#f1f5f9',
+                            color: form.price === '0' ? '#ffffff' : '#64748b',
+                            border: '1px solid ' + (form.price === '0' ? '#059669' : '#cbd5e1'),
+                            padding: '2px 8px',
+                            borderRadius: '999px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {form.price === '0' ? '✓ 100% Free' : 'Make 100% Free'}
+                        </button>
+                      </div>
                       <input
                         id="price"
                         name="price"
                         type="number"
                         inputMode="decimal"
-                        placeholder="29.99"
+                        placeholder="29.99 (or 0 for Free)"
                         min="0"
                         step="0.01"
                         value={form.price}
                         onChange={e => update('price', e.target.value)}
                         required
                       />
+                      {form.price === '0' && (
+                        <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
+                          ✨ Learners get instant 1-click free enrollment without payment.
+                        </small>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -478,6 +524,32 @@ export default function CreatePack() {
                       onChange={e => update('telegram_link', e.target.value)}
                     />
                   </div>
+
+                  <div className="sub">Upsell / Next course recommendation <span>(optional)</span></div>
+                  <p className="note">
+                    Guide learners who attend this pack into your next paid course or masterclass. Recommended when offering free packs or intro workshops!
+                  </p>
+
+                  <div className="f">
+                    <label htmlFor="upsell_title">Next course title</label>
+                    <input
+                      id="upsell_title"
+                      placeholder="e.g. Master Full-Stack Development 12-Week Bootcamp"
+                      value={form.upsell_title}
+                      onChange={e => update('upsell_title', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="f">
+                    <label htmlFor="upsell_link">Next course link</label>
+                    <input
+                      id="upsell_link"
+                      type="url"
+                      placeholder="https://lora.live/p/next-course-slug or full URL"
+                      value={form.upsell_link}
+                      onChange={e => update('upsell_link', e.target.value)}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -521,6 +593,15 @@ export default function CreatePack() {
                             placeholder="https://zoom.us/j/..."
                             value={form.freeSession.zoom_link}
                             onChange={e => updateFreeSession('zoom_link', e.target.value)}
+                          />
+                        </div>
+                        <div className="f">
+                          <label>YouTube Live link <span>(optional)</span></label>
+                          <input
+                            type="url"
+                            placeholder="https://youtube.com/live/... or unlisted stream"
+                            value={form.freeSession.youtube_live_link || ''}
+                            onChange={e => updateFreeSession('youtube_live_link', e.target.value)}
                           />
                         </div>
                         <div className="g g2 keep">
@@ -595,6 +676,15 @@ export default function CreatePack() {
                             onChange={e => updateSession(idx, 'zoom_link', e.target.value)}
                           />
                         </div>
+                        <div className="f">
+                          <label>YouTube Live link <span>(optional)</span></label>
+                          <input
+                            type="url"
+                            placeholder="https://youtube.com/live/... or unlisted stream"
+                            value={s.youtube_live_link || ''}
+                            onChange={e => updateSession(idx, 'youtube_live_link', e.target.value)}
+                          />
+                        </div>
                         <div className="g g2 keep">
                           <div className="f">
                             <label>Date &amp; time</label>
@@ -635,10 +725,15 @@ export default function CreatePack() {
 
                   <div className="chips">
                     <span>{form.category || 'General'}</span>
-                    <span className="pr">{form.currency} {form.price || '0'}</span>
+                    <span className="pr">{Number(form.price) === 0 ? 'FREE' : `${form.currency} ${form.price || '0'}`}</span>
                     {(form.whatsapp_number || profile?.contact_number) && (
                       <span className="wa">
                         WhatsApp: {form.whatsapp_number || profile?.contact_number}
+                      </span>
+                    )}
+                    {form.upsell_title && (
+                      <span style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe' }}>
+                        Upsell: {form.upsell_title}
                       </span>
                     )}
                   </div>

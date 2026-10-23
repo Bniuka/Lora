@@ -579,13 +579,88 @@
 }
 
 .lora-sessions .btn.live {
-  background: #e5484d;
-  border-color: #e5484d;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 
 .lora-sessions .btn.live:hover {
-  background: #c93a3f;
+  background: #1d4ed8;
+}
+
+.lora-sessions .btn.yt-live {
+  background: #cc0000;
+  border-color: #cc0000;
+  color: #fff;
+}
+
+.lora-sessions .btn.yt-live:hover {
+  background: #990000;
+}
+
+/* Upsell Next Course Card */
+.lora-sessions .upsell-card {
+  margin-top: 28px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #eff6ff 100%);
+  border: 1.5px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 20px -6px rgba(16, 185, 129, 0.15);
+}
+
+.lora-sessions .upsell-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-bottom: 6px;
+}
+
+.lora-sessions .upsell-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0e1733;
+}
+
+.lora-sessions .upsell-desc {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.lora-sessions .upsell-btn {
+  background: #0f9d6b;
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow: 0 8px 16px -6px rgba(15, 157, 107, 0.4);
+  transition: 0.15s ease;
+  white-space: nowrap;
+}
+
+.lora-sessions .upsell-btn:hover {
+  background: #0b7a53;
+  transform: translateY(-1px);
 }
 
 .lora-sessions .pill {

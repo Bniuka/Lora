@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, Send
+  MessageCircle, Send, Sparkles, ArrowRight
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -81,7 +81,7 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
           </a>
         ) : isLive ? (
           <a
-            href={session.zoom_link}
+            href={session.zoom_link || session.youtube_live_link}
             target="_blank"
             rel="noopener noreferrer"
             className="play"
@@ -142,18 +142,35 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
       {/* Action CTA */}
       <div className="act">
         {isLive ? (
-          <a
-            className="btn live"
-            href={session.zoom_link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg className="ic" viewBox="0 0 24 24">
-              <polygon points="23 7 16 12 23 17 23 7"/>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
-            Join Live
-          </a>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {session.zoom_link && (
+              <a
+                className="btn live"
+                href={session.zoom_link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg className="ic" viewBox="0 0 24 24">
+                  <polygon points="23 7 16 12 23 17 23 7"/>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                Join Zoom
+              </a>
+            )}
+            {session.youtube_live_link && (
+              <a
+                className="btn yt-live"
+                href={session.youtube_live_link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg className="ic" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                Watch YouTube
+              </a>
+            )}
+          </div>
         ) : isCompleted ? (
           <a
             className="btn"
@@ -438,6 +455,27 @@ export default function MySessions() {
               />
             ))}
           </div>
+
+          {/* Optional Upsell / Next Course Recommendation */}
+          {(pack.upsell_link || pack.upsell_title) && (
+            <div className="upsell-card">
+              <div>
+                <span className="upsell-badge">
+                  <Sparkles size={13} /> Recommended Next Step
+                </span>
+                <h3 className="upsell-title">{pack.upsell_title || 'Continue Your Learning'}</h3>
+                <p className="upsell-desc">Ready to level up? Join the creator's advanced follow-up course.</p>
+              </div>
+              <a
+                href={pack.upsell_link || '#'}
+                target={pack.upsell_link?.startsWith('http') ? '_blank' : '_self'}
+                rel="noopener noreferrer"
+                className="upsell-btn"
+              >
+                View Next Course <ArrowRight size={16} />
+              </a>
+            </div>
+          )}
 
           {/* Community Links */}
           {(pack.whatsapp_link || pack.telegram_link) && (
