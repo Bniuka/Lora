@@ -28,7 +28,10 @@ export function useSubscriptionGuard() {
           newStatus = 'expired';
         }
       } else if (status === 'active') {
-        if (subEnds && subEnds < now) {
+        // Check if an explicit end date or next billing date has passed.
+        // If neither is set, this is Lifetime VIP and never expires.
+        const activeEnds = subEnds || (creatorProfile.next_billing_date ? new Date(creatorProfile.next_billing_date) : null);
+        if (activeEnds && activeEnds < now) {
           needsUpdate = true;
           newStatus = 'expired';
         }

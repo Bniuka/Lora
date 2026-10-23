@@ -26,6 +26,7 @@ import EditPack from './pages/EditPack';
 import Enrollments from './pages/Enrollments';
 import CreatorSettings from './pages/CreatorSettings';
 import CreatorSubscription from './pages/CreatorSubscription';
+import AdminPanel from './pages/AdminPanel';
 /* ── Learner Pages ── */
 import LearnerDashboard from './pages/LearnerDashboard';
 import Discover from './pages/Discover';
@@ -90,6 +91,16 @@ export default function App() {
         <Route path="/creator/subscription" element={
           <ProtectedRoute allowedRole="creator">
             <CreatorSubscription />
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/admin" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><AdminPanel /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><AdminPanel /></CreatorLayout>
           </ProtectedRoute>
         } />
 

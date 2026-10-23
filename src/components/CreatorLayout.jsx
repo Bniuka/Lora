@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, Package, PlusCircle, CreditCard,
   Settings, Menu, X, Bell, Search, ChevronDown, Rocket, ChevronRight,
-  CheckCircle, Clock, Loader2, LogOut
+  CheckCircle, Clock, Loader2, LogOut, Crown
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { isUserAdmin } from '../lib/admin';
 import AppLogo from './AppLogo';
 import './creator-layout.css';
 
@@ -281,6 +282,12 @@ export default function CreatorLayout({ children }) {
               <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
               <span>Settings</span>
             </NavLink>
+            {isUserAdmin(user?.email) && (
+              <NavLink to="/creator/admin" className={({ isActive }) => isActive ? 'on' : ''}>
+                <Crown className="ic" style={{ color: '#f59e0b' }} />
+                <span style={{ color: '#d97706', fontWeight: 700 }}>Founder Panel</span>
+              </NavLink>
+            )}
           </nav>
           <div className="tip">
             <b>Grow your audience</b>
@@ -343,6 +350,11 @@ export default function CreatorLayout({ children }) {
 
                 {userDropdownOpen && (
                   <div className="user-dropdown">
+                    {isUserAdmin(user?.email) && (
+                      <button type="button" onClick={() => { setUserDropdownOpen(false); navigate('/creator/admin'); }} style={{ color: '#d97706', fontWeight: 600 }}>
+                        <Crown size={15} style={{ color: '#f59e0b' }} /> Founder Panel
+                      </button>
+                    )}
                     <button type="button" onClick={() => { setUserDropdownOpen(false); navigate('/creator/settings'); }}>
                       <Settings size={15} /> Settings
                     </button>

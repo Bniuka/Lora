@@ -1,0 +1,536 @@
+/* ================================================================
+   Lora Founder & Owner Panel Styles
+   ================================================================ */
+
+.lora-admin {
+  padding: 24px 28px 60px;
+  max-width: 1240px;
+  margin: 0 auto;
+  font-family: 'Figtree', sans-serif;
+  color: #0f172a;
+}
+
+.lora-admin-hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.lora-admin-hd h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lora-admin-hd h1 .founder-badge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 99px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+}
+
+.lora-admin-hd p {
+  margin: 0;
+  font-size: 14.5px;
+  color: #64748b;
+}
+
+/* Stats Row */
+.lora-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.lora-admin-stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.lora-admin-stat-card small {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.lora-admin-stat-card b {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.lora-admin-stat-card.stat-active b { color: #16a34a; }
+.lora-admin-stat-card.stat-trial b { color: #2563eb; }
+.lora-admin-stat-card.stat-vip b { color: #d97706; }
+.lora-admin-stat-card.stat-expired b { color: #dc2626; }
+
+/* Filter & Search Bar */
+.lora-admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.lora-admin-search {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  max-width: 440px;
+}
+
+.lora-admin-search input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px 0 40px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lora-admin-search input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.lora-admin-search .ic {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: #94a3b8;
+}
+
+.lora-admin-tabs {
+  display: flex;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.lora-admin-tabs button {
+  border: 0;
+  background: transparent;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lora-admin-tabs button.active {
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Creator Card / Row */
+.lora-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lora-admin-card {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lora-admin-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+}
+
+.lora-admin-card.is-vip {
+  border-color: #fde68a;
+  background: linear-gradient(180deg, #fffbeb 0%, #fff 100%);
+}
+
+.lora-admin-creator-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+.lora-admin-av {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.lora-admin-creator-meta {
+  min-width: 0;
+}
+
+.lora-admin-creator-meta b {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15.5px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.lora-admin-creator-meta small {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status & Expiry */
+.lora-admin-creator-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 170px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-pill.status-active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-pill.status-trial {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-pill.status-expired {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-pill.status-vip {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-expiry-date {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Action button */
+.lora-admin-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lora-admin-btn-manage {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lora-admin-btn-manage:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+/* Modal for Granting Access */
+.lora-admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 9999;
+}
+
+.lora-admin-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px -15px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: admin-pop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes admin-pop {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.lora-admin-modal-head {
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lora-admin-modal-head h2 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.lora-admin-modal-close {
+  background: #f1f5f9;
+  border: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+}
+
+.lora-admin-modal-body {
+  padding: 22px 26px;
+}
+
+.lora-admin-target-user {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lora-admin-presets-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.lora-admin-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.lora-admin-preset-btn {
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  transition: all 0.15s;
+}
+
+.lora-admin-preset-btn:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.lora-admin-preset-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.lora-admin-preset-btn.preset-vip {
+  grid-column: span 3;
+  background: linear-gradient(135deg, #fef3c7, #fef9c3);
+  border-color: #f59e0b;
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14.5px;
+}
+
+.lora-admin-preset-btn.preset-vip.active {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border-color: #d97706;
+}
+
+.lora-admin-custom-date {
+  margin-bottom: 20px;
+}
+
+.lora-admin-custom-date label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.lora-admin-custom-date input {
+  width: 100%;
+  height: 44px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+.lora-admin-custom-date input:focus {
+  border-color: #2563eb;
+}
+
+.lora-admin-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.lora-admin-btn-cancel {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.lora-admin-btn-save {
+  background: #2563eb;
+  color: #fff;
+  border: 0;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: filter 0.15s;
+}
+
+.lora-admin-btn-save:hover {
+  filter: brightness(1.08);
+}
+
+.lora-admin-btn-revoke {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: auto;
+}
+
+.lora-admin-btn-revoke:hover {
+  background: #fee2e2;
+}
+
+@media(max-width: 640px) {
+  .lora-admin {
+    padding: 16px 14px 40px;
+  }
+  .lora-admin-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .lora-admin-card-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .lora-admin-presets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .lora-admin-preset-btn.preset-vip {
+    grid-column: span 2;
+  }
+}
