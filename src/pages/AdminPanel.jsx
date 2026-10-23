@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Crown, Search, Clock, CheckCircle2, AlertCircle, 
-  Calendar, Loader2, Sparkles, X, ShieldAlert, UserCheck, ArrowUpRight
+  Calendar, Loader2, Sparkles, X, ShieldAlert, UserCheck, 
+  Lock, KeyRound, Eye, EyeOff, ArrowLeft, ShieldCheck
 } from 'lucide-react';
 import { format, addDays, addMonths, isAfter } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -15,8 +16,17 @@ export default function AdminPanel() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
 
+  // 🔒 Security Verification State (Locked by default on every page load)
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState('');
+  const [verifyPassword, setVerifyPassword] = useState('');
+  const [showVerifyPassword, setShowVerifyPassword] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState('');
+
+  // Dashboard Data State
   const [creators, setCreators] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [selectedCreator, setSelectedCreator] = useState(null);
@@ -38,6 +48,52 @@ export default function AdminPanel() {
       navigate('/creator/dashboard', { replace: true });
     }
   }, [user, navigate]);
+
+  const handleUnlock = async (e) => {
+    e.preventDefault();
+    setVerifyError('');
+    setVerifyLoading(true);
+
+    try {
+      const trimmedEmail = verifyEmail.trim().toLowerCase();
+
+      // 1. Verify this is the authorized founder email
+      if (!isUserAdmin(trimmedEmail)) {
+        throw new Error("This email is not authorized for founder panel access.");
+      }
+
+      // Check against current logged-in user
+      if (user?.email && trimmedEmail !== user.email.toLowerCase()) {
+        throw new Error(`Please use your currently logged-in account (${user.email}).`);
+      }
+
+      // 2. Verify password directly with Supabase
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password: verifyPassword,
+      });
+
+      if (authError) {
+        throw new Error("Incorrect founder email or password. Access denied.");
+      }
+
+      // 3. Authenticated successfully
+      setIsUnlocked(true);
+      setVerifyPassword('');
+      showToast("Founder verification successful!");
+      fetchCreators();
+    } catch (err) {
+      setVerifyError(err.message || "Authentication failed.");
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
+  const handleLockPanel = () => {
+    setIsUnlocked(false);
+    setVerifyPassword('');
+    showToast("Founder Panel locked.");
+  };
 
   const fetchCreators = async () => {
     setLoading(true);
@@ -62,12 +118,6 @@ export default function AdminPanel() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (user && isUserAdmin(user.email)) {
-      fetchCreators();
-    }
-  }, [user]);
 
   // Quick stats calculation
   const stats = creators.reduce((acc, c) => {
@@ -194,6 +244,107 @@ export default function AdminPanel() {
     );
   }
 
+  // 🔒 Render Security Lock Screen if not verified
+  if (!isUnlocked) {
+    return (
+      <PageTransition>
+        <div className="lora-admin-lock-screen">
+          <div className="lora-admin-lock-card">
+            <div className="lora-admin-lock-icon-wrap">
+              <KeyRound className="w-8 h-8" />
+            </div>
+
+            <h2>Founder Verification</h2>
+            <p>
+              This area contains master subscription and access controls. Please enter your founder email and password to proceed.
+            </p>
+
+            {verifyError && (
+              <div
+                style={{
+                  background: '#fef2f2',
+                  border: '1.5px solid #fecdd3',
+                  color: '#be123c',
+                  borderRadius: 12,
+                  padding: '10px 14px',
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  marginBottom: 16,
+                  textAlign: 'left',
+                }}
+              >
+                {verifyError}
+              </div>
+            )}
+
+            <form onSubmit={handleUnlock} className="lora-admin-lock-form">
+              <div className="lora-admin-lock-field">
+                <label htmlFor="admin-email">Founder Email Address</label>
+                <input
+                  id="admin-email"
+                  type="email"
+                  required
+                  placeholder="binukadin2009@gmail.com"
+                  autoComplete="email"
+                  value={verifyEmail}
+                  onChange={e => setVerifyEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="lora-admin-lock-field pw-field">
+                <label htmlFor="admin-pw">Password</label>
+                <input
+                  id="admin-pw"
+                  type={showVerifyPassword ? 'text' : 'password'}
+                  required
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  value={verifyPassword}
+                  onChange={e => setVerifyPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="pw-toggle"
+                  onClick={() => setShowVerifyPassword(!showVerifyPassword)}
+                  aria-label={showVerifyPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showVerifyPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="lora-admin-lock-btn"
+                disabled={verifyLoading}
+              >
+                {verifyLoading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Verifying Credentials…
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={18} />
+                    Unlock Founder Panel
+                  </>
+                )}
+              </button>
+            </form>
+
+            <button
+              type="button"
+              className="lora-admin-lock-back"
+              onClick={() => navigate('/creator/dashboard')}
+            >
+              <ArrowLeft size={15} /> Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  // 👑 Unlocked Dashboard View
   return (
     <PageTransition>
       <div className="lora-admin">
@@ -206,6 +357,18 @@ export default function AdminPanel() {
               <span className="founder-badge">Founder Mode</span>
             </h1>
             <p>Grant free access, extended trials, or lifetime VIP status to any creator.</p>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              type="button"
+              className="lora-admin-btn-lock"
+              onClick={handleLockPanel}
+              title="Lock panel when away from keyboard"
+            >
+              <Lock size={14} />
+              Lock Panel
+            </button>
           </div>
         </div>
 
