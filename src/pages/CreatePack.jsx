@@ -68,6 +68,8 @@ const emptySession = () => ({
   scheduled_at: '',
   duration_minutes: 60,
   is_free_session: false,
+  is_past_session: false,
+  recording_url: '',
 });
 
 export default function CreatePack() {
@@ -101,7 +103,7 @@ export default function CreatePack() {
     upsell_title: '',
     upsell_link: '',
     has_free_session: false,
-    freeSession: { title: '', zoom_link: '', youtube_live_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '' },
+    freeSession: { title: '', zoom_link: '', youtube_live_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '', is_past_session: false },
     sessions: [emptySession()],
   });
 
@@ -147,9 +149,18 @@ export default function CreatePack() {
       case 3: {
         if (form.has_free_session) {
           const fs = form.freeSession;
-          if (!fs.title.trim() || (!fs.zoom_link.trim() && !fs.youtube_live_link?.trim()) || !fs.scheduled_at) return false;
+          if (fs.is_past_session) {
+            if (!fs.title.trim() || !fs.recording_url?.trim()) return false;
+          } else {
+            if (!fs.title.trim() || (!fs.zoom_link.trim() && !fs.youtube_live_link?.trim()) || !fs.scheduled_at) return false;
+          }
         }
-        return form.sessions.every(s => s.title.trim() && (s.zoom_link.trim() || s.youtube_live_link?.trim()) && s.scheduled_at);
+        return form.sessions.every(s => {
+          if (s.is_past_session) {
+            return Boolean(s.title.trim() && s.recording_url?.trim());
+          }
+          return Boolean(s.title.trim() && (s.zoom_link.trim() || s.youtube_live_link?.trim()) && s.scheduled_at);
+        });
       }
       default:
         return true;
@@ -224,36 +235,50 @@ export default function CreatePack() {
       let orderIdx = 0;
 
       if (form.has_free_session) {
+        const isPast = Boolean(form.freeSession.is_past_session);
         sessionsToInsert.push({
           pack_id: pack.id,
           title: form.freeSession.title,
           zoom_link: form.freeSession.zoom_link || '',
           youtube_live_link: form.freeSession.youtube_live_link || null,
-          scheduled_at: form.freeSession.scheduled_at ? new Date(form.freeSession.scheduled_at).toISOString() : null,
+          scheduled_at: form.freeSession.scheduled_at
+            ? new Date(form.freeSession.scheduled_at).toISOString()
+            : isPast
+            ? new Date(Date.now() - 86400000 * (form.sessions.length + 1)).toISOString()
+            : new Date().toISOString(),
           duration_minutes: parseInt(form.freeSession.duration_minutes) || 60,
           order_index: orderIdx++,
           is_free_session: true,
+          is_past_session: isPast,
           recording_url: form.freeSession.recording_url || null,
         });
       }
 
-      for (const s of form.sessions) {
+      for (let sIdx = 0; sIdx < form.sessions.length; sIdx++) {
+        const s = form.sessions[sIdx];
+        const isPast = Boolean(s.is_past_session);
         sessionsToInsert.push({
           pack_id: pack.id,
           title: s.title,
           zoom_link: s.zoom_link || '',
           youtube_live_link: s.youtube_live_link || null,
-          scheduled_at: s.scheduled_at ? new Date(s.scheduled_at).toISOString() : null,
+          scheduled_at: s.scheduled_at
+            ? new Date(s.scheduled_at).toISOString()
+            : isPast
+            ? new Date(Date.now() - 86400000 * (form.sessions.length - sIdx)).toISOString()
+            : new Date().toISOString(),
           duration_minutes: parseInt(s.duration_minutes) || 60,
           order_index: orderIdx++,
           is_free_session: false,
+          is_past_session: isPast,
+          recording_url: s.recording_url || null,
         });
       }
 
       if (sessionsToInsert.length > 0) {
         let { error: sessErr } = await supabase.from('sessions').insert(sessionsToInsert);
-        if (sessErr && sessErr.message?.includes('youtube_live_link')) {
-          const fallback = sessionsToInsert.map(({ youtube_live_link, ...rest }) => rest);
+        if (sessErr && (sessErr.message?.includes('youtube_live_link') || sessErr.message?.includes('is_past_session'))) {
+          const fallback = sessionsToInsert.map(({ youtube_live_link, is_past_session, ...rest }) => rest);
           const retrySess = await supabase.from('sessions').insert(fallback);
           sessErr = retrySess.error;
         }
@@ -590,81 +615,140 @@ export default function CreatePack() {
 
                   {/* Free preview session block */}
                   {form.has_free_session && (
-                    <div className="sess free">
+                    <div className={`sess free ${form.freeSession.is_past_session ? 'past' : ''}`}>
                       <div className="sh2">
                         <span className="tag">FREE PREVIEW</span>
+                        <button
+                          type="button"
+                          className={`rec-t ${form.freeSession.is_past_session ? 'on' : ''}`}
+                          onClick={() => updateFreeSession('is_past_session', !form.freeSession.is_past_session)}
+                          aria-pressed={form.freeSession.is_past_session}
+                        >
+                          {form.freeSession.is_past_session ? '📼 Catch-up Recording' : '🔴 Live Upcoming'}
+                        </button>
                       </div>
                       <p className="hint">
                         This session is visible and joinable by anyone, even before they pay.
                       </p>
                       <div className="g">
                         <div className="f">
-                          <label>Session title</label>
+                          <label>Session title <em>*</em></label>
                           <input
                             placeholder="e.g. Introduction & What You'll Learn"
                             value={form.freeSession.title}
                             onChange={e => updateFreeSession('title', e.target.value)}
+                            required
                           />
                         </div>
-                        <div className="f">
-                          <label>Zoom link</label>
-                          <input
-                            type="url"
-                            placeholder="https://zoom.us/j/..."
-                            value={form.freeSession.zoom_link}
-                            onChange={e => updateFreeSession('zoom_link', e.target.value)}
-                          />
-                        </div>
-                        <div className="f">
-                          <label>YouTube Live link <span>(optional)</span></label>
-                          <input
-                            type="url"
-                            placeholder="https://youtube.com/live/... or unlisted stream"
-                            value={form.freeSession.youtube_live_link || ''}
-                            onChange={e => updateFreeSession('youtube_live_link', e.target.value)}
-                          />
-                        </div>
-                        <div className="g g2 keep">
-                          <div className="f">
-                            <label>Date &amp; time</label>
-                            <input
-                              type="datetime-local"
-                              value={form.freeSession.scheduled_at}
-                              onChange={e => updateFreeSession('scheduled_at', e.target.value)}
-                            />
-                          </div>
-                          <div className="f">
-                            <label>Duration <span>(min)</span></label>
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="15"
-                              step="15"
-                              value={form.freeSession.duration_minutes}
-                              onChange={e => updateFreeSession('duration_minutes', e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <div className="f">
-                          <label>Recording link <span>(optional)</span></label>
-                          <input
-                            type="url"
-                            placeholder="Add after the session"
-                            value={form.freeSession.recording_url}
-                            onChange={e => updateFreeSession('recording_url', e.target.value)}
-                          />
-                        </div>
+
+                        {form.freeSession.is_past_session ? (
+                          <>
+                            <div className="f">
+                              <label>Recording link <em>*</em> <span>(YouTube, Google Drive, Vimeo, Zoom cloud)</span></label>
+                              <input
+                                type="url"
+                                placeholder="https://..."
+                                value={form.freeSession.recording_url}
+                                onChange={e => updateFreeSession('recording_url', e.target.value)}
+                                required
+                              />
+                              <small style={{ color: '#059669', fontSize: 12, fontWeight: 600 }}>
+                                ✓ Free preview recording: Visible and playable immediately by anyone.
+                              </small>
+                            </div>
+                            <div className="g g2 keep">
+                              <div className="f">
+                                <label>Date conducted <span>(optional)</span></label>
+                                <input
+                                  type="datetime-local"
+                                  value={form.freeSession.scheduled_at}
+                                  onChange={e => updateFreeSession('scheduled_at', e.target.value)}
+                                />
+                              </div>
+                              <div className="f">
+                                <label>Duration <span>(min)</span></label>
+                                <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  min="15"
+                                  step="15"
+                                  value={form.freeSession.duration_minutes}
+                                  onChange={e => updateFreeSession('duration_minutes', e.target.value)}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="f">
+                              <label>Zoom link</label>
+                              <input
+                                type="url"
+                                placeholder="https://zoom.us/j/..."
+                                value={form.freeSession.zoom_link}
+                                onChange={e => updateFreeSession('zoom_link', e.target.value)}
+                              />
+                            </div>
+                            <div className="f">
+                              <label>YouTube Live link <span>(optional)</span></label>
+                              <input
+                                type="url"
+                                placeholder="https://youtube.com/live/... or unlisted stream"
+                                value={form.freeSession.youtube_live_link || ''}
+                                onChange={e => updateFreeSession('youtube_live_link', e.target.value)}
+                              />
+                            </div>
+                            <div className="g g2 keep">
+                              <div className="f">
+                                <label>Date &amp; time <em>*</em></label>
+                                <input
+                                  type="datetime-local"
+                                  value={form.freeSession.scheduled_at}
+                                  onChange={e => updateFreeSession('scheduled_at', e.target.value)}
+                                />
+                              </div>
+                              <div className="f">
+                                <label>Duration <span>(min)</span></label>
+                                <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  min="15"
+                                  step="15"
+                                  value={form.freeSession.duration_minutes}
+                                  onChange={e => updateFreeSession('duration_minutes', e.target.value)}
+                                />
+                              </div>
+                            </div>
+                            <div className="f">
+                              <label>Recording link <span>(optional)</span></label>
+                              <input
+                                type="url"
+                                placeholder="Add after the session"
+                                value={form.freeSession.recording_url}
+                                onChange={e => updateFreeSession('recording_url', e.target.value)}
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Paid sessions */}
-                  <div className="hd2">Paid sessions</div>
+                  <div className="hd2">Course sessions</div>
                   {form.sessions.map((s, idx) => (
-                    <div key={s.id} className="sess">
+                    <div key={s.id} className={`sess ${s.is_past_session ? 'past' : ''}`}>
                       <div className="sh2">
                         <span className="num">{idx + 1}</span>
                         <b>Session {idx + 1}</b>
+                        <button
+                          type="button"
+                          className={`rec-t ${s.is_past_session ? 'on' : ''}`}
+                          onClick={() => updateSession(idx, 'is_past_session', !s.is_past_session)}
+                          aria-pressed={s.is_past_session}
+                        >
+                          {s.is_past_session ? '📼 Catch-up Recording' : '🔴 Live Upcoming'}
+                        </button>
                         {form.sessions.length > 1 && (
                           <button
                             type="button"
@@ -678,54 +762,98 @@ export default function CreatePack() {
                           </button>
                         )}
                       </div>
+
                       <div className="g">
                         <div className="f">
-                          <label>Session title</label>
+                          <label>Session title <em>*</em></label>
                           <input
-                            placeholder="Session title"
+                            placeholder="e.g. Day 1: Fundamentals & Setup"
                             value={s.title}
                             onChange={e => updateSession(idx, 'title', e.target.value)}
+                            required
                           />
                         </div>
-                        <div className="f">
-                          <label>Zoom link</label>
-                          <input
-                            type="url"
-                            placeholder="https://zoom.us/j/..."
-                            value={s.zoom_link}
-                            onChange={e => updateSession(idx, 'zoom_link', e.target.value)}
-                          />
-                        </div>
-                        <div className="f">
-                          <label>YouTube Live link <span>(optional)</span></label>
-                          <input
-                            type="url"
-                            placeholder="https://youtube.com/live/... or unlisted stream"
-                            value={s.youtube_live_link || ''}
-                            onChange={e => updateSession(idx, 'youtube_live_link', e.target.value)}
-                          />
-                        </div>
-                        <div className="g g2 keep">
-                          <div className="f">
-                            <label>Date &amp; time</label>
-                            <input
-                              type="datetime-local"
-                              value={s.scheduled_at}
-                              onChange={e => updateSession(idx, 'scheduled_at', e.target.value)}
-                            />
-                          </div>
-                          <div className="f">
-                            <label>Duration <span>(min)</span></label>
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="15"
-                              step="15"
-                              value={s.duration_minutes}
-                              onChange={e => updateSession(idx, 'duration_minutes', e.target.value)}
-                            />
-                          </div>
-                        </div>
+
+                        {s.is_past_session ? (
+                          <>
+                            <div className="f">
+                              <label>Recording URL <em>*</em> <span>(Google Drive, YouTube unlisted, Vimeo, Zoom cloud)</span></label>
+                              <input
+                                type="url"
+                                placeholder="https://drive.google.com/... or https://youtube.com/..."
+                                value={s.recording_url || ''}
+                                onChange={e => updateSession(idx, 'recording_url', e.target.value)}
+                                required
+                              />
+                              <small style={{ color: '#7c3aed', fontSize: 12, fontWeight: 600 }}>
+                                ✓ Catch-up Recording: Learners get immediate access to watch this session the moment they enroll.
+                              </small>
+                            </div>
+                            <div className="g g2 keep">
+                              <div className="f">
+                                <label>Date conducted <span>(optional)</span></label>
+                                <input
+                                  type="datetime-local"
+                                  value={s.scheduled_at}
+                                  onChange={e => updateSession(idx, 'scheduled_at', e.target.value)}
+                                />
+                              </div>
+                              <div className="f">
+                                <label>Duration <span>(min)</span></label>
+                                <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  min="15"
+                                  step="15"
+                                  value={s.duration_minutes}
+                                  onChange={e => updateSession(idx, 'duration_minutes', e.target.value)}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="f">
+                              <label>Zoom link</label>
+                              <input
+                                type="url"
+                                placeholder="https://zoom.us/j/..."
+                                value={s.zoom_link}
+                                onChange={e => updateSession(idx, 'zoom_link', e.target.value)}
+                              />
+                            </div>
+                            <div className="f">
+                              <label>YouTube Live link <span>(optional)</span></label>
+                              <input
+                                type="url"
+                                placeholder="https://youtube.com/live/... or unlisted stream"
+                                value={s.youtube_live_link || ''}
+                                onChange={e => updateSession(idx, 'youtube_live_link', e.target.value)}
+                              />
+                            </div>
+                            <div className="g g2 keep">
+                              <div className="f">
+                                <label>Date &amp; time <em>*</em></label>
+                                <input
+                                  type="datetime-local"
+                                  value={s.scheduled_at}
+                                  onChange={e => updateSession(idx, 'scheduled_at', e.target.value)}
+                                />
+                              </div>
+                              <div className="f">
+                                <label>Duration <span>(min)</span></label>
+                                <input
+                                  type="number"
+                                  inputMode="numeric"
+                                  min="15"
+                                  step="15"
+                                  value={s.duration_minutes}
+                                  onChange={e => updateSession(idx, 'duration_minutes', e.target.value)}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -768,19 +896,30 @@ export default function CreatePack() {
                       <div className="ri">
                         <span className="tag">FREE PREVIEW</span>
                         <b>{form.freeSession.title || 'Untitled'}</b>
-                        <small>{form.freeSession.duration_minutes || 60} min</small>
+                        <small>
+                          {form.freeSession.is_past_session ? '📼 Catch-up Recording' : `${form.freeSession.duration_minutes || 60} min · Live`}
+                        </small>
                       </div>
                     </>
                   )}
 
                   <div className="hd2">
-                    {form.sessions.length} paid session{form.sessions.length !== 1 ? 's' : ''}
+                    {form.sessions.length} course session{form.sessions.length !== 1 ? 's' : ''}
+                    {form.sessions.some(s => s.is_past_session) && (
+                      <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--muted)', marginLeft: 8 }}>
+                        ({form.sessions.filter(s => s.is_past_session).length} catch-up recording{form.sessions.filter(s => s.is_past_session).length !== 1 ? 's' : ''}, {form.sessions.filter(s => !s.is_past_session).length} live upcoming)
+                      </span>
+                    )}
                   </div>
                   {form.sessions.map((s, i) => (
                     <div key={s.id || i} className="ri">
                       <span className="num">{i + 1}</span>
                       <b>{s.title || 'Untitled'}</b>
-                      <small>{s.duration_minutes || 60} min</small>
+                      {s.is_past_session ? (
+                        <small style={{ color: '#7c3aed', fontWeight: 700 }}>📼 Catch-up Recording Ready</small>
+                      ) : (
+                        <small>{s.duration_minutes || 60} min · Live</small>
+                      )}
                     </div>
                   ))}
                 </div>

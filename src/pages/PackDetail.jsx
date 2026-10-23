@@ -41,34 +41,35 @@ function getSanitizedPhone(rawNumber) {
 
 function SessionButton({ session }) {
   const now = new Date();
-  const scheduled = new Date(session.scheduled_at);
-  const minutesDiff = differenceInMinutes(scheduled, now);
-  const isLive = minutesDiff <= 15 && minutesDiff >= -session.duration_minutes;
-  const hasPassed = isPast(scheduled) && !isLive;
+  const scheduled = session.scheduled_at ? new Date(session.scheduled_at) : null;
+  const minutesDiff = scheduled ? differenceInMinutes(scheduled, now) : -9999;
+  const isLive = minutesDiff <= 15 && minutesDiff >= -(session.duration_minutes || 60);
+  const hasPassed = scheduled ? (isPast(scheduled) && !isLive) : true;
 
-  if (isLive) {
-    return (
-      <a
-        href={session.zoom_link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn pri"
-        style={{ width: 'auto', padding: '9px 18px', fontSize: '13.5px' }}
-      >
-        <Play size={14} /> Join Now
-      </a>
-    );
-  }
-  if (hasPassed && session.recording_url) {
+  if (session.recording_url) {
     return (
       <a
         href={session.recording_url}
         target="_blank"
         rel="noopener noreferrer"
         className="btn"
+        style={{ background: '#7c3aed', color: '#fff', borderColor: '#7c3aed' }}
       >
         <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /></svg>
         Watch recording
+      </a>
+    );
+  }
+  if (isLive) {
+    return (
+      <a
+        href={session.zoom_link || session.youtube_live_link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn pri"
+        style={{ width: 'auto', padding: '9px 18px', fontSize: '13.5px' }}
+      >
+        <Play size={14} /> Join Now
       </a>
     );
   }
@@ -81,7 +82,7 @@ function SessionButton({ session }) {
   }
   return (
     <span style={{ fontSize: '13px', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-      <Clock size={13} /> Starts {formatDistanceToNow(scheduled, { addSuffix: true })}
+      <Clock size={13} /> Starts {scheduled ? formatDistanceToNow(scheduled, { addSuffix: true }) : 'soon'}
     </span>
   );
 }
@@ -959,10 +960,33 @@ export default function PackDetail() {
               {/* Session schedule */}
               <section className="sec">
                 <h2>Session schedule</h2>
+
+                {sessions.some(s => s.recording_url || s.is_past_session) && (
+                  <div style={{
+                    marginBottom: 16,
+                    background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
+                    border: '1.5px solid #ddd6fe',
+                    borderRadius: 14,
+                    padding: '10px 16px',
+                    fontSize: '13.5px',
+                    color: '#6b21a8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontWeight: 600,
+                  }}>
+                    <span>📼</span>
+                    <span>
+                      Includes {sessions.filter(s => s.recording_url || s.is_past_session).length} catch-up recording{sessions.filter(s => s.recording_url || s.is_past_session).length !== 1 ? 's' : ''} ready to watch immediately upon enrollment!
+                    </span>
+                  </div>
+                )}
+
                 {sessions.length > 0 ? (
                   <div className="list">
                     {sessions.map((s, i) => {
                       const isUnlocked = enrollment?.status === 'confirmed' || s.is_free_session || user?.id === pack.creator_id;
+                      const isCatchup = Boolean(s.recording_url || s.is_past_session);
 
                       if (isUnlocked) {
                         return (
@@ -970,15 +994,26 @@ export default function PackDetail() {
                             <div className="n">{i + 1}</div>
                             <div className="t">
                               <div className="d">
-                                {format(new Date(s.scheduled_at), 'MMM dd')}
+                                {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
                                 {s.is_free_session && <span className="pv">Free preview</span>}
+                                {isCatchup && (
+                                  <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
+                                    📼 Catch-up Recording
+                                  </span>
+                                )}
                               </div>
                               <h3>{s.title}</h3>
                               <div className="s">
-                                <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                                {format(new Date(s.scheduled_at), 'h:mm a')}
-                                <span>·</span>
-                                {s.duration_minutes}m duration
+                                {isCatchup ? (
+                                  <span>{s.duration_minutes}m duration · Available immediately</span>
+                                ) : (
+                                  <>
+                                    <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                                    {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
+                                    <span>·</span>
+                                    {s.duration_minutes}m duration
+                                  </>
+                                )}
                               </div>
                             </div>
                             <SessionButton session={s} />
@@ -992,13 +1027,26 @@ export default function PackDetail() {
                             <svg className="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
                           </div>
                           <div className="t">
-                            <div className="d">{format(new Date(s.scheduled_at), 'MMM dd')}</div>
+                            <div className="d">
+                              {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
+                              {isCatchup && (
+                                <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
+                                  📼 Catch-up Recording
+                                </span>
+                              )}
+                            </div>
                             <h3>{s.title}</h3>
                             <div className="s">
-                              <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                              {format(new Date(s.scheduled_at), 'h:mm a')}
-                              <span>·</span>
-                              {s.duration_minutes}m duration
+                              {isCatchup ? (
+                                <span>{s.duration_minutes}m duration · Watch immediately after enrolling</span>
+                              ) : (
+                                <>
+                                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                                  {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
+                                  <span>·</span>
+                                  {s.duration_minutes}m duration
+                                </>
+                              )}
                             </div>
                           </div>
                           <span className="lk">
@@ -1006,7 +1054,7 @@ export default function PackDetail() {
                               <rect x="5" y="11" width="14" height="9" rx="2" />
                               <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                             </svg>
-                            Unlocks after enrollment
+                            {isCatchup ? 'Immediate access with enrollment' : 'Unlocks after enrollment'}
                           </span>
                         </div>
                       );

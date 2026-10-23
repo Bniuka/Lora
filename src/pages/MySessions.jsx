@@ -21,17 +21,17 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
   const [requestToast, setRequestToast] = useState(false);
 
   const now = new Date();
-  const scheduled = new Date(session.scheduled_at);
+  const scheduled = session.scheduled_at ? new Date(session.scheduled_at) : null;
   const duration = session.duration_minutes || 60;
-  const sessionEndTime = new Date(scheduled.getTime() + duration * 60000);
-  const minutesDiff = differenceInMinutes(scheduled, now);
+  const sessionEndTime = scheduled ? new Date(scheduled.getTime() + duration * 60000) : null;
+  const minutesDiff = scheduled ? differenceInMinutes(scheduled, now) : -9999;
   const isLive = minutesDiff <= 15 && minutesDiff >= -duration;
-  const hasEnded = (isPast(scheduled) || now > sessionEndTime) && !isLive;
+  const hasEnded = scheduled ? ((isPast(scheduled) || now > sessionEndTime) && !isLive) : true;
   const hasRecording = Boolean(session.recording_url && session.recording_url.trim());
-  const isCompleted = hasEnded && hasRecording;
+  const isCompleted = hasRecording || (hasEnded && hasRecording);
 
   // Concluded session without recording
-  const hoursSinceEnd = (now.getTime() - sessionEndTime.getTime()) / (1000 * 60 * 60);
+  const hoursSinceEnd = sessionEndTime ? (now.getTime() - sessionEndTime.getTime()) / (1000 * 60 * 60) : 999;
   const isProcessing = hasEnded && !hasRecording && hoursSinceEnd <= 24;
   const isPending = hasEnded && !hasRecording && hoursSinceEnd > 24;
 
@@ -108,6 +108,14 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
         <div className="tags">
           Day {index + 1}
           {session.is_free_session && <span className="fp">Free preview</span>}
+          {hasRecording && (
+            <span className="catchup-badge">
+              <svg className="ic" viewBox="0 0 24 24" style={{ width: 12, height: 12 }}>
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              Catch-up Recording Ready
+            </span>
+          )}
         </div>
         <h3>{session.title}</h3>
         <p>
@@ -120,15 +128,17 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
               <rect x="3" y="5" width="18" height="16" rx="2"/>
               <path d="M3 10h18M8 3v4M16 3v4"/>
             </svg>
-            {format(scheduled, 'MMM dd, yyyy')}
+            {scheduled ? format(scheduled, 'MMM dd, yyyy') : 'Catch-up Class'}
           </span>
-          <span>
-            <svg className="ic" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 7v5l3 2"/>
-            </svg>
-            {format(scheduled, 'h:mm a')}
-          </span>
+          {scheduled && (
+            <span>
+              <svg className="ic" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 7v5l3 2"/>
+              </svg>
+              {format(scheduled, 'h:mm a')}
+            </span>
+          )}
           <span>
             <svg className="ic" viewBox="0 0 24 24">
               <circle cx="12" cy="13" r="8"/>
@@ -314,7 +324,7 @@ export default function MySessions() {
   }
 
   const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
-  const completedSessions = sessions.filter(s => isPast(new Date(s.scheduled_at)) && s.recording_url).length;
+  const completedSessions = sessions.filter(s => Boolean(s.recording_url && s.recording_url.trim()) || (s.scheduled_at && isPast(new Date(s.scheduled_at)))).length;
   const progressPercent = sessions.length > 0 ? Math.round((completedSessions / sessions.length) * 100) : 0;
 
   const creatorFirst = pack.creator_profiles?.profiles?.first_name || '';

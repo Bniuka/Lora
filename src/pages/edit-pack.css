@@ -510,6 +510,11 @@
   background: linear-gradient(100deg, #e8efff, #fff 50%) !important;
 }
 
+.lora-edit .sess.past {
+  border-color: #ddd6fe !important;
+  background: linear-gradient(100deg, #f5f3ff, #fff 50%) !important;
+}
+
 .lora-edit .sh2 {
   display: flex !important;
   align-items: center !important;
@@ -548,6 +553,34 @@
 .lora-edit .free-t.on {
   background: var(--brand) !important;
   border-color: var(--brand) !important;
+  color: #fff !important;
+}
+
+.lora-edit .rec-t {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border: 1.5px solid var(--edge) !important;
+  background: #fff !important;
+  border-radius: 99px !important;
+  padding: 5px 12px !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.04em !important;
+  cursor: pointer !important;
+  color: var(--muted) !important;
+  min-height: 36px !important;
+  transition: 0.15s !important;
+}
+
+.lora-edit .rec-t:hover {
+  border-color: #cbd5e1 !important;
+  color: var(--ink) !important;
+}
+
+.lora-edit .rec-t.on {
+  background: #7c3aed !important;
+  border-color: #7c3aed !important;
   color: #fff !important;
 }
 
