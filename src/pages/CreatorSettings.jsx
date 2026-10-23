@@ -46,17 +46,85 @@ export default function CreatorSettings() {
     }));
   }, [profile, creatorProfile]);
 
-  const [bankDetails, setBankDetails] = useState({
-    bank_name: '', account_holder_name: '', account_number: '',
-    branch: '', branch_code: '', country: 'LK', extra_note: ''
-  });
+  const [bankAccounts, setBankAccounts] = useState([
+    {
+      id: 'primary',
+      bank_name: '',
+      account_holder_name: '',
+      account_number: '',
+      branch: '',
+      branch_code: '',
+      country: 'LK',
+      extra_note: '',
+      is_primary: true,
+    }
+  ]);
 
   useEffect(() => {
     if (user) {
       supabase.from('creator_bank_details').select('*').eq('creator_id', user.id).maybeSingle()
-        .then(({ data }) => { if (data) setBankDetails(data); });
+        .then(({ data }) => {
+          if (data) {
+            if (Array.isArray(data.bank_accounts) && data.bank_accounts.length > 0) {
+              setBankAccounts(data.bank_accounts);
+            } else if (data.bank_name) {
+              setBankAccounts([{
+                id: data.id || 'primary',
+                bank_name: data.bank_name || '',
+                account_holder_name: data.account_holder_name || '',
+                account_number: data.account_number || '',
+                branch: data.branch || '',
+                branch_code: data.branch_code || '',
+                country: data.country || 'LK',
+                extra_note: data.extra_note || '',
+                is_primary: true,
+              }]);
+            }
+          }
+        });
     }
   }, [user]);
+
+  const updateBankAccount = (id, field, value) => {
+    setBankAccounts(prev => prev.map(acc => acc.id === id ? { ...acc, [field]: value } : acc));
+  };
+
+  const setPrimaryAccount = (id) => {
+    setBankAccounts(prev => prev.map(acc => ({
+      ...acc,
+      is_primary: acc.id === id,
+    })));
+  };
+
+  const addBankAccount = () => {
+    if (bankAccounts.length >= 4) {
+      showToast('Maximum 4 bank accounts allowed');
+      return;
+    }
+    const newAcc = {
+      id: 'acc_' + Date.now(),
+      bank_name: '',
+      account_holder_name: bankAccounts[0]?.account_holder_name || '',
+      account_number: '',
+      branch: '',
+      branch_code: '',
+      country: 'LK',
+      extra_note: '',
+      is_primary: false,
+    };
+    setBankAccounts(prev => [...prev, newAcc]);
+  };
+
+  const removeBankAccount = (id) => {
+    if (bankAccounts.length <= 1) return;
+    setBankAccounts(prev => {
+      const remaining = prev.filter(acc => acc.id !== id);
+      if (!remaining.some(acc => acc.is_primary) && remaining.length > 0) {
+        remaining[0].is_primary = true;
+      }
+      return remaining;
+    });
+  };
 
   const [passwords, setPasswords] = useState({ new: '', confirm: '' });
   const [pwMsg, setPwMsg] = useState('');
@@ -67,9 +135,13 @@ export default function CreatorSettings() {
   const handleSavePayments = async () => {
     setSavingPay(true);
     try {
-      if ((form.payment_option === 'bank' || form.payment_option === 'both') &&
-          (!bankDetails.bank_name || !bankDetails.account_holder_name || !bankDetails.account_number)) {
-        throw new Error('Bank Name, Account Holder, and Account Number are required.');
+      if (form.payment_option === 'bank' || form.payment_option === 'both') {
+        for (let i = 0; i < bankAccounts.length; i++) {
+          const acc = bankAccounts[i];
+          if (!acc.bank_name || !acc.account_holder_name || !acc.account_number) {
+            throw new Error(`Please complete Bank Name, Holder, and Account Number for Bank #${i + 1}.`);
+          }
+        }
       }
       if (form.payment_option === 'link' && !form.payment_link) {
         throw new Error('Payment Link URL is required.');
@@ -78,10 +150,32 @@ export default function CreatorSettings() {
         payment_link: form.payment_link,
         payment_option: form.payment_option,
       }).eq('id', user.id);
+
       if (form.payment_option === 'bank' || form.payment_option === 'both') {
-        await supabase.from('creator_bank_details').upsert({
-          creator_id: user.id, ...bankDetails, updated_at: new Date().toISOString()
+        const primaryAcc = bankAccounts.find(a => a.is_primary) || bankAccounts[0] || {};
+        const basePayload = {
+          creator_id: user.id,
+          bank_name: primaryAcc.bank_name || '',
+          account_holder_name: primaryAcc.account_holder_name || '',
+          account_number: primaryAcc.account_number || '',
+          branch: primaryAcc.branch || '',
+          branch_code: primaryAcc.branch_code || '',
+          country: primaryAcc.country || 'LK',
+          extra_note: primaryAcc.extra_note || '',
+          updated_at: new Date().toISOString()
+        };
+
+        // Try upserting with bank_accounts JSON column
+        const { error: upsertErr } = await supabase.from('creator_bank_details').upsert({
+          ...basePayload,
+          bank_accounts: bankAccounts,
         }, { onConflict: 'creator_id' });
+
+        if (upsertErr) {
+          console.warn("Retrying bank save without bank_accounts column:", upsertErr.message);
+          const { error: fallbackErr } = await supabase.from('creator_bank_details').upsert(basePayload, { onConflict: 'creator_id' });
+          if (fallbackErr) throw fallbackErr;
+        }
       }
       await refreshProfile();
       showToast('Payment settings saved');
@@ -299,64 +393,154 @@ export default function CreatorSettings() {
 
             {/* Bank panel */}
             <div className={`s-panel${showBank ? ' show' : ''}`} id="bankPanel">
-              <h3 className="s-sub-heading">Bank account</h3>
-              <div className="s-grid">
-                <div className="s-field">
-                  <label htmlFor="bankName">Bank name <em>*</em></label>
-                  <select id="bankName" name="bankName" value={bankDetails.bank_name} onChange={e => setBankDetails({ ...bankDetails, bank_name: e.target.value })}>
-                    <option value="">Select a bank</option>
-                    <option value="Bank of Ceylon">Bank of Ceylon</option>
-                    <option value="Commercial Bank of Ceylon PLC">Commercial Bank</option>
-                    <option value="Hatton National Bank PLC">Hatton National Bank</option>
-                    <option value="People's Bank">People's Bank</option>
-                    <option value="Sampath Bank PLC">Sampath Bank</option>
-                    <option value="Seylan Bank PLC">Seylan Bank</option>
-                    <option value="Nations Trust Bank PLC">Nations Trust Bank</option>
-                    <option value="DFCC Bank PLC">DFCC Bank</option>
-                    <option value="National Development Bank PLC">National Development Bank</option>
-                    <option value="Amana Bank PLC">Amana Bank</option>
-                    <option value="Pan Asia Banking Corporation PLC">Pan Asia Banking</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="holder">Account holder name <em>*</em></label>
-                  <input id="holder" name="accountHolder" value={bankDetails.account_holder_name} onChange={e => setBankDetails({ ...bankDetails, account_holder_name: e.target.value })} />
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="accNo">Account number <em>*</em></label>
-                  <input id="accNo" name="accountNumber" inputMode="numeric" value={bankDetails.account_number} onChange={e => setBankDetails({ ...bankDetails, account_number: e.target.value })} />
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="country">Country <em>*</em></label>
-                  <select id="country" name="country" value={bankDetails.country} onChange={e => setBankDetails({ ...bankDetails, country: e.target.value })}>
-                    <option value="US">United States</option>
-                    <option value="LK">Sri Lanka</option>
-                    <option value="IN">India</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="AU">Australia</option>
-                    <option value="BD">Bangladesh</option>
-                  </select>
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="branch">Branch</label>
-                  <input id="branch" name="branch" value={bankDetails.branch} onChange={e => setBankDetails({ ...bankDetails, branch: e.target.value })} />
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="branchCode">Branch code</label>
-                  <input id="branchCode" name="branchCode" value={bankDetails.branch_code} onChange={e => setBankDetails({ ...bankDetails, branch_code: e.target.value })} />
-                </div>
-
-                <div className="s-field s-full">
-                  <label htmlFor="note">Extra note for learners</label>
-                  <textarea id="note" name="note" value={bankDetails.extra_note} onChange={e => setBankDetails({ ...bankDetails, extra_note: e.target.value })} placeholder="e.g. Please use your full name as the payment reference" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <div>
+                  <h3 className="s-sub-heading" style={{ margin: 0 }}>Bank accounts</h3>
+                  <p style={{ margin: '3px 0 0', fontSize: 13, color: 'var(--s-muted)' }}>
+                    Add multiple banks so learners can choose the most convenient one.
+                  </p>
                 </div>
               </div>
+
+              {bankAccounts.map((acc, index) => (
+                <div key={acc.id || index} className={`s-bank-card ${acc.is_primary ? 'is-primary' : ''}`}>
+                  <div className="s-bank-head">
+                    <div className="s-bank-title">
+                      <span>🏦 Bank #{index + 1}{acc.bank_name ? ` · ${acc.bank_name}` : ''}</span>
+                      {acc.is_primary && (
+                        <span className="s-bank-primary-badge">
+                          ⭐ Primary (Default)
+                        </span>
+                      )}
+                    </div>
+                    <div className="s-bank-actions">
+                      {!acc.is_primary && (
+                        <button
+                          type="button"
+                          className="s-btn-text"
+                          onClick={() => setPrimaryAccount(acc.id)}
+                        >
+                          Set as primary
+                        </button>
+                      )}
+                      {bankAccounts.length > 1 && (
+                        <button
+                          type="button"
+                          className="s-btn-text s-btn-text-danger"
+                          onClick={() => removeBankAccount(acc.id)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="s-grid">
+                    <div className="s-field">
+                      <label htmlFor={`bankName_${acc.id}`}>Bank name <em>*</em></label>
+                      <select
+                        id={`bankName_${acc.id}`}
+                        name="bankName"
+                        value={acc.bank_name}
+                        onChange={e => updateBankAccount(acc.id, 'bank_name', e.target.value)}
+                      >
+                        <option value="">Select a bank</option>
+                        <option value="Bank of Ceylon">Bank of Ceylon</option>
+                        <option value="Commercial Bank of Ceylon PLC">Commercial Bank</option>
+                        <option value="Hatton National Bank PLC">Hatton National Bank</option>
+                        <option value="People's Bank">People's Bank</option>
+                        <option value="Sampath Bank PLC">Sampath Bank</option>
+                        <option value="Seylan Bank PLC">Seylan Bank</option>
+                        <option value="Nations Trust Bank PLC">Nations Trust Bank</option>
+                        <option value="DFCC Bank PLC">DFCC Bank</option>
+                        <option value="National Development Bank PLC">National Development Bank</option>
+                        <option value="Amana Bank PLC">Amana Bank</option>
+                        <option value="Pan Asia Banking Corporation PLC">Pan Asia Banking</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor={`holder_${acc.id}`}>Account holder name <em>*</em></label>
+                      <input
+                        id={`holder_${acc.id}`}
+                        name="accountHolder"
+                        value={acc.account_holder_name}
+                        onChange={e => updateBankAccount(acc.id, 'account_holder_name', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor={`accNo_${acc.id}`}>Account number <em>*</em></label>
+                      <input
+                        id={`accNo_${acc.id}`}
+                        name="accountNumber"
+                        inputMode="numeric"
+                        value={acc.account_number}
+                        onChange={e => updateBankAccount(acc.id, 'account_number', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor={`country_${acc.id}`}>Country <em>*</em></label>
+                      <select
+                        id={`country_${acc.id}`}
+                        name="country"
+                        value={acc.country}
+                        onChange={e => updateBankAccount(acc.id, 'country', e.target.value)}
+                      >
+                        <option value="US">United States</option>
+                        <option value="LK">Sri Lanka</option>
+                        <option value="IN">India</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="AU">Australia</option>
+                        <option value="BD">Bangladesh</option>
+                      </select>
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor={`branch_${acc.id}`}>Branch</label>
+                      <input
+                        id={`branch_${acc.id}`}
+                        name="branch"
+                        value={acc.branch}
+                        onChange={e => updateBankAccount(acc.id, 'branch', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="s-field">
+                      <label htmlFor={`branchCode_${acc.id}`}>Branch code</label>
+                      <input
+                        id={`branchCode_${acc.id}`}
+                        name="branchCode"
+                        value={acc.branch_code}
+                        onChange={e => updateBankAccount(acc.id, 'branch_code', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="s-field s-full">
+                      <label htmlFor={`note_${acc.id}`}>Extra note for learners</label>
+                      <textarea
+                        id={`note_${acc.id}`}
+                        name="note"
+                        value={acc.extra_note}
+                        onChange={e => updateBankAccount(acc.id, 'extra_note', e.target.value)}
+                        placeholder="e.g. Please use your full name or reference code as the payment description"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {bankAccounts.length < 4 && (
+                <button
+                  type="button"
+                  className="s-add-bank-btn"
+                  onClick={addBankAccount}
+                >
+                  + Add another bank account ({bankAccounts.length}/4)
+                </button>
+              )}
             </div>
 
             <div className="s-actions">

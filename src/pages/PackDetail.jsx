@@ -274,6 +274,7 @@ function PaymentStep2({
   screenshot, setScreenshot,
   uploadError, setUploadError,
   uploading, paymentMethod, setPaymentMethod,
+  selectedBankName, setSelectedBankName,
   onBack, onSubmit,
 }) {
   const [activeTab, setActiveTab] = useState(() =>
@@ -281,6 +282,23 @@ function PaymentStep2({
   );
   const [copied, setCopied] = useState(false);
   const [dropOver, setDropOver] = useState(false);
+
+  const availableBanks = (Array.isArray(bankDetails?.bank_accounts) && bankDetails.bank_accounts.length > 0)
+    ? bankDetails.bank_accounts
+    : bankDetails?.bank_name ? [bankDetails] : [];
+
+  const [selectedBankIndex, setSelectedBankIndex] = useState(() => {
+    const primaryIdx = availableBanks.findIndex(b => b.is_primary);
+    return primaryIdx >= 0 ? primaryIdx : 0;
+  });
+
+  const currentBank = availableBanks[selectedBankIndex] || availableBanks[0] || bankDetails;
+
+  useEffect(() => {
+    if (currentBank?.bank_name && setSelectedBankName) {
+      setSelectedBankName(currentBank.bank_name);
+    }
+  }, [currentBank, setSelectedBankName]);
 
   const showBoth = creator?.payment_option === 'both';
   const showLink = creator?.payment_option === 'link' || creator?.payment_option === 'both';
@@ -295,7 +313,7 @@ function PaymentStep2({
   }
 
   async function handleCopy() {
-    try { await navigator.clipboard.writeText(bankDetails?.account_number || ''); } catch (_) {}
+    try { await navigator.clipboard.writeText(currentBank?.account_number || ''); } catch (_) {}
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   }
@@ -362,29 +380,53 @@ function PaymentStep2({
         {/* Bank Transfer pane */}
         {showBank && (!showBoth || activeTab === 'bank') && (
           <div className="pm-pane show">
-            {bankDetails ? (
+            {/* Multiple banks selector pills */}
+            {availableBanks.length > 1 && (
+              <div className="pm-bank-sel">
+                <span className="pm-bank-sel-title">Select a bank:</span>
+                <div className="pm-bank-pills">
+                  {availableBanks.map((b, idx) => (
+                    <button
+                      key={b.id || idx}
+                      type="button"
+                      className={`pm-bank-pill ${selectedBankIndex === idx ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedBankIndex(idx);
+                        if (setSelectedBankName) setSelectedBankName(b.bank_name || '');
+                      }}
+                    >
+                      <span>🏦</span>
+                      <span>{b.bank_name || `Bank #${idx + 1}`}</span>
+                      {b.is_primary && <span className="pm-bank-pill-badge">Primary</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {currentBank ? (
               <div className="pm-bank">
                 <dl>
                   <div>
                     <dt>Bank</dt>
-                    <dd className="pm-bn">{bankDetails.bank_name}</dd>
+                    <dd className="pm-bn">{currentBank.bank_name}</dd>
                   </div>
                   <div className="pm-two">
                     <div>
                       <dt>Account holder</dt>
-                      <dd>{bankDetails.account_holder_name}</dd>
+                      <dd>{currentBank.account_holder_name}</dd>
                     </div>
-                    {bankDetails.branch && (
+                    {currentBank.branch && (
                       <div>
                         <dt>Branch</dt>
-                        <dd>{bankDetails.branch}{bankDetails.branch_code ? ` (${bankDetails.branch_code})` : ''}</dd>
+                        <dd>{currentBank.branch}{currentBank.branch_code ? ` (${currentBank.branch_code})` : ''}</dd>
                       </div>
                     )}
                   </div>
                   <div>
                     <dt>Account number</dt>
                     <div className="pm-row">
-                      <dd className="pm-num">{bankDetails.account_number}</dd>
+                      <dd className="pm-num">{currentBank.account_number}</dd>
                       <button
                         className={`pm-copy${copied ? ' done' : ''}`}
                         type="button"
@@ -402,9 +444,9 @@ function PaymentStep2({
                 Bank details are not available. Please contact the creator.
               </p>
             )}
-            {bankDetails?.extra_note && (
+            {currentBank?.extra_note && (
               <div className="pm-note">
-                <b>Note:</b> {bankDetails.extra_note}
+                <b>Note:</b> {currentBank.extra_note}
               </div>
             )}
           </div>
@@ -435,7 +477,7 @@ function PaymentStep2({
                   checked={paymentMethod === 'bank'}
                   onChange={e => setPaymentMethod(e.target.value)}
                 />
-                <span>Manual bank transfer</span>
+                <span>Manual bank transfer{currentBank?.bank_name ? ` (${currentBank.bank_name})` : ''}</span>
               </label>
             )}
           </div>
@@ -519,6 +561,7 @@ export default function PackDetail() {
   const [paymentStep, setPaymentStep] = useState(1);
   const [refCode, setRefCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [selectedBankName, setSelectedBankName] = useState('');
 
   const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
 
@@ -650,19 +693,37 @@ export default function PackDetail() {
 
       const { data: urlData } = supabase.storage.from('payment-screenshots').getPublicUrl(path);
 
-      const { error: enrErr } = await supabase.from('enrollments').upsert({
+      const methodUsed = paymentMethod === 'bank'
+        ? (selectedBankName ? `bank: ${selectedBankName}` : 'bank')
+        : (paymentMethod || 'manual');
+
+      const enrollmentPayload = {
         id: enrollment?.id || undefined,
         learner_id: user.id,
         pack_id: pack?.id || id,
         status: 'pending',
         payment_screenshot_url: urlData?.publicUrl || null,
-        payment_method_used: paymentMethod || 'manual',
+        payment_method_used: methodUsed,
+        bank_name_used: paymentMethod === 'bank' ? selectedBankName : null,
         payment_reference_code: refCode,
         code_expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
         submitted_at: new Date().toISOString(),
-      }, { onConflict: enrollment?.id ? 'id' : undefined });
+      };
 
-      if (enrErr) throw enrErr;
+      const { error: enrErr } = await supabase.from('enrollments').upsert(
+        enrollmentPayload,
+        { onConflict: enrollment?.id ? 'id' : undefined }
+      );
+
+      if (enrErr) {
+        console.warn("Retrying enrollment upsert without bank_name_used:", enrErr.message);
+        delete enrollmentPayload.bank_name_used;
+        const { error: retryErr } = await supabase.from('enrollments').upsert(
+          enrollmentPayload,
+          { onConflict: enrollment?.id ? 'id' : undefined }
+        );
+        if (retryErr) throw retryErr;
+      }
 
       await supabase.from('notifications').insert({
         user_id: pack.creator_id,
@@ -1338,6 +1399,8 @@ export default function PackDetail() {
               uploading={uploading}
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
+              selectedBankName={selectedBankName}
+              setSelectedBankName={setSelectedBankName}
               onBack={() => setPaymentStep(1)}
               onSubmit={handlePaymentUpload}
             />

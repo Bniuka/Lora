@@ -270,6 +270,69 @@
   text-align: center !important;
 }
 
+/* ── Multiple Banks Selector ── */
+.lora-pay .pm-bank-sel {
+  margin-bottom: 14px !important;
+}
+
+.lora-pay .pm-bank-sel-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--pm-muted) !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.lora-pay .pm-bank-pills {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-pay .pm-bank-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: var(--pm-soft) !important;
+  border: 1.5px solid var(--pm-line) !important;
+  color: var(--pm-ink) !important;
+  border-radius: 99px !important;
+  padding: 7px 14px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s !important;
+  font-family: 'Figtree', sans-serif !important;
+}
+
+.lora-pay .pm-bank-pill:hover {
+  border-color: var(--pm-brand) !important;
+  background: #fff !important;
+}
+
+.lora-pay .pm-bank-pill.active {
+  background: var(--pm-brand) !important;
+  border-color: var(--pm-brand) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(47, 91, 255, 0.25) !important;
+}
+
+.lora-pay .pm-bank-pill.active .pm-bank-pill-badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+}
+
+.lora-pay .pm-bank-pill-badge {
+  font-size: 10px !important;
+  background: #e2e8f0 !important;
+  color: var(--pm-muted) !important;
+  padding: 2px 7px !important;
+  border-radius: 99px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
 /* ── Bank card ── */
 .lora-pay .pm-bank {
   background: linear-gradient(135deg, var(--pm-card1), var(--pm-card2)) !important;

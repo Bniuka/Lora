@@ -612,6 +612,107 @@
   background: rgba(255,255,255,0.2) !important;
 }
 
+/* ── Multiple Bank Accounts Manager ── */
+.lora-settings .s-bank-card {
+  background: #f8fafc;
+  border: 1.5px solid var(--s-line);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+
+.lora-settings .s-bank-card.is-primary {
+  border-color: var(--s-brand);
+  background: #fff;
+  box-shadow: 0 4px 18px -4px rgba(47, 91, 255, 0.12);
+}
+
+.lora-settings .s-bank-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--s-line);
+}
+
+.lora-settings .s-bank-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--s-ink);
+}
+
+.lora-settings .s-bank-primary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--s-brand-soft);
+  color: var(--s-brand);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.lora-settings .s-bank-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-settings .s-btn-text {
+  background: transparent;
+  border: 0;
+  color: var(--s-brand);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.lora-settings .s-btn-text:hover {
+  background: var(--s-brand-soft);
+}
+
+.lora-settings .s-btn-text-danger {
+  color: #d6334a;
+}
+
+.lora-settings .s-btn-text-danger:hover {
+  background: #fef2f2;
+}
+
+.lora-settings .s-add-bank-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+  color: var(--s-brand);
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.lora-settings .s-add-bank-btn:hover {
+  background: var(--s-brand-soft);
+  border-color: var(--s-brand);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lora-settings *, .lora-settings-toast {
     animation: none !important;

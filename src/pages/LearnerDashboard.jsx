@@ -191,7 +191,7 @@ export default function LearnerDashboard() {
                       </div>
 
                       {/* Bank transfer payment verification reference */}
-                      {isPending && enr.payment_method_used === 'bank' && (
+                      {isPending && (enr.payment_method_used === 'bank' || enr.payment_method_used?.startsWith('bank')) && (
                         <div
                           className="card-alert pending-bank"
                           onClick={(e) => {

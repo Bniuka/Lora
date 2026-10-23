@@ -254,7 +254,14 @@ export default function Enrollments() {
               const learnerEmail = x.profiles?.email || 'No email provided';
               const packTitle = x.session_packs?.title || 'Course Pack';
               const amount = `${x.session_packs?.currency || 'LKR'} ${x.session_packs?.price != null ? Number(x.session_packs.price).toFixed(0) : '0'}`;
-              const method = x.payment_method_used === 'bank' ? 'Bank transfer' : (x.payment_method_used || 'Payment link');
+              const isBank = x.payment_method_used === 'bank' || x.payment_method_used?.startsWith('bank');
+              let bankName = x.bank_name_used;
+              if (!bankName && x.payment_method_used?.includes(':')) {
+                bankName = x.payment_method_used.split(':')[1].trim();
+              }
+              const method = isBank 
+                ? (bankName ? `Bank transfer (${bankName})` : 'Bank transfer')
+                : (x.payment_method_used || 'Payment link');
               const submittedText = x.submitted_at ? format(new Date(x.submitted_at), 'MMM dd, yyyy · h:mm a') : 'N/A';
               const isPending = x.status === 'pending';
               const isProcessing = processing === x.id;
@@ -288,6 +295,11 @@ export default function Enrollments() {
                           <span className="ref-code" title="Payment reference code"> · {x.payment_reference_code}</span>
                         )}
                       </b>
+                      {isPending && bankName && (
+                        <div style={{ marginTop: 3, fontSize: 11.5, color: '#2563eb', fontWeight: 600 }}>
+                          🏦 Check {bankName} statement
+                        </div>
+                      )}
                     </div>
                     <div>
                       <small>Submitted</small>
