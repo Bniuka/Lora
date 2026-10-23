@@ -1,0 +1,515 @@
+/* ================================================================
+   Lora Signup Page — Light-mode-only Scoped Styles
+   All selectors scoped under .lora-signup-page to prevent collisions
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap');
+
+.lora-signup-page {
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --soft: #f4f6fb;
+  --ink: #0e1733;
+  --muted: #68728d;
+  --line: #e3e7f1;
+  --edge: #cdd8f6;
+  --brand: #2f5bff;
+  --brand2: #1d3fd1;
+  --brand-soft: #e9eeff;
+  --violet: #7a4dff;
+  --ok: #0f9d6b;
+  --bad: #d6334a;
+  --warn: #e08a00;
+
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  background: radial-gradient(760px 460px at 12% -5%, #cfdcff, transparent 70%),
+              radial-gradient(640px 440px at 100% 100%, #e4dbff, transparent 70%),
+              var(--bg) !important;
+  color: var(--ink) !important;
+  font: 16px/1.55 'Figtree', system-ui, sans-serif !important;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(40px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.lora-signup-page *,
+.lora-signup-page *::before,
+.lora-signup-page *::after {
+  box-sizing: border-box !important;
+}
+
+.lora-signup-page h1,
+.lora-signup-page h2 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.03em !important;
+  margin: 0 !important;
+}
+
+.lora-signup-page a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.lora-signup-page button,
+.lora-signup-page input,
+.lora-signup-page select,
+.lora-signup-page textarea {
+  font: inherit !important;
+  color: inherit !important;
+}
+
+.lora-signup-page :focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-signup-page .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  flex: none !important;
+}
+
+.lora-signup-page .top {
+  max-width: 560px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.lora-signup-page .back {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  padding: 10px 14px 10px 8px !important;
+  border-radius: 12px !important;
+  min-height: 44px !important;
+  transition: 0.15s !important;
+}
+
+.lora-signup-page .back:hover {
+  background: #fff !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup-page .back .ic {
+  transition: transform 0.2s !important;
+}
+
+.lora-signup-page .back:hover .ic {
+  transform: translateX(-3px) !important;
+}
+
+.lora-signup-page .logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  font: 800 22px 'Bricolage Grotesque', sans-serif !important;
+}
+
+.lora-signup-page .logo img {
+  height: 52px !important;
+  max-height: 54px !important;
+  max-width: 220px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.lora-signup-page .logo i {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  background: var(--brand) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-signup-page .logo svg {
+  width: 15px !important;
+  fill: #fff !important;
+}
+
+.lora-signup-page .wrap {
+  max-width: 560px !important;
+  margin: clamp(8px, 3vh, 28px) auto 0 !important;
+}
+
+.lora-signup-page .hd {
+  text-align: center !important;
+  margin-bottom: 24px !important;
+}
+
+.lora-signup-page .hd h1 {
+  font-size: clamp(32px, 6vw, 46px) !important;
+  line-height: 1.05 !important;
+}
+
+.lora-signup-page .hd h1 em {
+  font-style: normal !important;
+  background: linear-gradient(100deg, var(--brand), var(--violet)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+.lora-signup-page .hd p {
+  margin: 10px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 17px !important;
+}
+
+.lora-signup-page .card {
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, #fff, #f3f6ff) !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 2px 4px rgba(14, 23, 51, 0.06), 0 30px 60px -30px rgba(47, 91, 255, 0.45) !important;
+  padding: 34px 32px 26px !important;
+}
+
+.lora-signup-page .card:before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 6px !important;
+  background: linear-gradient(90deg, var(--brand), var(--violet)) !important;
+}
+
+.lora-signup-page .g {
+  display: grid !important;
+  gap: 18px !important;
+}
+
+.lora-signup-page .g2 {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+.lora-signup-page .f label {
+  display: block !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  margin-bottom: 7px !important;
+}
+
+.lora-signup-page .f label span {
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+}
+
+.lora-signup-page .in {
+  position: relative !important;
+}
+
+.lora-signup-page .in input,
+.lora-signup-page .in select,
+.lora-signup-page .in textarea {
+  width: 100% !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 14px !important;
+  padding: 13px 16px !important;
+  min-height: 52px !important;
+  outline: 0 !important;
+  transition: 0.15s !important;
+  font-size: 16px !important;
+}
+
+.lora-signup-page .in textarea {
+  min-height: 120px !important;
+  resize: vertical !important;
+}
+
+.lora-signup-page .in input:focus,
+.lora-signup-page .in select:focus,
+.lora-signup-page .in textarea:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-signup-page ::placeholder {
+  color: #9aa5c4 !important;
+}
+
+.lora-signup-page .in.err input,
+.lora-signup-page .in.err select,
+.lora-signup-page .in.err textarea {
+  border-color: var(--bad) !important;
+}
+
+.lora-signup-page .msg {
+  font-size: 13px !important;
+  margin: 6px 2px 0 !important;
+  color: var(--bad) !important;
+}
+
+/* Phone Input integration */
+.lora-signup-page .PhoneInput {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  background: #fff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 14px !important;
+  padding: 0 16px !important;
+  min-height: 52px !important;
+  transition: 0.15s !important;
+}
+
+.lora-signup-page .PhoneInput:focus-within {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 4px var(--brand-soft) !important;
+}
+
+.lora-signup-page .PhoneInput.err {
+  border-color: var(--bad) !important;
+}
+
+.lora-signup-page .PhoneInputInput {
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  font-size: 16px !important;
+  padding: 13px 8px !important;
+  width: 100% !important;
+  min-height: 50px !important;
+  color: var(--ink) !important;
+}
+
+.lora-signup-page .PhoneInputCountry {
+  margin-right: 8px !important;
+}
+
+.lora-signup-page .PhoneInputCountrySelect {
+  cursor: pointer !important;
+}
+
+.lora-signup-page .info {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 9px !important;
+  margin-top: 8px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  border-radius: 12px !important;
+  padding: 9px 12px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+}
+
+.lora-signup-page .info .ic {
+  width: 17px !important;
+  height: 17px !important;
+  margin-top: 1px !important;
+}
+
+.lora-signup-page .eye {
+  position: absolute !important;
+  right: 6px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border: 0 !important;
+  background: none !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  border-radius: 12px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-signup-page .eye:hover {
+  color: var(--brand) !important;
+  background: var(--brand-soft) !important;
+}
+
+.lora-signup-page .pw input {
+  padding-right: 54px !important;
+}
+
+.lora-signup-page .meter {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+  margin-top: 10px !important;
+}
+
+.lora-signup-page .meter i {
+  height: 6px !important;
+  border-radius: 99px !important;
+  background: #dde4f6 !important;
+  transition: 0.25s !important;
+}
+
+.lora-signup-page .lvl {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 6px !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+}
+
+.lora-signup-page .lvl b {
+  font-weight: 700 !important;
+}
+
+.lora-signup-page .meter.l1 i:nth-child(-n+1) { background: var(--bad) !important; }
+.lora-signup-page .meter.l2 i:nth-child(-n+2) { background: var(--warn) !important; }
+.lora-signup-page .meter.l3 i:nth-child(-n+3) { background: #7ac143 !important; }
+.lora-signup-page .meter.l4 i:nth-child(-n+4) { background: var(--ok) !important; }
+
+.lora-signup-page .lvl.l1 b { color: var(--bad) !important; }
+.lora-signup-page .lvl.l2 b { color: var(--warn) !important; }
+.lora-signup-page .lvl.l3 b { color: #5a9a2c !important; }
+.lora-signup-page .lvl.l4 b { color: var(--ok) !important; }
+
+.lora-signup-page .cnt {
+  float: right !important;
+  color: var(--muted) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+
+.lora-signup-page .cnt.max {
+  color: var(--bad) !important;
+}
+
+.lora-signup-page .rem {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  cursor: pointer !important;
+  min-height: 44px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
+.lora-signup-page .rem input {
+  position: absolute !important;
+  opacity: 0 !important;
+}
+
+.lora-signup-page .rem .bx {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 8px !important;
+  border: 2px solid var(--edge) !important;
+  background: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  transition: 0.15s !important;
+  flex: none !important;
+}
+
+.lora-signup-page .rem .bx .ic {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: #fff !important;
+  stroke-width: 3.4 !important;
+  opacity: 0 !important;
+}
+
+.lora-signup-page .rem input:checked + .bx {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+}
+
+.lora-signup-page .rem input:checked + .bx .ic {
+  opacity: 1 !important;
+}
+
+.lora-signup-page .rem input:focus-visible + .bx {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+}
+
+.lora-signup-page .btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  min-height: 56px !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+  cursor: pointer !important;
+  background: linear-gradient(135deg, var(--brand), #4a4bff) !important;
+  color: #fff !important;
+  box-shadow: 0 16px 30px -14px rgba(47, 91, 255, 0.95) !important;
+  transition: 0.2s !important;
+  margin-top: 4px !important;
+}
+
+.lora-signup-page .btn:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.06) !important;
+}
+
+.lora-signup-page .btn:disabled {
+  opacity: 0.7 !important;
+  cursor: wait !important;
+  transform: none !important;
+}
+
+.lora-signup-page .btn .sp {
+  display: inline-block !important;
+  width: 18px !important;
+  height: 18px !important;
+  border: 2.5px solid rgba(255, 255, 255, 0.4) !important;
+  border-top-color: #fff !important;
+  border-radius: 50% !important;
+  animation: lora-sp 0.7s linear infinite !important;
+}
+
+@keyframes lora-sp {
+  to { transform: rotate(360deg); }
+}
+
+.lora-signup-page .have {
+  text-align: center !important;
+  margin: 20px 0 0 !important;
+  color: var(--muted) !important;
+}
+
+.lora-signup-page .have a {
+  color: var(--brand) !important;
+  font-weight: 700 !important;
+  padding: 8px 4px !important;
+}
+
+.lora-signup-page .have a:hover {
+  text-decoration: underline !important;
+}
+
+@media(max-width: 560px) {
+  .lora-signup-page .card {
+    padding: 28px 18px 22px !important;
+    border-radius: 24px !important;
+  }
+  .lora-signup-page .g2 {
+    grid-template-columns: 1fr !important;
+  }
+  .lora-signup-page .hd p {
+    font-size: 16px !important;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  .lora-signup-page * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

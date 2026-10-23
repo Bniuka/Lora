@@ -1,29 +1,29 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
-import creatorLogo from '../../Logo/Creator logo.png';
+import AppLogo from '../components/AppLogo';
+import './signup-page.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
 const schema = z.object({
-  firstName: z.string().min(1, 'Required'),
-  lastName: z.string().min(1, 'Required'),
-  email: z.string().email('Invalid email'),
-  password: z.string().min(6, 'At least 6 characters'),
-  about: z.string().min(10, 'At least 10 characters').max(300, 'Max 300 characters'),
-  category: z.string().min(1, 'Select a category'),
+  firstName: z.string().min(1, 'Enter your first name'),
+  lastName: z.string().min(1, 'Enter your last name'),
+  email: z.string().email('Enter a valid email address'),
+  password: z.string().min(6, 'At least 6 characters required'),
+  category: z.string().min(1, 'Please select your category'),
+  about: z.string().min(10, 'At least 10 characters required').max(300, 'Max 300 characters'),
 });
 
 function getPasswordStrength(pw) {
   let score = 0;
+  if (!pw) return 0;
   if (pw.length >= 6) score++;
   if (pw.length >= 10) score++;
   if (/[A-Z]/.test(pw)) score++;
@@ -31,9 +31,6 @@ function getPasswordStrength(pw) {
   if (/[^A-Za-z0-9]/.test(pw)) score++;
   return score;
 }
-
-const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
-const strengthColors = ['', '#C0392B', '#E67E22', '#E67E22', '#2D7A4F', '#2D7A4F'];
 
 function friendlyError(msg) {
   if (!msg) return 'Something went wrong. Please try again.';
@@ -44,13 +41,14 @@ function friendlyError(msg) {
     return 'An account with this email already exists. Try logging in.';
   if (lower.includes('invalid login') || lower.includes('invalid email or password'))
     return 'Incorrect email or password. Please try again.';
-  return 'Something went wrong. Please try again.';
+  return msg;
 }
 
 export default function CreatorSignup() {
   const { signUp, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => localStorage.getItem('lora_remember_me') !== 'false');
   const [loading, setLoading] = useState(false);
@@ -64,10 +62,17 @@ export default function CreatorSignup() {
     }
   }, [user, profile, authLoading, navigate]);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       email: localStorage.getItem('lora_remembered_email') || '',
+      category: '',
+      about: '',
     },
   });
 
@@ -75,8 +80,33 @@ export default function CreatorSignup() {
   const strength = getPasswordStrength(password);
   const aboutLength = (watch('about') || '').length;
 
+  const meterClass = !password
+    ? ''
+    : strength <= 1
+    ? 'l1'
+    : strength === 2
+    ? 'l2'
+    : strength === 3
+    ? 'l3'
+    : 'l4';
+
+  const strengthText = !password
+    ? ''
+    : strength <= 1
+    ? 'Weak'
+    : strength === 2
+    ? 'Fair'
+    : strength === 3
+    ? 'Good'
+    : 'Strong';
+
   const onSubmit = async (data) => {
-    if (!phone) { setError('Phone number is required'); return; }
+    if (!phone) {
+      setPhoneError(true);
+      setError('Phone number is required');
+      return;
+    }
+    setPhoneError(false);
     setLoading(true);
     setError('');
 
@@ -98,7 +128,7 @@ export default function CreatorSignup() {
         category: data.category,
       });
 
-      navigate('/verify-email', { state: { email: data.email } });
+      navigate('/verify-email', { state: { email: data.email, role: 'creator' } });
     } catch (err) {
       console.error('[CreatorSignup] error:', err.message, err);
       setError(friendlyError(err.message));
@@ -109,150 +139,229 @@ export default function CreatorSignup() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
-        <div className="max-w-lg w-full relative z-10">
-          <Link to="/signup" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-6">
-            <ArrowLeft size={16} /> Back
+      <div className="lora-signup-page">
+        {/* Top bar with Back and Logo */}
+        <div className="top">
+          <Link className="back" to="/signup">
+            <svg className="ic" viewBox="0 0 24 24">
+              <path d="M19 12H5M11 6l-6 6 6 6" />
+            </svg>
+            Back
           </Link>
+          <div className="logo">
+            <AppLogo role="creator" to="/" height={52} />
+          </div>
+        </div>
 
-          <div className="flex justify-center mb-6">
-            <Link to="/">
-              <img src={creatorLogo} alt="Lora Creator" className="h-14 w-auto object-contain" />
-            </Link>
+        <div className="wrap">
+          {/* Header */}
+          <div className="hd">
+            <h1>
+              Create your <em>Creator</em> account
+            </h1>
+            <p>Start teaching and earning on Lora</p>
           </div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
-              Create your <span className="text-[#2563EB]">Creator</span> account
-            </h1>
-            <p className="text-sm text-[#475569]">Start teaching and earning on Lora</p>
-          </motion.div>
-
-          <motion.form
-            onSubmit={handleSubmit(onSubmit)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
-          >
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-[#C0392B] rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
-            )}
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="form-label">First Name</label>
-                <input {...register('firstName')} className="input-field" placeholder="John" />
-                {errors.firstName && <p className="form-error">{errors.firstName.message}</p>}
-              </div>
-              <div>
-                <label className="form-label">Last Name</label>
-                <input {...register('lastName')} className="input-field" placeholder="Doe" />
-                {errors.lastName && <p className="form-error">{errors.lastName.message}</p>}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="form-label">Phone Number</label>
-              <PhoneInput
-                international
-                defaultCountry="LK"
-                value={phone}
-                onChange={setPhone}
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="form-label">Email Address</label>
-              <input {...register('email')} type="email" className="input-field" placeholder="you@example.com" />
-              {errors.email && <p className="form-error">{errors.email.message}</p>}
-              <p className="mt-2 text-xs text-[#2563EB] bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2 flex items-start gap-2">
-                <span className="shrink-0 mt-0.5">📧</span>
-                We will send a verification email to this address. Please make sure it's correct.
-              </p>
-            </div>
-
-            <div className="mb-6">
-              <label className="form-label">Password</label>
-              <div className="relative">
-                <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  className="input-field pr-12"
-                  placeholder="Min 6 characters"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A6B8] hover:text-[#0F172A] transition-colors"
+          {/* Signup Form Card */}
+          <form className="card" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className="g">
+              {error && (
+                <div
+                  style={{
+                    background: '#fef2f2',
+                    border: '1.5px solid #fecdd3',
+                    color: '#be123c',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              {password && (
-                <div className="mt-2">
-                  <div className="strength-bar">
-                    <div
-                      className="strength-fill"
-                      style={{
-                        width: `${(strength / 5) * 100}%`,
-                        background: strengthColors[strength],
-                      }}
-                    />
-                  </div>
-                  <p className="text-xs mt-1" style={{ color: strengthColors[strength] }}>
-                    {strengthLabels[strength]}
-                  </p>
+                  {error}
                 </div>
               )}
-              {errors.password && <p className="form-error">{errors.password.message}</p>}
-            </div>
 
+              {/* First Name & Last Name */}
+              <div className="g g2">
+                <div className="f">
+                  <label htmlFor="fn">First name</label>
+                  <div className={`in ${errors.firstName ? 'err' : ''}`}>
+                    <input
+                      id="fn"
+                      {...register('firstName')}
+                      placeholder="John"
+                      autoComplete="given-name"
+                      required
+                    />
+                  </div>
+                  {errors.firstName && <div className="msg">{errors.firstName.message}</div>}
+                </div>
 
-            <div className="mb-6">
-              <label className="form-label">Category</label>
-              <select {...register('category')} className="select-field">
-                <option value="">Select your category</option>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              {errors.category && <p className="form-error">{errors.category.message}</p>}
-            </div>
+                <div className="f">
+                  <label htmlFor="ln">Last name</label>
+                  <div className={`in ${errors.lastName ? 'err' : ''}`}>
+                    <input
+                      id="ln"
+                      {...register('lastName')}
+                      placeholder="Doe"
+                      autoComplete="family-name"
+                      required
+                    />
+                  </div>
+                  {errors.lastName && <div className="msg">{errors.lastName.message}</div>}
+                </div>
+              </div>
 
-            <div className="mb-6">
-              <label className="form-label">About You ({aboutLength}/300)</label>
-              <textarea
-                {...register('about')}
-                className="textarea-field"
-                placeholder="Tell learners about your expertise and teaching style..."
-                maxLength={300}
-                rows={3}
-              />
-              {errors.about && <p className="form-error">{errors.about.message}</p>}
-            </div>
+              {/* Phone number */}
+              <div className="f">
+                <label htmlFor="ph">Phone number</label>
+                <div className={`PhoneInput ${phoneError ? 'err' : ''}`}>
+                  <PhoneInput
+                    id="ph"
+                    international
+                    defaultCountry="LK"
+                    value={phone}
+                    onChange={(val) => {
+                      setPhone(val || '');
+                      if (val) setPhoneError(false);
+                    }}
+                    placeholder="70 123 4567"
+                  />
+                </div>
+                {phoneError && <div className="msg" style={{ display: 'block' }}>Phone number is required</div>}
+              </div>
 
-            <div className="mb-6">
-              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+              {/* Email address */}
+              <div className="f">
+                <label htmlFor="em">Email address</label>
+                <div className={`in ${errors.email ? 'err' : ''}`}>
+                  <input
+                    id="em"
+                    {...register('email')}
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+                {errors.email && <div className="msg">{errors.email.message}</div>}
+                <div className="info">
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m4 8 8 6 8-6" />
+                  </svg>
+                  We will send a verification email to this address. Please make sure it's correct.
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="f">
+                <label htmlFor="pw">Password</label>
+                <div className={`in pw ${errors.password ? 'err' : ''}`}>
+                  <input
+                    id="pw"
+                    {...register('password')}
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    placeholder="Create a password"
+                    required
+                  />
+                  <button
+                    className="eye"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <svg className="ic" viewBox="0 0 24 24">
+                      {showPassword ? (
+                        <>
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </>
+                      ) : (
+                        <>
+                          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </>
+                      )}
+                    </svg>
+                  </button>
+                </div>
+                {errors.password && <div className="msg">{errors.password.message}</div>}
+
+                <div className={`meter ${meterClass}`}>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+                <div className={`lvl ${meterClass}`}>
+                  <span>Password strength</span>
+                  <b>{strengthText}</b>
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="f">
+                <label htmlFor="cat">Category</label>
+                <div className={`in ${errors.category ? 'err' : ''}`}>
+                  <select id="cat" {...register('category')} required>
+                    <option value="" disabled>
+                      Select your category
+                    </option>
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors.category && <div className="msg">{errors.category.message}</div>}
+              </div>
+
+              {/* About you */}
+              <div className="f">
+                <label htmlFor="ab">
+                  About you <span className={`cnt ${aboutLength >= 300 ? 'max' : ''}`}>{aboutLength}/300</span>
+                </label>
+                <div className={`in ${errors.about ? 'err' : ''}`}>
+                  <textarea
+                    id="ab"
+                    {...register('about')}
+                    maxLength={300}
+                    placeholder="Tell learners about your expertise and teaching style..."
+                  ></textarea>
+                </div>
+                {errors.about && <div className="msg">{errors.about.message}</div>}
+              </div>
+
+              {/* Remember Me Checkbox */}
+              <label className="rem">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#2563EB] border-[#CBD5E1] focus:ring-[#2563EB] cursor-pointer accent-[#2563EB]"
                 />
-                <span className="text-sm text-[#475569] group-hover:text-[#0F172A] transition-colors">
-                  Remember me on this device
+                <span className="bx">
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="m5 12 5 5 9-10" />
+                  </svg>
                 </span>
+                Remember me on this device
               </label>
+
+              {/* Submit Button */}
+              <button className={`btn ${loading ? 'load' : ''}`} type="submit" disabled={loading}>
+                {loading && <span className="sp"></span>}
+                <span>{loading ? 'Creating account…' : 'Create Creator Account'}</span>
+              </button>
             </div>
+          </form>
 
-            <button type="submit" className="btn-primary w-full py-4 mt-2 text-base" disabled={loading}>
-              {loading ? <Loader2 size={18} className="animate-spin" /> : 'Create Creator Account'}
-            </button>
-
-            <p className="text-center text-sm text-[#475569] mt-6">
-              Already have an account?{' '}
-              <Link to="/login" className="text-[#2563EB] font-semibold hover:underline">Log in</Link>
-            </p>
-          </motion.form>
+          {/* Login prompt */}
+          <p className="have">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
         </div>
       </div>
     </PageTransition>
