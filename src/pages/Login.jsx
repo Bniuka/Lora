@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import './signup-page.css';
 
 function friendlyError(msg) {
   if (!msg) return 'Something went wrong. Please try again.';
@@ -72,115 +71,162 @@ export default function Login() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
-        <div className="max-w-md w-full relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-6">
-            <ArrowLeft size={16} /> Home
+      <div className="lora-signup-page">
+        {/* Top bar with Back and Logo */}
+        <div className="top">
+          <Link className="back" to="/">
+            <svg className="ic" viewBox="0 0 24 24">
+              <path d="M19 12H5M11 6l-6 6 6 6" />
+            </svg>
+            Home
           </Link>
-
-          <div className="flex justify-center mb-6">
+          <div className="logo">
             <AppLogo to="/" height={52} />
           </div>
+        </div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
-              Welcome back
+        <div className="wrap">
+          {/* Header */}
+          <div className="hd">
+            <h1>
+              Welcome <em>Back</em>
             </h1>
-            <p className="text-sm text-[#475569]">Log in to your Lora account</p>
-          </motion.div>
+            <p>Log in to your Lora account</p>
+          </div>
 
-          {location.state?.verified && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] text-[#16A34A] text-sm font-medium flex items-center gap-3"
-            >
-              <CheckCircle2 size={18} className="shrink-0" />
-              Email verified successfully! You can now log in.
-            </motion.div>
-          )}
-
-          <motion.form
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
-          >
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-[#C0392B] rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
-            )}
-
-            <div className="mb-6">
-              <label className="form-label">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-2">
-                <label className="form-label mb-0">Password</label>
-                <Link to="/reset-password" className="text-sm text-[#2563EB] font-medium hover:underline">
-                  Forgot Password?
-                </Link>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pr-12"
-                  placeholder="Your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A6B8] hover:text-[#0F172A] transition-colors"
+          {/* Login Form Card */}
+          <form className="card" onSubmit={handleSubmit} noValidate>
+            <div className="g">
+              {location.state?.verified && (
+                <div
+                  style={{
+                    background: '#f0fdf4',
+                    border: '1.5px solid #bbf7d0',
+                    color: '#16a34a',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                  }}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
+                  <svg className="ic" viewBox="0 0 24 24" style={{ stroke: '#16a34a' }}>
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Email verified successfully! You can now log in.</span>
+                </div>
+              )}
 
-            <div className="flex items-center justify-between mb-6">
-              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+              {error && (
+                <div
+                  style={{
+                    background: '#fef2f2',
+                    border: '1.5px solid #fecdd3',
+                    color: '#be123c',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              {/* Email Address */}
+              <div className="f">
+                <label htmlFor="login-email">Email address</label>
+                <div className="in">
+                  <input
+                    id="login-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="f">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
+                  <label htmlFor="login-password" style={{ margin: 0 }}>Password</label>
+                  <Link
+                    to="/reset-password"
+                    style={{
+                      fontSize: 13.5,
+                      color: 'var(--brand)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="in pw">
+                  <input
+                    id="login-password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    className="eye"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <svg className="ic" viewBox="0 0 24 24">
+                      {showPassword ? (
+                        <>
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </>
+                      ) : (
+                        <>
+                          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </>
+                      )}
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me Checkbox */}
+              <label className="rem">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#2563EB] border-[#CBD5E1] focus:ring-[#2563EB] cursor-pointer accent-[#2563EB]"
                 />
-                <span className="text-sm text-[#475569] group-hover:text-[#0F172A] transition-colors">
-                  Remember me
+                <span className="bx">
+                  <svg className="ic" viewBox="0 0 24 24">
+                    <path d="m5 12 5 5 9-10" />
+                  </svg>
                 </span>
+                Remember me on this device
               </label>
+
+              {/* Submit Button */}
+              <button className={`btn ${loading ? 'load' : ''}`} type="submit" disabled={loading}>
+                {loading && <span className="sp"></span>}
+                <span>{loading ? (step || 'Signing in…') : 'Log In'}</span>
+              </button>
             </div>
+          </form>
 
-            <button type="submit" className="btn-primary w-full py-4 text-base" disabled={loading}>
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 size={18} className="animate-spin" />
-                  {step || 'Signing in...'}
-                </span>
-              ) : (
-                'Log In'
-              )}
-            </button>
-
-            <p className="text-center text-sm text-[#475569] mt-6">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-[#2563EB] font-semibold hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </motion.form>
+          {/* Sign up prompt */}
+          <p className="have">
+            Don't have an account? <Link to="/signup">Sign up</Link>
+          </p>
         </div>
       </div>
     </PageTransition>
