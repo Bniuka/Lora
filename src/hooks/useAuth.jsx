@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { isUserAdmin } from '../lib/admin';
 
 const AuthContext = createContext(null);
 
@@ -28,6 +29,10 @@ export function AuthProvider({ children }) {
 
           setProfile(profileData);
           if (profileData.role === 'creator') {
+            if (isUserAdmin(profileData.email) && creatorData) {
+              creatorData.subscription_status = 'active';
+              creatorData.next_billing_date = null;
+            }
             setCreatorProfile(creatorData);
           }
         } else {

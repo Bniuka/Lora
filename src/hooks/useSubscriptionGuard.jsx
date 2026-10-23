@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { supabase } from '../lib/supabase';
+import { isUserAdmin } from '../lib/admin';
 
 export function useSubscriptionGuard() {
-  const { creatorProfile, refreshProfile } = useAuth();
+  const { user, creatorProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -12,6 +13,18 @@ export function useSubscriptionGuard() {
     let isMounted = true;
 
     const checkSubscription = async () => {
+      // 👑 Founder Immunity: The founder has permanent lifetime VIP access and is never blocked
+      if (isUserAdmin(user?.email)) {
+        if (creatorProfile && (creatorProfile.subscription_status !== 'active' || creatorProfile.next_billing_date !== null)) {
+          await supabase
+            .from('creator_profiles')
+            .update({ subscription_status: 'active', next_billing_date: null })
+            .eq('id', user.id);
+          await refreshProfile();
+        }
+        return;
+      }
+
       if (!creatorProfile) return;
 
       const now = new Date();

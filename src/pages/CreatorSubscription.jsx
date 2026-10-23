@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { isUserAdmin } from '../lib/admin';
 import AppLogo from '../components/AppLogo';
 import './creator-subscription.css';
 
@@ -11,12 +12,19 @@ const AMOUNT_LKR = 3499;
 const AMOUNT_USD = (AMOUNT_LKR * LKR_TO_USD_RATE).toFixed(2);
 
 export default function CreatorSubscription() {
-  const { creatorProfile, refreshProfile } = useAuth();
+  const { user, creatorProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [error, setError] = useState('');
+
+  // 👑 Founders have permanent Lifetime VIP access and never need to subscribe
+  useEffect(() => {
+    if (isUserAdmin(user?.email)) {
+      navigate('/creator/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   // Wait for profile to load before determining trial status
   if (creatorProfile === undefined) {
