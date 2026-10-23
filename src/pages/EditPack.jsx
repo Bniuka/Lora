@@ -1,17 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import {
-  ArrowLeft, Save, Upload, X, Plus, Trash2, Video,
-  Clock, Loader2, Sparkles, ExternalLink, Phone
-} from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { PageTransition, ToggleSwitch, GoldBadge, Skeleton } from '../components/ui';
+import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug } from '../lib/utils';
+import './edit-pack.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
@@ -21,12 +18,24 @@ export default function EditPack() {
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [pack, setPack] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbPreview, setThumbPreview] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastMsg('');
+    }, 2800);
+  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -51,24 +60,56 @@ export default function EditPack() {
     fetch();
   }, [id]);
 
-  const updatePack = (field, value) => setPack(prev => ({ ...prev, [field]: value }));
-  const updateSession = (idx, field, value) =>
+  const updatePack = (field, value) => {
+    setPack(prev => ({ ...prev, [field]: value }));
+    setIsDirty(true);
+  };
+
+  const updateSession = (idx, field, value) => {
     setSessions(prev => prev.map((s, i) => i === idx ? { ...s, [field]: value } : s));
+    setIsDirty(true);
+  };
+
+  const toggleFreePreview = (idx) => {
+    setSessions(prev => prev.map((s, i) => i === idx ? { ...s, is_free_session: !s.is_free_session } : s));
+    setIsDirty(true);
+  };
 
   const addSession = () => {
-    setSessions(prev => [...prev, {
-      id: null, pack_id: id, title: '', zoom_link: '',
-      scheduled_at: '', duration_minutes: 60,
-      order_index: prev.length, is_free_session: false, recording_url: null, _isNew: true,
-    }]);
+    setSessions(prev => [
+      ...prev,
+      {
+        id: null,
+        pack_id: id,
+        title: '',
+        zoom_link: '',
+        scheduled_at: '',
+        duration_minutes: 60,
+        order_index: prev.length,
+        is_free_session: false,
+        recording_url: null,
+        _isNew: true,
+      },
+    ]);
+    setIsDirty(true);
+    setTimeout(() => {
+      const list = document.getElementById('sessions');
+      if (list?.lastElementChild) {
+        list.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        list.lastElementChild.querySelector('input')?.focus({ preventScroll: true });
+      }
+    }, 100);
   };
 
   const removeSession = async (idx) => {
+    if (!window.confirm(`Delete session ${idx + 1}?`)) return;
     const session = sessions[idx];
     if (session.id && !session._isNew) {
       await supabase.from('sessions').delete().eq('id', session.id);
     }
     setSessions(prev => prev.filter((_, i) => i !== idx));
+    setIsDirty(true);
+    showToast(`Session ${idx + 1} deleted`);
   };
 
   const handleThumbnail = (e) => {
@@ -76,6 +117,14 @@ export default function EditPack() {
     if (!file) return;
     setThumbnail(file);
     setThumbPreview(URL.createObjectURL(file));
+    setIsDirty(true);
+  };
+
+  const handleRemoveThumbnail = () => {
+    setThumbnail(null);
+    setThumbPreview(null);
+    updatePack('thumbnail_url', null);
+    setIsDirty(true);
   };
 
   const handleSave = async () => {
@@ -138,181 +187,396 @@ export default function EditPack() {
         }
       }
 
-      navigate('/creator/packs');
+      setIsDirty(false);
+      showToast('Pack saved successfully');
+      setTimeout(() => {
+        navigate('/creator/packs');
+      }, 700);
     } catch (err) {
+      showToast('Error: ' + err.message);
       alert('Error: ' + err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="space-y-4 p-8"><Skeleton className="h-10 w-48" /><Skeleton className="h-64" /></div>;
-  if (!pack) return <div className="p-8 text-center text-[#94A6B8]">Pack not found</div>;
+  if (loading) {
+    return (
+      <div className="lora-edit">
+        <div className="page">
+          <Skeleton className="h-10 w-48" style={{ height: 40, width: 220, borderRadius: 12, marginBottom: 20 }} />
+          <Skeleton className="h-64 w-full" style={{ height: 260, borderRadius: 24, marginBottom: 20 }} />
+          <Skeleton className="h-48 w-full" style={{ height: 200, borderRadius: 24 }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (!pack) {
+    return (
+      <div className="lora-edit">
+        <div className="page" style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--muted)' }}>
+          <h2>Pack not found</h2>
+          <Link to="/creator/packs" className="backl" style={{ marginTop: 20, display: 'inline-flex' }}>
+            Back to packs
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const now = new Date();
 
   return (
     <PageTransition>
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <Link to="/creator/packs" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB]">
-            <ArrowLeft size={16} /> Back to Packs
-          </Link>
-          <button onClick={handleSave} className="btn-primary text-sm py-3 px-6" disabled={saving}>
-            {saving ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Save Changes</>}
-          </button>
+      <div className="lora-edit">
+        {/* Sticky action bar */}
+        <div className="actions">
+          <div className="in">
+            <Link to="/creator/packs" className="backl">
+              <svg className="ic" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+              <span>Back to packs</span>
+            </Link>
+            {isDirty && <span className="dirty show">Unsaved changes</span>}
+            <button className="save" id="save" type="button" onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <Loader2 className="ic animate-spin" />
+              ) : (
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M5 3h11l4 4v14H5z" />
+                  <path d="M8 3v6h8V3M8 21v-7h8v7" />
+                </svg>
+              )}
+              <span>{saving ? 'Saving...' : 'Save changes'}</span>
+            </button>
+          </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-[#0F172A] mb-8" style={{ fontFamily: 'var(--font-heading)' }}>Edit Pack</h1>
+        {/* Main page form container */}
+        <div className="page">
+          <h1>Edit pack</h1>
 
-        <div className="space-y-8">
-          {/* Basic Info */}
-          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] space-y-5">
-            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-4">Basic Info</h2>
-            <div>
-              <label className="form-label">Title</label>
-              <input className="input-field" value={pack.title} onChange={e => updatePack('title', e.target.value)} />
-            </div>
-            <div>
-              <label className="form-label">Description</label>
-              <textarea className="textarea-field" rows={3} value={pack.description}
-                onChange={e => updatePack('description', e.target.value)} />
-            </div>
-            <div className="grid grid-cols-3 gap-5">
+          {/* Section 1: Basic Info */}
+          <section className="card">
+            <div className="sh">
+              <span className="ib">
+                <svg className="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+              </span>
               <div>
-                <label className="form-label">Category</label>
-                <select className="select-field" value={pack.category}
-                  onChange={e => updatePack('category', e.target.value)}>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="form-label">Price</label>
-                <input type="number" className="input-field" value={pack.price}
-                  onChange={e => updatePack('price', e.target.value)} />
-              </div>
-              <div>
-                <label className="form-label">Currency</label>
-                <select className="select-field" value={pack.currency}
-                  onChange={e => updatePack('currency', e.target.value)}>
-                  {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <h2>Basic info</h2>
+                <p>The title, description and price learners see.</p>
               </div>
             </div>
-          </div>
-
-          {/* Thumbnail */}
-          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-5">Thumbnail</h2>
-            {thumbPreview ? (
-              <div className="relative rounded-lg overflow-hidden border border-[#E2E8F0]">
-                <img src={thumbPreview} alt="Thumbnail" className="w-full h-44 object-cover" />
-                <button onClick={() => { setThumbnail(null); setThumbPreview(null); updatePack('thumbnail_url', null); }}
-                  className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-[#475569] hover:text-[#C0392B] shadow-sm">
-                  <X size={14} />
-                </button>
+            <div className="g">
+              <div className="f">
+                <label htmlFor="title">Title</label>
+                <input
+                  id="title"
+                  name="title"
+                  value={pack.title || ''}
+                  onChange={e => updatePack('title', e.target.value)}
+                  placeholder="e.g. Master React & Node.js"
+                  required
+                />
               </div>
-            ) : (
-              <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-[#E2E8F0] rounded-xl cursor-pointer hover:border-[#2563EB]/40 transition-colors bg-[#F8FAFC]">
-                <Upload size={24} className="text-[#94A6B8] mb-2" />
-                <span className="text-sm text-[#94A6B8]">Upload thumbnail</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleThumbnail} />
-              </label>
-            )}
-          </div>
+              <div className="f">
+                <label htmlFor="desc">Description</label>
+                <textarea
+                  id="desc"
+                  name="description"
+                  value={pack.description || ''}
+                  onChange={e => updatePack('description', e.target.value)}
+                  placeholder="Detailed overview of what students will learn..."
+                />
+              </div>
+              <div className="g g3">
+                <div className="f">
+                  <label htmlFor="cat">Category</label>
+                  <select
+                    id="cat"
+                    name="category"
+                    value={pack.category || 'Technology'}
+                    onChange={e => updatePack('category', e.target.value)}
+                  >
+                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="f">
+                  <label htmlFor="price">Price</label>
+                  <input
+                    id="price"
+                    name="price"
+                    type="number"
+                    inputMode="decimal"
+                    value={pack.price ?? ''}
+                    onChange={e => updatePack('price', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="f">
+                  <label htmlFor="cur">Currency</label>
+                  <select
+                    id="cur"
+                    name="currency"
+                    value={pack.currency || 'USD'}
+                    onChange={e => updatePack('currency', e.target.value)}
+                  >
+                    {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
 
-          {/* Contact & Community Links */}
-          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] space-y-6">
-            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-2">Inquiry Contact &amp; Links</h2>
-            
-            <div>
-              <label className="form-label">WhatsApp &amp; Contact Number for Inquiries</label>
-              <p className="text-xs text-[#94A6B8] mb-3">
-                Learners can use this to chat on WhatsApp or call you directly if they need more info or trust before joining.
-              </p>
-              <PhoneInput
-                international
-                defaultCountry="LK"
-                value={pack.whatsapp_number || ''}
-                onChange={v => updatePack('whatsapp_number', v || '')}
-              />
-              {profile?.contact_number && pack.whatsapp_number !== profile.contact_number && (
-                <button
-                  type="button"
-                  onClick={() => updatePack('whatsapp_number', profile.contact_number)}
-                  className="mt-2 text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1"
-                >
-                  Use my profile number ({profile.contact_number})
-                </button>
+          {/* Section 2: Thumbnail */}
+          <section className="card c2">
+            <div className="sh">
+              <span className="ib">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <circle cx="9" cy="10" r="2" />
+                  <path d="m21 16-5-5-9 9" />
+                </svg>
+              </span>
+              <div>
+                <h2>Thumbnail</h2>
+                <p>The cover image for your course.</p>
+              </div>
+            </div>
+            <div className="thumb">
+              {thumbPreview ? (
+                <>
+                  <img src={thumbPreview} alt="Pack thumbnail" />
+                  <div className="tb">
+                    <label className="btn-change">
+                      Change
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnail}
+                        style={{ display: 'none' }}
+                      />
+                    </label>
+                    <button
+                      className="rm"
+                      type="button"
+                      onClick={handleRemoveThumbnail}
+                      aria-label="Remove thumbnail"
+                    >
+                      <svg className="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <label className="thumb-empty">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnail}
+                    style={{ display: 'none' }}
+                  />
+                  <div className="ib">
+                    <svg className="ic" viewBox="0 0 24 24">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                    </svg>
+                  </div>
+                  <b>Upload thumbnail</b>
+                  <span>PNG, JPG or WebP (16:9 recommended)</span>
+                </label>
               )}
             </div>
+          </section>
 
-            <div className="pt-5 border-t border-[#F1F5F9] space-y-4">
+          {/* Section 3: Inquiry Contact & Community Links */}
+          <section className="card c3">
+            <div className="sh">
+              <span className="ib">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z" />
+                </svg>
+              </span>
               <div>
-                <label className="form-label">Intro Video URL (YouTube/Vimeo)</label>
-                <input className="input-field" value={pack.intro_video_url || ''}
-                  onChange={e => updatePack('intro_video_url', e.target.value)} />
-              </div>
-              <div>
-                <label className="form-label">WhatsApp Group (For enrolled students)</label>
-                <input className="input-field" value={pack.whatsapp_link || ''}
-                  placeholder="https://chat.whatsapp.com/..."
-                  onChange={e => updatePack('whatsapp_link', e.target.value)} />
-              </div>
-              <div>
-                <label className="form-label">Telegram Channel (For enrolled students)</label>
-                <input className="input-field" value={pack.telegram_link || ''}
-                  placeholder="https://t.me/..."
-                  onChange={e => updatePack('telegram_link', e.target.value)} />
+                <h2>Inquiry contact &amp; links</h2>
+                <p>Help learners reach you and join your community.</p>
               </div>
             </div>
-          </div>
+            <div className="g">
+              <div className="f">
+                <label htmlFor="wa">WhatsApp &amp; contact number for inquiries</label>
+                <div className="h">
+                  Learners can use this to chat on WhatsApp or call you directly if they need more info or trust before joining.
+                </div>
+                <PhoneInput
+                  international
+                  defaultCountry="LK"
+                  value={pack.whatsapp_number || ''}
+                  onChange={v => updatePack('whatsapp_number', v || '')}
+                />
+                {profile?.contact_number && pack.whatsapp_number !== profile.contact_number && (
+                  <button
+                    type="button"
+                    onClick={() => updatePack('whatsapp_number', profile.contact_number)}
+                    className="use-profile-num"
+                  >
+                    Use my profile number ({profile.contact_number})
+                  </button>
+                )}
+              </div>
 
-          {/* Sessions */}
-          <div className="bg-white p-8 rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-            <h2 className="text-sm font-semibold text-[#94A6B8] uppercase tracking-wider mb-5">Sessions</h2>
-            <div className="space-y-5">
+              <div className="f">
+                <label htmlFor="intro">Intro video URL <span>(YouTube/Vimeo)</span></label>
+                <input
+                  id="intro"
+                  name="introVideo"
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={pack.intro_video_url || ''}
+                  onChange={e => updatePack('intro_video_url', e.target.value)}
+                />
+              </div>
+
+              <div className="f">
+                <label htmlFor="wag">WhatsApp group <span>(for enrolled students)</span></label>
+                <input
+                  id="wag"
+                  name="whatsappGroup"
+                  type="url"
+                  placeholder="https://chat.whatsapp.com/..."
+                  value={pack.whatsapp_link || ''}
+                  onChange={e => updatePack('whatsapp_link', e.target.value)}
+                />
+              </div>
+
+              <div className="f">
+                <label htmlFor="tg">Telegram channel <span>(for enrolled students)</span></label>
+                <input
+                  id="tg"
+                  name="telegram"
+                  type="url"
+                  placeholder="https://t.me/..."
+                  value={pack.telegram_link || ''}
+                  onChange={e => updatePack('telegram_link', e.target.value)}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Section 4: Sessions */}
+          <section className="card c4">
+            <div className="sh">
+              <span className="ib">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <rect x="3" y="6" width="13" height="12" rx="2" />
+                  <path d="m16 10 5-3v10l-5-3" />
+                </svg>
+              </span>
+              <div>
+                <h2>Sessions</h2>
+                <p>Add your live sessions and recordings.</p>
+              </div>
+            </div>
+
+            <div id="sessions">
               {sessions.map((s, idx) => {
                 const isPast = s.scheduled_at && new Date(s.scheduled_at) < now;
+                const isFree = Boolean(s.is_free_session);
+
                 return (
-                  <div key={s.id || idx} className={`p-5 rounded-xl border space-y-4 ${
-                    s.is_free_session ? 'border-[#DBEAFE]/50 bg-[#DBEAFE]/5' : 'border-[#E2E8F0] bg-[#F8FAFC]'
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-[#94A6B8]">#{idx + 1}</span>
-                        {s.is_free_session && <GoldBadge icon={Sparkles}>FREE</GoldBadge>}
-                        {isPast && !s.recording_url && (
-                          <span className="badge badge-pending text-[10px]">Needs Recording</span>
-                        )}
-                      </div>
-                      <button onClick={() => removeSession(idx)} className="text-[#C0392B]/60 hover:text-[#C0392B]">
-                        <Trash2 size={14} />
+                  <div key={s.id || idx} className={`sess ${isFree ? 'free' : ''}`}>
+                    <div className="sh2">
+                      <span className="num">{idx + 1}</span>
+                      <button
+                        type="button"
+                        className={`free-t ${isFree ? 'on' : ''}`}
+                        onClick={() => toggleFreePreview(idx)}
+                        aria-pressed={isFree}
+                      >
+                        {isFree ? '✓ ' : ''}FREE PREVIEW
+                      </button>
+
+                      {isPast && !s.recording_url && (
+                        <span className="needs-rec-pill">Needs Recording</span>
+                      )}
+
+                      <button
+                        type="button"
+                        className="del"
+                        onClick={() => removeSession(idx)}
+                        aria-label={`Delete session ${idx + 1}`}
+                      >
+                        <svg className="ic" viewBox="0 0 24 24">
+                          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+                        </svg>
                       </button>
                     </div>
-                    <input className="input-field" placeholder="Session title" value={s.title}
-                      onChange={e => updateSession(idx, 'title', e.target.value)} />
-                    <input className="input-field" placeholder="Zoom link" value={s.zoom_link}
-                      onChange={e => updateSession(idx, 'zoom_link', e.target.value)} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <input type="datetime-local" className="input-field" value={s.scheduled_at || ''}
-                        onChange={e => updateSession(idx, 'scheduled_at', e.target.value)} />
-                      <input type="number" className="input-field" placeholder="Duration (min)" value={s.duration_minutes}
-                        onChange={e => updateSession(idx, 'duration_minutes', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="form-label text-xs">Recording URL {isPast ? '' : '(add after session)'}</label>
-                      <input className="input-field" placeholder="https://..." value={s.recording_url || ''}
-                        onChange={e => updateSession(idx, 'recording_url', e.target.value)} />
+
+                    <div className="g">
+                      <div className="f">
+                        <label>Session title</label>
+                        <input
+                          value={s.title || ''}
+                          placeholder="e.g. Introduction & Setup"
+                          onChange={e => updateSession(idx, 'title', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="f">
+                        <label>Zoom link</label>
+                        <input
+                          type="url"
+                          placeholder="https://zoom.us/j/..."
+                          value={s.zoom_link || ''}
+                          onChange={e => updateSession(idx, 'zoom_link', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="g g2 keep">
+                        <div className="f">
+                          <label>Date &amp; time</label>
+                          <input
+                            type="datetime-local"
+                            value={s.scheduled_at || ''}
+                            onChange={e => updateSession(idx, 'scheduled_at', e.target.value)}
+                          />
+                        </div>
+
+                        <div className="f">
+                          <label>Duration <span>(min)</span></label>
+                          <input
+                            type="number"
+                            inputMode="numeric"
+                            placeholder="60"
+                            value={s.duration_minutes ?? ''}
+                            onChange={e => updateSession(idx, 'duration_minutes', e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="f">
+                        <label>Recording URL</label>
+                        <input
+                          type="url"
+                          placeholder="https://..."
+                          value={s.recording_url || ''}
+                          onChange={e => updateSession(idx, 'recording_url', e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-            <button onClick={addSession} className="btn-ghost w-full mt-3 text-sm justify-center text-[#2563EB]">
-              <Plus size={16} /> Add Session
+
+            <button className="add" id="add" type="button" onClick={addSession}>
+              <svg className="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+              Add session
             </button>
-          </div>
+          </section>
+        </div>
+
+        {/* Floating toast notification */}
+        <div className={`toast ${toastMsg ? 'show' : ''}`} role="status">
+          {toastMsg}
         </div>
       </div>
     </PageTransition>
