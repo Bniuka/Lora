@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug } from '../lib/utils';
+import { generatePromoCode, normalizePromoCode } from '../lib/promo';
 import './edit-pack.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -30,12 +31,89 @@ export default function EditPack() {
   const [toastMsg, setToastMsg] = useState('');
   const toastTimeoutRef = useRef(null);
 
+  // Promo Code State
+  const [promoCodes, setPromoCodes] = useState([]);
+  const [promoModalOpen, setPromoModalOpen] = useState(false);
+  const [newPromoCode, setNewPromoCode] = useState(generatePromoCode());
+  const [newPromoMaxUses, setNewPromoMaxUses] = useState(15);
+  const [generatingPromo, setGeneratingPromo] = useState(false);
+  const [copiedCodeId, setCopiedCodeId] = useState(null);
+
   const showToast = (msg) => {
     setToastMsg(msg);
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     toastTimeoutRef.current = setTimeout(() => {
       setToastMsg('');
     }, 2800);
+  };
+
+  const fetchPromoCodes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pack_promo_codes')
+        .select('*')
+        .eq('pack_id', id)
+        .order('created_at', { ascending: false });
+      if (!error && data) {
+        setPromoCodes(data);
+      }
+    } catch (_) {}
+  };
+
+  const handleCreatePromoCode = async (e) => {
+    e?.preventDefault();
+    if (!newPromoCode) return;
+    setGeneratingPromo(true);
+    try {
+      const formattedCode = normalizePromoCode(newPromoCode);
+      const attempts = parseInt(newPromoMaxUses, 10) || 1;
+      const { error } = await supabase
+        .from('pack_promo_codes')
+        .insert({
+          pack_id: id,
+          creator_id: user.id,
+          code: formattedCode,
+          max_uses: attempts,
+          used_count: 0,
+          is_active: true,
+        });
+
+      if (error) throw error;
+      showToast(`Promo code ${formattedCode} created for ${attempts} learners!`);
+      setPromoModalOpen(false);
+      setNewPromoCode(generatePromoCode());
+      fetchPromoCodes();
+    } catch (err) {
+      showToast('Error creating promo code: ' + err.message);
+    } finally {
+      setGeneratingPromo(false);
+    }
+  };
+
+  const handleDeletePromo = async (promoId) => {
+    if (!window.confirm("Are you sure you want to delete this promo code?")) return;
+    try {
+      await supabase.from('pack_promo_codes').delete().eq('id', promoId);
+      showToast("Promo code deleted");
+      fetchPromoCodes();
+    } catch (err) {
+      showToast("Error deleting: " + err.message);
+    }
+  };
+
+  const handleCopyPromo = (codeText, promoId) => {
+    navigator.clipboard.writeText(codeText);
+    setCopiedCodeId(promoId);
+    showToast(`Copied ${codeText} to clipboard!`);
+    setTimeout(() => setCopiedCodeId(null), 2000);
+  };
+
+  const handleCopyPromoLink = (codeText) => {
+    const origin = window.location.origin;
+    const packSlug = pack?.slug || id;
+    const link = `${origin}/p/${packSlug}?promo=${encodeURIComponent(codeText)}`;
+    navigator.clipboard.writeText(link);
+    showToast(`Copied invite link with promo code!`);
   };
 
   useEffect(() => {
@@ -48,6 +126,7 @@ export default function EditPack() {
         setPack(packRes.data);
         setThumbPreview(packRes.data.thumbnail_url);
       }
+      fetchPromoCodes();
       const formatLocal = (iso) => {
         if (!iso) return '';
         const d = new Date(iso);
@@ -565,6 +644,118 @@ export default function EditPack() {
             </div>
           </section>
 
+          {/* Section: Promo Codes (Free Student Access) */}
+          <section className="card promo-section">
+            <div className="sh" style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ display: 'flex', gap: 14 }}>
+                <span className="ib" style={{ background: '#fef3c7', color: '#d97706' }}>
+                  <Tag className="ic" />
+                </span>
+                <div>
+                  <h2>Free Access Promo Codes</h2>
+                  <p>Generate usage-limited codes (e.g. 1 attempt, 15 attempts) to grant free access without payment slips.</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="btn"
+                style={{
+                  background: '#2563eb',
+                  color: '#fff',
+                  border: 0,
+                  borderRadius: 12,
+                  padding: '9px 16px',
+                  fontWeight: 700,
+                  fontSize: 13.5,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  flexShrink: 0,
+                }}
+                onClick={() => {
+                  setNewPromoCode(generatePromoCode());
+                  setNewPromoMaxUses(15);
+                  setPromoModalOpen(true);
+                }}
+              >
+                <Sparkles size={15} /> + Generate Promo Code
+              </button>
+            </div>
+
+            {promoCodes.length === 0 ? (
+              <div style={{
+                background: '#f8fafc',
+                border: '1.5px dashed #cbd5e1',
+                borderRadius: 16,
+                padding: '24px 20px',
+                textAlign: 'center',
+                color: '#64748b',
+                fontSize: 14,
+              }}>
+                No promo codes generated for this course yet. Click <b>+ Generate Promo Code</b> to create your first free access code.
+              </div>
+            ) : (
+              <div className="promo-list">
+                {promoCodes.map((p) => {
+                  const isExhausted = p.used_count >= p.max_uses;
+                  const remaining = Math.max(0, p.max_uses - p.used_count);
+                  const isCopied = copiedCodeId === p.id;
+
+                  return (
+                    <div key={p.id} className={`promo-card ${isExhausted ? 'exhausted' : ''}`}>
+                      <div className="promo-card-left">
+                        <span className="promo-code-badge">
+                          <Tag size={15} />
+                          {p.code}
+                        </span>
+                        <div className="promo-meta">
+                          <span className="promo-uses">
+                            {p.used_count} / {p.max_uses} claimed {isExhausted ? '(Expired)' : `(${remaining} left)`}
+                          </span>
+                          <span className="promo-sub">
+                            {isExhausted 
+                              ? 'Max attempts reached · Expired' 
+                              : `100% Free enrollment · Auto-expires after ${p.max_uses} students`}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="promo-actions">
+                        <button
+                          type="button"
+                          className="promo-btn-copy"
+                          onClick={() => handleCopyPromo(p.code, p.id)}
+                          title="Copy Code"
+                        >
+                          {isCopied ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                          <span>{isCopied ? 'Copied' : 'Copy Code'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="promo-btn-copy"
+                          onClick={() => handleCopyPromoLink(p.code)}
+                          title="Copy Direct Link with code pre-filled"
+                        >
+                          <span>🔗 Copy Invite Link</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="promo-btn-del"
+                          onClick={() => handleDeletePromo(p.id)}
+                          title="Delete code"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
           {/* Section 4: Sessions */}
           <section className="card c4">
             <div className="sh">
@@ -749,6 +940,185 @@ export default function EditPack() {
             </button>
           </section>
         </div>
+
+        {/* Modal: Generate Promo Code */}
+        {promoModalOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(15, 23, 42, 0.6)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 9999,
+              display: 'grid',
+              placeItems: 'center',
+              padding: 16,
+            }}
+            onClick={() => !generatingPromo && setPromoModalOpen(false)}
+          >
+            <div
+              style={{
+                width: '100%',
+                maxWidth: 460,
+                background: '#fff',
+                borderRadius: 22,
+                boxShadow: '0 25px 60px -15px rgba(0,0,0,0.3)',
+                padding: '24px 26px',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 19, fontWeight: 800 }}>Generate Promo Code</h3>
+                <button
+                  type="button"
+                  onClick={() => setPromoModalOpen(false)}
+                  style={{ background: '#f1f5f9', border: 0, borderRadius: '50%', width: 30, height: 30, cursor: 'pointer', display: 'grid', placeItems: 'center' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreatePromoCode}>
+                {/* Code Field */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                    Promo Code (100% Free Access)
+                  </label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      type="text"
+                      required
+                      value={newPromoCode}
+                      onChange={e => setNewPromoCode(e.target.value.toUpperCase())}
+                      style={{
+                        flex: 1,
+                        height: 46,
+                        border: '1.5px solid #cbd5e1',
+                        borderRadius: 12,
+                        padding: '0 14px',
+                        fontWeight: 700,
+                        fontSize: 16,
+                        fontFamily: 'monospace',
+                        letterSpacing: '0.05em',
+                        color: '#2563eb',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      title="Roll another code"
+                      onClick={() => setNewPromoCode(generatePromoCode())}
+                      style={{
+                        padding: '0 14px',
+                        background: '#f1f5f9',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        fontSize: 13,
+                        fontWeight: 600,
+                      }}
+                    >
+                      <RefreshCw size={14} /> Roll
+                    </button>
+                  </div>
+                  <small style={{ color: '#64748b', fontSize: 12, marginTop: 4, display: 'block' }}>
+                    Auto-generated format: <code>LORA-FREE-7X9</code>
+                  </small>
+                </div>
+
+                {/* Max Claims / Attempts */}
+                <div style={{ marginBottom: 22 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                    Usage Limit / Attempts
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    required
+                    value={newPromoMaxUses}
+                    onChange={e => setNewPromoMaxUses(e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: 46,
+                      border: '1.5px solid #cbd5e1',
+                      borderRadius: 12,
+                      padding: '0 14px',
+                      fontSize: 15,
+                      fontWeight: 600,
+                      marginBottom: 10,
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {[1, 5, 10, 15, 25, 50].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setNewPromoMaxUses(num)}
+                        style={{
+                          border: Number(newPromoMaxUses) === num ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                          background: Number(newPromoMaxUses) === num ? '#eff6ff' : '#fff',
+                          color: Number(newPromoMaxUses) === num ? '#2563eb' : '#475569',
+                          fontWeight: 700,
+                          fontSize: 12.5,
+                          padding: '5px 12px',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {num === 1 ? '1 student' : `${num} students`}
+                      </button>
+                    ))}
+                  </div>
+                  <small style={{ color: '#64748b', fontSize: 12, marginTop: 8, display: 'block' }}>
+                    Once {newPromoMaxUses} learner{newPromoMaxUses > 1 ? 's have' : ' has'} claimed this code, it will automatically expire.
+                  </small>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPromoModalOpen(false)}
+                    style={{
+                      border: '1px solid #e2e8f0',
+                      background: '#fff',
+                      padding: '10px 18px',
+                      borderRadius: 12,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                    disabled={generatingPromo}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      background: '#2563eb',
+                      color: '#fff',
+                      border: 0,
+                      padding: '10px 22px',
+                      borderRadius: 12,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                    }}
+                    disabled={generatingPromo}
+                  >
+                    {generatingPromo ? <Loader2 size={16} className="animate-spin" /> : 'Create Promo Code'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Floating toast notification */}
         <div className={`toast ${toastMsg ? 'show' : ''}`} role="status">

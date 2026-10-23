@@ -883,6 +883,108 @@
   font-weight: 400 !important;
 }
 
+/* ── Promo Codes Section in Edit Pack ── */
+.lora-edit .promo-section {
+  margin-top: 10px;
+}
+
+.lora-edit .promo-card {
+  background: #f8fafc !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.lora-edit .promo-card.exhausted {
+  opacity: 0.65;
+  background: #f1f5f9 !important;
+}
+
+.lora-edit .promo-card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lora-edit .promo-code-badge {
+  font-family: 'Bricolage Grotesque', monospace, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  background: #fff !important;
+  border: 1.5px dashed var(--brand) !important;
+  color: var(--brand) !important;
+  padding: 6px 14px !important;
+  border-radius: 10px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-edit .promo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lora-edit .promo-uses {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+}
+
+.lora-edit .promo-sub {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+}
+
+.lora-edit .promo-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-edit .promo-btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff !important;
+  border: 1px solid var(--edge) !important;
+  color: var(--ink) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s !important;
+}
+
+.lora-edit .promo-btn-copy:hover {
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+.lora-edit .promo-btn-del {
+  background: transparent !important;
+  border: 0 !important;
+  color: #ef4444 !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+}
+
+.lora-edit .promo-btn-del:hover {
+  background: #fef2f2 !important;
+}
+
 @media(prefers-reduced-motion: reduce) {
   .lora-edit * {
     transition: none !important;

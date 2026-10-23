@@ -1,15 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
   Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
-  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription, slugify } from '../lib/utils';
+import { normalizePromoCode } from '../lib/promo';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 import './payment-code-modal.css';
 import './payment-modal.css';
@@ -563,6 +564,129 @@ export default function PackDetail() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [selectedBankName, setSelectedBankName] = useState('');
 
+  // Promo Code State
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [promoInput, setPromoInput] = useState(() => searchParams.get('promo') || '');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [applyingPromo, setApplyingPromo] = useState(false);
+  const [claimingPromo, setClaimingPromo] = useState(false);
+  const [promoError, setPromoError] = useState('');
+  const [showPromoInput, setShowPromoInput] = useState(() => Boolean(searchParams.get('promo')));
+
+  const handleApplyPromoCode = async (codeToTry = promoInput) => {
+    const cleanCode = normalizePromoCode(codeToTry);
+    if (!cleanCode) return;
+    setApplyingPromo(true);
+    setPromoError('');
+
+    try {
+      const realPackId = pack?.id || id;
+      const { data, error } = await supabase
+        .from('pack_promo_codes')
+        .select('*')
+        .eq('pack_id', realPackId)
+        .eq('code', cleanCode)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) {
+        throw new Error("Invalid promo code for this session pack.");
+      }
+
+      if (!data.is_active || data.used_count >= data.max_uses) {
+        throw new Error("This promo code has reached its maximum usage limit.");
+      }
+
+      setAppliedPromo(data);
+      setPromoInput(data.code);
+      setShowPromoInput(true);
+    } catch (err) {
+      setPromoError(err.message || "Failed to apply promo code.");
+    } finally {
+      setApplyingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoInput('');
+    setPromoError('');
+  };
+
+  const handleClaimPromoEnrollment = async () => {
+    if (!user) {
+      setLoginPrompt(true);
+      return;
+    }
+    if (!appliedPromo) return;
+
+    setClaimingPromo(true);
+    try {
+      // 1. Verify and increment usage count atomically
+      const { data: freshPromo, error: checkErr } = await supabase
+        .from('pack_promo_codes')
+        .select('*')
+        .eq('id', appliedPromo.id)
+        .single();
+
+      if (checkErr || !freshPromo) {
+        throw new Error("Could not verify promo code. Please try again.");
+      }
+
+      if (!freshPromo.is_active || freshPromo.used_count >= freshPromo.max_uses) {
+        throw new Error("This promo code has reached its maximum usage limit.");
+      }
+
+      const newUsedCount = freshPromo.used_count + 1;
+      const shouldDeactivate = newUsedCount >= freshPromo.max_uses;
+
+      await supabase
+        .from('pack_promo_codes')
+        .update({
+          used_count: newUsedCount,
+          is_active: !shouldDeactivate,
+        })
+        .eq('id', freshPromo.id);
+
+      // 2. Insert or update confirmed enrollment
+      const { error: enrErr } = await supabase.from('enrollments').upsert({
+        id: enrollment?.id || undefined,
+        learner_id: user.id,
+        pack_id: pack?.id || id,
+        status: 'confirmed',
+        payment_method_used: `promo:${freshPromo.code}`,
+        promo_code_used: freshPromo.code,
+        submitted_at: new Date().toISOString(),
+      }, { onConflict: enrollment?.id ? 'id' : undefined });
+
+      if (enrErr) throw enrErr;
+
+      // 3. Notify creator
+      await supabase.from('notifications').insert({
+        user_id: pack.creator_id,
+        title: 'Student Joined via Promo Code! 🎟️',
+        message: `${profile?.first_name || 'A student'} joined "${pack.title}" using promo code ${freshPromo.code} (${newUsedCount}/${freshPromo.max_uses} claimed).`,
+      });
+
+      setEnrollment({ status: 'confirmed' });
+      alert(`🎉 Success! Promo code ${freshPromo.code} applied. You now have full free access to this course!`);
+    } catch (err) {
+      console.error("Promo enrollment error:", err);
+      alert(err.message);
+    } finally {
+      setClaimingPromo(false);
+    }
+  };
+
+  // Auto-apply promo from URL if pack is loaded
+  useEffect(() => {
+    const promoFromUrl = searchParams.get('promo');
+    if (promoFromUrl && pack?.id && !appliedPromo && !enrollment) {
+      handleApplyPromoCode(promoFromUrl);
+    }
+  }, [pack, searchParams]);
+
   const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
 
   useEffect(() => {
@@ -886,6 +1010,25 @@ export default function PackDetail() {
         </div>
       );
     }
+    if (appliedPromo) {
+      return (
+        <button
+          className="btn pri ok"
+          type="button"
+          onClick={handleClaimPromoEnrollment}
+          disabled={claimingPromo}
+          style={{ background: '#0f9d6b', borderColor: '#0f9d6b' }}
+        >
+          {claimingPromo ? (
+            <Loader2 className="ic animate-spin" />
+          ) : (
+            <>
+              <Sparkles size={16} /> Claim Free Access with {appliedPromo.code}
+            </>
+          )}
+        </button>
+      );
+    }
     return (
       <button className="btn pri" type="button" onClick={handleStartPaymentFlow}>
         Join this session
@@ -1177,9 +1320,55 @@ export default function PackDetail() {
               {/* Buy card */}
               <div className="card buy">
                 <small>Total price</small>
-                <div className="price">{Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}</div>
+                <div className="price">
+                  {appliedPromo ? (
+                    <>
+                      <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 8 }}>
+                        {pack.currency} {pack.price}
+                      </span>
+                      FREE
+                    </>
+                  ) : Number(pack.price) === 0 ? (
+                    'FREE'
+                  ) : (
+                    `${pack.currency} ${pack.price}`
+                  )}
+                </div>
 
                 {renderJoinAction()}
+
+                {/* Promo code box */}
+                {Number(pack?.price) > 0 && !enrollment && (
+                  <div className="promo-box">
+                    {appliedPromo ? (
+                      <div className="promo-success-badge">
+                        <span>✓ <b>{appliedPromo.code}</b> (100% Free)</span>
+                        <button type="button" onClick={handleRemovePromo} className="promo-remove-btn" title="Remove promo code">×</button>
+                      </div>
+                    ) : !showPromoInput ? (
+                      <button type="button" className="promo-toggle-btn" onClick={() => setShowPromoInput(true)}>
+                        <Tag size={13} /> Have a promo code?
+                      </button>
+                    ) : (
+                      <div>
+                        <div className="promo-input-group">
+                          <input
+                            type="text"
+                            placeholder="e.g. LORA-FREE-7X9"
+                            value={promoInput}
+                            onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoError(''); }}
+                            className="promo-input"
+                            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleApplyPromoCode(); } }}
+                          />
+                          <button type="button" className="promo-apply-btn" onClick={() => handleApplyPromoCode()} disabled={applyingPromo}>
+                            {applyingPromo ? <Loader2 size={13} className="animate-spin" /> : 'Apply'}
+                          </button>
+                        </div>
+                        {promoError && <div className="promo-err-msg">{promoError}</div>}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {inquiryNumber && (
                   <div className="buy-inquiry">
@@ -1324,7 +1513,20 @@ export default function PackDetail() {
         <div className="mbar">
           <div>
             <small>Total price</small>
-            <div className="price">{Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}</div>
+            <div className="price">
+              {appliedPromo ? (
+                <>
+                  <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 6 }}>
+                    {pack.currency} {pack.price}
+                  </span>
+                  <span style={{ color: '#059669', fontWeight: 800 }}>FREE</span>
+                </>
+              ) : Number(pack.price) === 0 ? (
+                'FREE'
+              ) : (
+                `${pack.currency} ${pack.price}`
+              )}
+            </div>
           </div>
           {whatsappUrl && (
             <a

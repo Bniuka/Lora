@@ -852,6 +852,103 @@
   color: var(--brand) !important;
 }
 
+/* ── Promo Code Box in Course Detail ── */
+.lora-course .promo-box {
+  margin-top: 14px !important;
+  margin-bottom: 6px !important;
+}
+
+.lora-course .promo-toggle-btn {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--brand) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 4px 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: opacity 0.15s !important;
+}
+
+.lora-course .promo-toggle-btn:hover {
+  text-decoration: underline !important;
+}
+
+.lora-course .promo-input-group {
+  display: flex !important;
+  gap: 6px !important;
+  margin-top: 6px !important;
+}
+
+.lora-course .promo-input {
+  flex: 1 !important;
+  height: 40px !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 10px !important;
+  padding: 0 12px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  font-family: monospace, sans-serif !important;
+  letter-spacing: 0.05em !important;
+  outline: none !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  text-transform: uppercase !important;
+}
+
+.lora-course .promo-input:focus {
+  border-color: var(--brand) !important;
+}
+
+.lora-course .promo-apply-btn {
+  height: 40px !important;
+  padding: 0 14px !important;
+  background: var(--brand) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: opacity 0.15s !important;
+}
+
+.lora-course .promo-apply-btn:hover {
+  filter: brightness(1.08) !important;
+}
+
+.lora-course .promo-err-msg {
+  color: #dc2626 !important;
+  font-size: 12px !important;
+  margin-top: 5px !important;
+  font-weight: 500 !important;
+}
+
+.lora-course .promo-success-badge {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: #f0fdf4 !important;
+  border: 1.5px solid #bbf7d0 !important;
+  color: #15803d !important;
+  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  font-size: 12.5px !important;
+  margin-top: 8px !important;
+}
+
+.lora-course .promo-remove-btn {
+  background: none !important;
+  border: 0 !important;
+  color: #15803d !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  padding: 0 4px !important;
+  font-weight: 700 !important;
+}
+
 @media(prefers-reduced-motion: reduce) {
   .lora-course * {
     transition: none !important;
