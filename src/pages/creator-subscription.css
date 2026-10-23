@@ -146,6 +146,14 @@
   margin-bottom: 22px;
 }
 
+.lora-sub .logo img {
+  height: 36px !important;
+  max-width: 165px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
 .lora-sub .logo i {
   width: 32px;
   height: 32px;

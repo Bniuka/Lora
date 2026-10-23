@@ -85,6 +85,15 @@
   gap: 9px !important;
   font: 800 22px 'Bricolage Grotesque', sans-serif !important;
   color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.lora-verify .logo img {
+  height: 38px !important;
+  max-width: 170px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
 .lora-verify .logo i {

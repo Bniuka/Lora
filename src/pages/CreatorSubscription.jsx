@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import AppLogo from '../components/AppLogo';
 import './creator-subscription.css';
 
 const LKR_TO_USD_RATE = 0.0034;
@@ -145,14 +146,9 @@ export default function CreatorSubscription() {
         <div className="grid">
           <div className="text">
             <div className="top-nav">
-              <Link className="logo" to="/creator/dashboard">
-                <i>
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 3 22 21H2z" />
-                  </svg>
-                </i>
-                Lora
-              </Link>
+              <div className="logo">
+                <AppLogo role="creator" to="/creator/dashboard" height={36} />
+              </div>
               {isCreatorInTrial && (
                 <button
                   type="button"

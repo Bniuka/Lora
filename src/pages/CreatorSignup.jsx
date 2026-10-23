@@ -9,6 +9,7 @@ import 'react-phone-number-input/style.css';
 import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
+import creatorLogo from '../../Logo/Creator logo.png';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 
@@ -110,9 +111,15 @@ export default function CreatorSignup() {
     <PageTransition>
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
         <div className="max-w-lg w-full relative z-10">
-          <Link to="/signup" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-10">
+          <Link to="/signup" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-6">
             <ArrowLeft size={16} /> Back
           </Link>
+
+          <div className="flex justify-center mb-6">
+            <Link to="/">
+              <img src={creatorLogo} alt="Lora Creator" className="h-11 w-auto object-contain" />
+            </Link>
+          </div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
             <h1 className="text-3xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>

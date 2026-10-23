@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import AppLogo, { creatorLogo, learnerLogo } from '../components/AppLogo';
 import './signup-choose.css';
 
 export default function RoleSelection() {
@@ -11,14 +12,9 @@ export default function RoleSelection() {
           </svg>
           Back to home
         </Link>
-        <Link className="logo" to="/">
-          <i>
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3 22 21H2z" />
-            </svg>
-          </i>
-          Lora
-        </Link>
+        <div className="logo">
+          <AppLogo to="/" height={36} />
+        </div>
       </header>
 
       <main>
@@ -29,12 +25,8 @@ export default function RoleSelection() {
 
         <div className="grid">
           <article className="role">
-            <div className="ico">
-              <svg className="ic" viewBox="0 0 24 24">
-                <path d="M12 19l7-7 3 3-7 7zM18 13 16.5 5.5 2 2l3.5 14.5L13 18z" />
-                <path d="m2 2 7.6 7.6" />
-                <circle cx="11" cy="11" r="2" />
-              </svg>
+            <div className="mb-4">
+              <img src={creatorLogo} alt="Lora Creator" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2>I'm a Creator</h2>
             <p>
@@ -49,11 +41,8 @@ export default function RoleSelection() {
           </article>
 
           <article className="role">
-            <div className="ico">
-              <svg className="ic" viewBox="0 0 24 24">
-                <path d="M22 10 12 5 2 10l10 5z" />
-                <path d="M6 12v5c3 2.5 9 2.5 12 0v-5M22 10v6" />
-              </svg>
+            <div className="mb-4">
+              <img src={learnerLogo} alt="Lora Learner" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2>I'm a Learner</h2>
             <p>

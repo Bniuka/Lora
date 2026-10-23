@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { User, LogOut, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import AppLogo from './AppLogo';
 import '../pages/learner-dashboard.css';
 
 export default function LearnerLayout({ children }) {
@@ -93,14 +94,9 @@ export default function LearnerLayout({ children }) {
         <header>
           <div className="bar">
             {/* Logo */}
-            <Link className="logo" to="/learner/dashboard">
-              <i>
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 3 22 21H2z" />
-                </svg>
-              </i>
-              Lora
-            </Link>
+            <div className="logo">
+              <AppLogo role="learner" to="/learner/dashboard" height={36} />
+            </div>
 
             {/* Search Input */}
             <form onSubmit={handleSearch} className="search">

@@ -81,6 +81,15 @@
   font: 800 22px 'Bricolage Grotesque', sans-serif !important;
   padding: 0 10px 22px !important;
   color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.lora-creator .logo img {
+  height: 38px !important;
+  max-width: 170px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
 .lora-creator .logo i {

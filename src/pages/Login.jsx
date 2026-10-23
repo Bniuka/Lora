@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
+import AppLogo from '../components/AppLogo';
 
 function friendlyError(msg) {
   if (!msg) return 'Something went wrong. Please try again.';
@@ -73,9 +74,13 @@ export default function Login() {
     <PageTransition>
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-10">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-6">
             <ArrowLeft size={16} /> Home
           </Link>
+
+          <div className="flex justify-center mb-6">
+            <AppLogo to="/" height={40} />
+          </div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
             <h1 className="text-3xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>

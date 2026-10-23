@@ -9,6 +9,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import AppLogo from './AppLogo';
 import './creator-layout.css';
 
 const navItems = [
@@ -256,11 +257,8 @@ export default function CreatorLayout({ children }) {
       <div className="app">
         {/* ══════════════ SIDEBAR ══════════════ */}
         <aside>
-          <div className="logo">
-            <i>
-              <svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z"/></svg>
-            </i>
-            Lora
+          <div className="logo" style={{ padding: '0 10px 22px' }}>
+            <AppLogo role="creator" to="/creator/dashboard" height={38} />
           </div>
           <nav>
             <NavLink to="/creator/dashboard" end className={({ isActive }) => isActive ? 'on' : ''}>

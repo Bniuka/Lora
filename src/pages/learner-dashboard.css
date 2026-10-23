@@ -104,6 +104,14 @@
   text-decoration: none !important;
 }
 
+.lora-learner .logo img {
+  height: 36px;
+  max-width: 165px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .lora-learner .logo i {
   width: 32px;
   height: 32px;

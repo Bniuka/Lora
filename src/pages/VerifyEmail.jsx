@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import AppLogo from "../components/AppLogo";
 import "./verify-email.css";
 
 const COOLDOWN_SECONDS = 60;
@@ -130,12 +131,9 @@ export default function VerifyEmail() {
     return (
       <div className="lora-verify">
         <div className="shell">
-          <Link className="logo" to="/">
-            <i>
-              <svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z" /></svg>
-            </i>
-            Lora
-          </Link>
+          <div className="logo" style={{ display: 'flex', justifyContent: 'center' }}>
+            <AppLogo to="/" height={38} />
+          </div>
 
           <main className="card">
             {verifying && (
@@ -201,12 +199,9 @@ export default function VerifyEmail() {
   return (
     <div className="lora-verify">
       <div className="shell">
-        <Link className="logo" to="/">
-          <i>
-            <svg viewBox="0 0 24 24"><path d="M12 3 22 21H2z" /></svg>
-          </i>
-          Lora
-        </Link>
+        <div className="logo" style={{ display: 'flex', justifyContent: 'center' }}>
+          <AppLogo to="/" height={38} />
+        </div>
 
         <main className="card">
           {/* Animated Mail Icon with Green Check Badge */}
