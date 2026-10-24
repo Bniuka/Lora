@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
 import './dashboard.css';
 
 /* ─── Sparkline SVG (pure, no external deps) ─── */
@@ -298,6 +299,72 @@ function MissingRecordingsAlert({ missingSessions, onSaveRecording, savingSessio
   );
 }
 
+/* ════════════════ ONBOARDING CHECKLIST (IDEA 01) ════════════════ */
+function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
+  const completedCount = steps.filter(s => s.done).length;
+  const totalCount = steps.length;
+  const pct = Math.round((completedCount / totalCount) * 100);
+
+  return (
+    <section className="ld-card ld-onboard">
+      <div className="ld-onboard-head">
+        <div>
+          <div className="ld-onboard-badges">
+            <span className="ld-onboard-pill">🚀 Creator Setup Guide</span>
+            <span className="ld-onboard-count">{completedCount} of {totalCount} completed ({pct}%)</span>
+          </div>
+          <h2>Get Started on LoraSpace</h2>
+          <p>Complete these 4 steps to start enrolling students, accepting direct bank payments, and sharing promo codes.</p>
+        </div>
+
+        <div className="ld-onboard-actions">
+          <button type="button" className="ld-tour-btn" onClick={onOpenTour}>
+            ✨ 1-Min Feature Tour
+          </button>
+          <Link to="/creator/guide" className="ld-guide-btn">
+            📖 Full Creator Guide
+          </Link>
+          <button
+            type="button"
+            className="ld-onboard-dismiss"
+            onClick={onDismiss}
+            title="Hide setup checklist"
+            aria-label="Hide setup checklist"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="ld-onboard-bar-track">
+        <div className="ld-onboard-bar-fill" style={{ width: `${pct}%` }} />
+      </div>
+
+      {/* 4 Step Cards */}
+      <div className="ld-onboard-grid">
+        {steps.map((step, idx) => (
+          <div key={step.id} className={`ld-onboard-step ${step.done ? 'done' : ''}`}>
+            <div className="ld-onboard-step-top">
+              <span className={`ld-onboard-check ${step.done ? 'done' : ''}`}>
+                {step.done ? '✓' : idx + 1}
+              </span>
+              <span className="ld-onboard-status">
+                {step.done ? 'Completed' : 'Pending'}
+              </span>
+            </div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+            <Link to={step.to} className="ld-onboard-link">
+              {step.done ? step.doneLabel : step.ctaLabel} →
+            </Link>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ════════════════ MAIN COMPONENT ════════════════ */
 export default function CreatorDashboard() {
   useSubscriptionGuard();
@@ -307,14 +374,49 @@ export default function CreatorDashboard() {
   const [recentPacks, setRecentPacks] = useState([]);
   const [activity, setActivity] = useState([]);
   const [missingRecordings, setMissingRecordings] = useState([]);
+  const [hasBankDetails, setHasBankDetails] = useState(false);
   const [savingSessionId, setSavingSessionId] = useState(null);
   const [toastMsg, setToastMsg] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [checklistDismissed, setChecklistDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const dismissed = localStorage.getItem(`lora_onboarding_dismissed_${user.id}`) === 'true';
+    setChecklistDismissed(dismissed);
+
+    const seenTour = localStorage.getItem(`lora_welcome_tour_seen_${user.id}`) === 'true';
+    if (!seenTour) {
+      setTourOpen(true);
+    }
+  }, [user]);
+
+  const handleCloseTour = () => {
+    setTourOpen(false);
+    if (user) {
+      localStorage.setItem(`lora_welcome_tour_seen_${user.id}`, 'true');
+    }
+  };
+
+  const handleDismissChecklist = () => {
+    setChecklistDismissed(true);
+    if (user) {
+      localStorage.setItem(`lora_onboarding_dismissed_${user.id}`, 'true');
+    }
+  };
+
+  const handleRestoreChecklist = () => {
+    setChecklistDismissed(false);
+    if (user) {
+      localStorage.removeItem(`lora_onboarding_dismissed_${user.id}`);
+    }
+  };
 
   useEffect(() => {
     if (!user) return;
     const loadData = async () => {
-      const [packsRes, enrollRes, notifRes] = await Promise.all([
+      const [packsRes, enrollRes, notifRes, bankRes] = await Promise.all([
         supabase
           .from('session_packs')
           .select('*, sessions(count)')
@@ -330,13 +432,25 @@ export default function CreatorDashboard() {
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(5),
+        supabase
+          .from('creator_bank_details')
+          .select('*')
+          .eq('creator_id', user.id)
+          .maybeSingle(),
       ]);
 
       const packs = packsRes.data || [];
       const enrollments = enrollRes.data || [];
-      const confirmed = enrollments.filter(e => e.status === 'confirmed');
+      const confirmed = enrollments.filter(e => e.status === 'confirmed' || e.status === 'active');
       const pending = enrollments.filter(e => e.status === 'pending');
       const revenue = confirmed.reduce((sum, e) => sum + (e.session_packs?.price || 0), 0);
+
+      const bankData = bankRes?.data;
+      const bankConfigured = Boolean(
+        (Array.isArray(bankData?.bank_accounts) && bankData.bank_accounts.some(acc => acc.account_number && acc.bank_name)) ||
+        (bankData?.bank_name && bankData?.account_number)
+      );
+      setHasBankDetails(bankConfigured);
 
       // Check for past sessions with missing recording_url across all creator's packs
       const packIds = packs.map(p => p.id);
@@ -459,6 +573,45 @@ export default function CreatorDashboard() {
     { label: 'Pending',        value: stats.pending,                     colorVar: 'c4', icon: <IcPending />,  to: '/creator/enrollments' },
   ];
 
+  const onboardingSteps = [
+    {
+      id: 'profile',
+      title: 'Complete Profile & Bio',
+      desc: 'Add your bio, category, and contact number so learners know who you are.',
+      done: Boolean(profile?.first_name && (creatorProfile?.about || profile?.contact_number)),
+      ctaLabel: 'Complete profile',
+      doneLabel: 'Edit profile',
+      to: '/creator/settings',
+    },
+    {
+      id: 'payouts',
+      title: 'Add Bank Account / Payment Link',
+      desc: 'Add up to 4 bank accounts or a payment link so students can pay you directly.',
+      done: Boolean(hasBankDetails || creatorProfile?.payment_link),
+      ctaLabel: 'Setup payouts',
+      doneLabel: 'Manage banks',
+      to: '/creator/settings',
+    },
+    {
+      id: 'pack',
+      title: 'Create Your First Session Pack',
+      desc: 'Schedule live Zoom/YouTube classes or upload past catch-up recordings.',
+      done: stats.packs > 0,
+      ctaLabel: 'Create pack',
+      doneLabel: 'View packs',
+      to: '/creator/packs/new',
+    },
+    {
+      id: 'share',
+      title: 'Publish & Generate Promo Code',
+      desc: 'Publish your course or create a usage-limited free code (LORA-FREE-7X9).',
+      done: recentPacks.some(p => p.is_published),
+      ctaLabel: 'Publish & promo codes',
+      doneLabel: 'Manage promo codes',
+      to: latestPack ? `/creator/packs/${latestPack.id}/edit` : '/creator/packs',
+    },
+  ];
+
   return (
     <div className="lora-dash">
       <div className="ld-page">
@@ -477,11 +630,36 @@ export default function CreatorDashboard() {
         {/* ── Trial banner ── */}
         <DashTrialBanner creatorProfile={creatorProfile} />
 
-        {/* ── Welcome heading ── */}
-        <div className="ld-hello">
-          <h1>Welcome back, {firstName}</h1>
-          <p>Here's what's happening with your courses today.</p>
+        {/* ── Welcome heading + Feature Tour buttons ── */}
+        <div className="ld-hello-row">
+          <div className="ld-hello">
+            <h1>Welcome back, {firstName}</h1>
+            <p>Here's what's happening with your courses today.</p>
+          </div>
+
+          <div className="ld-hello-btns">
+            {checklistDismissed && (
+              <button type="button" className="ld-restore-btn" onClick={handleRestoreChecklist}>
+                📋 Setup Checklist ({onboardingSteps.filter(s => s.done).length}/4)
+              </button>
+            )}
+            <button type="button" className="ld-tour-trigger" onClick={() => setTourOpen(true)}>
+              ✨ How LoraSpace Works
+            </button>
+            <Link to="/creator/guide" className="ld-guide-trigger">
+              📖 Creator Guide
+            </Link>
+          </div>
         </div>
+
+        {/* ── Idea 01: Interactive Onboarding Checklist ── */}
+        {!checklistDismissed && (
+          <OnboardingChecklist
+            steps={onboardingSteps}
+            onOpenTour={() => setTourOpen(true)}
+            onDismiss={handleDismissChecklist}
+          />
+        )}
 
         {/* ── Missing Recordings Alert ── */}
         <MissingRecordingsAlert
@@ -537,13 +715,13 @@ export default function CreatorDashboard() {
             </div>
           </Link>
 
-          <Link className="ld-card ld-act" to="/creator/payouts">
+          <Link className="ld-card ld-act" to="/creator/guide">
             <span className="ld-ib" style={{ background: 'var(--c3s)', color: 'var(--c3)' }}>
               <IcPayout />
             </span>
             <div>
-              <b>View payouts</b>
-              <span>Track your earnings</span>
+              <b>Creator Guide ✨</b>
+              <span>Learn all features &amp; promo codes</span>
             </div>
           </Link>
 
@@ -552,8 +730,8 @@ export default function CreatorDashboard() {
               <IcSettings />
             </span>
             <div>
-              <b>Settings</b>
-              <span>Update your profile &amp; preferences</span>
+              <b>Settings &amp; Banks</b>
+              <span>Update profile &amp; payout accounts</span>
             </div>
           </Link>
         </div>
@@ -699,6 +877,9 @@ export default function CreatorDashboard() {
 
           </div>
         </div>
+
+        {/* ── Idea 02: Welcome Tour Modal ── */}
+        <CreatorWelcomeTour isOpen={tourOpen} onClose={handleCloseTour} />
 
       </div>
     </div>

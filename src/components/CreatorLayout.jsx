@@ -282,6 +282,10 @@ export default function CreatorLayout({ children }) {
               <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
               <span>Settings</span>
             </NavLink>
+            <NavLink to="/creator/guide" className={({ isActive }) => isActive ? 'on' : ''}>
+              <svg className="ic" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span>Creator Guide</span>
+            </NavLink>
             {isUserAdmin(user?.email) && (
               <NavLink to="/creator/admin" className={({ isActive }) => isActive ? 'on' : ''}>
                 <Crown className="ic" style={{ color: '#f59e0b' }} />
@@ -290,9 +294,9 @@ export default function CreatorLayout({ children }) {
             )}
           </nav>
           <div className="tip">
-            <b>Grow your audience</b>
-            Share your courses with the world and make a bigger impact.
-            <button type="button" onClick={() => navigate('/creator/packs/new')}>View tips</button>
+            <b>New to LoraSpace?</b>
+            Discover all creator features, promo codes, and setup steps.
+            <button type="button" onClick={() => navigate('/creator/guide')}>Open Creator Guide</button>
           </div>
         </aside>
 

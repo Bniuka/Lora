@@ -800,10 +800,276 @@
   margin: 0 !important;
 }
 
+/* ── Hello Row with Action Buttons ── */
+.lora-dash .ld-hello-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-dash .ld-hello-btns {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-dash .ld-tour-trigger {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: linear-gradient(135deg, #2f5bff 0%, #5b38ff 100%) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  box-shadow: 0 6px 16px -4px rgba(47, 91, 255, 0.35) !important;
+  transition: transform 0.15s ease, filter 0.15s ease !important;
+}
+
+.lora-dash .ld-tour-trigger:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.06) !important;
+}
+
+.lora-dash .ld-guide-trigger,
+.lora-dash .ld-restore-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 9px 15px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: border-color 0.15s ease, background 0.15s ease !important;
+}
+
+.lora-dash .ld-guide-trigger:hover,
+.lora-dash .ld-restore-btn:hover {
+  border-color: var(--brand) !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+}
+
+/* ── Onboarding Checklist Card (Idea 01) ── */
+.lora-dash .ld-onboard {
+  padding: 24px 26px !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%) !important;
+  border: 1.5px solid #d5e0ff !important;
+  position: relative !important;
+}
+
+.lora-dash .ld-onboard-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 16px !important;
+}
+
+.lora-dash .ld-onboard-badges {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 6px !important;
+}
+
+.lora-dash .ld-onboard-pill {
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  padding: 4px 11px !important;
+  border-radius: 99px !important;
+  letter-spacing: 0.02em !important;
+}
+
+.lora-dash .ld-onboard-count {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #12a46f !important;
+  background: #e3f7ee !important;
+  padding: 4px 11px !important;
+  border-radius: 99px !important;
+}
+
+.lora-dash .ld-onboard-head h2 {
+  font-size: 22px !important;
+  color: var(--ink) !important;
+  margin-bottom: 4px !important;
+}
+
+.lora-dash .ld-onboard-head p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+}
+
+.lora-dash .ld-onboard-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-dash .ld-tour-btn {
+  background: var(--brand) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  padding: 8px 14px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+}
+
+.lora-dash .ld-guide-btn {
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 11px !important;
+  padding: 8px 14px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+}
+
+.lora-dash .ld-onboard-dismiss {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--line) !important;
+  background: #ffffff !important;
+  color: var(--muted) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-dash .ld-onboard-bar-track {
+  width: 100% !important;
+  height: 8px !important;
+  background: #e2e8f0 !important;
+  border-radius: 99px !important;
+  overflow: hidden !important;
+  margin-bottom: 20px !important;
+}
+
+.lora-dash .ld-onboard-bar-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #2f5bff 0%, #12a46f 100%) !important;
+  border-radius: 99px !important;
+  transition: width 0.35s ease !important;
+}
+
+.lora-dash .ld-onboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+}
+
+.lora-dash .ld-onboard-step {
+  background: #ffffff !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  transition: border-color 0.15s ease, transform 0.15s ease !important;
+}
+
+.lora-dash .ld-onboard-step:hover {
+  border-color: #93b4ff !important;
+  transform: translateY(-2px) !important;
+}
+
+.lora-dash .ld-onboard-step.done {
+  background: #f4fbf8 !important;
+  border-color: #bbf7d0 !important;
+}
+
+.lora-dash .ld-onboard-step-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 2px !important;
+}
+
+.lora-dash .ld-onboard-check {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.lora-dash .ld-onboard-check.done {
+  background: #12a46f !important;
+  color: #ffffff !important;
+}
+
+.lora-dash .ld-onboard-status {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  color: var(--muted) !important;
+}
+
+.lora-dash .ld-onboard-step.done .ld-onboard-status {
+  color: #12a46f !important;
+}
+
+.lora-dash .ld-onboard-step h3 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+}
+
+.lora-dash .ld-onboard-step p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  line-height: 1.45 !important;
+  flex: 1 !important;
+}
+
+.lora-dash .ld-onboard-link {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--brand) !important;
+  margin-top: 4px !important;
+  display: inline-block !important;
+}
+
+.lora-dash .ld-onboard-step.done .ld-onboard-link {
+  color: #0b7f55 !important;
+}
+
 /* ── Responsive: 1100px ── */
 @media (max-width: 1100px) {
   .lora-dash .ld-stats,
-  .lora-dash .ld-acts {
+  .lora-dash .ld-acts,
+  .lora-dash .ld-onboard-grid {
     grid-template-columns: 1fr 1fr !important;
   }
   .lora-dash .ld-cols {
@@ -814,7 +1080,8 @@
 /* ── Responsive: 560px ── */
 @media (max-width: 560px) {
   .lora-dash .ld-stats,
-  .lora-dash .ld-acts {
+  .lora-dash .ld-acts,
+  .lora-dash .ld-onboard-grid {
     grid-template-columns: 1fr !important;
   }
   .lora-dash .ld-pack {
