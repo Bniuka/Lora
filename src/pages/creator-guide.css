@@ -1,0 +1,311 @@
+/* ================================================================
+   Lora Creator Guide & Welcome Tour — V2 Scoped Stylesheet
+   High-contrast light-mode design matching lora-dashboard-v2
+   ================================================================ */
+
+.lora-guide {
+  --bg:         #e9eefb;
+  --surface:    #ffffff;
+  --soft:       #f4f6fb;
+  --ink:        #0e1733;
+  --muted:      #5b647d;
+  --line:       #e3e7f1;
+  --edge:       #cdd8f6;
+  --brand:      #2f5bff;
+  --brand-soft: #e9eeff;
+
+  font: 15px/1.55 'Figtree', system-ui, sans-serif !important;
+  color: var(--ink) !important;
+  background: radial-gradient(720px 420px at 0 0, #d6e3ff, transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, #e6dcff, transparent 70%),
+              var(--bg) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+}
+
+.lora-guide .lg-wrap {
+  max-width: 1180px !important;
+  padding: 28px 32px 64px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 30px !important;
+}
+
+/* ── Hero Card (Light Glossy High-Contrast V2) ── */
+.lora-guide .lg-hero {
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 55%, #e6edff 100%) !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 26px !important;
+  padding: clamp(26px, 4vw, 38px) !important;
+  box-shadow: 0 2px 4px rgba(14,23,51,.06), 0 22px 40px -20px rgba(47,91,255,.32) !important;
+}
+
+.lora-guide .lg-hero::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 5px !important;
+  background: linear-gradient(90deg, #2f5bff, #8a4dff, #12a46f) !important;
+}
+
+.lora-guide .lg-hero-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.lora-guide .lg-hero-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  border: 1px solid #bfd0ff !important;
+  padding: 6px 14px !important;
+  border-radius: 99px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Language Switcher */
+.lora-guide .lg-lang-switch,
+.lora-tour-overlay .lg-lang-switch {
+  display: inline-flex !important;
+  background: #f1f5f9 !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 99px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+
+.lora-guide .lg-lang-btn,
+.lora-tour-overlay .lg-lang-btn {
+  border: 0 !important;
+  background: transparent !important;
+  color: #475569 !important;
+  padding: 6px 14px !important;
+  border-radius: 99px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.lora-guide .lg-lang-btn.active,
+.lora-tour-overlay .lg-lang-btn.active {
+  background: #2f5bff !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(47, 91, 255, 0.35) !important;
+}
+
+.lora-guide .lg-hero h1 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  font-size: clamp(26px, 3.6vw, 38px) !important;
+  font-weight: 800 !important;
+  color: #0e1733 !important;
+  margin: 0 0 12px !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.lora-guide .lg-hero p {
+  margin: 0 0 24px !important;
+  font-size: 15.5px !important;
+  color: #475569 !important;
+  line-height: 1.65 !important;
+  max-width: 760px !important;
+}
+
+.lora-guide .lg-hero-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+/* Primary Blue Button */
+.lora-guide .lg-btn-pri {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, #2f5bff, #4a4bff) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  padding: 12px 22px !important;
+  min-height: 46px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  box-shadow: 0 12px 24px -10px rgba(47, 91, 255, 0.75) !important;
+  transition: filter 0.15s ease, transform 0.15s ease !important;
+}
+
+.lora-guide .lg-btn-pri:hover {
+  color: #ffffff !important;
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Secondary White Button */
+.lora-guide .lg-btn-sec {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #ffffff !important;
+  color: #0e1733 !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 13px !important;
+  padding: 12px 22px !important;
+  min-height: 46px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: border-color 0.15s ease, color 0.15s ease !important;
+}
+
+.lora-guide .lg-btn-sec:hover {
+  border-color: #2f5bff !important;
+  color: #2f5bff !important;
+}
+
+/* Section Headers */
+.lora-guide .lg-sec-head h2 {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #0e1733 !important;
+  margin: 0 0 4px !important;
+}
+
+.lora-guide .lg-sec-head p {
+  margin: 0 !important;
+  color: #5b647d !important;
+  font-size: 14.5px !important;
+}
+
+/* Cards */
+.lora-guide .lg-card {
+  background: linear-gradient(180deg, #ffffff, #f6f9ff) !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 22px !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-shadow: 0 2px 4px rgba(14,23,51,.05), 0 18px 34px -18px rgba(47,91,255,.28) !important;
+}
+
+.lora-guide .lg-card h3 {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  color: #0e1733 !important;
+  font-weight: 800 !important;
+}
+
+/* Action links inside feature cards */
+.lora-guide .lg-feat-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  text-decoration: none !important;
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1px solid #bfdbfe !important;
+  transition: all 0.15s ease !important;
+}
+
+.lora-guide .lg-feat-btn:hover {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.lora-guide .lg-step-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: #2563eb !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  text-decoration: none !important;
+}
+
+.lora-guide .lg-step-link:hover {
+  text-decoration: underline !important;
+}
+
+/* Welcome Tour Modal Buttons Override */
+.lora-tour-overlay .lt-btn-next {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 18px !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  background: linear-gradient(135deg, #2f5bff, #4a4bff) !important;
+  color: #ffffff !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.lora-tour-overlay .lt-btn-done {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 18px !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  background: #0e1733 !important;
+  color: #ffffff !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.lora-tour-overlay .lt-btn-guide {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 15px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #2563eb !important;
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.lora-tour-overlay .lt-btn-back {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 15px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 900px) {
+  .lora-guide .lg-wrap {
+    padding: 20px 16px 104px !important;
+  }
+}

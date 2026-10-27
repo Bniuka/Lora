@@ -6,6 +6,7 @@ import {
   MessageCircle, Globe
 } from 'lucide-react';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
+import './creator-guide.css';
 
 const GUIDE_CONTENT = {
   si: {
@@ -372,510 +373,279 @@ export default function CreatorGuide() {
   const t = GUIDE_CONTENT[lang] || GUIDE_CONTENT.si;
 
   return (
-    <div
-      style={{
-        fontFamily: "'Figtree', system-ui, sans-serif",
-        color: '#0e1733',
-        maxWidth: 1180,
-        padding: '28px 32px 64px',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 32,
-      }}
-    >
-      {/* ── Hero Banner ── */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #0e1733 0%, #1e3a8a 60%, #2563eb 100%)',
-          borderRadius: 26,
-          padding: 'clamp(26px, 4vw, 40px)',
-          color: '#ffffff',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 20px 50px -20px rgba(14, 23, 51, 0.35)',
-        }}
-      >
-        {/* Top Row: Badge + Language Switcher */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: 12,
-            marginBottom: 16,
-            position: 'relative',
-            zIndex: 2,
-          }}
-        >
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 7,
-              background: 'rgba(255, 255, 255, 0.14)',
-              border: '1px solid rgba(255, 255, 255, 0.22)',
-              padding: '6px 14px',
-              borderRadius: 99,
-              fontSize: 12.5,
-              fontWeight: 700,
-              letterSpacing: '0.03em',
-            }}
-          >
-            <Sparkles size={14} /> {t.heroBadge}
-          </span>
+    <div className="lora-guide">
+      <div className="lg-wrap">
 
-          {/* 1-Click Sinhala / English Toggle */}
-          <div
-            style={{
-              display: 'inline-flex',
-              background: 'rgba(14, 23, 51, 0.45)',
-              border: '1px solid rgba(255, 255, 255, 0.24)',
-              borderRadius: 99,
-              padding: 4,
-              gap: 4,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => handleLangChange('si')}
-              style={{
-                border: 0,
-                background: lang === 'si' ? '#ffffff' : 'transparent',
-                color: lang === 'si' ? '#0e1733' : 'rgba(255, 255, 255, 0.85)',
-                padding: '6px 14px',
-                borderRadius: 99,
-                fontSize: 13,
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              🇱🇰 සිංහල
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLangChange('en')}
-              style={{
-                border: 0,
-                background: lang === 'en' ? '#ffffff' : 'transparent',
-                color: lang === 'en' ? '#0e1733' : 'rgba(255, 255, 255, 0.85)',
-                padding: '6px 14px',
-                borderRadius: 99,
-                fontSize: 13,
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              English
-            </button>
+        {/* ── Hero Banner (High-Contrast Light Glossy V2) ── */}
+        <div className="lg-hero">
+          <div className="lg-hero-top">
+            <span className="lg-hero-badge">
+              <Sparkles size={14} /> {t.heroBadge}
+            </span>
+
+            {/* 1-Click Sinhala / English Toggle */}
+            <div className="lg-lang-switch">
+              <button
+                type="button"
+                className={`lg-lang-btn ${lang === 'si' ? 'active' : ''}`}
+                onClick={() => handleLangChange('si')}
+              >
+                🇱🇰 සිංහල
+              </button>
+              <button
+                type="button"
+                className={`lg-lang-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => handleLangChange('en')}
+              >
+                English
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div style={{ maxWidth: 740, position: 'relative', zIndex: 1 }}>
-          <h1
-            style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontSize: 'clamp(26px, 3.8vw, 38px)',
-              fontWeight: 800,
-              margin: '0 0 12px',
-              lineHeight: 1.2,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {t.heroTitle}
-          </h1>
+          <h1>{t.heroTitle}</h1>
+          <p>{t.heroDesc}</p>
 
-          <p
-            style={{
-              margin: '0 0 24px',
-              fontSize: 15.5,
-              color: 'rgba(255, 255, 255, 0.88)',
-              lineHeight: 1.65,
-            }}
-          >
-            {t.heroDesc}
-          </p>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <div className="lg-hero-actions">
             <button
               type="button"
+              className="lg-btn-pri"
               onClick={() => setTourOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: '#ffffff',
-                color: '#0e1733',
-                border: 0,
-                borderRadius: 13,
-                padding: '12px 22px',
-                fontWeight: 700,
-                fontSize: 14.5,
-                cursor: 'pointer',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.18)',
-              }}
             >
-              <Play size={16} fill="#0e1733" /> {t.btnTour}
+              <Play size={16} fill="#ffffff" /> {t.btnTour}
             </button>
 
-            <Link
-              to="/creator/packs/new"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: 'rgba(255, 255, 255, 0.14)',
-                color: '#ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.28)',
-                borderRadius: 13,
-                padding: '12px 22px',
-                fontWeight: 700,
-                fontSize: 14.5,
-                textDecoration: 'none',
-              }}
-            >
+            <Link to="/creator/packs/new" className="lg-btn-sec">
               {t.btnCreate} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
-      </div>
 
-      {/* ── 4-Step Creator Workflow Roadmap ── */}
-      <section>
-        <div style={{ marginBottom: 18 }}>
-          <h2
+        {/* ── 4-Step Creator Workflow Roadmap ── */}
+        <section>
+          <div className="lg-sec-head" style={{ marginBottom: 18 }}>
+            <h2>{t.roadmapTitle}</h2>
+            <p>{t.roadmapSub}</p>
+          </div>
+
+          <div
             style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontSize: 24,
-              fontWeight: 800,
-              margin: '0 0 4px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 18,
             }}
           >
-            {t.roadmapTitle}
-          </h2>
-          <p style={{ margin: 0, color: '#68728d', fontSize: 14.5 }}>
-            {t.roadmapSub}
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: 18,
-          }}
-        >
-          {t.workflowSteps.map((w) => (
-            <div
-              key={w.step}
-              style={{
-                background: '#ffffff',
-                border: '1.5px solid #cdd8f6',
-                borderRadius: 22,
-                padding: '22px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: w.bg,
-                    color: w.color,
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 13.5,
-                    padding: '5px 12px',
-                    borderRadius: 10,
-                    marginBottom: 14,
-                  }}
-                >
-                  {t.stepPrefix} {w.step}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    margin: '0 0 8px',
-                    color: '#0e1733',
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {w.title}
-                </h3>
-                <p style={{ margin: '0 0 18px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
-                  {w.desc}
-                </p>
-              </div>
-
-              <Link
-                to={w.ctaLink}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  color: w.color,
-                  fontWeight: 700,
-                  fontSize: 14,
-                  textDecoration: 'none',
-                }}
-              >
-                {w.ctaText} <ArrowRight size={15} />
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── All Platform Features Deep Dive ── */}
-      <section>
-        <div style={{ marginBottom: 18 }}>
-          <h2
-            style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontSize: 24,
-              fontWeight: 800,
-              margin: '0 0 4px',
-            }}
-          >
-            {t.featuresTitle}
-          </h2>
-          <p style={{ margin: 0, color: '#68728d', fontSize: 14.5 }}>
-            {t.featuresSub}
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: 20,
-          }}
-        >
-          {t.featureCards.map((feat, idx) => {
-            const Icon = feat.icon;
-            return (
-              <div
-                key={idx}
-                style={{
-                  background: '#ffffff',
-                  border: '1.5px solid #cdd8f6',
-                  borderRadius: 22,
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
-                }}
-              >
+            {t.workflowSteps.map((w) => (
+              <div key={w.step} className="lg-card">
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 14 }}>
-                    <div
-                      style={{
-                        width: 46,
-                        height: 46,
-                        borderRadius: 14,
-                        background: feat.softBg,
-                        color: feat.color,
-                        display: 'grid',
-                        placeItems: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Icon size={22} />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 11.5,
-                        fontWeight: 800,
-                        letterSpacing: '0.03em',
-                        color: feat.color,
-                        background: feat.softBg,
-                        padding: '4px 11px',
-                        borderRadius: 99,
-                      }}
-                    >
-                      {feat.badge}
-                    </span>
-                  </div>
-
-                  <h3
-                    style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: 19.5,
-                      fontWeight: 800,
-                      margin: '0 0 8px',
-                      color: '#0e1733',
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {feat.title}
-                  </h3>
-
-                  <p style={{ margin: '0 0 16px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
-                    {feat.description}
-                  </p>
-
-                  <ul style={{ margin: '0 0 20px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {feat.bullets.map((b, bIdx) => (
-                      <li
-                        key={bIdx}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 9,
-                          fontSize: 13.5,
-                          color: '#334155',
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        <CheckCircle2
-                          size={16}
-                          style={{ color: feat.color, flexShrink: 0, marginTop: 2 }}
-                        />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div style={{ paddingTop: 14, borderTop: '1px solid #f1f5f9' }}>
-                  <Link
-                    to={feat.actionTo}
+                  <div
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 7,
-                      background: feat.softBg,
-                      color: feat.color,
-                      padding: '9px 16px',
-                      borderRadius: 11,
-                      fontWeight: 700,
+                      justifyContent: 'center',
+                      background: w.bg,
+                      color: w.color,
+                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontWeight: 800,
                       fontSize: 13.5,
-                      textDecoration: 'none',
+                      padding: '5px 12px',
+                      borderRadius: 10,
+                      marginBottom: 14,
                     }}
                   >
-                    {feat.actionLabel} <ArrowRight size={15} />
-                  </Link>
+                    {t.stepPrefix} {w.step}
+                  </div>
+                  <h3 style={{ fontSize: 18, margin: '0 0 8px', lineHeight: 1.3 }}>
+                    {w.title}
+                  </h3>
+                  <p style={{ margin: '0 0 18px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
+                    {w.desc}
+                  </p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
 
-      {/* ── Frequently Asked Questions ── */}
-      <section
-        style={{
-          background: '#ffffff',
-          border: '1.5px solid #cdd8f6',
-          borderRadius: 24,
-          padding: '28px',
-          boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <Link to={w.ctaLink} className="lg-step-link">
+                  {w.ctaText} <ArrowRight size={15} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── All Platform Features Deep Dive ── */}
+        <section>
+          <div className="lg-sec-head" style={{ marginBottom: 18 }}>
+            <h2>{t.featuresTitle}</h2>
+            <p>{t.featuresSub}</p>
+          </div>
+
           <div
             style={{
-              width: 42,
-              height: 42,
-              borderRadius: 12,
-              background: '#eff6ff',
-              color: '#2563eb',
               display: 'grid',
-              placeItems: 'center',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+              gap: 20,
             }}
           >
-            <HelpCircle size={22} />
+            {t.featureCards.map((feat, idx) => {
+              const Icon = feat.icon;
+              return (
+                <div key={idx} className="lg-card">
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 14 }}>
+                      <div
+                        style={{
+                          width: 46,
+                          height: 46,
+                          borderRadius: 14,
+                          background: feat.softBg,
+                          color: feat.color,
+                          display: 'grid',
+                          placeItems: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Icon size={22} />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 11.5,
+                          fontWeight: 800,
+                          letterSpacing: '0.03em',
+                          color: feat.color,
+                          background: feat.softBg,
+                          padding: '4px 11px',
+                          borderRadius: 99,
+                        }}
+                      >
+                        {feat.badge}
+                      </span>
+                    </div>
+
+                    <h3 style={{ fontSize: 19.5, margin: '0 0 8px', lineHeight: 1.3 }}>
+                      {feat.title}
+                    </h3>
+
+                    <p style={{ margin: '0 0 16px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
+                      {feat.description}
+                    </p>
+
+                    <ul style={{ margin: '0 0 20px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {feat.bullets.map((b, bIdx) => (
+                        <li
+                          key={bIdx}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 9,
+                            fontSize: 13.5,
+                            color: '#334155',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          <CheckCircle2
+                            size={16}
+                            style={{ color: feat.color, flexShrink: 0, marginTop: 2 }}
+                          />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div style={{ paddingTop: 14, borderTop: '1px solid #e2e8f0' }}>
+                    <Link to={feat.actionTo} className="lg-feat-btn">
+                      {feat.actionLabel} <ArrowRight size={15} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div>
-            <h2
+        </section>
+
+        {/* ── Frequently Asked Questions ── */}
+        <section className="lg-card" style={{ padding: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <div
               style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontSize: 21,
-                fontWeight: 800,
-                margin: 0,
+                width: 42,
+                height: 42,
+                borderRadius: 12,
+                background: '#eff6ff',
+                color: '#2563eb',
+                display: 'grid',
+                placeItems: 'center',
               }}
             >
-              {t.faqTitle}
-            </h2>
-            <p style={{ margin: 0, fontSize: 13.5, color: '#68728d' }}>
-              {t.faqSub}
-            </p>
+              <HelpCircle size={22} />
+            </div>
+            <div className="lg-sec-head">
+              <h2 style={{ fontSize: 21 }}>{t.faqTitle}</h2>
+              <p style={{ fontSize: 13.5 }}>{t.faqSub}</p>
+            </div>
           </div>
-        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {t.faqs.map((item, idx) => {
-            const isOpen = openFaq === idx;
-            return (
-              <div
-                key={idx}
-                style={{
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                  background: isOpen ? '#f8fafc' : '#ffffff',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenFaq(isOpen ? -1 : idx)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {t.faqs.map((item, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
                   style={{
-                    width: '100%',
-                    padding: '16px 20px',
-                    background: 'transparent',
-                    border: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    textAlign: 'left',
-                    fontWeight: 700,
-                    fontSize: 15,
-                    color: '#0e1733',
-                    cursor: 'pointer',
+                    border: '1.5px solid #e2e8f0',
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    background: isOpen ? '#f8fafc' : '#ffffff',
                   }}
                 >
-                  <span>{item.q}</span>
-                  <ChevronDown
-                    size={18}
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? -1 : idx)}
                     style={{
-                      color: '#64748b',
-                      flexShrink: 0,
-                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.2s ease',
-                    }}
-                  />
-                </button>
-                {isOpen && (
-                  <div
-                    style={{
-                      padding: '0 20px 18px',
-                      fontSize: 14,
-                      color: '#475569',
-                      lineHeight: 1.65,
+                      width: '100%',
+                      padding: '16px 20px',
+                      background: 'transparent',
+                      border: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      textAlign: 'left',
+                      fontWeight: 700,
+                      fontSize: 15,
+                      color: '#0e1733',
+                      cursor: 'pointer',
                     }}
                   >
-                    {item.a}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+                    <span>{item.q}</span>
+                    <ChevronDown
+                      size={18}
+                      style={{
+                        color: '#64748b',
+                        flexShrink: 0,
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s ease',
+                      }}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div
+                      style={{
+                        padding: '0 20px 18px',
+                        fontSize: 14,
+                        color: '#475569',
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-      <CreatorWelcomeTour isOpen={tourOpen} onClose={() => setTourOpen(false)} />
+        <CreatorWelcomeTour isOpen={tourOpen} onClose={() => setTourOpen(false)} />
+      </div>
     </div>
   );
 }

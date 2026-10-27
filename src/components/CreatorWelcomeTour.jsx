@@ -4,6 +4,7 @@ import {
   Sparkles, Building2, Video, Ticket, Share2,
   CheckCircle2, ArrowRight, ArrowLeft, X, BookOpen
 } from 'lucide-react';
+import '../pages/creator-guide.css';
 
 const TOUR_SLIDES = {
   si: [
@@ -271,6 +272,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
   return (
     <div
+      className="lora-tour-overlay"
       style={{
         position: 'fixed',
         inset: 0,
@@ -328,46 +330,18 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
             {/* Language Switcher + Close Button */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  background: '#f1f5f9',
-                  padding: 3,
-                  borderRadius: 99,
-                  border: '1px solid #e2e8f0',
-                }}
-              >
+              <div className="lg-lang-switch">
                 <button
                   type="button"
+                  className={`lg-lang-btn ${lang === 'si' ? 'active' : ''}`}
                   onClick={() => handleLangChange('si')}
-                  style={{
-                    border: 0,
-                    background: lang === 'si' ? '#2563eb' : 'transparent',
-                    color: lang === 'si' ? '#ffffff' : '#475569',
-                    padding: '4px 11px',
-                    borderRadius: 99,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
                 >
                   🇱🇰 සිංහල
                 </button>
                 <button
                   type="button"
+                  className={`lg-lang-btn ${lang === 'en' ? 'active' : ''}`}
                   onClick={() => handleLangChange('en')}
-                  style={{
-                    border: 0,
-                    background: lang === 'en' ? '#2563eb' : 'transparent',
-                    color: lang === 'en' ? '#ffffff' : '#475569',
-                    padding: '4px 11px',
-                    borderRadius: 99,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
                 >
                   English
                 </button>
@@ -550,40 +524,16 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
             {step > 0 ? (
               <button
                 type="button"
+                className="lt-btn-back"
                 onClick={() => setStep(step - 1)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 15px',
-                  borderRadius: 11,
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
-                  color: '#334155',
-                  fontSize: 13.5,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
               >
                 <ArrowLeft size={15} /> {lang === 'si' ? 'ආපසු' : 'Back'}
               </button>
             ) : (
               <button
                 type="button"
+                className="lt-btn-back"
                 onClick={handleOpenGuide}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 14px',
-                  borderRadius: 11,
-                  border: '1px solid #e2e8f0',
-                  background: '#ffffff',
-                  color: '#475569',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
               >
                 <BookOpen size={14} /> {lang === 'si' ? 'සම්පූර්ණ විස්තරය' : 'Full Guide'}
               </button>
@@ -592,20 +542,8 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
             {!isLast ? (
               <button
                 type="button"
+                className="lt-btn-next"
                 onClick={() => setStep(step + 1)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 18px',
-                  borderRadius: 11,
-                  border: 0,
-                  background: current.accent,
-                  color: '#ffffff',
-                  fontSize: 13.5,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
               >
                 {lang === 'si' ? 'ඊළඟ' : 'Next'} <ArrowRight size={15} />
               </button>
@@ -613,39 +551,15 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   type="button"
+                  className="lt-btn-guide"
                   onClick={handleOpenGuide}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '9px 14px',
-                    borderRadius: 11,
-                    border: '1.5px solid #2563eb',
-                    background: '#eff6ff',
-                    color: '#2563eb',
-                    fontSize: 13.5,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
                 >
                   <BookOpen size={15} /> {lang === 'si' ? 'Creator Guide බලන්න' : 'Open Creator Guide'}
                 </button>
                 <button
                   type="button"
+                  className="lt-btn-done"
                   onClick={onClose}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '9px 18px',
-                    borderRadius: 11,
-                    border: 0,
-                    background: '#0e1733',
-                    color: '#ffffff',
-                    fontSize: 13.5,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
                 >
                   {lang === 'si' ? 'හරි, පටන් ගමු!' : "Got It, Let's Go!"}
                 </button>
