@@ -1,175 +1,375 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Sparkles, Building2, Video, Ticket, Share2, BellRing,
+  Sparkles, Building2, Video, Ticket, BellRing,
   CheckCircle2, ArrowRight, Play, HelpCircle, ChevronDown,
-  Layers, ShieldCheck, MessageCircle, Globe
+  MessageCircle, Globe
 } from 'lucide-react';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
 
-const WORKFLOW_STEPS = [
-  {
-    step: '01',
-    title: 'Set Up Profile & Bank Accounts',
-    desc: 'Add your creator bio, contact number, and up to 4 bank accounts (or a payment link) in Settings so learners can pay you directly.',
-    ctaText: 'Go to Settings',
-    ctaLink: '/creator/settings',
-    color: '#2563eb',
-    bg: '#eff6ff',
-  },
-  {
-    step: '02',
-    title: 'Create a Session Pack',
-    desc: 'Set your course title, thumbnail, LKR/USD price, WhatsApp inquiry number, and schedule your live Zoom / YouTube Live sessions or Past Recordings.',
-    ctaText: 'Create a Pack',
-    ctaLink: '/creator/packs/new',
-    color: '#7c3aed',
-    bg: '#f5f3ff',
-  },
-  {
-    step: '03',
-    title: 'Share Link or Promo Codes',
-    desc: 'Share your custom pack URL on social media, or generate a usage-limited Promo Code (e.g. LORA-FREE-7X9) inside the Pack Editor to grant free access to a specific number of students.',
-    ctaText: 'View My Packs',
-    ctaLink: '/creator/packs',
-    color: '#d97706',
-    bg: '#fffbeb',
-  },
-  {
-    step: '04',
-    title: 'Approve Slips & Upload Recordings',
-    desc: 'Verify student bank transfer slips in 1 click under Enrollments. After a live session finishes, paste the recording link on your Dashboard to automatically notify all enrolled learners.',
-    ctaText: 'Manage Enrollments',
-    ctaLink: '/creator/enrollments',
-    color: '#059669',
-    bg: '#ecfdf5',
-  },
-];
-
-const FEATURE_CARDS = [
-  {
-    icon: Ticket,
-    badge: 'NEW · SCHOLARSHIPS & BATCHES',
-    title: 'Usage-Limited Free Promo Codes (LORA-FREE-7X9)',
-    color: '#d97706',
-    softBg: '#fffbeb',
-    description:
-      'Want to give 100% free access to 1 special student or a private batch of 15 students without collecting their emails one by one or risking someone leaking an open link?',
-    bullets: [
-      'Open any saved Session Pack in Edit mode and scroll to "Free Access Promo Codes".',
-      'Click "+ Generate Code" — it creates a code like LORA-FREE-7X9.',
-      'Choose how many students can claim it (e.g. 1 student, 15 students, or any custom limit).',
-      'Once all attempts are claimed (e.g. 15/15), the code automatically expires so the 16th person cannot use it.',
-      'Copy the code or the direct 1-click claim link (?promo=LORA-FREE-7X9) to send via WhatsApp.',
+const GUIDE_CONTENT = {
+  si: {
+    heroBadge: 'නිල Creator මාර්ගෝපදේශය සහ විශේෂාංග',
+    heroTitle: 'LoraSpace හරහා ඔයාට කළ හැකි සියලුම දේ 🚀',
+    heroDesc:
+      'ඔයාගේ Creator ගිණුම සකසා ගන්නා ආකාරය, බැංකු ගිණුම් 4ක් දක්වා එක් කර සිසුන්ගෙන් කෙලින්ම මුදල් ලබාගන්නා ආකාරය, Live හෝ Recorded පන්ති පැවැත්වීම සහ Promo Codes (LORA-FREE-7X9) හරහා නොමිලේ පන්ති ලබාදෙන ආකාරය සිංහලෙන්ම මෙතැනින් දැනගන්න.',
+    btnTour: 'Slide Tour එක බලන්න',
+    btnCreate: 'අලුත් Session Pack එකක් හදන්න',
+    roadmapTitle: 'පියවර 4 කින් LoraSpace වැඩ කරන හැටි',
+    roadmapSub: 'ඔයා අලුතින්ම සම්බන්ධ වුණු කෙනෙක් නම්, මුල්ම ළමයා පන්තියට බඳවා ගන්නා තෙක් මේ පියවර 4 අනුගමනය කරන්න.',
+    featuresTitle: 'Creators ලා වෙනුවෙන්ම නිර්මාණය කළ විශේෂ පහසුකම්',
+    featuresSub: 'ඔයාගේ Online පන්ති වඩාත් පහසුවෙන් සහ වෘත්තීය මට්ටමින් කරගෙන යාමට ඇති සියලුම Tools.',
+    faqTitle: 'නිතර අසන ප්‍රශ්න (Creator FAQs)',
+    faqSub: 'LoraSpace හි පන්ති පවත්වාගෙන යාමේදී මතුවන ප්‍රධාන ගැටලු සහ පිළිතුරු.',
+    stepPrefix: 'පියවර',
+    workflowSteps: [
+      {
+        step: '01',
+        title: 'Profile එක සහ Bank Accounts සකසන්න',
+        desc: 'Settings වෙත ගොස් ඔයාගේ විස්තර, දුරකථන අංකය සහ බැංකු ගිණුම් 4ක් දක්වා (BOC, Sampath, Commercial ආදී) ඇතුළත් කරන්න.',
+        ctaText: 'Settings වෙත යන්න',
+        ctaLink: '/creator/settings',
+        color: '#2563eb',
+        bg: '#eff6ff',
+      },
+      {
+        step: '02',
+        title: 'Session Pack (පාඨමාලාවක්) හදන්න',
+        desc: 'පාඨමාලාවේ නම, Thumbnail පින්තූරය, ගාස්තුව (LKR), WhatsApp අංකය සහ ඔයාගේ Live (Zoom/YouTube) හෝ Recorded පාඩම් ඇතුළත් කරන්න.',
+        ctaText: 'Pack එකක් හදන්න',
+        ctaLink: '/creator/packs/new',
+        color: '#7c3aed',
+        bg: '#f5f3ff',
+      },
+      {
+        step: '03',
+        title: 'Course Link එක හෝ Promo Code බෙදාගන්න',
+        desc: 'ඔයාගේ Course Link එක Social Media වල Share කරන්න. නැත්නම් තෝරාගත් සිසුන් පිරිසකට නොමිලේ Access දීමට Promo Code එකක් (LORA-FREE-7X9) හදන්න.',
+        ctaText: 'My Packs බලන්න',
+        ctaLink: '/creator/packs',
+        color: '#d97706',
+        bg: '#fffbeb',
+      },
+      {
+        step: '04',
+        title: 'Payment Slips අනුමත කර Recordings දාන්න',
+        desc: 'Enrollments පිටුවෙන් ළමයින්ගේ Bank Slips එක Click එකකින් Approve කරන්න. Live පන්තියක් ඉවර වුණාම Dashboard එකෙන්ම Recording Link එක දාන්න.',
+        ctaText: 'Enrollments බලන්න',
+        ctaLink: '/creator/enrollments',
+        color: '#059669',
+        bg: '#ecfdf5',
+      },
     ],
-    actionLabel: 'Manage Packs & Promo Codes',
-    actionTo: '/creator/packs',
-  },
-  {
-    icon: Building2,
-    badge: 'DIRECT PAYOUTS',
-    title: 'Multi-Bank Accounts & Reference Code Verification',
-    color: '#059669',
-    softBg: '#ecfdf5',
-    description:
-      'LoraSpace never holds your course money. Students transfer the fee directly to your bank account or payment link.',
-    bullets: [
-      'Add up to 4 different bank accounts (BOC, Sampath, Commercial, HNB, etc.) in Settings.',
-      'Mark your preferred account as "Primary" — learners can switch between your banks using selector pills at checkout.',
-      'Before paying, each learner receives a unique Reference Code to include in their bank transfer description.',
-      'Students upload their transfer receipt screenshot, and you approve them in 1 click from the Enrollments page.',
+    featureCards: [
+      {
+        icon: Ticket,
+        badge: 'අලුත්ම පහසුකම · නොමිලේ පන්ති',
+        title: 'සීමිත සිසුන් ගණනකට දිය හැකි Promo Codes (LORA-FREE-7X9)',
+        color: '#d97706',
+        softBg: '#fffbeb',
+        description:
+          'ළමයින්ගේ Email එකින් එක ඉල්ලන්නේ නැතුව, එක් සිසුවෙකුට හෝ තෝරාගත් සිසුන් කණ්ඩායමකට (උදා: ළමයි 15 දෙනෙකුට) පමණක් 100% නොමිලේ පාඨමාලාවට සම්බන්ධ වීමට අවස්ථාව ලබාදෙන්න.',
+        bullets: [
+          'ඕනෑම Session Pack එකක් Edit ගොස් "Free Access Promo Codes" කොටසට යන්න.',
+          '"+ Generate Code" බටන් එක ඔබන්න — එවිට LORA-FREE-7X9 වැනි Code එකක් සෑදේ.',
+          'එම Code එකෙන් සම්බන්ධ විය හැකි සිසුන් ගණන (Attempts) තෝරන්න (උදා: 1 student, 15 students).',
+          'සිසුන් 15 දෙනාම එම Code එක පාවිච්චි කළ පසු, 16 වෙනියාට එම Code එක ඉබේම Expire වේ.',
+          'Code එක හෝ Direct Link එක (?promo=LORA-FREE-7X9) Copy කර WhatsApp හරහා සිසුන්ට යවන්න.',
+        ],
+        actionLabel: 'Promo Codes හදන්න (My Packs)',
+        actionTo: '/creator/packs',
+      },
+      {
+        icon: Building2,
+        badge: 'සෘජු ගෙවීම් · 100% ඔයාගේ අතට',
+        title: 'බැංකු ගිණුම් කිහිපයක් (Multi-Bank) සහ Reference Code ක්‍රමය',
+        color: '#059669',
+        softBg: '#ecfdf5',
+        description:
+          'සිසුන් ගෙවන පන්ති ගාස්තු කෙලින්ම බැර වන්නේ ඔයාගේම බැංකු ගිණුමට හෝ Payment Link එකටයි.',
+        bullets: [
+          'Settings තුළින් බැංකු ගිණුම් 4ක් දක්වා (BOC, Sampath, Commercial, HNB ආදී) ඇතුළත් කළ හැක.',
+          'ඔයාගේ ප්‍රධාන ගිණුම "Primary" ලෙස ලකුණු කරන්න — සිසුන්ට මුදල් ගෙවීමේදී තමන් කැමති බැංකුව තෝරාගත හැක.',
+          'මුදල් ගෙවන සෑම සිසුවෙකුටම Bank Transfer Description එකේ දැමීමට විශේෂ Reference Code එකක් ලැබේ.',
+          'සිසුවා Bank Slip එක Upload කළ පසු, Enrollments පිටුවෙන් එය පරීක්ෂා කර එක Click එකකින් Approve කළ හැක.',
+        ],
+        actionLabel: 'Bank Accounts සකසන්න',
+        actionTo: '/creator/settings',
+      },
+      {
+        icon: Video,
+        badge: 'LIVE + RECORDED පන්ති',
+        title: 'Zoom, YouTube Live සහ Past Catch-Up Recordings',
+        color: '#7c3aed',
+        softBg: '#f5f3ff',
+        description:
+          'Live පන්ති පමණක් හෝ Recorded පාඩම් පමණක් නොව, මේ දෙකම එකම Session Pack එකක් තුළ පවත්වාගෙන යා හැක.',
+        bullets: [
+          'Live Session: ඉදිරියට පැවැත්වෙන පන්ති සඳහා Zoom Link එකක් හෝ YouTube Live (Unlisted) ලින්ක් එකක් දිනය සහ වේලාව සමඟ එක් කරන්න.',
+          'Past Recording: පන්තිය ආරම්භ වූ පසු පසුව එකතු වන ළමයින්ට කලින් දවස්වල පාඩම් එවෙලේම නැරඹීමට "📼 Past Recording" ඔප්ෂන් එක තෝරන්න.',
+          'ලියාපදිංචි වූ සිසුන්ට "My Sessions" හරහා පිළිවෙළකට සියලුම පාඩම් නැරඹිය හැක.',
+        ],
+        actionLabel: 'අලුත් Pack එකක් හදන්න',
+        actionTo: '/creator/packs/new',
+      },
+      {
+        icon: BellRing,
+        badge: 'ස්වයංක්‍රීය මතක් කිරීම්',
+        title: 'Missing Recording Alerts සහ සිසුන්ට Auto-Notifications',
+        color: '#ea580c',
+        softBg: '#fff7ed',
+        description:
+          'Live පන්තියක් අවසන් වූ පසු එහි Recording එක දැමීමට අමතක වීම ගැන තවදුරටත් වද විය යුතු නැත.',
+        bullets: [
+          'Scheduled Live පන්තියක් අවසන් වූ වහාම ඔයාගේ Dashboard එකේ "Action Required: Missing Recordings" ලෙස මතක් කිරීමක් පෙන්වයි.',
+          'Google Drive, YouTube Unlisted, Vimeo හෝ Zoom Cloud Recording ලින්ක් එක එතැනම Paste කර "Save Recording" ඔබන්න.',
+          'එම මොහොතේම පාඨමාලාවේ සිටින සියලුම සිසුන්ට "Recording Available! 🎥" ලෙස Notification එකක් ස්වයංක්‍රීයව යයි.',
+        ],
+        actionLabel: 'Dashboard වෙත යන්න',
+        actionTo: '/creator/dashboard',
+      },
+      {
+        icon: MessageCircle,
+        badge: 'වැඩි සිසුන් පිරිසක් බඳවා ගැනීමට',
+        title: 'WhatsApp සහ Direct Call විමසීම් බටන්',
+        color: '#0284c7',
+        softBg: '#f0f9ff',
+        description:
+          'බොහෝ සිසුන් පාඨමාලාවකට මුදල් ගෙවීමට පෙර ගුරුවරයාගෙන් විස්තරයක් අසා දැනගැනීමට කැමතියි.',
+        bullets: [
+          'Session Pack එකක් සාදන විට හෝ Edit කරන විට ඔයාගේ WhatsApp අංකය සහ දුරකථන අංකය ඇතුළත් කරන්න.',
+          'එවිට ඔයාගේ Course පිටුවේ "Chat on WhatsApp" සහ "Call for Details" බටන් ස්වයංක්‍රීයව දිස්වේ.',
+          'Computer වල මෙන්ම Mobile Phone වල පහළින්ම ඇති Purchase Bar එකේද මෙය පැහැදිලිව පෙන්වයි.',
+        ],
+        actionLabel: 'Packs වලට WhatsApp එක් කරන්න',
+        actionTo: '/creator/packs',
+      },
+      {
+        icon: Globe,
+        badge: 'ඔයාගේ නම ප්‍රචාරණයට',
+        title: 'Custom Course Links සහ Public Creator Profile',
+        color: '#db2777',
+        softBg: '#fdf2f8',
+        description:
+          'Facebook, TikTok, YouTube සහ WhatsApp හරහා පහසුවෙන් Share කළ හැකි කෙටි සහ පැහැදිලි Links සාදාගන්න.',
+        bullets: [
+          'Pack Editor එක තුළින් ඔයාගේ පාඨමාලාවේ Link එක කැමති ලෙස වෙනස් කරගත හැක (උදා: /p/advanced-ict-2026).',
+          'ඕනෑම පාඨමාලාවක ඇති ඔයාගේ නම මත Click කළ විට, ඔයාගේ සියලුම පාඨමාලා ඇතුළත් Public Creator Profile එක සිසුන්ට බලාගත හැක.',
+          'Share බටන් එක හරහා එක Click එකකින් Social Media වෙත Course Link එක බෙදාහරින්න.',
+        ],
+        actionLabel: 'Profile එක සකසන්න',
+        actionTo: '/creator/settings',
+      },
     ],
-    actionLabel: 'Configure Bank Accounts',
-    actionTo: '/creator/settings',
-  },
-  {
-    icon: Video,
-    badge: 'HYBRID TEACHING',
-    title: 'Live Zoom, YouTube Live & Catch-Up Recordings',
-    color: '#7c3aed',
-    softBg: '#f5f3ff',
-    description:
-      'Teach live classes, upload pre-recorded lessons, or combine both inside the same Session Pack.',
-    bullets: [
-      'Live Scheduled Session: Add your Zoom meeting link or an unlisted YouTube Live stream link with date & duration.',
-      'Past Recording Mode: Toggle any session to "📼 Past Recording" when creating or editing a pack so new students can immediately watch earlier lessons.',
-      'Enrolled learners get a dedicated "My Sessions" player to join live classes or watch recordings.',
+    faqs: [
+      {
+        q: 'Payment Slip එකක් Upload කරන්නේ නැතුව, තෝරාගත් ළමයි කිහිප දෙනෙකුට විතරක් නොමිලේ පන්තිය ලබාදෙන්නේ කොහොමද?',
+        a: '"My Packs" වෙත ගොස් ඔයාගේ පාඨමාලාවේ "Edit" ඔබන්න. එහි පහළ ඇති "Free Access Promo Codes" කොටසේ "+ Generate Code" ඔබන්න. එතැනින් ඔයාට අවශ්‍ය සිසුන් ගණන (උදා: ළමයි 15) තෝරා Code එක සාදාගන්න. එම LORA-FREE-7X9 වැනි Code එක සිසුන්ට යවන්න. ළමයි 15 දෙනාම Join වූ පසු එම Code එක ඉබේම Expire වේ!',
+      },
+      {
+        q: 'Live පන්ති 2ක් පැවැත්වුවාට පසුව අලුතින් සම්බන්ධ වන ළමයෙකුට පසුගිය පාඩම් බලන්න පුළුවන්ද?',
+        a: 'ඔව්! ඔයා අවසන් වූ පන්තිවලට Recording URL එක ඇතුළත් කර ඇත්නම් (හෝ Pack Editor හි "Past Recording" ලෙස දමා ඇත්නම්), අලුතින් සම්බන්ධ වන ඕනෑම සිසුවෙකුට එම පසුගිය පාඩම් එවෙලේම නරඹා ඉදිරි Live පන්තිවලට සම්බන්ධ විය හැක.',
+      },
+      {
+        q: 'සිසුවෙක් බැංකුවට මුදල් ගෙවා එවූ Bank Slip එක පරීක්ෂා කර Approve කරන්නේ කොහොමද?',
+        a: 'සිසුවෙක් මුදල් ගෙවා Receipt / Slip එක Upload කළ විට, වම් පස මෙනුවේ ඇති "Enrollments" පිටුවට යන්න. එහි සිසුවාගේ නම, Reference Code එක, මුදල් තැන්පත් කළ බැංකුව සහ Slip එකේ ඡායාරූපය බලාගත හැක. එහි ඇති "Approve" බටන් එක එබූ සැණින් සිසුවාට පාඨමාලාව විවෘත වේ.',
+      },
+      {
+        q: 'සිසුන්ට පහසු වෙන්න මට බැංකු ගිණුම් එකකට වඩා වැඩි ගණනක් දාන්න පුළුවන්ද?',
+        a: 'අනිවාර්යයෙන්ම පුළුවන්! "Settings" → "Payout Details" වෙත ගොස් "+ Add Another Bank Account" ඔබන්න. BOC, Sampath, Commercial, HNB වැනි බැංකු ගිණුම් 4ක් දක්වා ඇතුළත් කළ හැක.',
+      },
     ],
-    actionLabel: 'Create a Hybrid Pack',
-    actionTo: '/creator/packs/new',
   },
-  {
-    icon: BellRing,
-    badge: 'AUTOMATION',
-    title: 'Missing Recording Alerts & Instant Student Notifications',
-    color: '#ea580c',
-    softBg: '#fff7ed',
-    description:
-      'Never forget to upload a class replay after a live session ends.',
-    bullets: [
-      'As soon as a scheduled live session finishes without a recording link, an orange "Action Required: Missing Recordings" banner appears right on your Dashboard.',
-      'Simply paste the Google Drive, YouTube Unlisted, Vimeo, or Zoom Cloud link into the box and click "Save Recording".',
-      'LoraSpace automatically sends an instant notification ("Recording Available! 🎥") to every confirmed student in that pack.',
+  en: {
+    heroBadge: 'Official Creator Guide & Feature Hub',
+    heroTitle: 'Everything You Can Do on LoraSpace 🚀',
+    heroDesc:
+      'Learn how to set up your creator account, accept direct multi-bank student transfers, host live or recorded sessions, and grant free access using usage-limited promo codes.',
+    btnTour: 'Launch Interactive Slide Tour',
+    btnCreate: 'Create a Session Pack',
+    roadmapTitle: 'How LoraSpace Works in 4 Simple Steps',
+    roadmapSub: 'New here? Follow this roadmap from signup to your first enrolled student.',
+    featuresTitle: 'Power Features Built for Creators',
+    featuresSub: 'Explore every tool available in your account and how to make the most of it.',
+    faqTitle: 'Frequently Asked Creator Questions',
+    faqSub: 'Quick answers to common questions about running your classes on LoraSpace.',
+    stepPrefix: 'STEP',
+    workflowSteps: [
+      {
+        step: '01',
+        title: 'Set Up Profile & Bank Accounts',
+        desc: 'Add your creator bio, contact number, and up to 4 bank accounts (or a payment link) in Settings so learners can pay you directly.',
+        ctaText: 'Go to Settings',
+        ctaLink: '/creator/settings',
+        color: '#2563eb',
+        bg: '#eff6ff',
+      },
+      {
+        step: '02',
+        title: 'Create a Session Pack',
+        desc: 'Set your course title, thumbnail, LKR/USD price, WhatsApp inquiry number, and schedule your live Zoom / YouTube Live sessions or Past Recordings.',
+        ctaText: 'Create a Pack',
+        ctaLink: '/creator/packs/new',
+        color: '#7c3aed',
+        bg: '#f5f3ff',
+      },
+      {
+        step: '03',
+        title: 'Share Link or Promo Codes',
+        desc: 'Share your custom pack URL on social media, or generate a usage-limited Promo Code (e.g. LORA-FREE-7X9) inside the Pack Editor to grant free access to a specific number of students.',
+        ctaText: 'View My Packs',
+        ctaLink: '/creator/packs',
+        color: '#d97706',
+        bg: '#fffbeb',
+      },
+      {
+        step: '04',
+        title: 'Approve Slips & Upload Recordings',
+        desc: 'Verify student bank transfer slips in 1 click under Enrollments. After a live session finishes, paste the recording link on your Dashboard to automatically notify all enrolled learners.',
+        ctaText: 'Manage Enrollments',
+        ctaLink: '/creator/enrollments',
+        color: '#059669',
+        bg: '#ecfdf5',
+      },
     ],
-    actionLabel: 'Go to Dashboard',
-    actionTo: '/creator/dashboard',
-  },
-  {
-    icon: MessageCircle,
-    badge: 'HIGHER CONVERSIONS',
-    title: 'WhatsApp & Direct Call Inquiry Buttons',
-    color: '#0284c7',
-    softBg: '#f0f9ff',
-    description:
-      'Many learners want to ask a quick question about the syllabus or schedule before they enroll.',
-    bullets: [
-      'When creating or editing a Session Pack, add your WhatsApp number and/or Contact Phone number.',
-      'Your course page will automatically display a "Chat on WhatsApp" button (with a pre-filled message containing your pack name) and a "Call for Details" button.',
-      'Works seamlessly on both desktop sidebars and the mobile sticky purchase bar.',
+    featureCards: [
+      {
+        icon: Ticket,
+        badge: 'NEW · SCHOLARSHIPS & BATCHES',
+        title: 'Usage-Limited Free Promo Codes (LORA-FREE-7X9)',
+        color: '#d97706',
+        softBg: '#fffbeb',
+        description:
+          'Want to give 100% free access to 1 special student or a private batch of 15 students without collecting their emails one by one or risking someone leaking an open link?',
+        bullets: [
+          'Open any saved Session Pack in Edit mode and scroll to "Free Access Promo Codes".',
+          'Click "+ Generate Code" — it creates a code like LORA-FREE-7X9.',
+          'Choose how many students can claim it (e.g. 1 student, 15 students, or any custom limit).',
+          'Once all attempts are claimed (e.g. 15/15), the code automatically expires so the 16th person cannot use it.',
+          'Copy the code or the direct 1-click claim link (?promo=LORA-FREE-7X9) to send via WhatsApp.',
+        ],
+        actionLabel: 'Manage Packs & Promo Codes',
+        actionTo: '/creator/packs',
+      },
+      {
+        icon: Building2,
+        badge: 'DIRECT PAYOUTS',
+        title: 'Multi-Bank Accounts & Reference Code Verification',
+        color: '#059669',
+        softBg: '#ecfdf5',
+        description:
+          'LoraSpace never holds your course money. Students transfer the fee directly to your bank account or payment link.',
+        bullets: [
+          'Add up to 4 different bank accounts (BOC, Sampath, Commercial, HNB, etc.) in Settings.',
+          'Mark your preferred account as "Primary" — learners can switch between your banks using selector pills at checkout.',
+          'Before paying, each learner receives a unique Reference Code to include in their bank transfer description.',
+          'Students upload their transfer receipt screenshot, and you approve them in 1 click from the Enrollments page.',
+        ],
+        actionLabel: 'Configure Bank Accounts',
+        actionTo: '/creator/settings',
+      },
+      {
+        icon: Video,
+        badge: 'HYBRID TEACHING',
+        title: 'Live Zoom, YouTube Live & Catch-Up Recordings',
+        color: '#7c3aed',
+        softBg: '#f5f3ff',
+        description:
+          'Teach live classes, upload pre-recorded lessons, or combine both inside the same Session Pack.',
+        bullets: [
+          'Live Scheduled Session: Add your Zoom meeting link or an unlisted YouTube Live stream link with date & duration.',
+          'Past Recording Mode: Toggle any session to "📼 Past Recording" when creating or editing a pack so new students can immediately watch earlier lessons.',
+          'Enrolled learners get a dedicated "My Sessions" player to join live classes or watch recordings.',
+        ],
+        actionLabel: 'Create a Hybrid Pack',
+        actionTo: '/creator/packs/new',
+      },
+      {
+        icon: BellRing,
+        badge: 'AUTOMATION',
+        title: 'Missing Recording Alerts & Instant Student Notifications',
+        color: '#ea580c',
+        softBg: '#fff7ed',
+        description:
+          'Never forget to upload a class replay after a live session ends.',
+        bullets: [
+          'As soon as a scheduled live session finishes without a recording link, an orange "Action Required: Missing Recordings" banner appears right on your Dashboard.',
+          'Simply paste the Google Drive, YouTube Unlisted, Vimeo, or Zoom Cloud link into the box and click "Save Recording".',
+          'LoraSpace automatically sends an instant notification ("Recording Available! 🎥") to every confirmed student in that pack.',
+        ],
+        actionLabel: 'Go to Dashboard',
+        actionTo: '/creator/dashboard',
+      },
+      {
+        icon: MessageCircle,
+        badge: 'HIGHER CONVERSIONS',
+        title: 'WhatsApp & Direct Call Inquiry Buttons',
+        color: '#0284c7',
+        softBg: '#f0f9ff',
+        description:
+          'Many learners want to ask a quick question about the syllabus or schedule before they enroll.',
+        bullets: [
+          'When creating or editing a Session Pack, add your WhatsApp number and/or Contact Phone number.',
+          'Your course page will automatically display a "Chat on WhatsApp" button (with a pre-filled message containing your pack name) and a "Call for Details" button.',
+          'Works seamlessly on both desktop sidebars and the mobile sticky purchase bar.',
+        ],
+        actionLabel: 'Edit Your Packs',
+        actionTo: '/creator/packs',
+      },
+      {
+        icon: Globe,
+        badge: 'BRANDING & SHARING',
+        title: 'Custom Pack URLs & Public Creator Profile',
+        color: '#db2777',
+        softBg: '#fdf2f8',
+        description:
+          'Build your personal teaching brand with clean links that look great on Instagram, TikTok, YouTube, and WhatsApp.',
+        bullets: [
+          'Customize your course link slug inside the Pack Editor (e.g. /p/advanced-python-bootcamp).',
+          'Students can also click your name on any course to view your Public Creator Profile and see all your published packs.',
+          'Use the built-in Share menu on any pack to copy links or share directly to social platforms.',
+        ],
+        actionLabel: 'Customize Profile',
+        actionTo: '/creator/settings',
+      },
     ],
-    actionLabel: 'Edit Your Packs',
-    actionTo: '/creator/packs',
-  },
-  {
-    icon: Globe,
-    badge: 'BRANDING & SHARING',
-    title: 'Custom Pack URLs & Public Creator Profile',
-    color: '#db2777',
-    softBg: '#fdf2f8',
-    description:
-      'Build your personal teaching brand with clean links that look great on Instagram, TikTok, YouTube, and WhatsApp.',
-    bullets: [
-      'Customize your course link slug inside the Pack Editor (e.g. /p/advanced-python-bootcamp).',
-      'Students can also click your name on any course to view your Public Creator Profile and see all your published packs.',
-      'Use the built-in Share menu on any pack to copy links or share directly to social platforms.',
+    faqs: [
+      {
+        q: 'How do I give free access to a group of students without them uploading a payment slip?',
+        a: 'Go to "My Packs", click "Edit" on your pack, and scroll to the "Free Access Promo Codes" card. Click "+ Generate Code", set the usage limit (for example, 15 students), and click Create. Send that code (e.g. LORA-FREE-7X9) or the direct promo link to your students. When they apply it, the price becomes FREE and they enroll in 1 click! Once 15 students claim it, the code expires automatically.',
+      },
+      {
+        q: 'What happens if a student joins my course after the first 2 live sessions are already finished?',
+        a: 'As long as you have added the recording URLs for those completed sessions (or marked them as "Past Recording" in the Pack Editor), any newly enrolled student can immediately watch those recordings to catch up, and then join your upcoming live sessions!',
+      },
+      {
+        q: 'How do I verify a student’s bank transfer payment?',
+        a: 'When a student pays via bank transfer or payment link, they receive a unique Reference Code and upload their payment screenshot. Go to the "Enrollments" tab in your sidebar — you will see their pending enrollment, reference code, which bank they transferred to, and their receipt image. Click "Approve" to unlock their access immediately.',
+      },
+      {
+        q: 'Can I add more than one bank account for students to choose from?',
+        a: 'Yes! Go to "Settings" → "Payout Details" and click "+ Add Another Bank Account". You can add up to 4 bank accounts (e.g. BOC, Sampath, Commercial Bank) and choose which one is Primary. Learners will see interactive bank pills at checkout so they can do a same-bank transfer.',
+      },
     ],
-    actionLabel: 'Customize Profile',
-    actionTo: '/creator/settings',
   },
-];
-
-const FAQS = [
-  {
-    q: 'How do I give free access to a group of students without them uploading a payment slip?',
-    a: 'Go to "My Packs", click "Edit" on your pack, and scroll to the "Free Access Promo Codes" card. Click "+ Generate Code", set the usage limit (for example, 15 students), and click Create. Send that code (e.g. LORA-FREE-7X9) or the direct promo link to your students. When they apply it, the price becomes FREE and they enroll in 1 click! Once 15 students claim it, the code expires automatically.',
-  },
-  {
-    q: 'What happens if a student joins my course after the first 2 live sessions are already finished?',
-    a: 'As long as you have added the recording URLs for those completed sessions (or marked them as "Past Recording" in the Pack Editor), any newly enrolled student can immediately watch those recordings to catch up, and then join your upcoming live sessions!',
-  },
-  {
-    q: 'How do I verify a student’s bank transfer payment?',
-    a: 'When a student pays via bank transfer or payment link, they receive a unique Reference Code and upload their payment screenshot. Go to the "Enrollments" tab in your sidebar — you will see their pending enrollment, reference code, Which Bank they transferred to, and their receipt image. Click "Approve" to unlock their access immediately.',
-  },
-  {
-    q: 'Can I add more than one bank account for students to choose from?',
-    a: 'Yes! Go to "Settings" → "Payout Details" and click "+ Add Another Bank Account". You can add up to 4 bank accounts (e.g. BOC, Sampath, Commercial Bank) and choose which one is Primary. Learners will see interactive bank pills at checkout so they can do a same-bank transfer.',
-  },
-];
+};
 
 export default function CreatorGuide() {
   const [tourOpen, setTourOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [lang, setLang] = useState(() => localStorage.getItem('lora_guide_lang') || 'si');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('lora_guide_lang');
+    if (saved === 'si' || saved === 'en') setLang(saved);
+  }, [tourOpen]);
+
+  const handleLangChange = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('lora_guide_lang', newLang);
+  };
+
+  const t = GUIDE_CONTENT[lang] || GUIDE_CONTENT.si;
 
   return (
     <div
@@ -177,7 +377,8 @@ export default function CreatorGuide() {
         fontFamily: "'Figtree', system-ui, sans-serif",
         color: '#0e1733',
         maxWidth: 1180,
-        padding: '28px 0 64px',
+        padding: '28px 32px 64px',
+        margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
         gap: 32,
@@ -188,14 +389,26 @@ export default function CreatorGuide() {
         style={{
           background: 'linear-gradient(135deg, #0e1733 0%, #1e3a8a 60%, #2563eb 100%)',
           borderRadius: 26,
-          padding: 'clamp(28px, 4vw, 42px)',
+          padding: 'clamp(26px, 4vw, 40px)',
           color: '#ffffff',
           position: 'relative',
           overflow: 'hidden',
           boxShadow: '0 20px 50px -20px rgba(14, 23, 51, 0.35)',
         }}
       >
-        <div style={{ maxWidth: 680, position: 'relative', zIndex: 1 }}>
+        {/* Top Row: Badge + Language Switcher */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12,
+            marginBottom: 16,
+            position: 'relative',
+            zIndex: 2,
+          }}
+        >
           <span
             style={{
               display: 'inline-flex',
@@ -207,36 +420,83 @@ export default function CreatorGuide() {
               borderRadius: 99,
               fontSize: 12.5,
               fontWeight: 700,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-              marginBottom: 16,
+              letterSpacing: '0.03em',
             }}
           >
-            <Sparkles size={14} /> Official Creator Guide & Feature Hub
+            <Sparkles size={14} /> {t.heroBadge}
           </span>
 
+          {/* 1-Click Sinhala / English Toggle */}
+          <div
+            style={{
+              display: 'inline-flex',
+              background: 'rgba(14, 23, 51, 0.45)',
+              border: '1px solid rgba(255, 255, 255, 0.24)',
+              borderRadius: 99,
+              padding: 4,
+              gap: 4,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => handleLangChange('si')}
+              style={{
+                border: 0,
+                background: lang === 'si' ? '#ffffff' : 'transparent',
+                color: lang === 'si' ? '#0e1733' : 'rgba(255, 255, 255, 0.85)',
+                padding: '6px 14px',
+                borderRadius: 99,
+                fontSize: 13,
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              🇱🇰 සිංහල
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLangChange('en')}
+              style={{
+                border: 0,
+                background: lang === 'en' ? '#ffffff' : 'transparent',
+                color: lang === 'en' ? '#0e1733' : 'rgba(255, 255, 255, 0.85)',
+                padding: '6px 14px',
+                borderRadius: 99,
+                fontSize: 13,
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              English
+            </button>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 740, position: 'relative', zIndex: 1 }}>
           <h1
             style={{
               fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontSize: 'clamp(28px, 4vw, 40px)',
+              fontSize: 'clamp(26px, 3.8vw, 38px)',
               fontWeight: 800,
               margin: '0 0 12px',
-              lineHeight: 1.15,
+              lineHeight: 1.2,
               letterSpacing: '-0.02em',
             }}
           >
-            Everything You Can Do on LoraSpace
+            {t.heroTitle}
           </h1>
 
           <p
             style={{
               margin: '0 0 24px',
-              fontSize: 16,
-              color: 'rgba(255, 255, 255, 0.85)',
-              lineHeight: 1.6,
+              fontSize: 15.5,
+              color: 'rgba(255, 255, 255, 0.88)',
+              lineHeight: 1.65,
             }}
           >
-            Learn how to set up your creator account, accept direct multi-bank student transfers, host live or recorded sessions, and grant free access using usage-limited promo codes.
+            {t.heroDesc}
           </p>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -258,7 +518,7 @@ export default function CreatorGuide() {
                 boxShadow: '0 8px 20px rgba(0,0,0,0.18)',
               }}
             >
-              <Play size={16} fill="#0e1733" /> Launch Interactive Slide Tour
+              <Play size={16} fill="#0e1733" /> {t.btnTour}
             </button>
 
             <Link
@@ -277,7 +537,7 @@ export default function CreatorGuide() {
                 textDecoration: 'none',
               }}
             >
-              Create a Session Pack <ArrowRight size={16} />
+              {t.btnCreate} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -294,10 +554,10 @@ export default function CreatorGuide() {
               margin: '0 0 4px',
             }}
           >
-            How LoraSpace Works in 4 Simple Steps
+            {t.roadmapTitle}
           </h2>
           <p style={{ margin: 0, color: '#68728d', fontSize: 14.5 }}>
-            New here? Follow this roadmap from signup to your first enrolled student.
+            {t.roadmapSub}
           </p>
         </div>
 
@@ -308,18 +568,18 @@ export default function CreatorGuide() {
             gap: 18,
           }}
         >
-          {WORKFLOW_STEPS.map((w) => (
+          {t.workflowSteps.map((w) => (
             <div
               key={w.step}
               style={{
                 background: '#ffffff',
-                border: '1px solid #e3e7f1',
+                border: '1.5px solid #cdd8f6',
                 borderRadius: 22,
                 padding: '22px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                boxShadow: '0 1px 2px rgba(14,23,51,.04), 0 10px 28px -16px rgba(14,23,51,.12)',
+                boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
               }}
             >
               <div>
@@ -332,26 +592,27 @@ export default function CreatorGuide() {
                     color: w.color,
                     fontFamily: "'Bricolage Grotesque', sans-serif",
                     fontWeight: 800,
-                    fontSize: 14,
+                    fontSize: 13.5,
                     padding: '5px 12px',
                     borderRadius: 10,
                     marginBottom: 14,
                   }}
                 >
-                  STEP {w.step}
+                  {t.stepPrefix} {w.step}
                 </div>
                 <h3
                   style={{
                     fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontSize: 18.5,
+                    fontSize: 18,
                     fontWeight: 700,
                     margin: '0 0 8px',
                     color: '#0e1733',
+                    lineHeight: 1.3,
                   }}
                 >
                   {w.title}
                 </h3>
-                <p style={{ margin: '0 0 18px', fontSize: 14, color: '#68728d', lineHeight: 1.55 }}>
+                <p style={{ margin: '0 0 18px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
                   {w.desc}
                 </p>
               </div>
@@ -386,10 +647,10 @@ export default function CreatorGuide() {
               margin: '0 0 4px',
             }}
           >
-            Power Features Built for Creators
+            {t.featuresTitle}
           </h2>
           <p style={{ margin: 0, color: '#68728d', fontSize: 14.5 }}>
-            Explore every tool available in your account and how to make the most of it.
+            {t.featuresSub}
           </p>
         </div>
 
@@ -400,24 +661,24 @@ export default function CreatorGuide() {
             gap: 20,
           }}
         >
-          {FEATURE_CARDS.map((feat, idx) => {
+          {t.featureCards.map((feat, idx) => {
             const Icon = feat.icon;
             return (
               <div
                 key={idx}
                 style={{
                   background: '#ffffff',
-                  border: '1px solid #e3e7f1',
+                  border: '1.5px solid #cdd8f6',
                   borderRadius: 22,
                   padding: '24px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: '0 1px 2px rgba(14,23,51,.04), 0 10px 28px -16px rgba(14,23,51,.12)',
+                  boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 14 }}>
                     <div
                       style={{
                         width: 46,
@@ -427,18 +688,19 @@ export default function CreatorGuide() {
                         color: feat.color,
                         display: 'grid',
                         placeItems: 'center',
+                        flexShrink: 0,
                       }}
                     >
                       <Icon size={22} />
                     </div>
                     <span
                       style={{
-                        fontSize: 11,
+                        fontSize: 11.5,
                         fontWeight: 800,
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.03em',
                         color: feat.color,
                         background: feat.softBg,
-                        padding: '4px 10px',
+                        padding: '4px 11px',
                         borderRadius: 99,
                       }}
                     >
@@ -449,20 +711,21 @@ export default function CreatorGuide() {
                   <h3
                     style={{
                       fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: 20,
+                      fontSize: 19.5,
                       fontWeight: 800,
                       margin: '0 0 8px',
                       color: '#0e1733',
+                      lineHeight: 1.3,
                     }}
                   >
                     {feat.title}
                   </h3>
 
-                  <p style={{ margin: '0 0 16px', fontSize: 14, color: '#5b647d', lineHeight: 1.55 }}>
+                  <p style={{ margin: '0 0 16px', fontSize: 14, color: '#475569', lineHeight: 1.6 }}>
                     {feat.description}
                   </p>
 
-                  <ul style={{ margin: '0 0 20px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 9 }}>
+                  <ul style={{ margin: '0 0 20px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {feat.bullets.map((b, bIdx) => (
                       <li
                         key={bIdx}
@@ -472,7 +735,7 @@ export default function CreatorGuide() {
                           gap: 9,
                           fontSize: 13.5,
                           color: '#334155',
-                          lineHeight: 1.45,
+                          lineHeight: 1.5,
                         }}
                       >
                         <CheckCircle2
@@ -514,10 +777,10 @@ export default function CreatorGuide() {
       <section
         style={{
           background: '#ffffff',
-          border: '1px solid #e3e7f1',
+          border: '1.5px solid #cdd8f6',
           borderRadius: 24,
           padding: '28px',
-          boxShadow: '0 1px 2px rgba(14,23,51,.04), 0 10px 28px -16px rgba(14,23,51,.12)',
+          boxShadow: '0 2px 4px rgba(14,23,51,.05), 0 16px 32px -18px rgba(47,91,255,.25)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
@@ -543,16 +806,16 @@ export default function CreatorGuide() {
                 margin: 0,
               }}
             >
-              Frequently Asked Creator Questions
+              {t.faqTitle}
             </h2>
             <p style={{ margin: 0, fontSize: 13.5, color: '#68728d' }}>
-              Quick answers to common questions about running your classes on LoraSpace.
+              {t.faqSub}
             </p>
           </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {FAQS.map((item, idx) => {
+          {t.faqs.map((item, idx) => {
             const isOpen = openFaq === idx;
             return (
               <div
@@ -600,7 +863,7 @@ export default function CreatorGuide() {
                       padding: '0 20px 18px',
                       fontSize: 14,
                       color: '#475569',
-                      lineHeight: 1.6,
+                      lineHeight: 1.65,
                     }}
                   >
                     {item.a}
