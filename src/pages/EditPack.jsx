@@ -2,13 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X } from 'lucide-react';
+import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X, Percent, Clock, Calendar } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug } from '../lib/utils';
-import { generatePromoCode, normalizePromoCode } from '../lib/promo';
+import {
+  generatePromoCode,
+  normalizePromoCode,
+  formatPromoDiscount,
+  getPromoExpiryInfo,
+} from '../lib/promo';
 import './edit-pack.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -34,8 +39,11 @@ export default function EditPack() {
   // Promo Code State
   const [promoCodes, setPromoCodes] = useState([]);
   const [promoModalOpen, setPromoModalOpen] = useState(false);
-  const [newPromoCode, setNewPromoCode] = useState(generatePromoCode());
-  const [newPromoMaxUses, setNewPromoMaxUses] = useState(15);
+  const [newPromoType, setNewPromoType] = useState('free'); // 'free' | 'percentage' | 'fixed'
+  const [newPromoValue, setNewPromoValue] = useState(20);
+  const [newPromoCode, setNewPromoCode] = useState(() => generatePromoCode('free'));
+  const [newPromoMaxUses, setNewPromoMaxUses] = useState(10);
+  const [newPromoExpiresAt, setNewPromoExpiresAt] = useState('');
   const [generatingPromo, setGeneratingPromo] = useState(false);
   const [copiedCodeId, setCopiedCodeId] = useState(null);
 
@@ -67,21 +75,38 @@ export default function EditPack() {
     try {
       const formattedCode = normalizePromoCode(newPromoCode);
       const attempts = parseInt(newPromoMaxUses, 10) || 1;
-      const { error } = await supabase
+      const numVal = newPromoType === 'free' ? 0 : (parseFloat(newPromoValue) || 0);
+      const expiresIso = newPromoExpiresAt ? new Date(newPromoExpiresAt).toISOString() : null;
+
+      const promoPayload = {
+        pack_id: id,
+        creator_id: user.id,
+        code: formattedCode,
+        discount_type: newPromoType,
+        discount_value: numVal,
+        max_uses: attempts,
+        used_count: 0,
+        is_active: true,
+        expires_at: expiresIso,
+      };
+
+      let { error } = await supabase
         .from('pack_promo_codes')
-        .insert({
-          pack_id: id,
-          creator_id: user.id,
-          code: formattedCode,
-          max_uses: attempts,
-          used_count: 0,
-          is_active: true,
-        });
+        .insert(promoPayload);
+
+      // Graceful fallback if expires_at or discount_value columns aren't added yet in user DB
+      if (error && (error.message?.includes('discount_value') || error.message?.includes('expires_at'))) {
+        delete promoPayload.discount_value;
+        delete promoPayload.expires_at;
+        const res = await supabase.from('pack_promo_codes').insert(promoPayload);
+        error = res.error;
+      }
 
       if (error) throw error;
-      showToast(`Promo code ${formattedCode} created for ${attempts} learners!`);
+      showToast(`Promo code ${formattedCode} created successfully!`);
       setPromoModalOpen(false);
-      setNewPromoCode(generatePromoCode());
+      setNewPromoCode(generatePromoCode(newPromoType));
+      setNewPromoExpiresAt('');
       fetchPromoCodes();
     } catch (err) {
       showToast('Error creating promo code: ' + err.message);
@@ -675,12 +700,15 @@ export default function EditPack() {
                   flexShrink: 0,
                 }}
                 onClick={() => {
-                  setNewPromoCode(generatePromoCode());
-                  setNewPromoMaxUses(15);
+                  setNewPromoType('percentage');
+                  setNewPromoValue(20);
+                  setNewPromoCode(generatePromoCode('percentage'));
+                  setNewPromoMaxUses(10);
+                  setNewPromoExpiresAt('');
                   setPromoModalOpen(true);
                 }}
               >
-                <Sparkles size={15} /> + Generate Promo Code
+                <Sparkles size={15} /> + Generate Discount &amp; Promo Code
               </button>
             </div>
 
@@ -694,31 +722,70 @@ export default function EditPack() {
                 color: '#64748b',
                 fontSize: 14,
               }}>
-                No promo codes generated for this course yet. Click <b>+ Generate Promo Code</b> to create your first free access code.
+                No promo codes created for this session pack yet. Click <b>+ Generate Discount &amp; Promo Code</b> to create early-bird offers (e.g. 20% OFF for the first 10 learners, or 100% Free access).
               </div>
             ) : (
               <div className="promo-list">
                 {promoCodes.map((p) => {
+                  const expiryInfo = getPromoExpiryInfo(p);
                   const isExhausted = p.used_count >= p.max_uses;
+                  const isExpired = expiryInfo.isExpired;
+                  const isInvalid = !p.is_active || isExhausted || isExpired;
                   const remaining = Math.max(0, p.max_uses - p.used_count);
                   const isCopied = copiedCodeId === p.id;
+                  const discountLabel = formatPromoDiscount(p, pack?.currency || 'LKR');
+                  const pType = p.discount_type || 'free';
 
                   return (
-                    <div key={p.id} className={`promo-card ${isExhausted ? 'exhausted' : ''}`}>
+                    <div key={p.id} className={`promo-card ${isInvalid ? 'exhausted' : ''}`}>
                       <div className="promo-card-left">
-                        <span className="promo-code-badge">
-                          <Tag size={15} />
-                          {p.code}
-                        </span>
-                        <div className="promo-meta">
-                          <span className="promo-uses">
-                            {p.used_count} / {p.max_uses} claimed {isExhausted ? '(Expired)' : `(${remaining} left)`}
-                          </span>
-                          <span className="promo-sub">
-                            {isExhausted 
-                              ? 'Max attempts reached · Expired' 
-                              : `100% Free enrollment · Auto-expires after ${p.max_uses} students`}
-                          </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <span className="promo-code-badge">
+                              <Tag size={15} />
+                              {p.code}
+                            </span>
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                padding: '3px 10px',
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 800,
+                                background: pType === 'free' ? '#dcfce7' : pType === 'percentage' ? '#f3e8ff' : '#e0e7ff',
+                                color: pType === 'free' ? '#15803d' : pType === 'percentage' ? '#7e22ce' : '#3730a3',
+                              }}
+                            >
+                              {discountLabel}
+                            </span>
+                            {isInvalid ? (
+                              <span style={{ fontSize: 11, fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '2px 8px', borderRadius: 6 }}>
+                                {isExpired ? 'Expired' : 'Max Claims Reached'}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: 6 }}>
+                                Active
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="promo-meta">
+                            <span className="promo-uses">
+                              👥 {p.used_count} / {p.max_uses} claimed {isExhausted ? '· Limit reached' : `(${remaining} spots left)`}
+                            </span>
+                            <span className="promo-sub" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                              <span>{pType === 'free' ? '100% Free scholarship' : `${discountLabel} at checkout`}</span>
+                              <span>·</span>
+                              <span>
+                                {p.expires_at ? (
+                                  <>⏰ {isExpired ? 'Expired on' : 'Expires'}: {expiryInfo.formattedDate}</>
+                                ) : (
+                                  <>♾️ No time limit</>
+                                )}
+                              </span>
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -738,7 +805,7 @@ export default function EditPack() {
                           onClick={() => handleCopyPromoLink(p.code)}
                           title="Copy Direct Link with code pre-filled"
                         >
-                          <span>🔗 Copy Invite Link</span>
+                          <span>🔗 Share Link</span>
                         </button>
                         <button
                           type="button"
@@ -941,48 +1008,218 @@ export default function EditPack() {
           </section>
         </div>
 
-        {/* Modal: Generate Promo Code */}
+        {/* Modal: Generate Discount & Promo Code */}
         {promoModalOpen && (
           <div
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(15, 23, 42, 0.6)',
-              backdropFilter: 'blur(4px)',
+              background: 'rgba(15, 23, 42, 0.65)',
+              backdropFilter: 'blur(5px)',
               zIndex: 9999,
               display: 'grid',
               placeItems: 'center',
               padding: 16,
+              overflowY: 'auto',
             }}
             onClick={() => !generatingPromo && setPromoModalOpen(false)}
           >
             <div
               style={{
                 width: '100%',
-                maxWidth: 460,
+                maxWidth: 500,
                 background: '#fff',
-                borderRadius: 22,
+                borderRadius: 24,
                 boxShadow: '0 25px 60px -15px rgba(0,0,0,0.3)',
                 padding: '24px 26px',
+                margin: 'auto',
               }}
               onClick={e => e.stopPropagation()}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ margin: 0, fontSize: 19, fontWeight: 800 }}>Generate Promo Code</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#0f172a' }}>Create Discount &amp; Promo Code</h3>
+                  <p style={{ margin: '2px 0 0', fontSize: 13, color: '#64748b' }}>Give discounts for early birds or time-limited flash sales</p>
+                </div>
                 <button
                   type="button"
                   onClick={() => setPromoModalOpen(false)}
-                  style={{ background: '#f1f5f9', border: 0, borderRadius: '50%', width: 30, height: 30, cursor: 'pointer', display: 'grid', placeItems: 'center' }}
+                  style={{ background: '#f1f5f9', border: 0, borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', display: 'grid', placeItems: 'center', color: '#64748b' }}
                 >
                   <X size={16} />
                 </button>
               </div>
 
               <form onSubmit={handleCreatePromoCode}>
-                {/* Code Field */}
+                {/* 1. Discount Type Selector */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
-                    Promo Code (100% Free Access)
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 7, color: '#1e293b' }}>
+                    Discount Type
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, background: '#f1f5f9', padding: 4, borderRadius: 12 }}>
+                    {[
+                      { id: 'percentage', label: '% Percentage', desc: 'e.g. 20% OFF' },
+                      { id: 'fixed', label: 'Fixed Amount', desc: `e.g. ${pack?.currency || 'LKR'} 1,000` },
+                      { id: 'free', label: '100% Free', desc: 'Free access' },
+                    ].map(t => {
+                      const isSel = newPromoType === t.id;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => {
+                            setNewPromoType(t.id);
+                            if (t.id === 'percentage') setNewPromoValue(20);
+                            if (t.id === 'fixed') setNewPromoValue(1000);
+                            setNewPromoCode(generatePromoCode(t.id));
+                          }}
+                          style={{
+                            background: isSel ? '#fff' : 'transparent',
+                            color: isSel ? '#2563eb' : '#475569',
+                            boxShadow: isSel ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                            border: 0,
+                            borderRadius: 9,
+                            padding: '8px 6px',
+                            fontWeight: 700,
+                            fontSize: 12.5,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 2,
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <span>{t.label}</span>
+                          <span style={{ fontSize: 10.5, fontWeight: 500, opacity: 0.75 }}>{t.desc}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Value Input (for percentage and fixed) */}
+                {newPromoType === 'percentage' && (
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+                      Discount Percentage (%)
+                    </label>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <div style={{ position: 'relative', flex: 1 }}>
+                        <input
+                          type="number"
+                          min="1"
+                          max="100"
+                          required
+                          value={newPromoValue}
+                          onChange={e => setNewPromoValue(e.target.value)}
+                          style={{
+                            width: '100%',
+                            height: 44,
+                            border: '1.5px solid #cbd5e1',
+                            borderRadius: 12,
+                            padding: '0 32px 0 14px',
+                            fontSize: 15,
+                            fontWeight: 700,
+                          }}
+                        />
+                        <span style={{ position: 'absolute', right: 12, top: 12, fontWeight: 700, color: '#64748b' }}>%</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                      {[10, 20, 25, 30, 50, 75].map(pct => (
+                        <button
+                          key={pct}
+                          type="button"
+                          onClick={() => setNewPromoValue(pct)}
+                          style={{
+                            border: Number(newPromoValue) === pct ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                            background: Number(newPromoValue) === pct ? '#eff6ff' : '#fff',
+                            color: Number(newPromoValue) === pct ? '#2563eb' : '#475569',
+                            fontWeight: 700,
+                            fontSize: 12,
+                            padding: '4px 10px',
+                            borderRadius: 8,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {pct}%
+                        </button>
+                      ))}
+                    </div>
+                    {Number(pack?.price) > 0 && (
+                      <small style={{ color: '#059669', fontSize: 12, marginTop: 6, display: 'block', fontWeight: 600 }}>
+                        ✓ Learner pays {pack.currency} {Math.max(0, Math.round(Number(pack.price) * (1 - (Number(newPromoValue) || 0) / 100))).toLocaleString()} (Saves {pack.currency} {Math.round((Number(pack.price) * (Number(newPromoValue) || 0)) / 100).toLocaleString()})
+                      </small>
+                    )}
+                  </div>
+                )}
+
+                {newPromoType === 'fixed' && (
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+                      Fixed Discount Amount ({pack?.currency || 'LKR'})
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="number"
+                        min="1"
+                        max={pack?.price || 1000000}
+                        required
+                        value={newPromoValue}
+                        onChange={e => setNewPromoValue(e.target.value)}
+                        style={{
+                          width: '100%',
+                          height: 44,
+                          border: '1.5px solid #cbd5e1',
+                          borderRadius: 12,
+                          padding: '0 14px',
+                          fontSize: 15,
+                          fontWeight: 700,
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                      {[500, 1000, 1500, 2000, 3000].map(amt => (
+                        <button
+                          key={amt}
+                          type="button"
+                          onClick={() => setNewPromoValue(amt)}
+                          style={{
+                            border: Number(newPromoValue) === amt ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                            background: Number(newPromoValue) === amt ? '#eff6ff' : '#fff',
+                            color: Number(newPromoValue) === amt ? '#2563eb' : '#475569',
+                            fontWeight: 700,
+                            fontSize: 12,
+                            padding: '4px 10px',
+                            borderRadius: 8,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {pack?.currency || 'Rs.'} {amt.toLocaleString()}
+                        </button>
+                      ))}
+                    </div>
+                    {Number(pack?.price) > 0 && (
+                      <small style={{ color: '#059669', fontSize: 12, marginTop: 6, display: 'block', fontWeight: 600 }}>
+                        ✓ Learner pays {pack.currency} {Math.max(0, Number(pack.price) - (Number(newPromoValue) || 0)).toLocaleString()} (Saves {pack.currency} {Math.min(Number(pack.price), Number(newPromoValue) || 0).toLocaleString()})
+                      </small>
+                    )}
+                  </div>
+                )}
+
+                {newPromoType === 'free' && (
+                  <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12 }}>
+                    <small style={{ color: '#166534', fontSize: 12.5, fontWeight: 600, display: 'block' }}>
+                      🎁 100% Free Access: Learners will be able to enroll immediately in 1 click without paying.
+                    </small>
+                  </div>
+                )}
+
+                {/* 3. Promo Code String */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+                    Promo Code (Customizable)
                   </label>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <input
@@ -992,21 +1229,21 @@ export default function EditPack() {
                       onChange={e => setNewPromoCode(e.target.value.toUpperCase())}
                       style={{
                         flex: 1,
-                        height: 46,
+                        height: 44,
                         border: '1.5px solid #cbd5e1',
                         borderRadius: 12,
                         padding: '0 14px',
                         fontWeight: 700,
-                        fontSize: 16,
+                        fontSize: 15.5,
                         fontFamily: 'monospace',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.04em',
                         color: '#2563eb',
                       }}
                     />
                     <button
                       type="button"
                       title="Roll another code"
-                      onClick={() => setNewPromoCode(generatePromoCode())}
+                      onClick={() => setNewPromoCode(generatePromoCode(newPromoType))}
                       style={{
                         padding: '0 14px',
                         background: '#f1f5f9',
@@ -1018,41 +1255,39 @@ export default function EditPack() {
                         gap: 6,
                         fontSize: 13,
                         fontWeight: 600,
+                        color: '#334155',
                       }}
                     >
                       <RefreshCw size={14} /> Roll
                     </button>
                   </div>
-                  <small style={{ color: '#64748b', fontSize: 12, marginTop: 4, display: 'block' }}>
-                    Auto-generated format: <code>LORA-FREE-7X9</code>
-                  </small>
                 </div>
 
-                {/* Max Claims / Attempts */}
-                <div style={{ marginBottom: 22 }}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
-                    Usage Limit / Attempts
+                {/* 4. Early-Bird Usage Limit */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+                    Usage Limit (Max Learners)
                   </label>
                   <input
                     type="number"
                     min="1"
-                    max="1000"
+                    max="5000"
                     required
                     value={newPromoMaxUses}
                     onChange={e => setNewPromoMaxUses(e.target.value)}
                     style={{
                       width: '100%',
-                      height: 46,
+                      height: 44,
                       border: '1.5px solid #cbd5e1',
                       borderRadius: 12,
                       padding: '0 14px',
-                      fontSize: 15,
+                      fontSize: 14.5,
                       fontWeight: 600,
-                      marginBottom: 10,
+                      marginBottom: 8,
                     }}
                   />
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                    {[1, 5, 10, 15, 25, 50].map((num) => (
+                    {[5, 7, 10, 15, 25, 50].map((num) => (
                       <button
                         key={num}
                         type="button"
@@ -1062,23 +1297,95 @@ export default function EditPack() {
                           background: Number(newPromoMaxUses) === num ? '#eff6ff' : '#fff',
                           color: Number(newPromoMaxUses) === num ? '#2563eb' : '#475569',
                           fontWeight: 700,
-                          fontSize: 12.5,
-                          padding: '5px 12px',
+                          fontSize: 12,
+                          padding: '4px 10px',
                           borderRadius: 8,
                           cursor: 'pointer',
                         }}
                       >
-                        {num === 1 ? '1 student' : `${num} students`}
+                        {num} learners
                       </button>
                     ))}
                   </div>
-                  <small style={{ color: '#64748b', fontSize: 12, marginTop: 8, display: 'block' }}>
-                    Once {newPromoMaxUses} learner{newPromoMaxUses > 1 ? 's have' : ' has'} claimed this code, it will automatically expire.
+                  <small style={{ color: '#64748b', fontSize: 11.5, marginTop: 5, display: 'block' }}>
+                    Auto-expires once {newPromoMaxUses} learner{newPromoMaxUses > 1 ? 's have' : ' has'} claimed it.
                   </small>
                 </div>
 
+                {/* 5. Expiry Date & Time (Optional) */}
+                <div style={{ marginBottom: 22 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <label style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>
+                      Expiry Date &amp; Time <span style={{ fontWeight: 400, color: '#64748b' }}>(Optional)</span>
+                    </label>
+                    {newPromoExpiresAt && (
+                      <button
+                        type="button"
+                        onClick={() => setNewPromoExpiresAt('')}
+                        style={{ background: 'none', border: 0, color: '#ef4444', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                      >
+                        Clear date
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="datetime-local"
+                    value={newPromoExpiresAt}
+                    onChange={e => setNewPromoExpiresAt(e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: 44,
+                      border: '1.5px solid #cbd5e1',
+                      borderRadius: 12,
+                      padding: '0 14px',
+                      fontSize: 13.5,
+                      fontWeight: 500,
+                      marginBottom: 8,
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+                        const pad = n => n.toString().padStart(2, '0');
+                        setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                      }}
+                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                    >
+                      ⚡ 24h Flash Sale
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const d = new Date(Date.now() + 48 * 60 * 60 * 1000);
+                        const pad = n => n.toString().padStart(2, '0');
+                        setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                      }}
+                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                    >
+                      ⏱️ 48 Hours
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const d = new Date();
+                        const day = d.getDay();
+                        const diff = (7 - day) % 7 || 7;
+                        d.setDate(d.getDate() + diff);
+                        d.setHours(23, 59, 0, 0);
+                        const pad = n => n.toString().padStart(2, '0');
+                        setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                      }}
+                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                    >
+                      📅 This Sunday 23:59
+                    </button>
+                  </div>
+                </div>
+
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 12, borderTop: '1px solid #f1f5f9' }}>
                   <button
                     type="button"
                     onClick={() => setPromoModalOpen(false)}
@@ -1090,6 +1397,7 @@ export default function EditPack() {
                       fontSize: 14,
                       fontWeight: 600,
                       cursor: 'pointer',
+                      color: '#475569',
                     }}
                     disabled={generatingPromo}
                   >
@@ -1109,6 +1417,7 @@ export default function EditPack() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 8,
+                      boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
                     }}
                     disabled={generatingPromo}
                   >

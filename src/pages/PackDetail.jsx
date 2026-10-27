@@ -10,7 +10,13 @@ import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-f
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference, hasValidSubscription, slugify } from '../lib/utils';
-import { normalizePromoCode } from '../lib/promo';
+import {
+  normalizePromoCode,
+  calculateDiscountedPrice,
+  formatPromoDiscount,
+  checkPromoValidity,
+  getPromoExpiryInfo,
+} from '../lib/promo';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 import './payment-code-modal.css';
 import './payment-modal.css';
@@ -276,6 +282,7 @@ function PaymentStep2({
   uploadError, setUploadError,
   uploading, paymentMethod, setPaymentMethod,
   selectedBankName, setSelectedBankName,
+  pricing, appliedPromo,
   onBack, onSubmit,
 }) {
   const [activeTab, setActiveTab] = useState(() =>
@@ -321,6 +328,8 @@ function PaymentStep2({
 
   const canSubmit = paymentMethod && screenshot && !uploading;
 
+  const hasDiscount = appliedPromo && pricing && !pricing.isFree && pricing.discountAmount > 0;
+
   return (
     <div className="lora-pay" role="dialog" aria-modal="true" aria-labelledby="pm-ttl">
       {/* HEAD */}
@@ -337,7 +346,27 @@ function PaymentStep2({
         {/* Total */}
         <div className="pm-total">
           <small>Total amount</small>
-          <div className="pm-amt"><span>{pack?.currency}</span>{pack?.price}</div>
+          <div className="pm-amt">
+            {hasDiscount ? (
+              <>
+                <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.6em', marginRight: 8 }}>
+                  {pack?.currency} {pack?.price}
+                </span>
+                <span>{pack?.currency}</span>{pricing.finalPrice.toLocaleString()}
+              </>
+            ) : (
+              <>
+                <span>{pack?.currency}</span>{pack?.price}
+              </>
+            )}
+          </div>
+          {hasDiscount && (
+            <div style={{ fontSize: 12.5, color: '#059669', fontWeight: 700, marginTop: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span>🏷️ Promo applied: <b>{appliedPromo.code}</b></span>
+              <span>·</span>
+              <span>Saved {pack?.currency} {pricing.discountAmount.toLocaleString()} ({formatPromoDiscount(appliedPromo, pack?.currency)})</span>
+            </div>
+          )}
         </div>
 
         {/* Tabs — only when both methods enabled */}
@@ -594,8 +623,9 @@ export default function PackDetail() {
         throw new Error("Invalid promo code for this session pack.");
       }
 
-      if (!data.is_active || data.used_count >= data.max_uses) {
-        throw new Error("This promo code has reached its maximum usage limit.");
+      const validity = checkPromoValidity(data);
+      if (!validity.valid) {
+        throw new Error(validity.error);
       }
 
       setAppliedPromo(data);
@@ -634,8 +664,9 @@ export default function PackDetail() {
         throw new Error("Could not verify promo code. Please try again.");
       }
 
-      if (!freshPromo.is_active || freshPromo.used_count >= freshPromo.max_uses) {
-        throw new Error("This promo code has reached its maximum usage limit.");
+      const validity = checkPromoValidity(freshPromo);
+      if (!validity.valid) {
+        throw new Error(validity.error);
       }
 
       const newUsedCount = freshPromo.used_count + 1;
@@ -650,15 +681,24 @@ export default function PackDetail() {
         .eq('id', freshPromo.id);
 
       // 2. Insert or update confirmed enrollment
-      const { error: enrErr } = await supabase.from('enrollments').upsert({
+      const enrPayload = {
         id: enrollment?.id || undefined,
         learner_id: user.id,
         pack_id: pack?.id || id,
         status: 'confirmed',
         payment_method_used: `promo:${freshPromo.code}`,
         promo_code_used: freshPromo.code,
+        amount_paid: 0,
         submitted_at: new Date().toISOString(),
-      }, { onConflict: enrollment?.id ? 'id' : undefined });
+      };
+
+      let { error: enrErr } = await supabase.from('enrollments').upsert(enrPayload, { onConflict: enrollment?.id ? 'id' : undefined });
+      if (enrErr && enrErr.message?.includes('amount_paid')) {
+        delete enrPayload.amount_paid;
+        delete enrPayload.promo_code_used;
+        const res = await supabase.from('enrollments').upsert(enrPayload, { onConflict: enrollment?.id ? 'id' : undefined });
+        enrErr = res.error;
+      }
 
       if (enrErr) throw enrErr;
 
@@ -678,6 +718,8 @@ export default function PackDetail() {
       setClaimingPromo(false);
     }
   };
+
+  const pricing = calculateDiscountedPrice(pack?.price, appliedPromo);
 
   // Auto-apply promo from URL if pack is loaded
   useEffect(() => {
@@ -821,6 +863,26 @@ export default function PackDetail() {
         ? (selectedBankName ? `bank: ${selectedBankName}` : 'bank')
         : (paymentMethod || 'manual');
 
+      // If promo code applied, increment usage count
+      if (appliedPromo) {
+        try {
+          const { data: freshPromo } = await supabase
+            .from('pack_promo_codes')
+            .select('id, used_count, max_uses')
+            .eq('id', appliedPromo.id)
+            .single();
+          if (freshPromo) {
+            const newCount = (freshPromo.used_count || 0) + 1;
+            await supabase.from('pack_promo_codes').update({
+              used_count: newCount,
+              is_active: newCount < freshPromo.max_uses,
+            }).eq('id', freshPromo.id);
+          }
+        } catch (pErr) {
+          console.warn("Could not increment promo usage:", pErr);
+        }
+      }
+
       const enrollmentPayload = {
         id: enrollment?.id || undefined,
         learner_id: user.id,
@@ -830,6 +892,8 @@ export default function PackDetail() {
         payment_method_used: methodUsed,
         bank_name_used: paymentMethod === 'bank' ? selectedBankName : null,
         payment_reference_code: refCode,
+        amount_paid: pricing.finalPrice,
+        promo_code_used: appliedPromo?.code || null,
         code_expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
         submitted_at: new Date().toISOString(),
       };
@@ -840,8 +904,10 @@ export default function PackDetail() {
       );
 
       if (enrErr) {
-        console.warn("Retrying enrollment upsert without bank_name_used:", enrErr.message);
+        console.warn("Retrying enrollment upsert without optional columns:", enrErr.message);
         delete enrollmentPayload.bank_name_used;
+        delete enrollmentPayload.amount_paid;
+        delete enrollmentPayload.promo_code_used;
         const { error: retryErr } = await supabase.from('enrollments').upsert(
           enrollmentPayload,
           { onConflict: enrollment?.id ? 'id' : undefined }
@@ -849,10 +915,11 @@ export default function PackDetail() {
         if (retryErr) throw retryErr;
       }
 
+      const promoNote = appliedPromo ? ` with promo ${appliedPromo.code} (${pack.currency} ${pricing.finalPrice})` : '';
       await supabase.from('notifications').insert({
         user_id: pack.creator_id,
         title: 'New Payment Received! 💰',
-        message: `${profile.first_name} ${profile.last_name} submitted payment for "${pack.title}". Review and confirm.`,
+        message: `${profile.first_name} ${profile.last_name} submitted payment for "${pack.title}"${promoNote}. Review and confirm.`,
       });
 
       setPaymentStep(3);
@@ -1010,7 +1077,7 @@ export default function PackDetail() {
         </div>
       );
     }
-    if (appliedPromo) {
+    if (appliedPromo && pricing.isFree) {
       return (
         <button
           className="btn pri ok"
@@ -1026,6 +1093,13 @@ export default function PackDetail() {
               <Sparkles size={16} /> Claim Free Access with {appliedPromo.code}
             </>
           )}
+        </button>
+      );
+    }
+    if (appliedPromo && !pricing.isFree) {
+      return (
+        <button className="btn pri" type="button" onClick={handleStartPaymentFlow}>
+          <Sparkles size={16} /> Join session for {pack.currency} {pricing.finalPrice.toLocaleString()}
         </button>
       );
     }
@@ -1322,12 +1396,28 @@ export default function PackDetail() {
                 <small>Total price</small>
                 <div className="price">
                   {appliedPromo ? (
-                    <>
-                      <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 8 }}>
-                        {pack.currency} {pack.price}
-                      </span>
-                      FREE
-                    </>
+                    pricing.isFree ? (
+                      <>
+                        <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 8 }}>
+                          {pack.currency} {pack.price}
+                        </span>
+                        FREE
+                      </>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                          <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em' }}>
+                            {pack.currency} {pack.price}
+                          </span>
+                          <span style={{ color: '#059669', fontWeight: 800 }}>
+                            {pack.currency} {pricing.finalPrice.toLocaleString()}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '0.52em', color: '#059669', fontWeight: 700, marginTop: 2, letterSpacing: 'normal' }}>
+                          Save {pack.currency} {pricing.discountAmount.toLocaleString()} ({formatPromoDiscount(appliedPromo, pack.currency)})
+                        </span>
+                      </div>
+                    )
                   ) : Number(pack.price) === 0 ? (
                     'FREE'
                   ) : (
@@ -1342,7 +1432,7 @@ export default function PackDetail() {
                   <div className="promo-box">
                     {appliedPromo ? (
                       <div className="promo-success-badge">
-                        <span>✓ <b>{appliedPromo.code}</b> (100% Free)</span>
+                        <span>✓ <b>{appliedPromo.code}</b> ({formatPromoDiscount(appliedPromo, pack.currency)})</span>
                         <button type="button" onClick={handleRemovePromo} className="promo-remove-btn" title="Remove promo code">×</button>
                       </div>
                     ) : !showPromoInput ? (
@@ -1354,7 +1444,7 @@ export default function PackDetail() {
                         <div className="promo-input-group">
                           <input
                             type="text"
-                            placeholder="e.g. LORA-FREE-7X9"
+                            placeholder="e.g. LORA-SAVE-7X9"
                             value={promoInput}
                             onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoError(''); }}
                             className="promo-input"
@@ -1515,12 +1605,23 @@ export default function PackDetail() {
             <small>Total price</small>
             <div className="price">
               {appliedPromo ? (
-                <>
-                  <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 6 }}>
-                    {pack.currency} {pack.price}
-                  </span>
-                  <span style={{ color: '#059669', fontWeight: 800 }}>FREE</span>
-                </>
+                pricing.isFree ? (
+                  <>
+                    <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 6 }}>
+                      {pack.currency} {pack.price}
+                    </span>
+                    <span style={{ color: '#059669', fontWeight: 800 }}>FREE</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 6 }}>
+                      {pack.currency} {pack.price}
+                    </span>
+                    <span style={{ color: '#059669', fontWeight: 800 }}>
+                      {pack.currency} {pricing.finalPrice.toLocaleString()}
+                    </span>
+                  </>
+                )
               ) : Number(pack.price) === 0 ? (
                 'FREE'
               ) : (
@@ -1594,6 +1695,8 @@ export default function PackDetail() {
               pack={pack}
               creator={creator}
               bankDetails={bankDetails}
+              pricing={pricing}
+              appliedPromo={appliedPromo}
               screenshot={screenshot}
               setScreenshot={setScreenshot}
               uploadError={uploadError}
