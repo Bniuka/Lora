@@ -12,14 +12,14 @@ function Sparkline({ data, colorVar }) {
   const w = 200, h = 54;
   const max = Math.max(...data);
   const min = Math.min(...data);
-  const x = (i) => i * w / (data.length - 1);
-  const y = (v) => h - 6 - (v - min) / ((max - min) || 1) * (h - 14);
+  const x = (i) => (i * w) / (data.length - 1);
+  const y = (v) => h - 6 - ((v - min) / ((max - min) || 1)) * (h - 14);
   const pts = data.map((v, i) => `${x(i)},${y(v)}`);
   const line = 'M' + pts.join(' L');
   const area = `${line} L${w},${h} L0,${h}Z`;
   return (
     <svg
-      className="ld-spark"
+      className="spark"
       viewBox={`0 0 ${w} ${h}`}
       preserveAspectRatio="none"
       aria-hidden="true"
@@ -38,10 +38,10 @@ function Sparkline({ data, colorVar }) {
   );
 }
 
-/* ─── Inline SVG icons ─── */
+/* ─── Inline SVG icons matching lora-dashboard-v2.html ─── */
 function IcPack() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M21 8 12 3 3 8v8l9 5 9-5z" />
       <path d="M3 8l9 5 9-5M12 13v8" />
     </svg>
@@ -49,7 +49,7 @@ function IcPack() {
 }
 function IcStudents() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" />
     </svg>
@@ -57,14 +57,14 @@ function IcStudents() {
 }
 function IcRevenue() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5" />
     </svg>
   );
 }
 function IcPending() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3 2" />
     </svg>
@@ -72,7 +72,7 @@ function IcPending() {
 }
 function IcCreate() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
       <path d="M12 8v8M8 12h8" />
     </svg>
@@ -80,22 +80,22 @@ function IcCreate() {
 }
 function IcEnroll() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" />
     </svg>
   );
 }
-function IcPayout() {
+function IcGuide() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
-      <path d="M12 3v18M16.5 7.5C15.5 6.5 14 6 12 6c-2.5 0-4 1.2-4 3s1.5 2.5 4 3 4 1.2 4 3-1.5 3-4 3c-2 0-3.5-.5-4.5-1.5" />
+    <svg className="ic" viewBox="0 0 24 24">
+      <path d="M12 6c-2-1.5-5-2-8-2v13c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v13" />
     </svg>
   );
 }
 function IcSettings() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="3" />
       <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />
     </svg>
@@ -103,21 +103,21 @@ function IcSettings() {
 }
 function IcBarChart() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M6 20V10M12 20V4M18 20v-7" />
     </svg>
   );
 }
 function IcActivity() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M3 12h4l3-8 4 16 3-8h4" />
     </svg>
   );
 }
 function IcLesson() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M3 9l9-5 9 5-9 5z" />
       <path d="M7 11.5V16c3 2 7 2 10 0v-4.5" />
     </svg>
@@ -125,7 +125,7 @@ function IcLesson() {
 }
 function IcClock() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3 2" />
     </svg>
@@ -133,28 +133,28 @@ function IcClock() {
 }
 function IcZap() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <path d="M13 2 4 14h7l-1 8 9-12h-7z" />
     </svg>
   );
 }
 function IcArrowRight() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
+    <svg className="ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
       <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
   );
 }
 function IcChevRight() {
   return (
-    <svg className="ld-ic" style={{ width: 16, height: 16 }} viewBox="0 0 24 24">
+    <svg className="ic" style={{ width: 16, height: 16 }} viewBox="0 0 24 24">
       <path d="m9 6 6 6-6 6" />
     </svg>
   );
 }
 function IcCheck() {
   return (
-    <svg className="ld-ic" viewBox="0 0 24 24">
+    <svg className="ic" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
       <path d="m8.5 12 2.5 2.5 4.5-5" />
     </svg>
@@ -254,7 +254,7 @@ function MissingRecordingsAlert({ missingSessions, onSaveRecording, savingSessio
                   {sess.title}
                 </div>
                 <div className="ld-missing-rec-time">
-                  <svg className="ld-ic" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                  <svg className="ic" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
                     <circle cx="12" cy="12" r="9" />
                     <path d="M12 7v5l3 2" />
                   </svg>
@@ -299,14 +299,14 @@ function MissingRecordingsAlert({ missingSessions, onSaveRecording, savingSessio
   );
 }
 
-/* ════════════════ ONBOARDING CHECKLIST (IDEA 01) ════════════════ */
+/* ════════════════ ONBOARDING CHECKLIST ════════════════ */
 function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
   const completedCount = steps.filter(s => s.done).length;
   const totalCount = steps.length;
   const pct = Math.round((completedCount / totalCount) * 100);
 
   return (
-    <section className="ld-card ld-onboard">
+    <section className="card ld-onboard">
       <div className="ld-onboard-head">
         <div>
           <div className="ld-onboard-badges">
@@ -379,12 +379,12 @@ export default function CreatorDashboard() {
   const [toastMsg, setToastMsg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tourOpen, setTourOpen] = useState(false);
-  const [checklistDismissed, setChecklistDismissed] = useState(false);
+  const [checklistOpen, setChecklistOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     const dismissed = localStorage.getItem(`lora_onboarding_dismissed_${user.id}`) === 'true';
-    setChecklistDismissed(dismissed);
+    setChecklistOpen(!dismissed);
 
     const seenTour = localStorage.getItem(`lora_welcome_tour_seen_${user.id}`) === 'true';
     if (!seenTour) {
@@ -400,17 +400,24 @@ export default function CreatorDashboard() {
   };
 
   const handleDismissChecklist = () => {
-    setChecklistDismissed(true);
+    setChecklistOpen(false);
     if (user) {
       localStorage.setItem(`lora_onboarding_dismissed_${user.id}`, 'true');
     }
   };
 
-  const handleRestoreChecklist = () => {
-    setChecklistDismissed(false);
-    if (user) {
-      localStorage.removeItem(`lora_onboarding_dismissed_${user.id}`);
-    }
+  const handleToggleChecklist = () => {
+    setChecklistOpen(prev => {
+      const next = !prev;
+      if (user) {
+        if (next) {
+          localStorage.removeItem(`lora_onboarding_dismissed_${user.id}`);
+        } else {
+          localStorage.setItem(`lora_onboarding_dismissed_${user.id}`, 'true');
+        }
+      }
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -506,7 +513,7 @@ export default function CreatorDashboard() {
           .from('enrollments')
           .select('learner_id')
           .eq('pack_id', session.pack_id)
-          .eq('status', 'confirmed');
+          .in('status', ['confirmed', 'active']);
 
         if (enrollments && enrollments.length > 0) {
           const notifs = enrollments.map(e => ({
@@ -520,7 +527,6 @@ export default function CreatorDashboard() {
         console.warn('Could not dispatch learner notifications:', notifErr);
       }
 
-      // Remove from missing list
       setMissingRecordings(prev => prev.filter(s => s.id !== sessionId));
       setToastMsg(`Recording saved for "${session.title}"! Enrolled learners were notified.`);
       setTimeout(() => setToastMsg(null), 5000);
@@ -536,10 +542,10 @@ export default function CreatorDashboard() {
   if (loading) {
     return (
       <div className="lora-dash">
-        <div className="ld-page">
-          <div className="ld-stats">
+        <div className="page">
+          <div className="stats">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="ld-card ld-stat" style={{ height: 160, opacity: 0.5, background: '#e3e7f1' }} />
+              <div key={i} className="card stat" style={{ height: 160, opacity: 0.5, background: '#e3e7f1' }} />
             ))}
           </div>
         </div>
@@ -554,16 +560,16 @@ export default function CreatorDashboard() {
   /* ── Sparkline demo data (7-day trend shape) ── */
   const sparkData = {
     packs:    [3, 4, 3.6, 4.6, 4.2, 5, 5.4],
-    students: [3, 3.6, 3, 4, 3.5, 4.4, 4.2],
+    students: [3, 3.6, 2.4, 4.4, 3.2, 5, 4.6],
     revenue:  [2, 3, 2.6, 3.8, 3.2, 4.4, 5],
     pending:  [5, 4.4, 4.8, 3.8, 4, 3.2, 3],
   };
 
   const statCards = [
-    { key: 'packs',    label: 'Total packs', value: stats.packs,                          colorVar: 'c1', up: true,  icon: <IcPack />,    spark: sparkData.packs },
-    { key: 'students', label: 'Students',    value: stats.students,                        colorVar: 'c2', up: true,  icon: <IcStudents />, spark: sparkData.students },
-    { key: 'revenue',  label: 'Revenue',     value: `LKR ${stats.revenue.toFixed(0)}`,     colorVar: 'c3', up: true,  icon: <IcRevenue />,  spark: sparkData.revenue },
-    { key: 'pending',  label: 'Pending',     value: stats.pending,                         colorVar: 'c4', up: false, icon: <IcPending />,  spark: sparkData.pending },
+    { key: 'packs',    t: 't1', label: 'Total packs', value: stats.packs,                          colorVar: 'c1', up: true,  icon: <IcPack />,    spark: sparkData.packs },
+    { key: 'students', t: 't2', label: 'Students',    value: stats.students,                        colorVar: 'c2', up: true,  icon: <IcStudents />, spark: sparkData.students },
+    { key: 'revenue',  t: 't3', label: 'Revenue',     value: `LKR ${stats.revenue.toFixed(0)}`,     colorVar: 'c3', up: true,  icon: <IcRevenue />,  spark: sparkData.revenue },
+    { key: 'pending',  t: 't4', label: 'Pending',     value: stats.pending,                         colorVar: 'c4', up: false, icon: <IcPending />,  spark: sparkData.pending },
   ];
 
   const quickStats = [
@@ -612,9 +618,11 @@ export default function CreatorDashboard() {
     },
   ];
 
+  const completedCount = onboardingSteps.filter(s => s.done).length;
+
   return (
     <div className="lora-dash">
-      <div className="ld-page">
+      <div className="page">
 
         {/* ── Toast message ── */}
         {toastMsg && (
@@ -630,30 +638,51 @@ export default function CreatorDashboard() {
         {/* ── Trial banner ── */}
         <DashTrialBanner creatorProfile={creatorProfile} />
 
-        {/* ── Welcome heading + Feature Tour buttons ── */}
-        <div className="ld-hello-row">
-          <div className="ld-hello">
+        {/* ── Header / Hello section matching lora-dashboard-v2.html ── */}
+        <div className="hello">
+          <div>
             <h1>Welcome back, {firstName}</h1>
             <p>Here's what's happening with your courses today.</p>
           </div>
 
-          <div className="ld-hello-btns">
-            {checklistDismissed && (
-              <button type="button" className="ld-restore-btn" onClick={handleRestoreChecklist}>
-                📋 Setup Checklist ({onboardingSteps.filter(s => s.done).length}/4)
-              </button>
-            )}
-            <button type="button" className="ld-tour-trigger" onClick={() => setTourOpen(true)}>
-              ✨ How LoraSpace Works
+          <div className="hb">
+            <button
+              type="button"
+              className="pill"
+              onClick={handleToggleChecklist}
+              title={checklistOpen ? "Collapse checklist" : "Open checklist"}
+            >
+              <span className="ok">
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="m5 12 5 5 9-10" />
+                </svg>
+              </span>
+              Setup checklist ({completedCount}/{onboardingSteps.length})
             </button>
-            <Link to="/creator/guide" className="ld-guide-trigger">
-              📖 Creator Guide
+
+            <button
+              type="button"
+              className="pill pri"
+              onClick={() => setTourOpen(true)}
+            >
+              <svg className="ic" viewBox="0 0 24 24">
+                <path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z" />
+              </svg>
+              How LoraSpace works
+            </button>
+
+            <Link className="pill" to="/creator/guide">
+              <svg className="ic" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="13" rx="2" />
+                <path d="M8 21h8M12 17v4" />
+              </svg>
+              Creator guide
             </Link>
           </div>
         </div>
 
-        {/* ── Idea 01: Interactive Onboarding Checklist ── */}
-        {!checklistDismissed && (
+        {/* ── Interactive Setup Checklist (Collapsible) ── */}
+        {checklistOpen && (
           <OnboardingChecklist
             steps={onboardingSteps}
             onOpenTour={() => setTourOpen(true)}
@@ -661,31 +690,35 @@ export default function CreatorDashboard() {
           />
         )}
 
-        {/* ── Missing Recordings Alert ── */}
+        {/* ── Missing Recordings Alert Banner ── */}
         <MissingRecordingsAlert
           missingSessions={missingRecordings}
           onSaveRecording={handleSaveRecording}
           savingSessionId={savingSessionId}
         />
 
-        {/* ── KPI stat cards ── */}
-        <div className="ld-stats">
+        {/* ── 4 Stats Cards matching lora-dashboard-v2.html ── */}
+        <div className="stats">
           {statCards.map(s => (
-            <div key={s.key} className="ld-card ld-stat">
-              <div className="ld-r">
+            <div key={s.key} className={`card stat ${s.t}`}>
+              <div className="r">
                 <span
-                  className="ld-ib"
-                  style={{ background: `var(--${s.colorVar}s)`, color: `var(--${s.colorVar})` }}
+                  className="ib"
+                  style={{
+                    background: '#fff',
+                    color: `var(--${s.colorVar})`,
+                    boxShadow: `0 6px 14px -8px var(--${s.colorVar})`,
+                  }}
                 >
                   {s.icon}
                 </span>
                 <div>
                   <small>{s.label}</small>
-                  <div className="ld-big">{s.value}</div>
+                  <div className="big">{s.value}</div>
                 </div>
               </div>
-              <div className="ld-trend">
-                <b className={s.up ? 'ld-up' : 'ld-down'}>
+              <div className="trend">
+                <b className={s.up ? 'up' : 'down'}>
                   {s.up ? '↗' : '↘'} 0%
                 </b>
                 vs last 7 days
@@ -695,18 +728,18 @@ export default function CreatorDashboard() {
           ))}
         </div>
 
-        {/* ── Quick-action cards ── */}
-        <div className="ld-acts">
-          <Link className="ld-card ld-act dark" to="/creator/packs/new">
-            <span className="ld-ib"><IcCreate /></span>
+        {/* ── Quick-action Cards matching lora-dashboard-v2.html ── */}
+        <div className="acts">
+          <Link className="card act dark" to="/creator/packs/new">
+            <span className="ib"><IcCreate /></span>
             <div>
               <b>Create new pack</b>
               <span>Start a new course pack</span>
             </div>
           </Link>
 
-          <Link className="ld-card ld-act" to="/creator/enrollments">
-            <span className="ld-ib" style={{ background: 'var(--c2s)', color: 'var(--c2)' }}>
+          <Link className="card act" to="/creator/enrollments">
+            <span className="ib" style={{ background: 'var(--c2s)', color: 'var(--c2)' }}>
               <IcEnroll />
             </span>
             <div>
@@ -715,61 +748,59 @@ export default function CreatorDashboard() {
             </div>
           </Link>
 
-          <Link className="ld-card ld-act" to="/creator/guide">
-            <span className="ld-ib" style={{ background: 'var(--c3s)', color: 'var(--c3)' }}>
-              <IcPayout />
+          <Link className="card act" to="/creator/guide">
+            <span className="ib" style={{ background: 'var(--c3s)', color: 'var(--c3)' }}>
+              <IcGuide />
             </span>
             <div>
-              <b>Creator Guide ✨</b>
+              <b>Creator guide ✨</b>
               <span>Learn all features &amp; promo codes</span>
             </div>
           </Link>
 
-          <Link className="ld-card ld-act" to="/creator/settings">
-            <span className="ld-ib" style={{ background: 'var(--bg)', color: 'var(--muted)' }}>
+          <Link className="card act" to="/creator/settings">
+            <span className="ib" style={{ background: 'var(--soft)', color: 'var(--muted)' }}>
               <IcSettings />
             </span>
             <div>
-              <b>Settings &amp; Banks</b>
+              <b>Settings &amp; banks</b>
               <span>Update profile &amp; payout accounts</span>
             </div>
           </Link>
         </div>
 
-        {/* ── Main two-column area ── */}
-        <div className="ld-cols">
+        {/* ── Two-Column Area matching lora-dashboard-v2.html ── */}
+        <div className="cols">
 
-          {/* ── Recent Packs ── */}
-          <section className="ld-card ld-sec">
-            <div className="ld-sh">
-              <span className="ld-ib"><IcBarChart /></span>
+          {/* Left Column: Recent Packs */}
+          <section className="card sec">
+            <div className="sh">
+              <span className="ib"><IcBarChart /></span>
               <div>
                 <h2>Recent packs</h2>
                 <p>Your latest course packs and their performance.</p>
               </div>
-              <Link className="ld-va" to="/creator/packs">
+              <Link className="va" to="/creator/packs">
                 View all <IcArrowRight />
               </Link>
             </div>
 
             {latestPack ? (
-              <article className="ld-pack">
-                {/* Thumbnail */}
-                <div className="ld-thumb">
+              <article className="pack">
+                <div className="thumb">
                   {latestPack.thumbnail_url && (
                     <img src={latestPack.thumbnail_url} alt={latestPack.title} />
                   )}
-                  <span className={`ld-badge${latestPack.is_published ? '' : ' draft'}`}>
+                  <span className={`badge${latestPack.is_published ? '' : ' draft'}`}>
                     {latestPack.is_published ? 'Published' : 'Draft'}
                   </span>
                 </div>
 
-                {/* Content */}
-                <div className="ld-pb">
+                <div className="pb">
                   <h3>{latestPack.title}</h3>
                   <p>{latestPack.description || 'No description provided.'}</p>
 
-                  <div className="ld-meta">
+                  <div className="meta">
                     <span>
                       <IcLesson />
                       {sessionCount} lesson{sessionCount !== 1 ? 's' : ''}
@@ -786,68 +817,71 @@ export default function CreatorDashboard() {
                     )}
                   </div>
 
-                  <div className="ld-pf">
-                    <span className="ld-price">
+                  <div className="pf">
+                    <span className="price">
                       {latestPack.currency} {latestPack.price}
                     </span>
-                    <Link className="ld-btn" to={`/learner/pack/${latestPack.id}`}>
+                    <Link className="btn" to={`/learner/pack/${latestPack.id}`}>
                       View details <IcArrowRight />
                     </Link>
                   </div>
                 </div>
               </article>
             ) : (
-              <div className="ld-empty">
-                <span className="ld-ib"><IcPack /></span>
+              <div className="empty">
+                <span className="ib"><IcPack /></span>
                 <h3>No packs yet</h3>
                 <p>Create your first session pack and start teaching your audience today.</p>
-                <Link className="ld-btn-primary" to="/creator/packs/new">
+                <Link
+                  className="btn"
+                  style={{ background: 'var(--brand)', color: '#fff', border: 0 }}
+                  to="/creator/packs/new"
+                >
                   <IcCreate /> Create Pack
                 </Link>
               </div>
             )}
           </section>
 
-          {/* ── Right column ── */}
-          <div className="ld-side">
+          {/* Right Column: Quick Stats & Recent Activity */}
+          <div className="side">
 
             {/* Quick Stats */}
-            <section className="ld-card ld-sec ld-qs">
-              <div className="ld-sh">
-                <span className="ld-ib"><IcBarChart /></span>
+            <section className="card sec qs">
+              <div className="sh">
+                <span className="ib"><IcBarChart /></span>
                 <h2>Quick stats</h2>
               </div>
-
               {quickStats.map((q, i) => (
                 <Link key={i} to={q.to || '#'}>
                   <span
-                    className="ld-ib"
+                    className="ib"
                     style={{ background: `var(--${q.colorVar}s)`, color: `var(--${q.colorVar})` }}
                   >
                     {q.icon}
                   </span>
-                  <span className="ld-qs-label">{q.label}</span>
-                  <b className="ld-qs-val">{q.value}</b>
+                  <span>{q.label}</span>
+                  <b>{q.value}</b>
                   <IcChevRight />
                 </Link>
               ))}
             </section>
 
             {/* Recent Activity */}
-            <section className="ld-card ld-sec ld-feed">
-              <div className="ld-sh">
-                <span className="ld-ib"><IcActivity /></span>
+            <section className="card sec">
+              <div className="sh">
+                <span className="ib"><IcActivity /></span>
                 <h2>Recent activity</h2>
-                <Link className="ld-va" to="/creator/enrollments">View all</Link>
+                <Link className="va" to="/creator/enrollments">View all</Link>
               </div>
 
               {activity.length > 0 ? (
-                <ul>
+                <ul className="feed">
                   {activity.map(n => (
                     <li key={n.id}>
                       <span
-                        className="ld-ib"
-                        style={{ background: 'var(--c3s)', color: 'var(--c3)', width: 38, height: 38 }}
+                        className="ib"
+                        style={{ background: 'var(--c3s)', color: 'var(--c3)' }}
                       >
                         <IcCheck />
                       </span>
@@ -878,7 +912,7 @@ export default function CreatorDashboard() {
           </div>
         </div>
 
-        {/* ── Idea 02: Welcome Tour Modal ── */}
+        {/* ── First-Time Welcome Tour Modal ── */}
         <CreatorWelcomeTour isOpen={tourOpen} onClose={handleCloseTour} />
 
       </div>
