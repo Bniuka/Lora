@@ -12,10 +12,9 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
-  HelpCircle,
+  ChevronDown,
   X,
   Zap,
-  Globe2
 } from 'lucide-react';
 import './pack-setup-modal.css';
 
@@ -24,10 +23,14 @@ import './pack-setup-modal.css';
  * Guided, one-question-at-a-time interactive wizard that collects the creator's
  * intent (cohort vs recording vs single masterclass, pricing & free preview strategy,
  * and delivery links) and automatically pre-configures the CreatePack form.
+ * Features clean collapsed preview cards with a toggle arrow to view in-depth details.
  */
 export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
   const [lang, setLang] = useState('si'); // 'si' (Sinhala) | 'en' (English)
   const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  // Tracks which card has its detailed accordion expanded
+  const [expandedCardId, setExpandedCardId] = useState(null);
 
   // Creator's selected preferences
   const [answers, setAnswers] = useState({
@@ -44,7 +47,13 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
     setAnswers(prev => ({ ...prev, [key]: value }));
   };
 
+  const toggleExpand = (e, optId) => {
+    e.stopPropagation(); // Don't trigger radio select if only toggling arrow
+    setExpandedCardId(prev => (prev === optId ? null : optId));
+  };
+
   const handleNext = () => {
+    setExpandedCardId(null);
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion(q => q + 1);
     } else {
@@ -53,6 +62,7 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
   };
 
   const handleBack = () => {
+    setExpandedCardId(null);
     if (currentQuestion > 0) {
       setCurrentQuestion(q => q - 1);
     }
@@ -81,7 +91,8 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Radio,
           badge: lang === 'si' ? 'වඩාත් ජනප්‍රියයි (Live)' : 'Most Popular · Live',
           accent: '#2563eb',
-          title: lang === 'si' ? 'ඉදිරි Live පන්ති මාලාවක් (Upcoming Live Cohort)' : 'Upcoming Live Cohort / Series',
+          title: lang === 'si' ? 'ඉදිරි Live පන්ති මාලාවක්' : 'Upcoming Live Cohort / Series',
+          subShort: lang === 'si' ? 'Zoom හෝ YouTube Live හරහා සජීවීව පවත්වන පන්ති සඳහා' : 'Scheduled multi-day live sessions on Zoom / YouTube',
           sinhalaDesc: 'දින වකවානු නියම කරලා, සතියකට දින 1ක් හෝ කිහිපයක් Zoom / YouTube Live හරහා සජීවීව පවත්වන පන්ති සඳහා.',
           englishDesc: 'For scheduled live workshops or multiple-day bootcamps hosted via Zoom or YouTube Live in the coming days.',
           bullets: [
@@ -94,7 +105,8 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: FileVideo,
           badge: lang === 'si' ? 'Recordings සූදානම්' : 'Self-Paced · On-Demand',
           accent: '#7c3aed',
-          title: lang === 'si' ? 'පසුගිය හෝ පටිගත කළ පාඩම් මාලාවක් (Recorded Masterclass)' : 'Recorded Masterclass / Catch-up Course',
+          title: lang === 'si' ? 'පසුගිය හෝ පටිගත කළ පාඩම් මාලාවක්' : 'Recorded Masterclass / Catch-up Course',
+          subShort: lang === 'si' ? 'කලින් කරපු වීඩියෝ (YouTube/Drive) සිසුන්ට අධ්‍යයනයට දීමට' : 'Pre-recorded videos ready for students to watch 24/7',
           sinhalaDesc: 'කලින් පවත්වපු පන්තිවල Recordings (YouTube Unlisted / Google Drive links) පමණක් සිසුන්ට අධ්‍යයනය සඳහා ලබාදීමට.',
           englishDesc: 'You already have pre-recorded lessons or previous class recordings ready to watch on-demand.',
           bullets: [
@@ -108,6 +120,7 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           badge: lang === 'si' ? 'දින 1 ක වැඩමුළු' : 'Single Session · 1-Day',
           accent: '#059669',
           title: lang === 'si' ? 'එක් දින විශේෂ Masterclass / Webinar එකක්' : 'Single 1-Day Masterclass or Webinar',
+          subShort: lang === 'si' ? 'එකම දිනක පවත්වන විශේෂ වැඩමුළුවක් හෝ Intensive Training එකක්' : 'A single high-impact live session or crash webinar',
           sinhalaDesc: 'එකම දිනක පවත්වන විශේෂ වැඩමුළුවක් හෝ Intensive Training එකක් සඳහා.',
           englishDesc: 'A focused, single high-impact live session or webinar (no extra sessions clutter).',
           bullets: [
@@ -125,16 +138,17 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
         ? 'සිසුන් මේ පාඨමාලාවට සම්බන්ධ කරගන්නේ කොහොමද?' 
         : 'How would you like learners to enroll and pay?',
       subtitle: lang === 'si'
-        ? 'නොමිලේ සාම්පලයක් (Free Preview) ලබාදීමෙන් සිසුන්ගේ විශ්වාසය දිනාගෙන Paid enrollments 3X ගුණයකින් වැඩි කරගත හැක.'
+        ? 'නොමිලේ සාම්පලයක් (Free Preview) ලබාදීමෙන් සිසුන්ගේ විශ්වාසය දිනාගෙන Enrollments වැඩි කරගත හැක.'
         : 'Offering a free taster increases student trust and can boost paid conversions by up to 300%.',
       field: 'pricing',
       options: [
         {
           id: 'preview_paid',
           icon: Eye,
-          badge: lang === 'si' ? 'නිර්දේශිත ක්‍රමය ⭐' : 'Highly Recommended ⭐',
+          badge: lang === 'si' ? 'නිර්දේශිතයි ⭐' : 'Recommended ⭐',
           accent: '#059669',
-          title: lang === 'si' ? 'ගෙවන පාඨමාලාවක් + පළමු Session එක FREE (Free Preview + Paid)' : 'Paid Course with 1 Free Taster Session',
+          title: lang === 'si' ? 'ගෙවන පාඨමාලාවක් + පළමු Session එක FREE' : 'Paid Course with 1 Free Taster Session',
+          subShort: lang === 'si' ? 'පළමු Session එක Free දීලා, ඉතිරි Sessions වලට මුදල් අය කිරීම' : 'Session 1 is 100% Free to try; paid for the rest',
           sinhalaDesc: 'පළමු Session එකට (හෝ හැඳින්වීමේ පාඩමට) ඕනෑම අයෙකුට නොමිලේ සම්බන්ධ වෙන්න දීලා, ඉතිරි Sessions වලට මුදල් අය කිරීම.',
           englishDesc: 'Session 1 is 100% Free for anyone to try out without paying. Remaining sessions require payment.',
           bullets: [
@@ -147,7 +161,8 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Lock,
           badge: lang === 'si' ? 'සම්පූර්ණ ගෙවීම්' : 'Paid Only',
           accent: '#2563eb',
-          title: lang === 'si' ? 'මුල සිටම ගෙවිය යුතු පාඨමාලාවක් (Direct Paid Only)' : 'Paid Only (No Free Previews)',
+          title: lang === 'si' ? 'මුල සිටම ගෙවිය යුතු පාඨමාලාවක් (Direct Paid)' : 'Paid Only (No Free Previews)',
+          subShort: lang === 'si' ? 'සියලුම Sessions සඳහා සිසුන් කලින්ම මුදල් ගෙවිය යුතුය' : 'All sessions are locked until payment is confirmed',
           sinhalaDesc: 'සියලුම Sessions සඳහා සිසුන් කලින්ම සම්පූර්ණ මුදල ගෙවා Bank Slip එකක් හෝ Card Payment එකක් කළ යුතුය.',
           englishDesc: 'All sessions are locked. Learners must pay the creator before accessing any session links or videos.',
           bullets: [
@@ -158,9 +173,10 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
         {
           id: 'free_all',
           icon: Gift,
-          badge: lang === 'si' ? '100% නොමිලේ' : '100% Free · Community',
+          badge: lang === 'si' ? '100% නොමිලේ' : '100% Free',
           accent: '#d97706',
-          title: lang === 'si' ? '100% ක්ම නොමිලේ ලබාදෙන වැඩමුළුවක් (100% Free Access)' : '100% Free Workshop or Community Pack',
+          title: lang === 'si' ? '100% ක්ම නොමිලේ ලබාදෙන වැඩමුළුවක්' : '100% Free Workshop or Community Pack',
+          subShort: lang === 'si' ? 'කිසිදු මුදලක් අය නොකර සිසුන්ට 1-Click එකකින් සම්බන්ධ වීමට දීමට' : 'Zero cost for learners; instant 1-click enrollment',
           sinhalaDesc: 'කිසිදු මුදලක් අය නොකර සිසුන්ට 1-Click එකකින් නොමිලේ සම්බන්ධ වීමට ලබාදීමට (Audience Building / Leads).',
           englishDesc: 'Totally free for all students. Learners enroll instantly in 1-click without any payment screens.',
           bullets: [
@@ -188,6 +204,7 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           badge: lang === 'si' ? 'සජීවී පන්ති' : 'Live Streams',
           accent: '#2563eb',
           title: lang === 'si' ? 'Zoom හෝ YouTube Live Links පමණක් දමන්නෙමි' : 'I will provide Zoom or YouTube Live links',
+          subShort: lang === 'si' ? 'ඉදිරි දිනවල පවත්වන පන්ති වල Zoom / YouTube Live links' : 'Scheduled future sessions with live meeting join links',
           sinhalaDesc: 'ඉදිරි දිනවල පවත්වන පන්ති වල Zoom Meetings links හෝ YouTube Live unlisted streams දමන්න.',
           englishDesc: 'Each session will have a scheduled date & time and an online meeting link for students to join live.',
           bullets: [
@@ -201,6 +218,7 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           badge: lang === 'si' ? 'වීඩියෝ සූදානම්' : 'Videos Ready',
           accent: '#7c3aed',
           title: lang === 'si' ? 'වීඩියෝ Recordings Links මා සතුව දැනටමත් ඇත' : 'I already have video recording links (YouTube / Drive)',
+          subShort: lang === 'si' ? 'කලින් කරපු වීඩියෝ links (YouTube/Drive/Vimeo)' : 'Direct links for students to stream videos right away',
           sinhalaDesc: 'කලින් කරපු වීඩියෝ හෝ Unlisted YouTube / Vimeo / Google Drive links කෙලින්ම Sessions වලට ඇතුළත් කිරීමට.',
           englishDesc: 'Direct video playback links. Students unlock and stream these videos immediately after enrollment.',
           bullets: [
@@ -213,7 +231,8 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Layers,
           badge: lang === 'si' ? 'දෙකම එකතු කර' : 'Hybrid Model',
           accent: '#059669',
-          title: lang === 'si' ? 'Live පන්ති සහ පසුගිය Recordings දෙකෙහිම එකතුවක් (Hybrid)' : 'Hybrid: Some past recordings + upcoming live sessions',
+          title: lang === 'si' ? 'Live පන්ති සහ පසුගිය Recordings දෙකෙහිම එකතුවක්' : 'Hybrid: Some past recordings + upcoming live sessions',
+          subShort: lang === 'si' ? 'පසුගිය recordings සහ ඉදිරි live පන්ති එකට පවත්වන්න' : 'Combine recorded intro lessons with live masterclasses',
           sinhalaDesc: 'කලින් කරපු හැඳින්වීමේ පාඩම් වල recordings බලන්න දීලා, ඉදිරි සංකීර්ණ පාඩම් Live පවත්වන්න.',
           englishDesc: 'Combine introductory recorded lessons with upcoming interactive live masterclasses.',
           bullets: [
@@ -294,10 +313,11 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           </p>
         </div>
 
-        {/* Options Grid (Vertical Cards with generous space & detail) */}
+        {/* Options List (Clean, compact cards with accordion toggle) */}
         <div className="setup-options-container">
           {currentQ.options.map((opt) => {
             const isSelected = selectedValue === opt.id;
+            const isExpanded = expandedCardId === opt.id;
             const IconComponent = opt.icon;
 
             return (
@@ -314,62 +334,80 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
                   }
                 }}
               >
-                {/* Radio selection indicator */}
-                <div className="setup-card-radio">
-                  <div className={`setup-radio-dot ${isSelected ? 'checked' : ''}`}>
-                    {isSelected && <div className="setup-radio-inner" />}
-                  </div>
-                </div>
-
-                {/* Card Icon */}
-                <div
-                  className="setup-card-icon-box"
-                  style={{
-                    backgroundColor: isSelected ? opt.accent : '#f1f5f9',
-                    color: isSelected ? '#ffffff' : opt.accent,
-                  }}
-                >
-                  <IconComponent size={22} />
-                </div>
-
-                {/* Main Card Content */}
-                <div className="setup-card-body">
-                  <div className="setup-card-head">
-                    <h3 className="setup-card-title">{opt.title}</h3>
-                    {opt.badge && (
-                      <span
-                        className="setup-card-badge"
-                        style={{
-                          backgroundColor: isSelected ? '#eff6ff' : '#f8fafc',
-                          color: isSelected ? opt.accent : '#475569',
-                          borderColor: isSelected ? '#bfdbfe' : '#e2e8f0',
-                        }}
-                      >
-                        {opt.badge}
-                      </span>
-                    )}
+                {/* Compact Row: Radio + Icon + Clean Title + Badge + Down Arrow */}
+                <div className="setup-card-main-row">
+                  {/* Radio indicator */}
+                  <div className="setup-card-radio">
+                    <div className={`setup-radio-dot ${isSelected ? 'checked' : ''}`}>
+                      {isSelected && <div className="setup-radio-inner" />}
+                    </div>
                   </div>
 
-                  {/* Primary Language Description */}
-                  <p className="setup-card-desc-si">
-                    {lang === 'si' ? opt.sinhalaDesc : opt.englishDesc}
-                  </p>
-
-                  {/* Secondary Language Translation (Subtle helper) */}
-                  <p className="setup-card-desc-secondary">
-                    {lang === 'si' ? opt.englishDesc : opt.sinhalaDesc}
-                  </p>
-
-                  {/* Key Benefits / Form adjustments */}
-                  <div className="setup-card-bullets">
-                    {opt.bullets.map((b, idx) => (
-                      <div key={idx} className="setup-bullet-item">
-                        <CheckCircle2 size={13} style={{ color: opt.accent, flexShrink: 0, marginTop: 2 }} />
-                        <span>{b}</span>
-                      </div>
-                    ))}
+                  {/* Icon */}
+                  <div
+                    className="setup-card-icon-box"
+                    style={{
+                      backgroundColor: isSelected ? opt.accent : '#f1f5f9',
+                      color: isSelected ? '#ffffff' : opt.accent,
+                    }}
+                  >
+                    <IconComponent size={20} />
                   </div>
+
+                  {/* Title and 1-line short tagline */}
+                  <div className="setup-card-primary-info">
+                    <div className="setup-card-head">
+                      <h3 className="setup-card-title">{opt.title}</h3>
+                      {opt.badge && (
+                        <span
+                          className="setup-card-badge"
+                          style={{
+                            backgroundColor: isSelected ? '#eff6ff' : '#f8fafc',
+                            color: isSelected ? opt.accent : '#475569',
+                            borderColor: isSelected ? '#bfdbfe' : '#e2e8f0',
+                          }}
+                        >
+                          {opt.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="setup-card-short-tagline">
+                      {opt.subShort}
+                    </p>
+                  </div>
+
+                  {/* Expand / Collapse Details Arrow Button */}
+                  <button
+                    type="button"
+                    className={`setup-expand-btn ${isExpanded ? 'expanded' : ''}`}
+                    onClick={(e) => toggleExpand(e, opt.id)}
+                    title={isExpanded ? 'Hide detailed explanation' : 'Show detailed explanation'}
+                    aria-label={isExpanded ? 'Hide details' : 'Show details'}
+                  >
+                    <ChevronDown size={17} className="setup-chevron-icon" />
+                  </button>
                 </div>
+
+                {/* Collapsible Details Drawer (Only shown when arrow clicked or if user wants deeper details) */}
+                {isExpanded && (
+                  <div className="setup-card-details-drawer">
+                    <p className="setup-card-desc-si">
+                      {lang === 'si' ? opt.sinhalaDesc : opt.englishDesc}
+                    </p>
+                    <p className="setup-card-desc-secondary">
+                      {lang === 'si' ? opt.englishDesc : opt.sinhalaDesc}
+                    </p>
+
+                    <div className="setup-card-bullets">
+                      {opt.bullets.map((b, idx) => (
+                        <div key={idx} className="setup-bullet-item">
+                          <CheckCircle2 size={13} style={{ color: opt.accent, flexShrink: 0, marginTop: 2 }} />
+                          <span>{b}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -417,3 +455,4 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
     </div>
   );
 }
+
