@@ -168,6 +168,10 @@ export default function EditPack() {
         supabase.from('sessions').select('*').eq('pack_id', id).order('order_index'),
       ]);
       if (packRes.data) {
+        if (packRes.data.is_multi_pack) {
+          navigate(`/creator/multi-packs/${id}`, { replace: true });
+          return;
+        }
         setPack({
           ...packRes.data,
           visibility: packRes.data.visibility || 'public',
@@ -296,6 +300,7 @@ export default function EditPack() {
         has_free_session: hasFree,
         visibility: pack.visibility || 'public',
         invite_token: pack.invite_token || generateInviteToken(),
+        ...(pack.parent_pack_id ? { require_previous_pack: Boolean(pack.require_previous_pack) } : {}),
       };
 
       if (!pack.slug && pack.title) {
@@ -413,9 +418,9 @@ export default function EditPack() {
         {/* Sticky action bar */}
         <div className="actions">
           <div className="in">
-            <Link to="/creator/packs" className="backl">
+            <Link to={pack.parent_pack_id ? `/creator/multi-packs/${pack.parent_pack_id}` : '/creator/packs'} className="backl">
               <svg className="ic" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
-              <span>Back to packs</span>
+              <span>{pack.parent_pack_id ? 'Back to Multi-Pack' : 'Back to packs'}</span>
             </Link>
             {isDirty && <span className="dirty show">Unsaved changes</span>}
             <button className="save" id="save" type="button" onClick={handleSave} disabled={saving}>

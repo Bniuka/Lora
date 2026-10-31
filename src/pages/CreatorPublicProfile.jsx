@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, Star, Users, ArrowLeft, Sparkles, MapPin, Lock } from 'lucide-react';
+import { Package, Star, Users, ArrowLeft, Sparkles, MapPin, Lock, Layers } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState } from '../components/ui';
 
@@ -24,7 +24,18 @@ export default function CreatorPublicProfile() {
           .order('created_at', { ascending: false }),
       ]);
       setCreator(creatorRes.data);
-      setPacks((packsRes.data || []).filter(p => p.visibility !== 'unlisted'));
+      const allPub = packsRes.data || [];
+      const subByParent = allPub.reduce((acc, p) => {
+        if (p.parent_pack_id) {
+          if (!acc[p.parent_pack_id]) acc[p.parent_pack_id] = [];
+          acc[p.parent_pack_id].push(p);
+        }
+        return acc;
+      }, {});
+      const visibleTop = allPub
+        .filter(p => !p.parent_pack_id && p.visibility !== 'unlisted')
+        .map(p => ({ ...p, _subPacks: subByParent[p.id] || [] }));
+      setPacks(visibleTop);
       setLoading(false);
     };
     fetch();
@@ -132,7 +143,16 @@ export default function CreatorPublicProfile() {
               />
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-                {packs.map((pack, i) => (
+                {packs.map((pack, i) => {
+                  const isMulti = Boolean(pack.is_multi_pack);
+                  const subs = pack._subPacks || [];
+                  const studentCount = isMulti
+                    ? subs.reduce((sum, s) => sum + (s.enrollments?.[0]?.count || 0), 0)
+                    : (pack.enrollments?.[0]?.count || 0);
+                  const paidPrices = subs.map(s => Number(s.price)).filter(n => n > 0);
+                  const minSubPrice = paidPrices.length > 0 ? Math.min(...paidPrices) : null;
+
+                  return (
                   <motion.div
                     key={pack.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -152,13 +172,19 @@ export default function CreatorPublicProfile() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Package size={36} className="text-[#E2E8F0]" />
+                            {isMulti ? <Layers size={36} className="text-[#93C5FD]" /> : <Package size={36} className="text-[#E2E8F0]" />}
                           </div>
                         )}
                         {pack.visibility === 'private' ? (
                           <div className="absolute top-3 left-3">
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1E1B4B]/90 text-white backdrop-blur-sm shadow-sm">
                               <Lock size={11} /> Private
+                            </span>
+                          </div>
+                        ) : isMulti ? (
+                          <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#2563EB]/95 text-white backdrop-blur-sm shadow-sm">
+                              <Layers size={11} /> {subs.length > 0 ? `${subs.length} Batch${subs.length !== 1 ? 'es' : ''}` : 'Multi-Pack'}
                             </span>
                           </div>
                         ) : pack.has_free_session ? (
@@ -177,19 +203,24 @@ export default function CreatorPublicProfile() {
                             <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
                               <Lock size={12} /> Private · Invite Only
                             </span>
+                          ) : isMulti ? (
+                            <p className="text-sm font-semibold text-[#2563EB]">
+                              {minSubPrice !== null ? `From ${pack.currency} ${minSubPrice}` : 'View Batches →'}
+                            </p>
                           ) : (
                             <p className="text-sm font-semibold text-[#2563EB]">
                               {Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}
                             </p>
                           )}
                           <span className="text-xs text-[#94A6B8]">
-                            {pack.enrollments?.[0]?.count || 0} students
+                            {studentCount} students
                           </span>
                         </div>
                       </div>
                     </Link>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

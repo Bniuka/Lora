@@ -2,7 +2,7 @@ import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import {
-  LayoutDashboard, Package, PlusCircle, CreditCard,
+  LayoutDashboard, Package, PlusCircle, Layers, CreditCard,
   Settings, Menu, X, Bell, Search, ChevronDown, Rocket, ChevronRight,
   CheckCircle, Clock, Loader2, LogOut, Crown
 } from 'lucide-react';
@@ -17,6 +17,7 @@ const navItems = [
   { to: '/creator/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/creator/packs', icon: Package, label: 'My Packs' },
   { to: '/creator/packs/new', icon: PlusCircle, label: 'Create Pack' },
+  { to: '/creator/multi-packs/new', icon: Layers, label: 'Create Multi-Pack' },
   { to: '/creator/enrollments', icon: CreditCard, label: 'Enrollments' },
   { to: '/creator/settings', icon: Settings, label: 'Settings' },
 ];

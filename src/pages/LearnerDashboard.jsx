@@ -27,10 +27,14 @@ export default function LearnerDashboard() {
           .select('*, creator_profiles(id, profiles(first_name, last_name))')
           .eq('is_published', true)
           .order('created_at', { ascending: false })
-          .limit(6),
+          .limit(20),
       ]);
       setEnrollments(enrRes.data || []);
-      setDiscover((discRes.data || []).filter(p => p.visibility !== 'unlisted'));
+      setDiscover(
+        (discRes.data || [])
+          .filter(p => !p.parent_pack_id && p.visibility !== 'unlisted')
+          .slice(0, 6)
+      );
       setLoading(false);
     };
     fetchData();
@@ -361,6 +365,10 @@ export default function LearnerDashboard() {
                         <span className="chip" style={{ background: '#1e1b4b', color: '#fff', borderColor: '#312e81' }}>
                           🔒 Private
                         </span>
+                      ) : pack.is_multi_pack ? (
+                        <span className="chip" style={{ background: '#2563eb', color: '#fff', borderColor: '#1d4ed8' }}>
+                          📚 Multi-Pack
+                        </span>
                       ) : pack.has_free_session ? (
                         <span className="chip">
                           <svg className="ic" viewBox="0 0 24 24">
@@ -384,6 +392,10 @@ export default function LearnerDashboard() {
                         {pack.visibility === 'private' ? (
                           <span className="price" style={{ fontSize: '12.5px', color: '#6d28d9' }}>
                             🔒 Private · Invite Only
+                          </span>
+                        ) : pack.is_multi_pack ? (
+                          <span className="price" style={{ fontSize: '13.5px', color: '#2563eb' }}>
+                            View Batches →
                           </span>
                         ) : (
                           <span className="price">

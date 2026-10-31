@@ -36,6 +36,7 @@ export default function Enrollments() {
   const [searchParams] = useSearchParams();
 
   const [enrollments, setEnrollments] = useState([]);
+  const [packTitleMap, setPackTitleMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,16 +59,25 @@ export default function Enrollments() {
 
   const fetchEnrollments = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from('enrollments')
-      .select(`
-        *,
-        profiles!enrollments_learner_id_fkey(first_name, last_name, email),
-        session_packs!inner(title, creator_id, price, currency)
-      `)
-      .eq('session_packs.creator_id', user.id)
-      .order('submitted_at', { ascending: false });
-    setEnrollments(data || []);
+    const [enrRes, packsRes] = await Promise.all([
+      supabase
+        .from('enrollments')
+        .select(`
+          *,
+          profiles!enrollments_learner_id_fkey(first_name, last_name, email),
+          session_packs!inner(*)
+        `)
+        .eq('session_packs.creator_id', user.id)
+        .order('submitted_at', { ascending: false }),
+      supabase
+        .from('session_packs')
+        .select('id, title')
+        .eq('creator_id', user.id),
+    ]);
+    const map = {};
+    (packsRes.data || []).forEach(p => { map[p.id] = p.title; });
+    setPackTitleMap(map);
+    setEnrollments(enrRes.data || []);
     setLoading(false);
   };
 
@@ -252,7 +262,10 @@ export default function Enrollments() {
             filtered.map(x => {
               const learnerName = `${x.profiles?.first_name || ''} ${x.profiles?.last_name || ''}`.trim() || 'Learner';
               const learnerEmail = x.profiles?.email || 'No email provided';
-              const packTitle = x.session_packs?.title || 'Course Pack';
+              const parentTitle = x.session_packs?.parent_pack_id ? packTitleMap[x.session_packs.parent_pack_id] : null;
+              const packTitle = parentTitle
+                ? `${parentTitle} › ${x.session_packs?.title || 'Sub-Pack'}`
+                : (x.session_packs?.title || 'Course Pack');
               const amount = `${x.session_packs?.currency || 'LKR'} ${x.session_packs?.price != null ? Number(x.session_packs.price).toFixed(0) : '0'}`;
               const isBank = x.payment_method_used === 'bank' || x.payment_method_used?.startsWith('bank');
               let bankName = x.bank_name_used;

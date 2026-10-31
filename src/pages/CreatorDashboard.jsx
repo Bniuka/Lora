@@ -554,7 +554,8 @@ export default function CreatorDashboard() {
   }
 
   const firstName = profile?.first_name || 'Creator';
-  const latestPack = recentPacks[0] ?? null;
+  const topLevelRecentPacks = recentPacks.filter(p => !p.parent_pack_id);
+  const latestPack = topLevelRecentPacks[0] ?? recentPacks[0] ?? null;
   const sessionCount = latestPack?.sessions?.[0]?.count ?? 0;
 
   /* ── Sparkline demo data (7-day trend shape) ── */
@@ -670,6 +671,11 @@ export default function CreatorDashboard() {
               </svg>
               How LoraSpace works
             </button>
+
+            <Link className="pill" to="/creator/multi-packs/new">
+              <IcPack />
+              Create Multi-Pack
+            </Link>
 
             <Link className="pill" to="/creator/guide">
               <svg className="ic" viewBox="0 0 24 24">
@@ -819,10 +825,10 @@ export default function CreatorDashboard() {
 
                   <div className="pf">
                     <span className="price">
-                      {latestPack.currency} {latestPack.price}
+                      {latestPack.is_multi_pack ? 'Multi-Course Pack' : `${latestPack.currency} ${latestPack.price}`}
                     </span>
-                    <Link className="btn" to={`/learner/pack/${latestPack.id}`}>
-                      View details <IcArrowRight />
+                    <Link className="btn" to={latestPack.is_multi_pack ? `/creator/multi-packs/${latestPack.id}` : `/learner/pack/${latestPack.id}`}>
+                      {latestPack.is_multi_pack ? 'Manage batches' : 'View details'} <IcArrowRight />
                     </Link>
                   </div>
                 </div>

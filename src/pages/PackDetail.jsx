@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
   Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
-  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag, KeyRound, Unlock
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag, KeyRound, Unlock, Layers, ArrowRight, GitBranch, PlusCircle
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -607,6 +607,16 @@ export default function PackDetail() {
   const [inviteUnlocked, setInviteUnlocked] = useState(false);
   const [unlockCodeInput, setUnlockCodeInput] = useState('');
 
+  // Multi-Pack & Sub-Pack Relationship State
+  const [subPacks, setSubPacks] = useState([]);
+  const [subEnrollmentsMap, setSubEnrollmentsMap] = useState({});
+  const [parentPack, setParentPack] = useState(null);
+  const [siblingIndex, setSiblingIndex] = useState(-1);
+  const [siblingCount, setSiblingCount] = useState(0);
+  const [prevSubPack, setPrevSubPack] = useState(null);
+  const [nextSubPack, setNextSubPack] = useState(null);
+  const [prevSubConfirmed, setPrevSubConfirmed] = useState(true);
+
   const handleApplyPromoCode = async (codeToTry = promoInput, { isPrivateAttempt = false } = {}) => {
     const cleanCode = normalizePromoCode(codeToTry);
     if (!cleanCode) return;
@@ -797,6 +807,20 @@ export default function PackDetail() {
 
   useEffect(() => {
     const fetch = async () => {
+      setLoading(true);
+      setEnrollment(null);
+      setSessions([]);
+      setSubPacks([]);
+      setSubEnrollmentsMap({});
+      setParentPack(null);
+      setSiblingIndex(-1);
+      setSiblingCount(0);
+      setPrevSubPack(null);
+      setNextSubPack(null);
+      setPrevSubConfirmed(true);
+      setAppliedPromo(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
       let packData = null;
@@ -832,20 +856,94 @@ export default function PackDetail() {
 
         const realId = packData.id;
 
-        const [sessRes, enrRes] = await Promise.all([
-          supabase.from('sessions').select('*').eq('pack_id', realId).order('order_index'),
-          user ? supabase.from('enrollments').select('*').eq('learner_id', user.id).eq('pack_id', realId).maybeSingle() : Promise.resolve({ data: null })
-        ]);
+        if (packData.is_multi_pack) {
+          let subQuery = supabase
+            .from('session_packs')
+            .select('*, sessions(count), enrollments(count)')
+            .eq('parent_pack_id', realId)
+            .order('sub_pack_order', { ascending: true })
+            .order('created_at', { ascending: true });
 
-        setSessions(sessRes.data || []);
-        if (enrRes.data) {
-          setEnrollment(enrRes.data);
+          if (user?.id !== packData.creator_id) {
+            subQuery = subQuery.eq('is_published', true);
+          }
+
+          const { data: children } = await subQuery;
+          const childList = children || [];
+          setSubPacks(childList);
+
+          if (user && childList.length > 0) {
+            const childIds = childList.map(c => c.id);
+            const { data: myEnrs } = await supabase
+              .from('enrollments')
+              .select('*')
+              .eq('learner_id', user.id)
+              .in('pack_id', childIds);
+            const map = {};
+            (myEnrs || []).forEach(e => {
+              map[e.pack_id] = e;
+            });
+            setSubEnrollmentsMap(map);
+          }
+        } else {
+          const [sessRes, enrRes] = await Promise.all([
+            supabase.from('sessions').select('*').eq('pack_id', realId).order('order_index'),
+            user ? supabase.from('enrollments').select('*').eq('learner_id', user.id).eq('pack_id', realId).maybeSingle() : Promise.resolve({ data: null })
+          ]);
+
+          setSessions(sessRes.data || []);
+          if (enrRes.data) {
+            setEnrollment(enrRes.data);
+          }
+
+          if (packData.parent_pack_id) {
+            const [parentRes, sibsRes] = await Promise.all([
+              supabase.from('session_packs').select('id, title, slug, sequential_unlock, visibility, invite_token, thumbnail_url').eq('id', packData.parent_pack_id).maybeSingle(),
+              supabase
+                .from('session_packs')
+                .select('id, title, slug, sub_pack_order, require_previous_pack, price, currency, is_published')
+                .eq('parent_pack_id', packData.parent_pack_id)
+                .eq('is_published', true)
+                .order('sub_pack_order', { ascending: true })
+                .order('created_at', { ascending: true }),
+            ]);
+
+            const pData = parentRes.data || null;
+            setParentPack(pData);
+
+            const sibs = sibsRes.data || [];
+            setSiblingCount(sibs.length);
+            const idx = sibs.findIndex(s => s.id === realId);
+            setSiblingIndex(idx);
+
+            const prev = idx > 0 ? sibs[idx - 1] : null;
+            const next = idx >= 0 && idx < sibs.length - 1 ? sibs[idx + 1] : null;
+            setPrevSubPack(prev);
+            setNextSubPack(next);
+
+            const needsPrev = Boolean(prev) && (Boolean(pData?.sequential_unlock) || Boolean(packData.require_previous_pack));
+            if (needsPrev && user?.id !== packData.creator_id) {
+              if (!user) {
+                setPrevSubConfirmed(false);
+              } else {
+                const { data: prevEnr } = await supabase
+                  .from('enrollments')
+                  .select('id, status')
+                  .eq('learner_id', user.id)
+                  .eq('pack_id', prev.id)
+                  .maybeSingle();
+                setPrevSubConfirmed(prevEnr?.status === 'confirmed');
+              }
+            }
+          }
         }
 
         if (packData.creator_profiles) {
           supabase.from('creator_bank_details').select('*').eq('creator_id', packData.creator_profiles.id).maybeSingle()
             .then(({ data }) => setBankDetails(data));
         }
+      } else {
+        setPack(null);
       }
 
       setLoading(false);
@@ -1080,11 +1178,34 @@ export default function PackDetail() {
   const whatsappUrl = sanitizedPhone ? `https://wa.me/${sanitizedPhone}?text=${whatsappMessage}` : null;
   const callUrl = inquiryNumber ? `tel:${inquiryNumber}` : null;
 
+  const isMultiPack = Boolean(pack.is_multi_pack);
+  const totalMultiSessions = subPacks.reduce((acc, sp) => acc + (sp.sessions?.[0]?.count || 0), 0);
+  const subPaidPrices = subPacks.map(sp => Number(sp.price)).filter(n => n > 0);
+  const multiMinPrice = subPaidPrices.length > 0 ? Math.min(...subPaidPrices) : null;
+  const confirmedSubCount = subPacks.filter(sp => subEnrollmentsMap[sp.id]?.status === 'confirmed').length;
+
+  const isSequentialLocked =
+    !isMultiPack &&
+    Boolean(prevSubPack) &&
+    (Boolean(parentPack?.sequential_unlock) || Boolean(pack.require_previous_pack)) &&
+    user?.id !== pack.creator_id &&
+    !prevSubConfirmed &&
+    !enrollment;
+
+  const scrollToBatches = () => {
+    const el = document.getElementById('course-batches');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const renderJoinAction = (isMobile = false) => {
     if (user?.id === pack.creator_id) {
       return (
-        <Link to={`/creator/packs/${pack.id}/edit`} className="btn pri" style={{ textAlign: 'center' }}>
-          Edit pack
+        <Link
+          to={isMultiPack ? `/creator/multi-packs/${pack.id}` : `/creator/packs/${pack.id}/edit`}
+          className="btn pri"
+          style={{ textAlign: 'center' }}
+        >
+          {isMultiPack ? 'Manage Multi-Pack & Batches' : 'Edit pack'}
         </Link>
       );
     }
@@ -1106,6 +1227,13 @@ export default function PackDetail() {
         </button>
       );
     }
+    if (isMultiPack) {
+      return (
+        <button className="btn pri" type="button" onClick={scrollToBatches}>
+          <Layers size={16} /> Choose a Batch ({subPacks.length}) ↓
+        </button>
+      );
+    }
     if (!user) {
       return (
         <Link to="/signup/learner" className="btn pri" style={{ textAlign: 'center' }}>
@@ -1123,6 +1251,72 @@ export default function PackDetail() {
             style={{ width: '100%', marginTop: 8, textAlign: 'center', display: 'block' }}
           >
             Go to Course Sessions →
+          </Link>
+          {nextSubPack && (
+            <Link
+              to={`/learner/pack/${nextSubPack.slug || nextSubPack.id}`}
+              className="btn"
+              style={{
+                width: '100%',
+                marginTop: 8,
+                textAlign: 'center',
+                display: 'block',
+                background: '#eff6ff',
+                color: '#2563eb',
+                borderColor: '#bfdbfe',
+                fontWeight: 700,
+                fontSize: 13,
+              }}
+            >
+              Next Batch: {nextSubPack.title} →
+            </Link>
+          )}
+        </div>
+      );
+    }
+    if (isSequentialLocked && prevSubPack) {
+      if (isMobile) {
+        return (
+          <Link
+            to={`/learner/pack/${prevSubPack.slug || prevSubPack.id}`}
+            className="btn pri"
+            style={{ background: '#6d28d9', borderColor: '#6d28d9', textAlign: 'center' }}
+          >
+            <Lock size={14} /> Unlock Prev Batch
+          </Link>
+        );
+      }
+      return (
+        <div
+          style={{
+            padding: '14px',
+            borderRadius: 14,
+            background: '#f5f3ff',
+            border: '1.5px solid #ddd6fe',
+            color: '#4c1d95',
+            fontSize: 13,
+            lineHeight: 1.45,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800, marginBottom: 4 }}>
+            <Lock size={14} /> Step-by-Step Progression
+          </div>
+          <div style={{ color: '#5b21b6', fontSize: 12.5 }}>
+            Complete enrollment in <b>&ldquo;{prevSubPack.title}&rdquo;</b> first to unlock this batch.
+          </div>
+          <Link
+            to={`/learner/pack/${prevSubPack.slug || prevSubPack.id}`}
+            className="btn pri"
+            style={{
+              width: '100%',
+              marginTop: 10,
+              background: '#6d28d9',
+              borderColor: '#6d28d9',
+              textAlign: 'center',
+              display: 'block',
+            }}
+          >
+            Go to {prevSubPack.title} →
           </Link>
         </div>
       );
@@ -1210,14 +1404,64 @@ export default function PackDetail() {
             <Link to="/">Home</Link>
             <span>›</span>
             <Link to="/learner/discover">Sessions</Link>
+            {parentPack && (
+              <>
+                <span>›</span>
+                <Link to={`/learner/pack/${parentPack.slug || parentPack.id}`}>{parentPack.title}</Link>
+              </>
+            )}
             <span>›</span>
             <b>{pack.title}</b>
           </nav>
 
+          {/* SUB-PACK PARENT COURSE BANNER */}
+          {parentPack && (
+            <div
+              style={{
+                marginBottom: 18,
+                padding: '11px 16px',
+                borderRadius: 14,
+                background: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
+                border: '1.5px solid #bfdbfe',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 10,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: '#1e3a8a' }}>
+                <Layers size={16} style={{ color: '#2563eb', flexShrink: 0 }} />
+                <span>
+                  Part of <b>{parentPack.title}</b>
+                  {siblingIndex >= 0 && siblingCount > 0 && (
+                    <span style={{ color: '#475569', marginLeft: 6 }}>
+                      · Batch #{siblingIndex + 1} of {siblingCount}
+                    </span>
+                  )}
+                </span>
+              </div>
+              <Link
+                to={`/learner/pack/${parentPack.slug || parentPack.id}`}
+                style={{
+                  fontSize: 12.5,
+                  fontWeight: 750,
+                  color: '#2563eb',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                ← View all batches
+              </Link>
+            </div>
+          )}
+
           <div className="layout">
             {/* MAIN CONTENT COLUMN */}
             <main>
-              {/* Private status or Free preview tag */}
+              {/* Private status, Multi-Pack tag, or Free preview tag */}
               {isLockedPrivate ? (
                 <span
                   className="tag"
@@ -1241,6 +1485,18 @@ export default function PackDetail() {
                 >
                   <Unlock size={13} />
                   {user?.id === pack.creator_id ? 'Creator View · Private Pack' : 'Private Invite Unlocked'}
+                </span>
+              ) : isMultiPack ? (
+                <span
+                  className="tag"
+                  style={{
+                    background: '#eff6ff',
+                    color: '#2563eb',
+                    borderColor: '#bfdbfe',
+                  }}
+                >
+                  <Layers size={13} />
+                  Multi-Course Pack · {subPacks.length} Batch{subPacks.length !== 1 ? 'es' : ''}
                 </span>
               ) : hasFreePreview ? (
                 <span className="tag">
@@ -1293,6 +1549,30 @@ export default function PackDetail() {
                     <span>
                       <KeyRound size={14} style={{ color: '#64748b' }} />
                       Creator link or promo code unlocks access
+                    </span>
+                  </>
+                ) : isMultiPack ? (
+                  <>
+                    <span>
+                      <Layers size={14} style={{ color: '#2563eb' }} />
+                      <b>{subPacks.length}</b> batch{subPacks.length !== 1 ? 'es' : ''} / sub-pack{subPacks.length !== 1 ? 's' : ''}
+                    </span>
+                    <span>
+                      <Calendar size={14} style={{ color: '#2563eb' }} />
+                      <b>{totalMultiSessions}</b> total session{totalMultiSessions !== 1 ? 's' : ''}
+                    </span>
+                    <span>
+                      {pack.sequential_unlock ? (
+                        <>
+                          <GitBranch size={14} style={{ color: '#6d28d9' }} />
+                          Step-by-step order
+                        </>
+                      ) : (
+                        <>
+                          <Unlock size={14} style={{ color: '#059669' }} />
+                          Enroll in any batch
+                        </>
+                      )}
                     </span>
                   </>
                 ) : (
@@ -1365,9 +1645,9 @@ export default function PackDetail() {
                 </div>
               </section>
 
-              {/* Session schedule */}
-              <section className="sec">
-                <h2>Session schedule</h2>
+              {/* Course Batches (for Multi-Pack) OR Session schedule (for Normal/Sub-Pack) */}
+              <section className="sec" id="course-batches">
+                <h2>{isMultiPack ? 'Course batches & monthly sub-packs' : 'Session schedule'}</h2>
 
                 {isLockedPrivate ? (
                   <div
@@ -1433,6 +1713,189 @@ export default function PackDetail() {
                       </div>
                       {promoError && <div className="promo-err-msg" style={{ textAlign: 'left', marginTop: 6 }}>{promoError}</div>}
                     </div>
+                  </div>
+                ) : isMultiPack ? (
+                  <div>
+                    <p style={{ margin: '0 0 18px', fontSize: 14, color: '#475569', lineHeight: 1.55 }}>
+                      {pack.sequential_unlock
+                        ? 'This course is organized into step-by-step batches. Enroll in Batch #1 first, then unlock each next batch as you progress!'
+                        : 'Select the monthly class or batch below to view its scheduled sessions, recordings, and complete enrollment.'}
+                    </p>
+
+                    {subPacks.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        {subPacks.map((sub, idx) => {
+                          const subEnr = subEnrollmentsMap[sub.id];
+                          const prevSub = idx > 0 ? subPacks[idx - 1] : null;
+                          const prevEnr = prevSub ? subEnrollmentsMap[prevSub.id] : null;
+                          const lockedBySeq =
+                            idx > 0 &&
+                            (Boolean(pack.sequential_unlock) || Boolean(sub.require_previous_pack)) &&
+                            user?.id !== pack.creator_id &&
+                            prevEnr?.status !== 'confirmed' &&
+                            !subEnr;
+                          const sessCount = sub.sessions?.[0]?.count || 0;
+                          const coverImg = sub.thumbnail_url || pack.thumbnail_url;
+
+                          return (
+                            <div
+                              key={sub.id}
+                              className="card"
+                              style={{
+                                padding: 18,
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                alignItems: 'center',
+                                gap: 18,
+                                border: subEnr?.status === 'confirmed' ? '1.5px solid #86efac' : '1px solid var(--line)',
+                                background: subEnr?.status === 'confirmed' ? 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)' : '#fff',
+                              }}
+                            >
+                              {/* Thumbnail */}
+                              <div
+                                style={{
+                                  width: 136,
+                                  height: 86,
+                                  borderRadius: 12,
+                                  overflow: 'hidden',
+                                  background: '#eff6ff',
+                                  flexShrink: 0,
+                                  position: 'relative',
+                                  display: 'grid',
+                                  placeItems: 'center',
+                                }}
+                              >
+                                {coverImg ? (
+                                  <img
+                                    src={coverImg}
+                                    alt={sub.title}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                  />
+                                ) : (
+                                  <Layers size={24} style={{ color: '#2563eb' }} />
+                                )}
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    top: 6,
+                                    left: 6,
+                                    background: 'rgba(15, 23, 42, 0.85)',
+                                    color: '#fff',
+                                    fontSize: 10.5,
+                                    fontWeight: 800,
+                                    padding: '2px 7px',
+                                    borderRadius: 99,
+                                  }}
+                                >
+                                  Batch #{idx + 1}
+                                </span>
+                              </div>
+
+                              {/* Content */}
+                              <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                                  <h3 style={{ margin: 0, fontSize: 16.5, fontWeight: 750, color: '#0f172a' }}>
+                                    {sub.title}
+                                  </h3>
+                                  {!sub.is_published && (
+                                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: '#fef3c7', color: '#92400e' }}>
+                                      Draft (Creator only)
+                                    </span>
+                                  )}
+                                  {subEnr?.status === 'confirmed' && (
+                                    <span style={{ fontSize: 11, fontWeight: 750, padding: '2px 8px', borderRadius: 99, background: '#dcfce7', color: '#15803d' }}>
+                                      ✓ Enrolled
+                                    </span>
+                                  )}
+                                  {subEnr?.status === 'pending' && (
+                                    <span style={{ fontSize: 11, fontWeight: 750, padding: '2px 8px', borderRadius: 99, background: '#fef3c7', color: '#b45309' }}>
+                                      ⏳ Payment Pending
+                                    </span>
+                                  )}
+                                  {sub.has_free_session && !subEnr && (
+                                    <span style={{ fontSize: 11, fontWeight: 750, padding: '2px 8px', borderRadius: 99, background: '#eff6ff', color: '#2563eb' }}>
+                                      Free Preview
+                                    </span>
+                                  )}
+                                </div>
+
+                                {sub.description && (
+                                  <p
+                                    style={{
+                                      margin: '0 0 8px',
+                                      fontSize: 13,
+                                      color: '#64748b',
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 2,
+                                      WebkitBoxOrient: 'vertical',
+                                      overflow: 'hidden',
+                                    }}
+                                  >
+                                    {sub.description}
+                                  </p>
+                                )}
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', fontSize: 12.5, color: '#475569' }}>
+                                  <span style={{ fontWeight: 800, color: '#2563eb', fontSize: 14 }}>
+                                    {Number(sub.price) === 0 ? 'FREE' : `${sub.currency} ${sub.price}`}
+                                  </span>
+                                  <span>· {sessCount} session{sessCount !== 1 ? 's' : ''}</span>
+                                  {lockedBySeq && prevSub && (
+                                    <span style={{ color: '#6d28d9', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                      <Lock size={12} /> Unlocks after &ldquo;{prevSub.title}&rdquo;
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Action CTA */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                                {subEnr?.status === 'confirmed' ? (
+                                  <Link
+                                    to={`/learner/pack/${sub.slug || sub.id}/sessions`}
+                                    className="btn ok"
+                                    style={{ width: 'auto', padding: '10px 18px', fontSize: 13.5 }}
+                                  >
+                                    Open Sessions →
+                                  </Link>
+                                ) : lockedBySeq ? (
+                                  <Link
+                                    to={`/learner/pack/${sub.slug || sub.id}`}
+                                    className="btn"
+                                    style={{ width: 'auto', padding: '9px 15px', fontSize: 13, color: '#6d28d9', borderColor: '#ddd6fe', background: '#f5f3ff' }}
+                                  >
+                                    <Lock size={13} /> View Batch
+                                  </Link>
+                                ) : (
+                                  <Link
+                                    to={`/learner/pack/${sub.slug || sub.id}`}
+                                    className="btn pri"
+                                    style={{ width: 'auto', padding: '10px 18px', fontSize: 13.5 }}
+                                  >
+                                    {subEnr?.status === 'pending' ? 'View Status →' : 'Select & Enroll →'}
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="card" style={{ padding: '32px 24px', textAlign: 'center', color: 'var(--muted)' }}>
+                        <Layers size={28} style={{ margin: '0 auto 10px', color: '#94a3b8' }} />
+                        <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>No batches published yet</div>
+                        <div style={{ fontSize: 13 }}>The creator is preparing the first batch for this course.</div>
+                        {user?.id === pack.creator_id && (
+                          <Link
+                            to={`/creator/packs/new?parent=${pack.id}`}
+                            className="btn pri"
+                            style={{ width: 'auto', display: 'inline-flex', marginTop: 16, padding: '10px 20px' }}
+                          >
+                            <PlusCircle size={15} /> Create First Sub-Pack
+                          </Link>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -1611,12 +2074,20 @@ export default function PackDetail() {
                     <Unlock size={12} /> Private Access Unlocked
                   </div>
                 )}
-                <small>{isLockedPrivate ? 'Course access' : 'Total price'}</small>
+                <small>{isLockedPrivate ? 'Course access' : isMultiPack ? 'Batch pricing' : 'Total price'}</small>
                 <div className="price">
                   {isLockedPrivate ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#475569', fontSize: '0.82em' }}>
                       <Lock size={22} /> Private
                     </span>
+                  ) : isMultiPack ? (
+                    multiMinPrice !== null ? (
+                      <span style={{ fontSize: '0.85em' }}>
+                        From {pack.currency} {multiMinPrice}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.8em' }}>Multi-Batch Course</span>
+                    )
                   ) : appliedPromo ? (
                     pricing.isFree ? (
                       <>
@@ -1684,7 +2155,7 @@ export default function PackDetail() {
                     </div>
                     {promoError && <div className="promo-err-msg">{promoError}</div>}
                   </div>
-                ) : Number(pack?.price) > 0 && !enrollment ? (
+                ) : !isMultiPack && Number(pack?.price) > 0 && !enrollment && !isSequentialLocked ? (
                   <div className="promo-box">
                     {appliedPromo ? (
                       <div className="promo-success-badge">
@@ -1770,36 +2241,72 @@ export default function PackDetail() {
                 </div>
               </div>
 
-              {/* Session details */}
+              {/* Session details / Course structure */}
               <div className="card box">
-                <h3>Session details</h3>
-                <div className="row">
-                  <span className="ib">
-                    <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
-                  </span>
-                  <div>
-                    <small>Starts on</small>
-                    <b>{isLockedPrivate ? 'Private (Invite only)' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</b>
-                  </div>
-                </div>
-                <div className="row">
-                  <span className="ib">
-                    <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                  </span>
-                  <div>
-                    <small>Time</small>
-                    <b>{isLockedPrivate ? 'Unlocks with invite' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</b>
-                  </div>
-                </div>
-                <div className="row">
-                  <span className="ib">
-                    <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
-                  </span>
-                  <div>
-                    <small>Category</small>
-                    <b>{pack.category || 'General'}</b>
-                  </div>
-                </div>
+                <h3>{isMultiPack ? 'Course structure' : 'Session details'}</h3>
+                {isMultiPack ? (
+                  <>
+                    <div className="row">
+                      <span className="ib">
+                        <Layers size={17} />
+                      </span>
+                      <div>
+                        <small>Available batches</small>
+                        <b>{subPacks.length} Sub-Pack{subPacks.length !== 1 ? 's' : ''}</b>
+                      </div>
+                    </div>
+                    {user && confirmedSubCount > 0 && (
+                      <div className="row">
+                        <span className="ib">
+                          <CheckCircle size={17} />
+                        </span>
+                        <div>
+                          <small>Your progress</small>
+                          <b>{confirmedSubCount} of {subPacks.length} unlocked</b>
+                        </div>
+                      </div>
+                    )}
+                    <div className="row">
+                      <span className="ib">
+                        <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                      </span>
+                      <div>
+                        <small>Category</small>
+                        <b>{pack.category || 'General'}</b>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="row">
+                      <span className="ib">
+                        <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                      </span>
+                      <div>
+                        <small>Starts on</small>
+                        <b>{isLockedPrivate ? 'Private (Invite only)' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</b>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <span className="ib">
+                        <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                      </span>
+                      <div>
+                        <small>Time</small>
+                        <b>{isLockedPrivate ? 'Unlocks with invite' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</b>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <span className="ib">
+                        <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
+                      </span>
+                      <div>
+                        <small>Category</small>
+                        <b>{pack.category || 'General'}</b>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* What's included */}
@@ -1858,12 +2365,14 @@ export default function PackDetail() {
         {/* MOBILE STICKY PURCHASE BAR */}
         <div className="mbar">
           <div>
-            <small>{isLockedPrivate ? 'Course access' : 'Total price'}</small>
+            <small>{isLockedPrivate ? 'Course access' : isMultiPack ? 'Batch pricing' : 'Total price'}</small>
             <div className="price">
               {isLockedPrivate ? (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#475569' }}>
                   <Lock size={15} /> Private
                 </span>
+              ) : isMultiPack ? (
+                multiMinPrice !== null ? `From ${pack.currency} ${multiMinPrice}` : 'Multi-Pack'
               ) : appliedPromo ? (
                 pricing.isFree ? (
                   <>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, Send, Sparkles, ArrowRight
+  MessageCircle, Send, Sparkles, ArrowRight, Layers
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -261,6 +261,8 @@ export default function MySessions() {
   const { user } = useAuth();
   const [pack, setPack] = useState(null);
   const [sessions, setSessions] = useState([]);
+  const [parentPack, setParentPack] = useState(null);
+  const [nextSubPack, setNextSubPack] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -290,10 +292,31 @@ export default function MySessions() {
       }
 
       setPack(packData);
+      setParentPack(null);
+      setNextSubPack(null);
 
       if (packData) {
         const sessRes = await supabase.from('sessions').select('*').eq('pack_id', packData.id).order('order_index');
         setSessions(sessRes.data || []);
+
+        if (packData.parent_pack_id) {
+          const [pRes, sibRes] = await Promise.all([
+            supabase.from('session_packs').select('id, title, slug').eq('id', packData.parent_pack_id).maybeSingle(),
+            supabase
+              .from('session_packs')
+              .select('id, title, slug, price, currency, sub_pack_order')
+              .eq('parent_pack_id', packData.parent_pack_id)
+              .eq('is_published', true)
+              .order('sub_pack_order', { ascending: true })
+              .order('created_at', { ascending: true }),
+          ]);
+          setParentPack(pRes.data || null);
+          const sibs = sibRes.data || [];
+          const idx = sibs.findIndex(s => s.id === packData.id);
+          if (idx >= 0 && idx < sibs.length - 1) {
+            setNextSubPack(sibs[idx + 1]);
+          }
+        }
       }
       setLoading(false);
     };
@@ -467,6 +490,27 @@ export default function MySessions() {
           </div>
 
           {/* Optional Upsell / Next Course Recommendation */}
+          {/* Next Sub-Pack Progression Card */}
+          {nextSubPack && (
+            <div className="upsell-card" style={{ marginBottom: 16 }}>
+              <div>
+                <span className="upsell-badge">
+                  <Layers size={13} /> Next Batch in {parentPack?.title || 'Course'}
+                </span>
+                <h3 className="upsell-title">{nextSubPack.title}</h3>
+                <p className="upsell-desc">
+                  Ready for the next month / batch? Continue your learning journey seamlessly.
+                </p>
+              </div>
+              <Link
+                to={`/learner/pack/${nextSubPack.slug || nextSubPack.id}`}
+                className="upsell-btn"
+              >
+                Continue to Next Batch <ArrowRight size={16} />
+              </Link>
+            </div>
+          )}
+
           {(pack.upsell_link || pack.upsell_title) && (
             <div className="upsell-card">
               <div>

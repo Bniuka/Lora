@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, Package, Sparkles, X, Lock } from 'lucide-react';
+import { Search, Filter, Package, Sparkles, X, Lock, Layers } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch, ShareMenu } from '../components/ui';
 
@@ -34,14 +34,35 @@ export default function Discover() {
 
     const { data } = await q;
     
-    // Filter out packs from creators with expired subscriptions/trials and unlisted packs
-    const validPacks = (data || []).filter(
+    // Filter out child sub-packs (only show Main Multi-Packs + normal standalone packs),
+    // creators with expired subscriptions/trials, and unlisted packs
+    const topPacks = (data || []).filter(
       pack =>
+        !pack.parent_pack_id &&
         hasValidSubscription(pack.creator_profiles) &&
         pack.visibility !== 'unlisted' &&
         (!hasFreeSession || pack.visibility !== 'private')
     );
-    setPacks(validPacks);
+
+    const multiIds = topPacks.filter(p => p.is_multi_pack).map(p => p.id);
+    let subMap = {};
+    if (multiIds.length > 0) {
+      const { data: subs } = await supabase
+        .from('session_packs')
+        .select('id, parent_pack_id, price, currency, enrollments(count)')
+        .in('parent_pack_id', multiIds)
+        .eq('is_published', true);
+      (subs || []).forEach(s => {
+        if (!subMap[s.parent_pack_id]) subMap[s.parent_pack_id] = [];
+        subMap[s.parent_pack_id].push(s);
+      });
+    }
+
+    const enriched = topPacks.map(p => ({
+      ...p,
+      _subPacks: subMap[p.id] || [],
+    }));
+    setPacks(enriched);
     setLoading(false);
   };
 
@@ -126,7 +147,16 @@ export default function Discover() {
           <EmptyState icon={Package} title="No courses found" description="Try adjusting your filters or search terms." />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {packs.map((pack, i) => (
+            {packs.map((pack, i) => {
+              const isMulti = Boolean(pack.is_multi_pack);
+              const subs = pack._subPacks || [];
+              const studentTotal = isMulti
+                ? subs.reduce((sum, s) => sum + (s.enrollments?.[0]?.count || 0), 0)
+                : (pack.enrollments?.[0]?.count || 0);
+              const paidPrices = subs.map(s => Number(s.price)).filter(n => n > 0);
+              const minSubPrice = paidPrices.length > 0 ? Math.min(...paidPrices) : null;
+
+              return (
               <motion.div key={pack.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                 <Link to={`/learner/pack/${pack.id}`} className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block group">
                   <div className="h-40 bg-[#F8FAFC] relative overflow-hidden">
@@ -135,13 +165,19 @@ export default function Discover() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Package size={36} className="text-[#E2E8F0]" />
+                        {isMulti ? <Layers size={36} className="text-[#93C5FD]" /> : <Package size={36} className="text-[#E2E8F0]" />}
                       </div>
                     )}
                     {pack.visibility === 'private' ? (
                       <div className="absolute top-3 left-3">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1E1B4B]/90 text-white backdrop-blur-sm shadow-sm">
                           <Lock size={11} /> Private
+                        </span>
+                      </div>
+                    ) : isMulti ? (
+                      <div className="absolute top-3 left-3">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#2563EB]/95 text-white backdrop-blur-sm shadow-sm">
+                          <Layers size={11} /> {subs.length > 0 ? `${subs.length} Batch${subs.length !== 1 ? 'es' : ''}` : 'Multi-Pack'}
                         </span>
                       </div>
                     ) : pack.has_free_session ? (
@@ -161,17 +197,22 @@ export default function Discover() {
                         <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
                           <Lock size={12} /> Private · Invite Only
                         </span>
+                      ) : isMulti ? (
+                        <p className="text-sm font-semibold text-[#2563EB]">
+                          {minSubPrice !== null ? `From ${pack.currency} ${minSubPrice}` : 'View Batches →'}
+                        </p>
                       ) : (
                         <p className="text-sm font-semibold text-[#2563EB]">
                           {Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}
                         </p>
                       )}
-                      <span className="text-xs text-[#94A6B8]">{pack.enrollments?.[0]?.count || 0} students</span>
+                      <span className="text-xs text-[#94A6B8]">{studentTotal} students</span>
                     </div>
                   </div>
                 </Link>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Package, PlusCircle, Edit3, Trash2, Eye, Users, Lock, EyeOff, KeyRound, Check } from 'lucide-react';
+import { Package, PlusCircle, Edit3, Trash2, Eye, Users, Lock, EyeOff, KeyRound, Check, Layers } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState, Modal, ShareMenu } from '../components/ui';
@@ -41,6 +41,13 @@ export default function MyPacks() {
   const handleDelete = async () => {
     if (!deleteModal) return;
     setDeleting(true);
+    // Clean up child sub-pack sessions and sub-packs if deleting a Multi-Pack
+    const childIds = packs.filter(p => p.parent_pack_id === deleteModal).map(p => p.id);
+    if (childIds.length > 0) {
+      await supabase.from('sessions').delete().in('pack_id', childIds);
+      await supabase.from('session_packs').delete().in('id', childIds);
+    }
+    await supabase.from('sessions').delete().eq('pack_id', deleteModal);
     await supabase.from('session_packs').delete().eq('id', deleteModal);
     setDeleteModal(null);
     setDeleting(false);
@@ -55,19 +62,37 @@ export default function MyPacks() {
     fetchPacks();
   };
 
+  const topLevelPacks = packs.filter(p => !p.parent_pack_id);
+  const subPacksByParent = packs.reduce((acc, p) => {
+    if (p.parent_pack_id) {
+      if (!acc[p.parent_pack_id]) acc[p.parent_pack_id] = [];
+      acc[p.parent_pack_id].push(p);
+    }
+    return acc;
+  }, {});
+  const deletingPackObj = packs.find(p => p.id === deleteModal);
+
   return (
     <PageTransition>
       <div>
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A]" style={{ fontFamily: 'var(--font-heading)' }}>
               My Session Packs
             </h1>
-            <p className="text-sm text-[#475569] mt-2">{packs.length} pack{packs.length !== 1 ? 's' : ''} created</p>
+            <p className="text-sm text-[#475569] mt-2">{topLevelPacks.length} course{topLevelPacks.length !== 1 ? 's' : ''} created</p>
           </div>
-          <Link to="/creator/packs/new" className="btn-primary text-sm py-3 px-6">
-            <PlusCircle size={16} /> New Pack
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/creator/multi-packs/new"
+              className="btn-ghost text-sm py-3 px-5 border-2 border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] font-semibold"
+            >
+              <Layers size={16} /> New Multi-Pack
+            </Link>
+            <Link to="/creator/packs/new" className="btn-primary text-sm py-3 px-6">
+              <PlusCircle size={16} /> New Pack
+            </Link>
+          </div>
         </div>
 
         {loading ? (
@@ -76,20 +101,35 @@ export default function MyPacks() {
               <Skeleton key={i} className="h-64" />
             ))}
           </div>
-        ) : packs.length === 0 ? (
+        ) : topLevelPacks.length === 0 ? (
           <EmptyState
             icon={Package}
             title="No session packs yet"
-            description="Create your first session pack to start teaching and earning."
+            description="Create a normal session pack or a Multi-Pack with monthly/batch sub-packs to start teaching."
             action={
-              <Link to="/creator/packs/new" className="btn-primary text-sm py-2.5 px-6">
-                <PlusCircle size={16} /> Create Pack
-              </Link>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link to="/creator/packs/new" className="btn-primary text-sm py-2.5 px-6">
+                  <PlusCircle size={16} /> Create Normal Pack
+                </Link>
+                <Link to="/creator/multi-packs/new" className="btn-ghost text-sm py-2.5 px-5 border border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB]">
+                  <Layers size={16} /> Create Multi-Pack
+                </Link>
+              </div>
             }
           />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {packs.map((pack, i) => (
+            {topLevelPacks.map((pack, i) => {
+              const isMulti = Boolean(pack.is_multi_pack);
+              const children = subPacksByParent[pack.id] || [];
+              const totalStudents = isMulti
+                ? children.reduce((sum, c) => sum + (c.enrollments?.[0]?.count || 0), 0)
+                : (pack.enrollments?.[0]?.count || 0);
+              const totalSessions = isMulti
+                ? children.reduce((sum, c) => sum + (c.sessions?.[0]?.count || 0), 0)
+                : (pack.sessions?.[0]?.count || 0);
+
+              return (
               <motion.div
                 key={pack.id}
                 className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col hover:shadow-lg transition-all duration-300"
@@ -103,25 +143,28 @@ export default function MyPacks() {
                     <img src={pack.thumbnail_url} alt={pack.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package size={36} className="text-[#E2E8F0]" />
+                      {isMulti ? <Layers size={36} className="text-[#93C5FD]" /> : <Package size={36} className="text-[#E2E8F0]" />}
                     </div>
                   )}
-                  {pack.visibility === 'private' && (
-                    <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    {isMulti && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#2563EB]/95 text-white backdrop-blur-sm shadow-sm">
+                        <Layers size={11} /> Multi-Pack · {children.length} Batch{children.length !== 1 ? 'es' : ''}
+                      </span>
+                    )}
+                    {pack.visibility === 'private' && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5B21B6]/90 text-white backdrop-blur-sm shadow-sm">
                         <Lock size={11} /> Private
                       </span>
-                    </div>
-                  )}
-                  {pack.visibility === 'unlisted' && (
-                    <div className="absolute top-3 left-3">
+                    )}
+                    {pack.visibility === 'unlisted' && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#0F172A]/90 text-white backdrop-blur-sm shadow-sm">
                         <EyeOff size={11} /> Unlisted
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   <div className="absolute top-3 right-3 flex items-center gap-2">
-                    {pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
+                    {!isMulti && pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
                     <ShareMenu url={getPackShareUrl(pack, { includeInvite: true })} title={pack.title} pack={pack} />
                   </div>
                 </div>
@@ -138,13 +181,18 @@ export default function MyPacks() {
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#94A6B8] mb-4">{pack.category} · {pack.currency} {pack.price}</p>
+                  <p className="text-xs text-[#94A6B8] mb-4">
+                    {pack.category} ·{' '}
+                    {isMulti
+                      ? `Multi-Course (${children.length} Sub-Pack${children.length !== 1 ? 's' : ''})`
+                      : `${pack.currency} ${pack.price}`}
+                  </p>
 
                   <div className="flex items-center gap-4 text-xs text-[#94A6B8] mb-5">
                     <span className="flex items-center gap-1">
-                      <Users size={13} /> {pack.enrollments?.[0]?.count || 0} students
+                      <Users size={13} /> {totalStudents} students
                     </span>
-                    <span>{pack.sessions?.[0]?.count || 0} sessions</span>
+                    <span>{totalSessions} sessions</span>
                   </div>
 
                   {(pack.visibility === 'private' || pack.visibility === 'unlisted') && (
@@ -165,12 +213,14 @@ export default function MyPacks() {
                     </button>
                   )}
 
-                  <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#E2E8F0]">
+                  <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-[#E2E8F0]">
                     <Link
-                      to={`/creator/packs/${pack.id}/edit`}
-                      className="btn-ghost text-xs py-1.5 px-3 flex-1 justify-center border border-[#E2E8F0]"
+                      to={isMulti ? `/creator/multi-packs/${pack.id}` : `/creator/packs/${pack.id}/edit`}
+                      className={`btn-ghost text-xs py-1.5 px-3 flex-1 justify-center border ${
+                        isMulti ? 'border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB] font-semibold' : 'border-[#E2E8F0]'
+                      }`}
                     >
-                      <Edit3 size={13} /> Edit
+                      {isMulti ? <><Layers size={13} /> Batches</> : <><Edit3 size={13} /> Edit</>}
                     </Link>
                     <Link
                       to={`/learner/pack/${pack.id}`}
@@ -187,19 +237,22 @@ export default function MyPacks() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         )}
 
         {/* Delete confirmation modal */}
-        <Modal isOpen={!!deleteModal} onClose={() => setDeleteModal(null)} title="Delete Pack?">
+        <Modal isOpen={!!deleteModal} onClose={() => setDeleteModal(null)} title={deletingPackObj?.is_multi_pack ? 'Delete Multi-Pack?' : 'Delete Pack?'}>
           <p className="text-sm text-[#475569] mb-6">
-            This will permanently delete this session pack and all its sessions. This action cannot be undone.
+            {deletingPackObj?.is_multi_pack
+              ? 'This will permanently delete this Main Multi-Pack AND all of its monthly/batch Sub-Packs and sessions. This action cannot be undone.'
+              : 'This will permanently delete this session pack and all its sessions. This action cannot be undone.'}
           </p>
           <div className="flex gap-3">
             <button onClick={() => setDeleteModal(null)} className="btn-ghost flex-1 border border-[#E2E8F0]">Cancel</button>
             <button onClick={handleDelete} className="btn-danger bg-[#C0392B] text-white flex-1 border-[#C0392B]" disabled={deleting}>
-              {deleting ? 'Deleting...' : 'Delete Pack'}
+              {deleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         </Modal>

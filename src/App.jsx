@@ -22,6 +22,8 @@ import CreatorPublicProfile from './pages/CreatorPublicProfile';
 import CreatorDashboard from './pages/CreatorDashboard';
 import MyPacks from './pages/MyPacks';
 import CreatePack from './pages/CreatePack';
+import CreateMultiPack from './pages/CreateMultiPack';
+import ManageMultiPack from './pages/ManageMultiPack';
 import EditPack from './pages/EditPack';
 import Enrollments from './pages/Enrollments';
 import CreatorSettings from './pages/CreatorSettings';
@@ -67,6 +69,16 @@ export default function App() {
         <Route path="/creator/packs/new" element={
           <ProtectedRoute allowedRole="creator">
             <CreatorLayout><CreatePack /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/multi-packs/new" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><CreateMultiPack /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/multi-packs/:id" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><ManageMultiPack /></CreatorLayout>
           </ProtectedRoute>
         } />
         <Route path="/creator/packs/:id/edit" element={

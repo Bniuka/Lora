@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2, Sparkles, HelpCircle, Globe2, Lock, EyeOff } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle, Globe2, Lock, EyeOff, Layers, ArrowLeft, GitBranch } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
@@ -77,14 +77,18 @@ export default function CreatePack() {
   useSubscriptionGuard();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const parentPackId = searchParams.get('parent');
+  const [parentPack, setParentPack] = useState(null);
+  const [existingSubCount, setExistingSubCount] = useState(0);
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [previousPrice, setPreviousPrice] = useState('29.99');
   const [toastMsg, setToastMsg] = useState('');
   const toastTimeoutRef = useRef(null);
 
-  // Guided Smart Setup Assistant State (opens automatically on fresh pack creation)
-  const [setupModalOpen, setSetupModalOpen] = useState(true);
+  // Guided Smart Setup Assistant State (opens automatically on fresh normal pack creation)
+  const [setupModalOpen, setSetupModalOpen] = useState(() => !searchParams.get('parent'));
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -100,6 +104,7 @@ export default function CreatePack() {
     currency: 'USD',
     visibility: 'public',
     invite_token: generateInviteToken(),
+    require_previous_pack: false,
     thumbnail: null,
     thumbnailPreview: null,
     intro_video_url: '',
@@ -112,6 +117,34 @@ export default function CreatePack() {
     freeSession: { title: '', zoom_link: '', youtube_live_link: '', scheduled_at: '', duration_minutes: 60, recording_url: '', is_past_session: false },
     sessions: [emptySession()],
   });
+
+  // Auto-fill shared settings when creating a Sub-Pack under a Multi-Pack
+  useEffect(() => {
+    if (!parentPackId || !user) return;
+    const loadParent = async () => {
+      const [parentRes, countRes] = await Promise.all([
+        supabase.from('session_packs').select('*').eq('id', parentPackId).maybeSingle(),
+        supabase.from('session_packs').select('id', { count: 'exact', head: true }).eq('parent_pack_id', parentPackId),
+      ]);
+      if (parentRes.data) {
+        const p = parentRes.data;
+        const count = countRes.count || 0;
+        setParentPack(p);
+        setExistingSubCount(count);
+        setForm(prev => ({
+          ...prev,
+          category: p.category || prev.category,
+          currency: p.currency || prev.currency,
+          visibility: p.visibility || 'public',
+          whatsapp_number: p.whatsapp_number || prev.whatsapp_number,
+          whatsapp_link: p.whatsapp_link || prev.whatsapp_link,
+          telegram_link: p.telegram_link || prev.telegram_link,
+          require_previous_pack: count > 0 ? Boolean(p.sequential_unlock) : false,
+        }));
+      }
+    };
+    loadParent();
+  }, [parentPackId, user]);
 
   const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
@@ -264,7 +297,7 @@ export default function CreatePack() {
   const handleSave = async (publish) => {
     setSaving(true);
     try {
-      let thumbnailUrl = null;
+      let thumbnailUrl = parentPack?.thumbnail_url || null;
       if (form.thumbnail) {
         const ext = form.thumbnail.name.split('.').pop();
         const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
@@ -296,6 +329,13 @@ export default function CreatePack() {
         upsell_link: form.upsell_link || null,
         has_free_session: form.has_free_session,
         is_published: publish,
+        ...(parentPackId
+          ? {
+              parent_pack_id: parentPackId,
+              sub_pack_order: existingSubCount,
+              require_previous_pack: Boolean(form.require_previous_pack),
+            }
+          : {}),
       };
 
       let { data: pack, error: packErr } = await supabase.from('session_packs').insert(packPayload).select().single();
@@ -380,9 +420,9 @@ export default function CreatePack() {
         if (sessErr) throw sessErr;
       }
 
-      showToast(publish ? 'Pack published!' : 'Saved as draft');
+      showToast(publish ? (parentPackId ? 'Sub-Pack published!' : 'Pack published!') : 'Saved as draft');
       setTimeout(() => {
-        navigate('/creator/packs');
+        navigate(parentPackId ? `/creator/multi-packs/${parentPackId}` : '/creator/packs');
       }, 700);
     } catch (err) {
       console.error('Save error:', err);
@@ -399,10 +439,52 @@ export default function CreatePack() {
     <PageTransition>
       <div className="lora-wizard">
         <div className="page">
+          {parentPack && (
+            <div
+              style={{
+                marginBottom: 14,
+                padding: '12px 16px',
+                borderRadius: 14,
+                background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)',
+                border: '1.5px solid #bfdbfe',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 10,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Layers size={18} style={{ color: '#2563eb', flexShrink: 0 }} />
+                <div style={{ fontSize: 13.5, color: '#1e3a8a' }}>
+                  Creating <b>Sub-Pack #{existingSubCount + 1}</b> under Main Course: <b>{parentPack.title}</b>
+                </div>
+              </div>
+              <Link
+                to={`/creator/multi-packs/${parentPack.id}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  color: '#2563eb',
+                  textDecoration: 'none',
+                }}
+              >
+                <ArrowLeft size={14} /> Back to Multi-Pack
+              </Link>
+            </div>
+          )}
+
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
             <div>
-              <h1 style={{ margin: 0 }}>Create session pack</h1>
-              <p style={{ margin: '4px 0 0', color: 'var(--muted)' }}>Launch your live interactive course in 5 simple steps.</p>
+              <h1 style={{ margin: 0 }}>{parentPack ? 'Create Sub-Pack (Month / Batch)' : 'Create session pack'}</h1>
+              <p style={{ margin: '4px 0 0', color: 'var(--muted)' }}>
+                {parentPack
+                  ? `Shared settings from "${parentPack.title}" have been pre-filled automatically.`
+                  : 'Launch your live interactive course in 5 simple steps.'}
+              </p>
             </div>
             <button
               type="button"
@@ -670,6 +752,31 @@ export default function CreatePack() {
                         )}
                       </div>
                     </div>
+
+                    {parentPack && existingSubCount > 0 && (
+                      <label className={`sw free-banner ${form.require_previous_pack ? 'active' : ''}`} style={{ borderColor: form.require_previous_pack ? '#c4b5fd' : undefined, background: form.require_previous_pack ? '#f5f3ff' : undefined }}>
+                        <div className="sw-info">
+                          <div className="sw-title">
+                            <b style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                              <GitBranch size={15} style={{ color: '#6d28d9' }} />
+                              Require previous Sub-Pack enrollment first
+                            </b>
+                            <span className="sw-pill" style={form.require_previous_pack ? { background: '#6d28d9', color: '#fff' } : {}}>
+                              {form.require_previous_pack ? 'SEQUENTIAL' : 'OPEN'}
+                            </span>
+                          </div>
+                          <p className="sw-desc">
+                            When turned on, learners must be approved in Batch #{existingSubCount} before they can pay for this Sub-Pack. Turn off if new students can join this month/batch directly.
+                          </p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={Boolean(form.require_previous_pack)}
+                          onChange={(e) => update('require_previous_pack', e.target.checked)}
+                        />
+                        <span className="tg"></span>
+                      </label>
+                    )}
                   </div>
                 );
               })()}
