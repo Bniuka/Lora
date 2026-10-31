@@ -1,0 +1,407 @@
+/* =========================================================================
+   Lora Pack Setup Wizard Modal — Scoped styles
+   ========================================================================= */
+
+.lora-setup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  animation: setupBackdropFadeIn 0.2s ease-out;
+}
+
+@keyframes setupBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lora-setup-modal {
+  width: 100%;
+  max-width: 820px;
+  background: #ffffff;
+  border-radius: 26px;
+  box-shadow: 0 30px 90px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 92vh;
+  animation: setupModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes setupModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 1. Top Header Bar */
+.setup-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 26px 14px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.setup-top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.setup-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #dbeafe;
+}
+
+.setup-step-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.setup-top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.setup-lang-toggle {
+  display: inline-flex;
+  background: #e2e8f0;
+  padding: 3px;
+  border-radius: 10px;
+  gap: 2px;
+}
+
+.setup-lang-btn {
+  background: transparent;
+  border: 0;
+  padding: 4px 11px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setup-lang-btn.active {
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.setup-close-btn {
+  background: #e2e8f0;
+  border: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setup-close-btn:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+/* 2. Progress Track */
+.setup-progress-track {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  position: relative;
+}
+
+.setup-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 3. Question Header */
+.setup-question-header {
+  padding: 26px 28px 12px;
+}
+
+.setup-q-title {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1.35 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.setup-q-sub {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 4. Options Container */
+.setup-options-container {
+  padding: 10px 28px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 5. Option Card */
+.setup-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  user-select: none;
+}
+
+.setup-card:hover {
+  border-color: #93c5fd;
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.06);
+}
+
+.setup-card.selected {
+  border-color: #2563eb !important;
+  background: #f0f7ff !important;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
+}
+
+/* Radio button */
+.setup-card-radio {
+  padding-top: 3px;
+  flex-shrink: 0;
+}
+
+.setup-radio-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+  background: #ffffff;
+}
+
+.setup-radio-dot.checked {
+  border-color: #2563eb;
+  background: #2563eb;
+}
+
+.setup-radio-inner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Icon Box */
+.setup-card-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+/* Body */
+.setup-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.setup-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.setup-card-title {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 16.5px !important;
+  font-weight: 750 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+}
+
+.setup-card-badge {
+  font-size: 11.5px;
+  font-weight: 750;
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1px solid #e2e8f0;
+}
+
+.setup-card-desc-si {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  margin: 3px 0 0;
+  line-height: 1.5;
+}
+
+.setup-card-desc-secondary {
+  font-size: 12px;
+  color: #64748b;
+  margin: 1px 0 0;
+  line-height: 1.45;
+}
+
+.setup-card-bullets {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(203, 213, 225, 0.7);
+}
+
+.setup-bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+/* 6. Footer Actions */
+.setup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  gap: 12px;
+}
+
+.setup-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setup-btn-back:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.setup-btn-skip {
+  background: transparent;
+  border: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 6px;
+}
+
+.setup-btn-skip:hover {
+  color: #1e293b;
+}
+
+.setup-btn-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  border: 0;
+  padding: 12px 24px;
+  border-radius: 13px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.15s ease;
+}
+
+.setup-btn-next:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .setup-question-header {
+    padding: 20px 18px 10px;
+  }
+  .setup-q-title {
+    font-size: 19px !important;
+  }
+  .setup-options-container {
+    padding: 8px 18px 16px;
+  }
+  .setup-footer {
+    padding: 14px 18px;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .setup-footer-left,
+  .setup-footer-right {
+    width: 100%;
+  }
+  .setup-btn-back,
+  .setup-btn-next {
+    width: 100%;
+    justify-content: center;
+  }
+}

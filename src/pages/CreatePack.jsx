@@ -2,12 +2,13 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug } from '../lib/utils';
+import PackSetupModal from '../components/PackSetupModal';
 import './create-pack.css';
 
 const STEPS = ['Basic Info', 'Media', 'Contact & Community', 'Sessions', 'Review'];
@@ -82,6 +83,9 @@ export default function CreatePack() {
   const [toastMsg, setToastMsg] = useState('');
   const toastTimeoutRef = useRef(null);
 
+  // Guided Smart Setup Assistant State (opens automatically on fresh pack creation)
+  const [setupModalOpen, setSetupModalOpen] = useState(true);
+
   const showToast = (msg) => {
     setToastMsg(msg);
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
@@ -129,6 +133,78 @@ export default function CreatePack() {
     if (!file) return;
     update('thumbnail', file);
     update('thumbnailPreview', URL.createObjectURL(file));
+  };
+
+  /**
+   * Applies the creator's answers from the PackSetupModal questionnaire
+   * to automatically pre-configure form values and session modes.
+   */
+  const handleApplySetup = (answers) => {
+    const { format, pricing, materials } = answers;
+
+    setForm(prev => {
+      let updated = { ...prev };
+
+      // 1. Pricing configuration
+      if (pricing === 'free_all') {
+        updated.price = '0';
+        updated.has_free_session = false;
+      } else if (pricing === 'preview_paid') {
+        if (!updated.price || updated.price === '0') {
+          updated.price = '2500';
+          updated.currency = 'LKR';
+        }
+        updated.has_free_session = true;
+      } else if (pricing === 'direct_paid') {
+        if (!updated.price || updated.price === '0') {
+          updated.price = '3500';
+          updated.currency = 'LKR';
+        }
+        updated.has_free_session = false;
+      }
+
+      // 2. Format & Session count
+      const isPastMode = format === 'recordings' || materials === 'ready_videos';
+
+      // Update free session if enabled
+      if (updated.has_free_session) {
+        updated.freeSession = {
+          ...updated.freeSession,
+          title: updated.freeSession.title || 'Free Preview & Introduction',
+          is_past_session: isPastMode,
+        };
+      }
+
+      // Update sessions array
+      if (format === 'webinar') {
+        // Single masterclass -> exactly 1 session
+        updated.sessions = [
+          {
+            ...(prev.sessions[0] || emptySession()),
+            title: prev.sessions[0]?.title || 'Main Masterclass Session',
+            is_past_session: isPastMode,
+          }
+        ];
+      } else if (format === 'recordings') {
+        // Recorded course -> 3 starter recorded lessons
+        updated.sessions = (prev.sessions.length >= 2 ? prev.sessions : [emptySession(), emptySession()]).map((s, idx) => ({
+          ...s,
+          title: s.title || `Module ${idx + 1}: Lessons & Walkthrough`,
+          is_past_session: true,
+        }));
+      } else {
+        // Cohort series -> live sessions
+        updated.sessions = prev.sessions.map((s, idx) => ({
+          ...s,
+          title: s.title || (idx === 0 ? 'Session 1: Live Kickoff & Core Concepts' : `Session ${idx + 1}`),
+          is_past_session: isPastMode,
+        }));
+      }
+
+      return updated;
+    });
+
+    showToast('✨ Form pre-configured according to your choices!');
   };
 
   const canNext = () => {
@@ -304,8 +380,34 @@ export default function CreatePack() {
     <PageTransition>
       <div className="lora-wizard">
         <div className="page">
-          <h1>Create session pack</h1>
-          <p>Launch your live interactive course in 5 simple steps.</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
+            <div>
+              <h1 style={{ margin: 0 }}>Create session pack</h1>
+              <p style={{ margin: '4px 0 0', color: 'var(--muted)' }}>Launch your live interactive course in 5 simple steps.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSetupModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                background: '#eff6ff',
+                color: '#2563eb',
+                border: '1px solid #bfdbfe',
+                borderRadius: 12,
+                padding: '8px 15px',
+                fontSize: 13,
+                fontWeight: 750,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Open the step-by-step assistant again"
+            >
+              <Sparkles size={14} className="text-amber-500" />
+              <span>Smart Setup Assistant (ප්‍රශ්නෝත්තර මගපෙන්වීම)</span>
+            </button>
+          </div>
 
           {/* Stepper Card */}
           <section className="card stp">
@@ -1004,6 +1106,13 @@ export default function CreatePack() {
         <div className={`toast ${toastMsg ? 'show' : ''}`} role="status">
           {toastMsg}
         </div>
+
+        {/* Guided Smart Setup Questionnaire Modal */}
+        <PackSetupModal
+          isOpen={setupModalOpen}
+          onClose={() => setSetupModalOpen(false)}
+          onApplySetup={handleApplySetup}
+        />
       </div>
     </PageTransition>
   );
