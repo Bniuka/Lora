@@ -2,12 +2,12 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2, Sparkles, HelpCircle } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle, Globe2, Lock, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
-import { generateUniquePackSlug } from '../lib/utils';
+import { generateUniquePackSlug, generateInviteToken } from '../lib/utils';
 import PackSetupModal from '../components/PackSetupModal';
 import './create-pack.css';
 
@@ -98,6 +98,8 @@ export default function CreatePack() {
     category: '',
     price: '',
     currency: 'USD',
+    visibility: 'public',
+    invite_token: generateInviteToken(),
     thumbnail: null,
     thumbnailPreview: null,
     intro_video_url: '',
@@ -140,10 +142,14 @@ export default function CreatePack() {
    * to automatically pre-configure form values and session modes.
    */
   const handleApplySetup = (answers) => {
-    const { format, pricing, materials } = answers;
+    const { format, visibility, pricing, materials } = answers;
 
     setForm(prev => {
-      let updated = { ...prev };
+      let updated = {
+        ...prev,
+        visibility: visibility || 'public',
+        invite_token: prev.invite_token || generateInviteToken(),
+      };
 
       // 1. Pricing configuration
       if (pricing === 'free_all') {
@@ -279,6 +285,8 @@ export default function CreatePack() {
         category: form.category,
         price: parseFloat(form.price),
         currency: form.currency,
+        visibility: form.visibility || 'public',
+        invite_token: form.invite_token || generateInviteToken(),
         thumbnail_url: thumbnailUrl,
         intro_video_url: form.intro_video_url || null,
         whatsapp_number: form.whatsapp_number || null,
@@ -293,12 +301,23 @@ export default function CreatePack() {
       let { data: pack, error: packErr } = await supabase.from('session_packs').insert(packPayload).select().single();
 
       // Gracefully retry without optional columns if not yet present in Supabase
-      if (packErr && (packErr.message?.includes('whatsapp_number') || packErr.message?.includes('slug') || packErr.message?.includes('upsell_'))) {
+      if (
+        packErr &&
+        (packErr.message?.includes('whatsapp_number') ||
+          packErr.message?.includes('slug') ||
+          packErr.message?.includes('upsell_') ||
+          packErr.message?.includes('visibility') ||
+          packErr.message?.includes('invite_token'))
+      ) {
         if (packErr.message?.includes('whatsapp_number')) delete packPayload.whatsapp_number;
         if (packErr.message?.includes('slug')) delete packPayload.slug;
         if (packErr.message?.includes('upsell_')) {
           delete packPayload.upsell_title;
           delete packPayload.upsell_link;
+        }
+        if (packErr.message?.includes('visibility') || packErr.message?.includes('invite_token')) {
+          delete packPayload.visibility;
+          delete packPayload.invite_token;
         }
         const retry = await supabase.from('session_packs').insert(packPayload).select().single();
         pack = retry.data;
@@ -463,8 +482,93 @@ export default function CreatePack() {
               {/* STEP 0: Basic Info */}
               {step === 0 && (() => {
                 const isFreePack = form.price === '0' || form.price === 0;
+                const vis = form.visibility || 'public';
                 return (
                   <div className="g">
+                    {/* Course Visibility & Access Selector */}
+                    <div className="f">
+                      <label>Course visibility &amp; access</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+                        {[
+                          {
+                            id: 'public',
+                            icon: <Globe2 size={16} />,
+                            title: 'Public',
+                            desc: 'Open to all learners on Discover',
+                            accent: '#2563eb',
+                            bg: '#eff6ff',
+                          },
+                          {
+                            id: 'private',
+                            icon: <Lock size={16} />,
+                            title: 'Private Showcase',
+                            desc: 'Shows as Private · Invite/Promo only',
+                            accent: '#d97706',
+                            bg: '#fffbeb',
+                          },
+                          {
+                            id: 'unlisted',
+                            icon: <EyeOff size={16} />,
+                            title: 'Unlisted (Hidden)',
+                            desc: 'Hidden from Discover · Direct link only',
+                            accent: '#7c3aed',
+                            bg: '#f5f3ff',
+                          },
+                        ].map(opt => {
+                          const active = vis === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => {
+                                update('visibility', opt.id);
+                                if (!form.invite_token) update('invite_token', generateInviteToken());
+                              }}
+                              style={{
+                                textAlign: 'left',
+                                padding: '12px 14px',
+                                borderRadius: 14,
+                                border: active ? `2px solid ${opt.accent}` : '1.5px solid var(--line)',
+                                background: active ? opt.bg : '#fff',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 4,
+                                transition: 'all 0.15s ease',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 750, fontSize: 14, color: active ? opt.accent : '#0f172a' }}>
+                                {opt.icon}
+                                <span>{opt.title}</span>
+                              </div>
+                              <span style={{ fontSize: 12, color: '#64748b', lineHeight: 1.35 }}>
+                                {opt.desc}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {(vis === 'private' || vis === 'unlisted') && (
+                        <div style={{
+                          marginTop: 10,
+                          padding: '11px 14px',
+                          borderRadius: 12,
+                          background: vis === 'private' ? '#fffbeb' : '#f5f3ff',
+                          border: `1px solid ${vis === 'private' ? '#fde68a' : '#ddd6fe'}`,
+                          fontSize: 12.5,
+                          color: vis === 'private' ? '#92400e' : '#5b21b6',
+                          lineHeight: 1.5,
+                        }}>
+                          <b>{vis === 'private' ? '🔒 Private Showcase Active:' : '👻 Unlisted Mode Active:'}</b>{' '}
+                          {vis === 'private'
+                            ? 'Outside learners see this pack listed as "Private" with zero session details shown.'
+                            : 'This pack is completely hidden from Discover, Search, and your public profile.'}{' '}
+                          Only people with your <b>Secret Invite Link</b> (code: <code>{form.invite_token}</code>) or a <b>Promo Code</b> can view sessions and join!
+                        </div>
+                      )}
+                    </div>
+
                     {/* Top Switch for 100% Free Pack */}
                     <label className={`sw free-banner ${isFreePack ? 'active' : ''}`}>
                       <div className="sw-info">
@@ -996,6 +1100,13 @@ export default function CreatePack() {
                   <div className="chips">
                     <span>{form.category || 'General'}</span>
                     <span className="pr">{Number(form.price) === 0 ? 'FREE' : `${form.currency} ${form.price || '0'}`}</span>
+                    <span style={{
+                      background: form.visibility === 'private' ? '#fffbeb' : form.visibility === 'unlisted' ? '#f5f3ff' : '#eff6ff',
+                      color: form.visibility === 'private' ? '#b45309' : form.visibility === 'unlisted' ? '#6d28d9' : '#1d4ed8',
+                      border: `1px solid ${form.visibility === 'private' ? '#fde68a' : form.visibility === 'unlisted' ? '#ddd6fe' : '#bfdbfe'}`,
+                    }}>
+                      {form.visibility === 'private' ? '🔒 Private Showcase' : form.visibility === 'unlisted' ? '👻 Unlisted (Hidden)' : '🌍 Public'}
+                    </span>
                     {(form.whatsapp_number || profile?.contact_number) && (
                       <span className="wa">
                         WhatsApp: {form.whatsapp_number || profile?.contact_number}

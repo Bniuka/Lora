@@ -30,7 +30,7 @@ export default function LearnerDashboard() {
           .limit(6),
       ]);
       setEnrollments(enrRes.data || []);
-      setDiscover(discRes.data || []);
+      setDiscover((discRes.data || []).filter(p => p.visibility !== 'unlisted'));
       setLoading(false);
     };
     fetchData();
@@ -357,14 +357,18 @@ export default function LearnerDashboard() {
                     to={`/learner/pack/${pack.id}`}
                   >
                     <div className="th">
-                      {pack.has_free_session && (
+                      {pack.visibility === 'private' ? (
+                        <span className="chip" style={{ background: '#1e1b4b', color: '#fff', borderColor: '#312e81' }}>
+                          🔒 Private
+                        </span>
+                      ) : pack.has_free_session ? (
                         <span className="chip">
                           <svg className="ic" viewBox="0 0 24 24">
                             <path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z" />
                           </svg>
                           Free preview
                         </span>
-                      )}
+                      ) : null}
                       {pack.thumbnail_url && (
                         <img src={pack.thumbnail_url} alt={pack.title || 'Course'} />
                       )}
@@ -377,9 +381,15 @@ export default function LearnerDashboard() {
                         {pack.category && <span>{pack.category}</span>}
                       </div>
                       <div className="cf">
-                        <span className="price">
-                          {pack.currency || 'USD'} {pack.price}
-                        </span>
+                        {pack.visibility === 'private' ? (
+                          <span className="price" style={{ fontSize: '12.5px', color: '#6d28d9' }}>
+                            🔒 Private · Invite Only
+                          </span>
+                        ) : (
+                          <span className="price">
+                            {Number(pack.price) === 0 ? 'FREE' : `${pack.currency || 'USD'} ${pack.price}`}
+                          </span>
+                        )}
                         <span className="arrow">
                           <svg className="ic" viewBox="0 0 24 24">
                             <path d="M5 12h14M13 6l6 6-6 6" />

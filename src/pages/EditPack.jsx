@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X, Percent, Clock, Calendar } from 'lucide-react';
+import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X, Percent, Clock, Calendar, Globe2, Lock, EyeOff, KeyRound } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
-import { generateUniquePackSlug } from '../lib/utils';
+import { generateUniquePackSlug, generateInviteToken, getPackShareUrl } from '../lib/utils';
 import {
   generatePromoCode,
   normalizePromoCode,
@@ -141,6 +141,26 @@ export default function EditPack() {
     showToast(`Copied invite link with promo code!`);
   };
 
+  const handleCopySecretInviteLink = () => {
+    const token = pack?.invite_token || generateInviteToken();
+    if (!pack?.invite_token) {
+      updatePack('invite_token', token);
+    }
+    const url = getPackShareUrl({ ...pack, id, invite_token: token, visibility: pack?.visibility || 'private' }, { includeInvite: true });
+    navigator.clipboard.writeText(url);
+    showToast('🔑 Copied Secret Invite Link to clipboard!');
+  };
+
+  const handleResetInviteToken = async () => {
+    if (!window.confirm('Reset Secret Invite Link? Anyone with the previous link will need the new link to unlock this course.')) return;
+    const freshToken = generateInviteToken();
+    setPack(prev => ({ ...prev, invite_token: freshToken }));
+    try {
+      await supabase.from('session_packs').update({ invite_token: freshToken }).eq('id', id);
+    } catch (_) {}
+    showToast(`New invite code generated: ${freshToken}`);
+  };
+
   useEffect(() => {
     const fetch = async () => {
       const [packRes, sessRes] = await Promise.all([
@@ -148,7 +168,11 @@ export default function EditPack() {
         supabase.from('sessions').select('*').eq('pack_id', id).order('order_index'),
       ]);
       if (packRes.data) {
-        setPack(packRes.data);
+        setPack({
+          ...packRes.data,
+          visibility: packRes.data.visibility || 'public',
+          invite_token: packRes.data.invite_token || generateInviteToken(),
+        });
         setThumbPreview(packRes.data.thumbnail_url);
       }
       fetchPromoCodes();
@@ -270,6 +294,8 @@ export default function EditPack() {
         upsell_title: pack.upsell_title || null,
         upsell_link: pack.upsell_link || null,
         has_free_session: hasFree,
+        visibility: pack.visibility || 'public',
+        invite_token: pack.invite_token || generateInviteToken(),
       };
 
       if (!pack.slug && pack.title) {
@@ -277,12 +303,23 @@ export default function EditPack() {
       }
 
       let { error: updateErr } = await supabase.from('session_packs').update(packUpdate).eq('id', id);
-      if (updateErr && (updateErr.message?.includes('whatsapp_number') || updateErr.message?.includes('slug') || updateErr.message?.includes('upsell_'))) {
+      if (
+        updateErr &&
+        (updateErr.message?.includes('whatsapp_number') ||
+          updateErr.message?.includes('slug') ||
+          updateErr.message?.includes('upsell_') ||
+          updateErr.message?.includes('visibility') ||
+          updateErr.message?.includes('invite_token'))
+      ) {
         if (updateErr.message?.includes('whatsapp_number')) delete packUpdate.whatsapp_number;
         if (updateErr.message?.includes('slug')) delete packUpdate.slug;
         if (updateErr.message?.includes('upsell_')) {
           delete packUpdate.upsell_title;
           delete packUpdate.upsell_link;
+        }
+        if (updateErr.message?.includes('visibility') || updateErr.message?.includes('invite_token')) {
+          delete packUpdate.visibility;
+          delete packUpdate.invite_token;
         }
         const retry = await supabase.from('session_packs').update(packUpdate).eq('id', id);
         updateErr = retry.error;
@@ -409,6 +446,145 @@ export default function EditPack() {
                 <h2>Basic info</h2>
                 <p>The title, description and price learners see.</p>
               </div>
+            </div>
+
+            {/* Course Visibility & Access Selector + Secret Invite Link */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: 13.5, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>
+                Course visibility &amp; access
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))', gap: 10 }}>
+                {[
+                  {
+                    id: 'public',
+                    icon: Globe2,
+                    label: 'Public Course',
+                    sub: 'Open on Sessions page · Anyone can enroll',
+                    activeBorder: '#2563eb',
+                    activeBg: '#eff6ff',
+                    activeColor: '#1d4ed8',
+                  },
+                  {
+                    id: 'private',
+                    icon: Lock,
+                    label: 'Private Showcase',
+                    sub: 'Listed as 🔒 Private · Invite / Promo unlocks',
+                    activeBorder: '#7c3aed',
+                    activeBg: '#f5f3ff',
+                    activeColor: '#6d28d9',
+                  },
+                  {
+                    id: 'unlisted',
+                    icon: EyeOff,
+                    label: 'Unlisted (Hidden)',
+                    sub: 'Hidden everywhere · Secret Link / Promo only',
+                    activeBorder: '#0f172a',
+                    activeBg: '#f1f5f9',
+                    activeColor: '#0f172a',
+                  },
+                ].map((opt) => {
+                  const IconComp = opt.icon;
+                  const active = (pack.visibility || 'public') === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => updatePack('visibility', opt.id)}
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 13px',
+                        borderRadius: 14,
+                        border: `1.5px solid ${active ? opt.activeBorder : '#e2e8f0'}`,
+                        background: active ? opt.activeBg : '#ffffff',
+                        cursor: 'pointer',
+                        transition: 'all .15s',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 4,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 13.5, color: active ? opt.activeColor : '#0f172a' }}>
+                        <IconComp size={15} />
+                        <span>{opt.label}</span>
+                      </div>
+                      <span style={{ fontSize: 11.5, color: '#64748b', lineHeight: 1.35 }}>{opt.sub}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {(pack.visibility === 'private' || pack.visibility === 'unlisted') && (
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: '14px 16px',
+                    borderRadius: 14,
+                    background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
+                    border: '1.5px solid #ddd6fe',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#5b21b6', fontWeight: 700, fontSize: 13 }}>
+                      <KeyRound size={15} />
+                      <span>
+                        Secret Creator Invite Link &amp; Code:{' '}
+                        <code style={{ background: '#ede9fe', padding: '2px 7px', borderRadius: 6, fontSize: 12.5 }}>
+                          {pack.invite_token}
+                        </code>
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        onClick={handleCopySecretInviteLink}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '7px 12px',
+                          borderRadius: 9,
+                          background: '#6d28d9',
+                          color: '#ffffff',
+                          border: 'none',
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Copy size={13} /> Copy Secret Invite Link
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleResetInviteToken}
+                        title="Generate a new invite code and invalidate the old link"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          padding: '7px 10px',
+                          borderRadius: 9,
+                          background: '#ffffff',
+                          color: '#64748b',
+                          border: '1px solid #cbd5e1',
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <RefreshCw size={12} /> Reset Link
+                      </button>
+                    </div>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 12, color: '#6b21a8', lineHeight: 1.5 }}>
+                    {pack.visibility === 'private'
+                      ? 'Learners on the Sessions page see this course as 🔒 Private with session details hidden. Share this Secret Invite Link (or any Promo Code / Promo Link below) with selected people to unlock enrollment & free previews.'
+                      : 'This course is completely hidden from public pages. Only people with this Secret Invite Link (or a Promo Code / Promo Link below) can view and enroll.'}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Top Switch for 100% Free Pack */}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, Package, Sparkles, X } from 'lucide-react';
+import { Search, Filter, Package, Sparkles, X, Lock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState, ToggleSwitch, ShareMenu } from '../components/ui';
 
@@ -34,8 +34,13 @@ export default function Discover() {
 
     const { data } = await q;
     
-    // Filter out packs from creators with expired subscriptions/trials
-    const validPacks = (data || []).filter(pack => hasValidSubscription(pack.creator_profiles));
+    // Filter out packs from creators with expired subscriptions/trials and unlisted packs
+    const validPacks = (data || []).filter(
+      pack =>
+        hasValidSubscription(pack.creator_profiles) &&
+        pack.visibility !== 'unlisted' &&
+        (!hasFreeSession || pack.visibility !== 'private')
+    );
     setPacks(validPacks);
     setLoading(false);
   };
@@ -133,9 +138,15 @@ export default function Discover() {
                         <Package size={36} className="text-[#E2E8F0]" />
                       </div>
                     )}
-                    {pack.has_free_session && (
+                    {pack.visibility === 'private' ? (
+                      <div className="absolute top-3 left-3">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1E1B4B]/90 text-white backdrop-blur-sm shadow-sm">
+                          <Lock size={11} /> Private
+                        </span>
+                      </div>
+                    ) : pack.has_free_session ? (
                       <div className="absolute top-3 left-3"><GoldBadge icon={Sparkles}>Free Preview</GoldBadge></div>
-                    )}
+                    ) : null}
                     <div className="absolute top-3 right-3">
                       <ShareMenu url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`} title={pack.title} pack={pack} />
                     </div>
@@ -146,7 +157,15 @@ export default function Discover() {
                       {pack.creator_profiles?.profiles?.first_name} {pack.creator_profiles?.profiles?.last_name} · {pack.category}
                     </p>
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-[#2563EB]">{pack.currency} {pack.price}</p>
+                      {pack.visibility === 'private' ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
+                          <Lock size={12} /> Private · Invite Only
+                        </span>
+                      ) : (
+                        <p className="text-sm font-semibold text-[#2563EB]">
+                          {Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}
+                        </p>
+                      )}
                       <span className="text-xs text-[#94A6B8]">{pack.enrollments?.[0]?.count || 0} students</span>
                     </div>
                   </div>

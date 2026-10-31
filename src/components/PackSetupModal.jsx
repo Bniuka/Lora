@@ -7,6 +7,9 @@ import {
   Gift,
   Lock,
   Eye,
+  EyeOff,
+  Globe2,
+  ShieldCheck,
   Calendar,
   Layers,
   ArrowRight,
@@ -21,8 +24,8 @@ import './pack-setup-modal.css';
 /**
  * PackSetupModal
  * Guided, one-question-at-a-time interactive wizard that collects the creator's
- * intent (cohort vs recording vs single masterclass, pricing & free preview strategy,
- * and delivery links) and automatically pre-configures the CreatePack form.
+ * intent (cohort vs recording vs single masterclass, visibility mode: public/private/unlisted,
+ * pricing & free preview strategy, and delivery links) and automatically pre-configures CreatePack.
  * Features clean collapsed preview cards with a toggle arrow to view in-depth details.
  */
 export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
@@ -34,14 +37,16 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
 
   // Creator's selected preferences
   const [answers, setAnswers] = useState({
-    format: 'cohort',       // 'cohort' (Upcoming Live series) | 'recordings' (Recorded Course) | 'webinar' (1-Day Masterclass)
-    pricing: 'preview_paid', // 'preview_paid' (Paid + Free Preview) | 'direct_paid' (Direct Paid) | 'free_all' (100% Free)
-    materials: 'live_zoom',  // 'live_zoom' (Live Zoom/YT stream) | 'ready_videos' (Drive/YT videos ready) | 'hybrid' (Both)
+    format: 'cohort',         // 'cohort' | 'recordings' | 'webinar'
+    visibility: 'public',     // 'public' | 'private' | 'unlisted'
+    pricing: 'preview_paid',  // 'preview_paid' | 'direct_paid' | 'free_all'
+    materials: 'live_zoom',   // 'live_zoom' | 'ready_videos' | 'hybrid'
   });
 
   if (!isOpen) return null;
 
-  const totalQuestions = 3;
+  const totalQuestions = 4;
+  const isPrivateMode = answers.visibility === 'private' || answers.visibility === 'unlisted';
 
   const selectAnswer = (key, value) => {
     setAnswers(prev => ({ ...prev, [key]: value }));
@@ -77,7 +82,7 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
   const questionsData = [
     // QUESTION 1: Format & Delivery Mode
     {
-      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 01 / 03 · පාඨමාලාවේ ස්වභාවය' : 'Question 01 of 03 · Pack Format',
+      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 01 / 04 · පාඨමාලාවේ ස්වභාවය' : 'Question 01 of 04 · Pack Format',
       title: lang === 'si' 
         ? 'ඔයා මේ Session Pack එක පවත්වන්න බලාපොරොත්තු වෙන්නේ කොහොමද?' 
         : 'What format do you want to use for this Session Pack?',
@@ -131,15 +136,75 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
       ]
     },
 
-    // QUESTION 2: Pricing Strategy & Free Preview
+    // QUESTION 2: Visibility & Private Access Mode
     {
-      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 02 / 03 · ගාස්තු සහ Free Preview' : 'Question 02 of 03 · Pricing & Preview Strategy',
-      title: lang === 'si' 
-        ? 'සිසුන් මේ පාඨමාලාවට සම්බන්ධ කරගන්නේ කොහොමද?' 
-        : 'How would you like learners to enroll and pay?',
+      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 02 / 04 · පෞද්ගලිකත්වය සහ ප්‍රවේශය' : 'Question 02 of 04 · Visibility & Access',
+      title: lang === 'si'
+        ? 'කාටද මේ පාඨමාලාවට සම්බන්ධ වෙන්න පුළුවන්?'
+        : 'Who should be able to see and access this course?',
       subtitle: lang === 'si'
-        ? 'නොමිලේ සාම්පලයක් (Free Preview) ලබාදීමෙන් සිසුන්ගේ විශ්වාසය දිනාගෙන Enrollments වැඩි කරගත හැක.'
-        : 'Offering a free taster increases student trust and can boost paid conversions by up to 300%.',
+        ? 'ඕනෑම අයෙකුට විවෘත Public පාඨමාලාවක් ලෙස හෝ ඔබ තෝරාගත් සිසුන්ට පමණක් ලබාදෙන Private පාඨමාලාවක් ලෙස සකස් කළ හැක.'
+        : 'Open your pack to everyone publicly, or restrict enrollment exclusively to learners with your Invite Link or Promo Code.',
+      field: 'visibility',
+      options: [
+        {
+          id: 'public',
+          icon: Globe2,
+          badge: lang === 'si' ? 'සියලු දෙනාටම 🌍' : 'Open to All 🌍',
+          accent: '#2563eb',
+          title: lang === 'si' ? 'Public — සියලුම සිසුන්ට විවෘතයි' : 'Public Course (Open to Everyone)',
+          subShort: lang === 'si' ? 'Sessions පිටුවේ පෙන්වයි · ඕනෑම අයෙකුට විස්තර බලා සම්බන්ධ විය හැක' : 'Listed publicly on Sessions page; anyone can view details & enroll',
+          sinhalaDesc: 'ඔබගේ පාඨමාලාව Sessions (Discover) පිටුවේ සහ ඔබගේ Profile එකේ සියලුම සිසුන්ට පෙනෙන සේ ප්‍රදර්ශනය වේ. ඕනෑම සිසුවෙකුට Session විස්තර බලා ලියාපදිංචි විය හැක.',
+          englishDesc: 'Your pack appears on the public Sessions page and your Creator Profile. Any learner can browse the full session schedule and enroll.',
+          bullets: [
+            lang === 'si' ? 'අලුත් සිසුන් සොයාගැනීමට සහ වැඩි පිරිසකට ළඟා වීමට හොඳම ක්‍රමයයි' : 'Best for reaching new students and growing your audience',
+            lang === 'si' ? 'සියලුම Session විස්තර සහ Free Previews සාමාන්‍ය පරිදි පෙන්වයි' : 'Displays full curriculum, free previews, and pricing openly'
+          ]
+        },
+        {
+          id: 'private',
+          icon: ShieldCheck,
+          badge: lang === 'si' ? 'Private Showcase 🔒' : 'Private Showcase 🔒',
+          accent: '#d97706',
+          title: lang === 'si' ? 'Private — තෝරාගත් සිසුන්ට පමණයි (Listed as Private)' : 'Private Showcase (Invite or Promo Only)',
+          subShort: lang === 'si' ? 'Sessions පිටුවේ "Private" ලෙස පෙන්වයි · Invite Link / Promo Code අවශ්‍යයි' : 'Listed with "Private" button & hidden sessions; unlocks via Invite or Promo',
+          sinhalaDesc: 'පාඨමාලාව Sessions පිටුවේ "Private" ලෙස පෙනුනද, කිසිදු Session විස්තරයක් හෝ Free Preview එකක් පිටස්තර අයට නොපෙන්වයි. ඔබගේ Secret Invite Link එක හෝ Promo Code එක ඇති අයට පමණක් විවෘත වේ.',
+          englishDesc: 'Shown on the Sessions page with a "Private" button and zero session details visible. Only learners using your Secret Invite Link, Promo Link, or Promo Code can unlock and join.',
+          bullets: [
+            lang === 'si' ? 'Private Paid (+ Free Previews) හෝ 100% Free Private යන දෙවර්ගයටම සහය දක්වයි' : 'Works with both Private Paid (+ Free Previews) and 100% Free Private courses',
+            lang === 'si' ? 'VIP කණ්ඩායම් සඳහා කුතුහලය (Exclusivity) ඇති කරමින් අන්තර්ගතය ආරක්ෂා කරයි' : 'Builds VIP exclusivity on your profile while keeping sessions 100% locked'
+          ]
+        },
+        {
+          id: 'unlisted',
+          icon: EyeOff,
+          badge: lang === 'si' ? 'සම්පූර්ණයෙන්ම රහසිගතයි 👻' : 'Hidden · Direct Link 👻',
+          accent: '#7c3aed',
+          title: lang === 'si' ? 'Unlisted — සම්පූර්ණයෙන්ම සැඟවූ පාඨමාලාවක්' : 'Unlisted & Hidden (Direct Link Only)',
+          subShort: lang === 'si' ? 'Sessions පිටුවේ කිසිසේත්ම නොපෙන්වයි · ඔබ Link යවන අයට පමණයි' : 'Completely hidden from Discover & Search; invite link or promo only',
+          sinhalaDesc: 'මෙම පාඨමාලාව Sessions පිටුවේ, Search වල හෝ ඔබගේ Public Profile එකේ කිසිම තැනක පෙන්වන්නේ නැත. ඔබ පෞද්ගලිකව Secret Invite Link එක හෝ Promo Link එක යවන සිසුන්ට පමණක් පිවිසිය හැක.',
+          englishDesc: 'Completely hidden from Discover, Search, and your public profile. Only learners who have your Secret Invite Link or Promo Code can view and enroll.',
+          bullets: [
+            lang === 'si' ? '1-on-1 Coaching, ආයතනික පුහුණු හෝ පෞද්ගලික පන්ති කණ්ඩායම් සඳහා කදිමයි' : 'Perfect for 1-on-1 coaching, corporate training, or closed physical class batches',
+            lang === 'si' ? 'ගෙවන (+ Free Previews) හෝ 100% නොමිලේ යන දෙවර්ගයටම සැකසිය හැක' : 'Supports both Paid (+ Free Previews) and 100% Free private cohorts'
+          ]
+        }
+      ]
+    },
+
+    // QUESTION 3: Pricing Strategy & Free Preview
+    {
+      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 03 / 04 · ගාස්තු සහ Free Preview' : 'Question 03 of 04 · Pricing & Preview Strategy',
+      title: lang === 'si' 
+        ? (isPrivateMode ? 'මෙම Private පාඨමාලාව ගෙවන එකක්ද නැතිනම් නොමිලේද?' : 'සිසුන් මේ පාඨමාලාවට සම්බන්ධ කරගන්නේ කොහොමද?')
+        : (isPrivateMode ? 'Should this Private pack be Paid (+ Free Previews) or 100% Free?' : 'How would you like learners to enroll and pay?'),
+      subtitle: lang === 'si'
+        ? (isPrivateMode
+            ? 'ඔබගේ Invite Link හෝ Promo Code මගින් පැමිණෙන සිසුන් සඳහා ගෙවීම් ක්‍රමය තෝරන්න.'
+            : 'නොමිලේ සාම්පලයක් (Free Preview) ලබාදීමෙන් සිසුන්ගේ විශ්වාසය දිනාගෙන Enrollments වැඩි කරගත හැක.')
+        : (isPrivateMode
+            ? 'Choose how invited learners enroll once they unlock your private pack.'
+            : 'Offering a free taster increases student trust and can boost paid conversions by up to 300%.'),
       field: 'pricing',
       options: [
         {
@@ -147,10 +212,12 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Eye,
           badge: lang === 'si' ? 'නිර්දේශිතයි ⭐' : 'Recommended ⭐',
           accent: '#059669',
-          title: lang === 'si' ? 'ගෙවන පාඨමාලාවක් + පළමු Session එක FREE' : 'Paid Course with 1 Free Taster Session',
+          title: lang === 'si'
+            ? (isPrivateMode ? 'Private ගෙවන පාඨමාලාවක් + Free Preview' : 'ගෙවන පාඨමාලාවක් + පළමු Session එක FREE')
+            : (isPrivateMode ? 'Private Paid Course + Free Preview Session' : 'Paid Course with 1 Free Taster Session'),
           subShort: lang === 'si' ? 'පළමු Session එක Free දීලා, ඉතිරි Sessions වලට මුදල් අය කිරීම' : 'Session 1 is 100% Free to try; paid for the rest',
-          sinhalaDesc: 'පළමු Session එකට (හෝ හැඳින්වීමේ පාඩමට) ඕනෑම අයෙකුට නොමිලේ සම්බන්ධ වෙන්න දීලා, ඉතිරි Sessions වලට මුදල් අය කිරීම.',
-          englishDesc: 'Session 1 is 100% Free for anyone to try out without paying. Remaining sessions require payment.',
+          sinhalaDesc: 'පළමු Session එකට (හෝ හැඳින්වීමේ පාඩමට) නොමිලේ සම්බන්ධ වෙන්න දීලා, ඉතිරි Sessions වලට මුදල් අය කිරීම.',
+          englishDesc: 'Session 1 is 100% Free to try out without paying (visible once unlocked if private). Remaining sessions require payment.',
           bullets: [
             lang === 'si' ? 'Free Preview switch එක ස්වයංක්‍රීයවම ක්‍රියාත්මක වේ' : 'Auto-enables the Free Preview banner and 1st session setup',
             lang === 'si' ? 'සිසුන්ට පන්තියේ ගුණාත්මක බව දැකලා කැමැත්තෙන්ම ගෙවීමට අවස්ථාව ලැබේ' : 'Builds trust fast before asking for bank slip/payment'
@@ -161,13 +228,15 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Lock,
           badge: lang === 'si' ? 'සම්පූර්ණ ගෙවීම්' : 'Paid Only',
           accent: '#2563eb',
-          title: lang === 'si' ? 'මුල සිටම ගෙවිය යුතු පාඨමාලාවක් (Direct Paid)' : 'Paid Only (No Free Previews)',
+          title: lang === 'si'
+            ? (isPrivateMode ? 'Private ගෙවන පාඨමාලාවක් පමණයි (Direct Paid)' : 'මුල සිටම ගෙවිය යුතු පාඨමාලාවක් (Direct Paid)')
+            : (isPrivateMode ? 'Private Paid Only (No Free Previews)' : 'Paid Only (No Free Previews)'),
           subShort: lang === 'si' ? 'සියලුම Sessions සඳහා සිසුන් කලින්ම මුදල් ගෙවිය යුතුය' : 'All sessions are locked until payment is confirmed',
-          sinhalaDesc: 'සියලුම Sessions සඳහා සිසුන් කලින්ම සම්පූර්ණ මුදල ගෙවා Bank Slip එකක් හෝ Card Payment එකක් කළ යුතුය.',
+          sinhalaDesc: 'සියලුම Sessions සඳහා සිසුන් කලින්ම සම්පූර්ණ මුදල ගෙවා Bank Slip එකක් හෝ Payment Link හරහා ගෙවිය යුතුය.',
           englishDesc: 'All sessions are locked. Learners must pay the creator before accessing any session links or videos.',
           bullets: [
             lang === 'si' ? 'Free preview අංග ඉවත් කර පිරිසිදු Paid Form එකක් පෙන්වයි' : 'Cleans up the form by hiding free preview inputs completely',
-            lang === 'si' ? 'ඔබට පසුව අවශ්‍ය නම් Discount Promo Code ලබාදිය හැක' : 'You can still create percentage or early-bird promo codes later'
+            lang === 'si' ? 'ඔබට පසුව අවශ්‍ය නම් Discount හෝ 100% Free Promo Code ලබාදිය හැක' : 'You can still create percentage or 100% free promo codes later'
           ]
         },
         {
@@ -175,21 +244,23 @@ export default function PackSetupModal({ isOpen, onClose, onApplySetup }) {
           icon: Gift,
           badge: lang === 'si' ? '100% නොමිලේ' : '100% Free',
           accent: '#d97706',
-          title: lang === 'si' ? '100% ක්ම නොමිලේ ලබාදෙන වැඩමුළුවක්' : '100% Free Workshop or Community Pack',
-          subShort: lang === 'si' ? 'කිසිදු මුදලක් අය නොකර සිසුන්ට 1-Click එකකින් සම්බන්ධ වීමට දීමට' : 'Zero cost for learners; instant 1-click enrollment',
-          sinhalaDesc: 'කිසිදු මුදලක් අය නොකර සිසුන්ට 1-Click එකකින් නොමිලේ සම්බන්ධ වීමට ලබාදීමට (Audience Building / Leads).',
-          englishDesc: 'Totally free for all students. Learners enroll instantly in 1-click without any payment screens.',
+          title: lang === 'si'
+            ? (isPrivateMode ? '100% නොමිලේ Private පාඨමාලාවක් (Free Private)' : '100% ක්ම නොමිලේ ලබාදෙන වැඩමුළුවක්')
+            : (isPrivateMode ? '100% Free Private Course' : '100% Free Workshop or Community Pack'),
+          subShort: lang === 'si' ? 'කිසිදු මුදලක් අය නොකර 1-Click එකකින් සම්බන්ධ වීමට දීමට' : 'Zero cost for invited learners; instant 1-click enrollment',
+          sinhalaDesc: 'කිසිදු මුදලක් අය නොකර (තෝරාගත් හෝ සියලුම) සිසුන්ට 1-Click එකකින් නොමිලේ සම්බන්ධ වීමට ලබාදීමට.',
+          englishDesc: 'Totally free access. Learners (with your invite link if private) enroll instantly in 1-click without payment.',
           bullets: [
             lang === 'si' ? 'මිල 0 (FREE) ලෙස ස්වයංක්‍රීයව සැකසේ' : 'Sets pack price to FREE automatically',
-            lang === 'si' ? 'වැඩමුළුව අවසානයේ ඔබගේ මීළඟ Paid Course එක Upsell කළ හැක' : 'Great for giving value, then recommending your paid courses'
+            lang === 'si' ? 'භෞතික පන්ති සිසුන්ට හෝ තෝරාගත් කණ්ඩායමකට නොමිලේ ප්‍රවේශය දීමට කදිමයි' : 'Great for physical class students, VIP groups, or community workshops'
           ]
         }
       ]
     },
 
-    // QUESTION 3: Materials & Video Readiness
+    // QUESTION 4: Materials & Video Readiness
     {
-      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 03 / 03 · Links සහ වීඩියෝ සූදානම' : 'Question 03 of 03 · Links & Video Readiness',
+      stepLabel: lang === 'si' ? 'ප්‍රශ්නය 04 / 04 · Links සහ වීඩියෝ සූදානම' : 'Question 04 of 04 · Links & Video Readiness',
       title: lang === 'si' 
         ? 'ඔබ සතුව මේ වන විට ඇති Links මොනවාද?' 
         : 'What links and session details do you currently have?',

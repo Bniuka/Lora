@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, Star, Users, ArrowLeft, Sparkles, MapPin } from 'lucide-react';
+import { Package, Star, Users, ArrowLeft, Sparkles, MapPin, Lock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState } from '../components/ui';
 
@@ -24,7 +24,7 @@ export default function CreatorPublicProfile() {
           .order('created_at', { ascending: false }),
       ]);
       setCreator(creatorRes.data);
-      setPacks(packsRes.data || []);
+      setPacks((packsRes.data || []).filter(p => p.visibility !== 'unlisted'));
       setLoading(false);
     };
     fetch();
@@ -155,11 +155,17 @@ export default function CreatorPublicProfile() {
                             <Package size={36} className="text-[#E2E8F0]" />
                           </div>
                         )}
-                        {pack.has_free_session && (
+                        {pack.visibility === 'private' ? (
+                          <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1E1B4B]/90 text-white backdrop-blur-sm shadow-sm">
+                              <Lock size={11} /> Private
+                            </span>
+                          </div>
+                        ) : pack.has_free_session ? (
                           <div className="absolute top-3 left-3">
                             <GoldBadge icon={Sparkles}>Free Preview</GoldBadge>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                       <div className="p-5">
                         <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-1">
@@ -167,9 +173,15 @@ export default function CreatorPublicProfile() {
                         </h3>
                         <p className="text-xs text-[#94A6B8] mb-3">{pack.category}</p>
                         <div className="flex items-center justify-between">
-                          <p className="text-sm font-semibold text-[#2563EB]">
-                            {pack.currency} {pack.price}
-                          </p>
+                          {pack.visibility === 'private' ? (
+                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
+                              <Lock size={12} /> Private · Invite Only
+                            </span>
+                          ) : (
+                            <p className="text-sm font-semibold text-[#2563EB]">
+                              {Number(pack.price) === 0 ? 'FREE' : `${pack.currency} ${pack.price}`}
+                            </p>
+                          )}
                           <span className="text-xs text-[#94A6B8]">
                             {pack.enrollments?.[0]?.count || 0} students
                           </span>

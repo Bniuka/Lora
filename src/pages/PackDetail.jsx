@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
   Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
-  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag, KeyRound, Unlock
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { generatePaymentReference, hasValidSubscription, slugify } from '../lib/utils';
+import { generatePaymentReference, hasValidSubscription, slugify, getPackShareUrl } from '../lib/utils';
 import {
   normalizePromoCode,
   calculateDiscountedPrice,
@@ -603,7 +603,11 @@ export default function PackDetail() {
   const [promoError, setPromoError] = useState('');
   const [showPromoInput, setShowPromoInput] = useState(() => Boolean(searchParams.get('promo')));
 
-  const handleApplyPromoCode = async (codeToTry = promoInput) => {
+  // Private Course Invite Unlock State
+  const [inviteUnlocked, setInviteUnlocked] = useState(false);
+  const [unlockCodeInput, setUnlockCodeInput] = useState('');
+
+  const handleApplyPromoCode = async (codeToTry = promoInput, { isPrivateAttempt = false } = {}) => {
     const cleanCode = normalizePromoCode(codeToTry);
     if (!cleanCode) return;
     setApplyingPromo(true);
@@ -620,7 +624,11 @@ export default function PackDetail() {
 
       if (error) throw error;
       if (!data) {
-        throw new Error("Invalid promo code for this session pack.");
+        throw new Error(
+          isPrivateAttempt
+            ? 'Invalid invite code or promo code for this private course.'
+            : 'Invalid promo code for this session pack.'
+        );
       }
 
       const validity = checkPromoValidity(data);
@@ -631,17 +639,47 @@ export default function PackDetail() {
       setAppliedPromo(data);
       setPromoInput(data.code);
       setShowPromoInput(true);
+      if (pack?.id) {
+        try {
+          localStorage.setItem(`lora_promo_${pack.id}`, data.code);
+        } catch (_) {}
+      }
     } catch (err) {
-      setPromoError(err.message || "Failed to apply promo code.");
+      setPromoError(err.message || 'Failed to apply promo code.');
     } finally {
       setApplyingPromo(false);
     }
+  };
+
+  const handleUnlockPrivatePack = async (rawCode = unlockCodeInput) => {
+    const cleanCode = normalizePromoCode(rawCode);
+    if (!cleanCode) return;
+    setPromoError('');
+
+    const expectedInvite = normalizePromoCode(pack?.invite_token || '');
+    if (expectedInvite && cleanCode === expectedInvite) {
+      setInviteUnlocked(true);
+      setUnlockCodeInput('');
+      if (pack?.id) {
+        try {
+          localStorage.setItem(`lora_invite_${pack.id}`, pack.invite_token);
+        } catch (_) {}
+      }
+      return;
+    }
+
+    await handleApplyPromoCode(cleanCode, { isPrivateAttempt: true });
   };
 
   const handleRemovePromo = () => {
     setAppliedPromo(null);
     setPromoInput('');
     setPromoError('');
+    if (pack?.id) {
+      try {
+        localStorage.removeItem(`lora_promo_${pack.id}`);
+      } catch (_) {}
+    }
   };
 
   const handleClaimPromoEnrollment = async () => {
@@ -721,11 +759,37 @@ export default function PackDetail() {
 
   const pricing = calculateDiscountedPrice(pack?.price, appliedPromo);
 
-  // Auto-apply promo from URL if pack is loaded
+  // Auto-apply promo or secret invite token from URL / saved storage once pack loads
   useEffect(() => {
+    if (!pack?.id) return;
+
+    // 1. Check Secret Invite Token (?invite=INV-XXXXXX or previously unlocked token in localStorage)
+    const expectedInvite = normalizePromoCode(pack.invite_token || '');
+    const inviteFromUrl = normalizePromoCode(searchParams.get('invite') || '');
+    let storedInvite = '';
+    try {
+      storedInvite = normalizePromoCode(localStorage.getItem(`lora_invite_${pack.id}`) || '');
+    } catch (_) {}
+
+    if (expectedInvite && inviteFromUrl && inviteFromUrl === expectedInvite) {
+      setInviteUnlocked(true);
+      try {
+        localStorage.setItem(`lora_invite_${pack.id}`, pack.invite_token);
+      } catch (_) {}
+    } else if (expectedInvite && storedInvite && storedInvite === expectedInvite) {
+      setInviteUnlocked(true);
+    }
+
+    // 2. Check Promo Code (?promo=CODE or stored promo on restricted packs across login redirect)
     const promoFromUrl = searchParams.get('promo');
-    if (promoFromUrl && pack?.id && !appliedPromo && !enrollment) {
-      handleApplyPromoCode(promoFromUrl);
+    let storedPromo = '';
+    try {
+      storedPromo = localStorage.getItem(`lora_promo_${pack.id}`) || '';
+    } catch (_) {}
+
+    const candidatePromo = promoFromUrl || ((pack.visibility === 'private' || pack.visibility === 'unlisted') ? storedPromo : '');
+    if (candidatePromo && !appliedPromo && !enrollment) {
+      handleApplyPromoCode(candidatePromo);
     }
   }, [pack, searchParams]);
 
@@ -996,8 +1060,17 @@ export default function PackDetail() {
     );
   }
 
-  const embedUrl = getVideoEmbedUrl(pack.intro_video_url);
-  const hasFreePreview = pack.has_free_session || sessions.some(s => s.is_free_session);
+  const isRestrictedPack = pack.visibility === 'private' || pack.visibility === 'unlisted';
+  const hasPrivateAccess =
+    !isRestrictedPack ||
+    user?.id === pack.creator_id ||
+    Boolean(enrollment) ||
+    inviteUnlocked ||
+    Boolean(appliedPromo);
+  const isLockedPrivate = isRestrictedPack && !hasPrivateAccess;
+
+  const embedUrl = isLockedPrivate ? null : getVideoEmbedUrl(pack.intro_video_url);
+  const hasFreePreview = !isLockedPrivate && (pack.has_free_session || sessions.some(s => s.is_free_session));
 
   const inquiryNumber = pack.whatsapp_number || creator?.profiles?.contact_number;
   const sanitizedPhone = getSanitizedPhone(inquiryNumber);
@@ -1008,17 +1081,35 @@ export default function PackDetail() {
   const callUrl = inquiryNumber ? `tel:${inquiryNumber}` : null;
 
   const renderJoinAction = (isMobile = false) => {
+    if (user?.id === pack.creator_id) {
+      return (
+        <Link to={`/creator/packs/${pack.id}/edit`} className="btn pri" style={{ textAlign: 'center' }}>
+          Edit pack
+        </Link>
+      );
+    }
+    if (isLockedPrivate) {
+      return (
+        <button
+          className="btn"
+          type="button"
+          disabled
+          style={{
+            background: '#f1f5f9',
+            color: '#475569',
+            borderColor: '#cbd5e1',
+            cursor: 'not-allowed',
+            fontWeight: 700,
+          }}
+        >
+          <Lock size={15} /> Private
+        </button>
+      );
+    }
     if (!user) {
       return (
         <Link to="/signup/learner" className="btn pri" style={{ textAlign: 'center' }}>
           Sign up to join
-        </Link>
-      );
-    }
-    if (user.id === pack.creator_id) {
-      return (
-        <Link to={`/creator/packs/${pack.id}/edit`} className="btn pri" style={{ textAlign: 'center' }}>
-          Edit pack
         </Link>
       );
     }
@@ -1126,22 +1217,46 @@ export default function PackDetail() {
           <div className="layout">
             {/* MAIN CONTENT COLUMN */}
             <main>
-              {/* Free preview tag */}
-              {hasFreePreview && (
+              {/* Private status or Free preview tag */}
+              {isLockedPrivate ? (
+                <span
+                  className="tag"
+                  style={{
+                    background: '#f5f3ff',
+                    color: '#6d28d9',
+                    borderColor: '#ddd6fe',
+                  }}
+                >
+                  <Lock size={13} />
+                  Private Course · Invite Only
+                </span>
+              ) : isRestrictedPack ? (
+                <span
+                  className="tag"
+                  style={{
+                    background: '#ecfdf5',
+                    color: '#047857',
+                    borderColor: '#a7f3d0',
+                  }}
+                >
+                  <Unlock size={13} />
+                  {user?.id === pack.creator_id ? 'Creator View · Private Pack' : 'Private Invite Unlocked'}
+                </span>
+              ) : hasFreePreview ? (
                 <span className="tag">
                   <svg className="ic" viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
                     <path d="m12 3 2.2 5.6L20 9l-4.5 3.8L17 19l-5-3-5 3 1.5-6.2L4 9l5.8-.4z" />
                   </svg>
                   Free preview session
                 </span>
-              )}
+              ) : null}
 
               {/* Title & Share */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
                 <h1 style={{ margin: 0, flex: 1 }}>{pack.title}</h1>
                 <div style={{ marginTop: 6, flexShrink: 0 }}>
                   <ShareMenu
-                    url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`}
+                    url={getPackShareUrl(pack, { includeInvite: user?.id === pack.creator_id })}
                     title={`Check out "${pack.title}" on Loraspace!`}
                     pack={pack}
                   />
@@ -1169,22 +1284,37 @@ export default function PackDetail() {
 
               {/* Meta tags */}
               <div className="meta">
-                <span>
-                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5 3.5-5 3.5z" /></svg>
-                  <b>{sessions.length}</b> session{sessions.length !== 1 ? 's' : ''}
-                </span>
-                <span>
-                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                  <b>{totalMinutes}</b> min total
-                </span>
-                <span>
-                  <svg className="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" /></svg>
-                  All levels
-                </span>
-                <span>
-                  <svg className="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z" /></svg>
-                  <b>4.9</b> (128 reviews)
-                </span>
+                {isLockedPrivate ? (
+                  <>
+                    <span>
+                      <Lock size={14} style={{ color: '#6d28d9' }} />
+                      <b>Private curriculum</b> · Invite required
+                    </span>
+                    <span>
+                      <KeyRound size={14} style={{ color: '#64748b' }} />
+                      Creator link or promo code unlocks access
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5 3.5-5 3.5z" /></svg>
+                      <b>{sessions.length}</b> session{sessions.length !== 1 ? 's' : ''}
+                    </span>
+                    <span>
+                      <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                      <b>{totalMinutes}</b> min total
+                    </span>
+                    <span>
+                      <svg className="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" /></svg>
+                      All levels
+                    </span>
+                    <span>
+                      <svg className="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z" /></svg>
+                      <b>4.9</b> (128 reviews)
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Hero video or thumbnail */}
@@ -1239,109 +1369,178 @@ export default function PackDetail() {
               <section className="sec">
                 <h2>Session schedule</h2>
 
-                {sessions.some(s => s.recording_url || s.is_past_session) && (
-                  <div style={{
-                    marginBottom: 16,
-                    background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
-                    border: '1.5px solid #ddd6fe',
-                    borderRadius: 14,
-                    padding: '10px 16px',
-                    fontSize: '13.5px',
-                    color: '#6b21a8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    fontWeight: 600,
-                  }}>
-                    <span>📼</span>
-                    <span>
-                      Includes {sessions.filter(s => s.recording_url || s.is_past_session).length} catch-up recording{sessions.filter(s => s.recording_url || s.is_past_session).length !== 1 ? 's' : ''} ready to watch immediately upon enrollment!
-                    </span>
-                  </div>
-                )}
+                {isLockedPrivate ? (
+                  <div
+                    className="card"
+                    style={{
+                      padding: '28px 24px',
+                      background: 'linear-gradient(145deg, #f8fafc 0%, #f5f3ff 100%)',
+                      border: '1.5px solid #ddd6fe',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: '50%',
+                        background: '#ede9fe',
+                        color: '#6d28d9',
+                        display: 'grid',
+                        placeItems: 'center',
+                        margin: '0 auto 14px',
+                      }}
+                    >
+                      <Lock size={24} />
+                    </div>
+                    <h3 style={{ margin: '0 0 8px', fontSize: 18, color: '#0f172a' }}>
+                      Private Course · Invite Required
+                    </h3>
+                    <p style={{ margin: '0 auto 8px', maxWidth: 480, fontSize: 13.5, color: '#475569', lineHeight: 1.55 }}>
+                      Session details, schedules, free previews, and enrollment are hidden because the creator set this pack to <b>Private</b>. Open the creator&apos;s invite link or enter an invite / promo code below to unlock.
+                    </p>
+                    <p style={{ margin: '0 auto 18px', maxWidth: 480, fontSize: 12.5, color: '#6b21a8', lineHeight: 1.6 }}>
+                      මෙය Private පාඨමාලාවකි. Session විස්තර සහ ලියාපදිංචි වීම දැකගත හැක්කේ Creator ගේ විශේෂ Invite Link එක හෝ Promo Code එක ඇති අයට පමණි.
+                    </p>
 
-                {sessions.length > 0 ? (
-                  <div className="list">
-                    {sessions.map((s, i) => {
-                      const isUnlocked = enrollment?.status === 'confirmed' || s.is_free_session || user?.id === pack.creator_id;
-                      const isCatchup = Boolean(s.recording_url || s.is_past_session);
-
-                      if (isUnlocked) {
-                        return (
-                          <div key={s.id} className="card sess">
-                            <div className="n">{i + 1}</div>
-                            <div className="t">
-                              <div className="d">
-                                {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
-                                {s.is_free_session && <span className="pv">Free preview</span>}
-                                {isCatchup && (
-                                  <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
-                                    📼 Catch-up Recording
-                                  </span>
-                                )}
-                              </div>
-                              <h3>{s.title}</h3>
-                              <div className="s">
-                                {isCatchup ? (
-                                  <span>{s.duration_minutes}m duration · Available immediately</span>
-                                ) : (
-                                  <>
-                                    <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                                    {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
-                                    <span>·</span>
-                                    {s.duration_minutes}m duration
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                            <SessionButton session={s} />
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <div key={s.id} className="card sess lock">
-                          <div className="n">
-                            <svg className="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-                          </div>
-                          <div className="t">
-                            <div className="d">
-                              {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
-                              {isCatchup && (
-                                <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
-                                  📼 Catch-up Recording
-                                </span>
-                              )}
-                            </div>
-                            <h3>{s.title}</h3>
-                            <div className="s">
-                              {isCatchup ? (
-                                <span>{s.duration_minutes}m duration · Watch immediately after enrolling</span>
-                              ) : (
-                                <>
-                                  <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                                  {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
-                                  <span>·</span>
-                                  {s.duration_minutes}m duration
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <span className="lk">
-                            <svg className="ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
-                              <rect x="5" y="11" width="14" height="9" rx="2" />
-                              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-                            </svg>
-                            {isCatchup ? 'Immediate access with enrollment' : 'Unlocks after enrollment'}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    <div style={{ maxWidth: 380, margin: '0 auto' }}>
+                      <div className="promo-input-group">
+                        <input
+                          type="text"
+                          placeholder="Enter Invite or Promo Code (e.g. INV-8XK9P2)"
+                          value={unlockCodeInput}
+                          onChange={e => {
+                            setUnlockCodeInput(e.target.value.toUpperCase());
+                            setPromoError('');
+                          }}
+                          className="promo-input"
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleUnlockPrivatePack();
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="promo-apply-btn"
+                          style={{ background: '#6d28d9' }}
+                          onClick={() => handleUnlockPrivatePack()}
+                          disabled={applyingPromo}
+                        >
+                          {applyingPromo ? <Loader2 size={13} className="animate-spin" /> : 'Unlock'}
+                        </button>
+                      </div>
+                      {promoError && <div className="promo-err-msg" style={{ textAlign: 'left', marginTop: 6 }}>{promoError}</div>}
+                    </div>
                   </div>
                 ) : (
-                  <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>
-                    No sessions scheduled yet.
-                  </div>
+                  <>
+                    {sessions.some(s => s.recording_url || s.is_past_session) && (
+                      <div style={{
+                        marginBottom: 16,
+                        background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
+                        border: '1.5px solid #ddd6fe',
+                        borderRadius: 14,
+                        padding: '10px 16px',
+                        fontSize: '13.5px',
+                        color: '#6b21a8',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        fontWeight: 600,
+                      }}>
+                        <span>📼</span>
+                        <span>
+                          Includes {sessions.filter(s => s.recording_url || s.is_past_session).length} catch-up recording{sessions.filter(s => s.recording_url || s.is_past_session).length !== 1 ? 's' : ''} ready to watch immediately upon enrollment!
+                        </span>
+                      </div>
+                    )}
+
+                    {sessions.length > 0 ? (
+                      <div className="list">
+                        {sessions.map((s, i) => {
+                          const isUnlocked = enrollment?.status === 'confirmed' || s.is_free_session || user?.id === pack.creator_id;
+                          const isCatchup = Boolean(s.recording_url || s.is_past_session);
+
+                          if (isUnlocked) {
+                            return (
+                              <div key={s.id} className="card sess">
+                                <div className="n">{i + 1}</div>
+                                <div className="t">
+                                  <div className="d">
+                                    {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
+                                    {s.is_free_session && <span className="pv">Free preview</span>}
+                                    {isCatchup && (
+                                      <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
+                                        📼 Catch-up Recording
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h3>{s.title}</h3>
+                                  <div className="s">
+                                    {isCatchup ? (
+                                      <span>{s.duration_minutes}m duration · Available immediately</span>
+                                    ) : (
+                                      <>
+                                        <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                                        {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
+                                        <span>·</span>
+                                        {s.duration_minutes}m duration
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                                <SessionButton session={s} />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div key={s.id} className="card sess lock">
+                              <div className="n">
+                                <svg className="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+                              </div>
+                              <div className="t">
+                                <div className="d">
+                                  {s.scheduled_at ? format(new Date(s.scheduled_at), 'MMM dd') : 'Past session'}
+                                  {isCatchup && (
+                                    <span className="pv" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe', marginLeft: 6 }}>
+                                      📼 Catch-up Recording
+                                    </span>
+                                  )}
+                                </div>
+                                <h3>{s.title}</h3>
+                                <div className="s">
+                                  {isCatchup ? (
+                                    <span>{s.duration_minutes}m duration · Watch immediately after enrolling</span>
+                                  ) : (
+                                    <>
+                                      <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                                      {s.scheduled_at ? format(new Date(s.scheduled_at), 'h:mm a') : ''}
+                                      <span>·</span>
+                                      {s.duration_minutes}m duration
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                              <span className="lk">
+                                <svg className="ic" viewBox="0 0 24 24" style={{ width: 15, height: 15 }}>
+                                  <rect x="5" y="11" width="14" height="9" rx="2" />
+                                  <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                                </svg>
+                                {isCatchup ? 'Immediate access with enrollment' : 'Unlocks after enrollment'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>
+                        No sessions scheduled yet.
+                      </div>
+                    )}
+                  </>
                 )}
               </section>
 
@@ -1393,9 +1592,32 @@ export default function PackDetail() {
             <aside className="side">
               {/* Buy card */}
               <div className="card buy">
-                <small>Total price</small>
+                {isRestrictedPack && !isLockedPrivate && (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '4px 10px',
+                      borderRadius: 99,
+                      background: '#ecfdf5',
+                      color: '#047857',
+                      border: '1px solid #a7f3d0',
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Unlock size={12} /> Private Access Unlocked
+                  </div>
+                )}
+                <small>{isLockedPrivate ? 'Course access' : 'Total price'}</small>
                 <div className="price">
-                  {appliedPromo ? (
+                  {isLockedPrivate ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#475569', fontSize: '0.82em' }}>
+                      <Lock size={22} /> Private
+                    </span>
+                  ) : appliedPromo ? (
                     pricing.isFree ? (
                       <>
                         <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 8 }}>
@@ -1427,8 +1649,42 @@ export default function PackDetail() {
 
                 {renderJoinAction()}
 
-                {/* Promo code box */}
-                {Number(pack?.price) > 0 && !enrollment && (
+                {/* Unlock Private Box OR Promo Code Box */}
+                {isLockedPrivate ? (
+                  <div className="promo-box" style={{ marginTop: 12 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#5b21b6', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <KeyRound size={13} /> Have an invite or promo code?
+                    </div>
+                    <div className="promo-input-group">
+                      <input
+                        type="text"
+                        placeholder="INV-XXXXXX or Promo Code"
+                        value={unlockCodeInput}
+                        onChange={e => {
+                          setUnlockCodeInput(e.target.value.toUpperCase());
+                          setPromoError('');
+                        }}
+                        className="promo-input"
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleUnlockPrivatePack();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="promo-apply-btn"
+                        style={{ background: '#6d28d9' }}
+                        onClick={() => handleUnlockPrivatePack()}
+                        disabled={applyingPromo}
+                      >
+                        {applyingPromo ? <Loader2 size={13} className="animate-spin" /> : 'Unlock'}
+                      </button>
+                    </div>
+                    {promoError && <div className="promo-err-msg">{promoError}</div>}
+                  </div>
+                ) : Number(pack?.price) > 0 && !enrollment ? (
                   <div className="promo-box">
                     {appliedPromo ? (
                       <div className="promo-success-badge">
@@ -1458,7 +1714,7 @@ export default function PackDetail() {
                       </div>
                     )}
                   </div>
-                )}
+                ) : null}
 
                 {inquiryNumber && (
                   <div className="buy-inquiry">
@@ -1523,7 +1779,7 @@ export default function PackDetail() {
                   </span>
                   <div>
                     <small>Starts on</small>
-                    <b>{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</b>
+                    <b>{isLockedPrivate ? 'Private (Invite only)' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'MMMM dd, yyyy') : 'TBA'}</b>
                   </div>
                 </div>
                 <div className="row">
@@ -1532,7 +1788,7 @@ export default function PackDetail() {
                   </span>
                   <div>
                     <small>Time</small>
-                    <b>{sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</b>
+                    <b>{isLockedPrivate ? 'Unlocks with invite' : sessions[0] ? format(new Date(sessions[0].scheduled_at), 'h:mm a') : 'TBA'}</b>
                   </div>
                 </div>
                 <div className="row">
@@ -1552,7 +1808,7 @@ export default function PackDetail() {
                 <ul className="ul inc" style={{ marginTop: 0 }}>
                   <li>
                     <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
-                    {totalMinutes} minutes of live content
+                    {isLockedPrivate ? 'Private sessions (invite required)' : `${totalMinutes} minutes of live content`}
                   </li>
                   <li>
                     <svg className="ic" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2" /><path d="M11 18h2" /></svg>
@@ -1602,9 +1858,13 @@ export default function PackDetail() {
         {/* MOBILE STICKY PURCHASE BAR */}
         <div className="mbar">
           <div>
-            <small>Total price</small>
+            <small>{isLockedPrivate ? 'Course access' : 'Total price'}</small>
             <div className="price">
-              {appliedPromo ? (
+              {isLockedPrivate ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#475569' }}>
+                  <Lock size={15} /> Private
+                </span>
+              ) : appliedPromo ? (
                 pricing.isFree ? (
                   <>
                     <span style={{ textDecoration: 'line-through', opacity: 0.45, fontSize: '0.65em', marginRight: 6 }}>

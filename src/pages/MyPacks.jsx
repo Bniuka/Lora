@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Package, PlusCircle, Edit3, Trash2, Eye, Users } from 'lucide-react';
+import { Package, PlusCircle, Edit3, Trash2, Eye, Users, Lock, EyeOff, KeyRound, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, GoldBadge, Skeleton, EmptyState, Modal, ShareMenu } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
-import { slugify } from '../lib/utils';
+import { getPackShareUrl } from '../lib/utils';
 
 export default function MyPacks() {
   useSubscriptionGuard();
@@ -15,6 +15,14 @@ export default function MyPacks() {
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [copiedInviteId, setCopiedInviteId] = useState(null);
+
+  const handleCopyInviteLink = (pack) => {
+    const shareUrl = getPackShareUrl(pack, { includeInvite: true });
+    navigator.clipboard.writeText(shareUrl);
+    setCopiedInviteId(pack.id);
+    setTimeout(() => setCopiedInviteId(null), 2000);
+  };
 
   const fetchPacks = async () => {
     const { data } = await supabase
@@ -98,9 +106,23 @@ export default function MyPacks() {
                       <Package size={36} className="text-[#E2E8F0]" />
                     </div>
                   )}
+                  {pack.visibility === 'private' && (
+                    <div className="absolute top-3 left-3">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5B21B6]/90 text-white backdrop-blur-sm shadow-sm">
+                        <Lock size={11} /> Private
+                      </span>
+                    </div>
+                  )}
+                  {pack.visibility === 'unlisted' && (
+                    <div className="absolute top-3 left-3">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#0F172A]/90 text-white backdrop-blur-sm shadow-sm">
+                        <EyeOff size={11} /> Unlisted
+                      </span>
+                    </div>
+                  )}
                   <div className="absolute top-3 right-3 flex items-center gap-2">
                     {pack.has_free_session && <GoldBadge>Free Session</GoldBadge>}
-                    <ShareMenu url={`${window.location.origin}/p/${pack.slug || slugify(pack.title) || pack.id}`} title={pack.title} pack={pack} />
+                    <ShareMenu url={getPackShareUrl(pack, { includeInvite: true })} title={pack.title} pack={pack} />
                   </div>
                 </div>
 
@@ -124,6 +146,24 @@ export default function MyPacks() {
                     </span>
                     <span>{pack.sessions?.[0]?.count || 0} sessions</span>
                   </div>
+
+                  {(pack.visibility === 'private' || pack.visibility === 'unlisted') && (
+                    <button
+                      type="button"
+                      onClick={() => handleCopyInviteLink(pack)}
+                      className="mb-4 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE] hover:bg-[#EDE9FE] transition-colors cursor-pointer"
+                    >
+                      {copiedInviteId === pack.id ? (
+                        <>
+                          <Check size={13} /> Copied Secret Invite Link!
+                        </>
+                      ) : (
+                        <>
+                          <KeyRound size={13} /> Copy Secret Invite Link
+                        </>
+                      )}
+                    </button>
+                  )}
 
                   <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#E2E8F0]">
                     <Link

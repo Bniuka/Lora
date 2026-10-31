@@ -72,3 +72,33 @@ export async function generateUniquePackSlug(title, currentPackId = null) {
   return slug;
 }
 
+/**
+ * Generates an unambiguous uppercase alphanumeric token for Private / Unlisted invite links
+ * e.g. "INV-8XK9P2"
+ */
+export function generateInviteToken() {
+  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  let suffix = '';
+  for (let i = 0; i < 6; i++) {
+    suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `INV-${suffix}`;
+}
+
+/**
+ * Builds the shareable URL for a pack.
+ * When includeInvite is true and the pack is private/unlisted with an invite_token,
+ * appends ?invite=<invite_token> so invited learners unlock full access immediately.
+ */
+export function getPackShareUrl(pack, { includeInvite = false, origin = typeof window !== 'undefined' ? window.location.origin : '' } = {}) {
+  if (!pack) return origin;
+  const slugPart = pack.slug || slugify(pack.title) || pack.id;
+  const baseUrl = `${origin}/p/${slugPart}`;
+  const isRestricted = pack.visibility === 'private' || pack.visibility === 'unlisted';
+  if (includeInvite && isRestricted && pack.invite_token) {
+    return `${baseUrl}?invite=${encodeURIComponent(pack.invite_token)}`;
+  }
+  return baseUrl;
+}
+
+
