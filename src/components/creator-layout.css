@@ -368,6 +368,7 @@
     flex-direction: row !important;
     width: 100% !important;
     justify-content: space-around !important;
+    overflow-x: auto !important;
   }
   .lora-creator nav a {
     flex-direction: column !important;
@@ -376,6 +377,7 @@
     padding: 6px 8px !important;
     margin: 0 !important;
     text-align: center !important;
+    white-space: nowrap !important;
   }
   .lora-creator nav a .ic {
     width: 20px !important;

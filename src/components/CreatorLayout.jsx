@@ -267,13 +267,17 @@ export default function CreatorLayout({ children }) {
               <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
               <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/creator/packs" className={({ isActive }) => isActive ? 'on' : ''}>
+            <NavLink to="/creator/packs" end className={({ isActive }) => isActive ? 'on' : ''}>
               <svg className="ic" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
               <span>My Packs</span>
             </NavLink>
             <NavLink to="/creator/packs/new" className={({ isActive }) => isActive ? 'on' : ''}>
               <svg className="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
               <span>Create Pack</span>
+            </NavLink>
+            <NavLink to="/creator/multi-packs/new" className={({ isActive }) => isActive ? 'on' : ''}>
+              <svg className="ic" viewBox="0 0 24 24"><path d="m12 2 9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 17.5 9 4.5 9-4.5"/></svg>
+              <span>Create Multi-Pack</span>
             </NavLink>
             <NavLink to="/creator/enrollments" className={({ isActive }) => isActive ? 'on' : ''}>
               <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
