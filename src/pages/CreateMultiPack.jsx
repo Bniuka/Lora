@@ -23,6 +23,7 @@ import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug, generateInviteToken } from '../lib/utils';
 import './create-pack.css';
+import './multi-pack-guide-modal.css';
 
 const STEPS = ['Main Course Info', 'Media', 'Contact & Community', 'Review'];
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -68,174 +69,88 @@ function MultiPackGuideModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: 'rgba(15, 23, 42, 0.6)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
+    <div className="mp-guide-backdrop" onClick={onClose}>
       <div
-        style={{
-          background: '#fff',
-          borderRadius: 24,
-          maxWidth: 640,
-          width: '100%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          boxShadow: '0 24px 64px rgba(15, 23, 42, 0.22)',
-          border: '1px solid #e2e8f0',
-        }}
+        className="mp-guide-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mp-guide-modal-title"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
-        <div
-          style={{
-            padding: '22px 26px 18px',
-            borderBottom: '1px solid #f1f5f9',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 12,
-                background: 'linear-gradient(135deg, #2563eb, #4f46e5)',
-                color: '#fff',
-                display: 'grid',
-                placeItems: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <Layers size={20} />
-            </div>
-            <div>
-              <div style={{ fontSize: 11.5, fontWeight: 800, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                {lang === 'si' ? 'ඉක්මන් මගපෙන්වීම' : 'Quick Guide'}
-              </div>
-              <h2 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#0f172a' }}>
-                {lang === 'si' ? 'Multi-Pack සහ සාමාන්‍ය Pack අතර වෙනස කුමක්ද?' : 'How is a Multi-Pack different from a Normal Pack?'}
-              </h2>
-            </div>
+        {/* Top Utility Bar: Badge + Language Switcher + Close */}
+        <div className="mp-guide-topbar">
+          <div className="mp-guide-badge">
+            <span className="mp-guide-badge-icon">
+              <Layers size={13} />
+            </span>
+            <span className="mp-guide-badge-text">
+              {lang === 'si' ? 'ඉක්මන් මගපෙන්වීම' : 'Quick Guide'}
+            </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                background: '#f1f5f9',
-                borderRadius: 99,
-                padding: 3,
-              }}
-            >
+          <div className="mp-guide-controls">
+            <div className="mp-guide-lang-switch">
               <button
                 type="button"
+                className={`mp-guide-lang-btn ${lang === 'en' ? 'active' : ''}`}
                 onClick={() => setLang('en')}
-                style={{
-                  border: 0,
-                  borderRadius: 99,
-                  padding: '5px 11px',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  background: lang === 'en' ? '#fff' : 'transparent',
-                  color: lang === 'en' ? '#0f172a' : '#64748b',
-                  boxShadow: lang === 'en' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                }}
               >
                 English
               </button>
               <button
                 type="button"
+                className={`mp-guide-lang-btn ${lang === 'si' ? 'active' : ''}`}
                 onClick={() => setLang('si')}
-                style={{
-                  border: 0,
-                  borderRadius: 99,
-                  padding: '5px 11px',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  background: lang === 'si' ? '#fff' : 'transparent',
-                  color: lang === 'si' ? '#0f172a' : '#64748b',
-                  boxShadow: lang === 'si' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                }}
               >
                 සිංහල
               </button>
             </div>
             <button
               type="button"
+              className="mp-guide-close-btn"
               onClick={onClose}
               aria-label="Close"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 10,
-                border: '1px solid #e2e8f0',
-                background: '#fff',
-                color: '#64748b',
-                display: 'grid',
-                placeItems: 'center',
-                cursor: 'pointer',
-              }}
             >
-              <X size={17} />
+              <X size={16} />
             </button>
           </div>
         </div>
 
-        {/* Body */}
-        <div style={{ padding: '22px 26px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* Side-by-side comparison */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
-            <div
-              style={{
-                padding: 16,
-                borderRadius: 16,
-                border: '1.5px solid #e2e8f0',
-                background: '#f8fafc',
-              }}
-            >
-              <div style={{ fontSize: 12, fontWeight: 800, color: '#64748b', marginBottom: 6 }}>
+        {/* Full-Width Title */}
+        <div className="mp-guide-header">
+          <h2 id="mp-guide-modal-title" className="mp-guide-title">
+            {lang === 'si'
+              ? 'Multi-Pack සහ සාමාන්‍ය Pack අතර වෙනස කුමක්ද?'
+              : 'How is a Multi-Pack different from a Normal Pack?'}
+          </h2>
+        </div>
+
+        {/* Scrollable Body */}
+        <div className="mp-guide-body">
+          {/* Side-by-side (desktop) / stacked (mobile) comparison */}
+          <div className="mp-guide-compare">
+            <div className="mp-guide-card">
+              <div className="mp-guide-card-kicker">
                 {lang === 'si' ? 'සාමාන්‍ය Pack (Normal Pack)' : 'Normal Session Pack'}
               </div>
-              <div style={{ fontSize: 15, fontWeight: 750, color: '#0f172a', marginBottom: 6 }}>
+              <div className="mp-guide-card-heading">
                 {lang === 'si' ? 'තනි පාඨමාලාවක් / එක් ගෙවීමක්' : 'Single Course · One Payment'}
               </div>
-              <p style={{ margin: 0, fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
+              <p className="mp-guide-card-desc">
                 {lang === 'si'
                   ? 'එකවර ගෙවීමක් කර සියලුම සැසි (Sessions) වලට සම්බන්ධ වන කෙටි වැඩමුළු හෝ තනි පාඨමාලා සඳහා සුදුසුයි.'
                   : 'Best for standalone workshops or fixed courses where students pay once to unlock all sessions directly.'}
               </p>
             </div>
 
-            <div
-              style={{
-                padding: 16,
-                borderRadius: 16,
-                border: '2px solid #2563eb',
-                background: 'linear-gradient(145deg, #eff6ff 0%, #eef2ff 100%)',
-              }}
-            >
-              <div style={{ fontSize: 12, fontWeight: 800, color: '#2563eb', marginBottom: 6 }}>
+            <div className="mp-guide-card highlight">
+              <div className="mp-guide-card-kicker">
                 {lang === 'si' ? 'Multi-Pack (මාසික / කණ්ඩායම් පන්ති)' : 'Multi-Pack · Main Course + Sub-Packs'}
               </div>
-              <div style={{ fontSize: 15, fontWeight: 750, color: '#0f172a', marginBottom: 6 }}>
+              <div className="mp-guide-card-heading">
                 {lang === 'si' ? 'ප්‍රධාන පාඨමාලාව යටතේ මාසික / Batch අනු-පාඨමාලා' : 'Main Course Hub + Monthly / Batch Sub-Packs'}
               </div>
-              <p style={{ margin: 0, fontSize: 13, color: '#1e3a8a', lineHeight: 1.5 }}>
+              <p className="mp-guide-card-desc">
                 {lang === 'si'
                   ? 'අගෝස්තු, සැප්තැම්බර් වැනි මාසික පන්ති හෝ 1st Batch, 2nd Batch ලෙස කොටස් වශයෙන් ගෙවීම් කරන දිගුකාලීන පාඨමාලා සඳහාම නිර්මාණය කර ඇත.'
                   : 'Built for monthly tuition classes (August → September → October) or multi-phase courses (1st Batch, 2nd Batch, 3rd Batch).'}
@@ -244,18 +159,8 @@ function MultiPackGuideModal({ isOpen, onClose }) {
           </div>
 
           {/* 3-step visual flow */}
-          <div
-            style={{
-              background: '#fff',
-              borderRadius: 16,
-              border: '1px solid #e2e8f0',
-              padding: '16px 18px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 12,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#0f172a' }}>
+          <div className="mp-guide-steps">
+            <div className="mp-guide-steps-heading">
               {lang === 'si' ? 'Multi-Pack ක්‍රියාත්මක වන ආකාරය:' : 'How Multi-Pack works in 3 steps:'}
             </div>
 
@@ -282,68 +187,26 @@ function MultiPackGuideModal({ isOpen, onClose }) {
                   : 'Learners open your Main Course, see all monthly/batch Sub-Packs underneath, click the one they need, and complete payment seamlessly.',
               },
             ].map(item => (
-              <div key={item.num} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <span
-                  style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: '50%',
-                    background: '#eff6ff',
-                    color: '#2563eb',
-                    fontWeight: 800,
-                    fontSize: 13,
-                    display: 'grid',
-                    placeItems: 'center',
-                    flexShrink: 0,
-                    marginTop: 1,
-                  }}
-                >
-                  {item.num}
-                </span>
+              <div key={item.num} className="mp-guide-step-row">
+                <span className="mp-guide-step-num">{item.num}</span>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 750, color: '#0f172a' }}>{item.title}</div>
-                  <div style={{ fontSize: 12.5, color: '#64748b', lineHeight: 1.45, marginTop: 2 }}>{item.desc}</div>
+                  <div className="mp-guide-step-title">{item.title}</div>
+                  <div className="mp-guide-step-desc">{item.desc}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            padding: '16px 26px 22px',
-            borderTop: '1px solid #f1f5f9',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            flexWrap: 'wrap',
-          }}
-        >
-          <Link
-            to="/creator/packs/new"
-            style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textDecoration: 'none' }}
-          >
+        {/* Sticky Footer */}
+        <div className="mp-guide-footer">
+          <Link to="/creator/packs/new" className="mp-guide-switch-link">
             {lang === 'si' ? '← සාමාන්‍ය Pack එකක් සෑදීමට යන්න' : '← Switch to Normal Pack instead'}
           </Link>
           <button
             type="button"
+            className="mp-guide-continue-btn"
             onClick={onClose}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#2563eb',
-              color: '#fff',
-              border: 0,
-              borderRadius: 12,
-              padding: '11px 22px',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
-            }}
           >
             <span>{lang === 'si' ? 'Multi-Pack සෑදීම අරඹන්න' : 'Continue creating Multi-Pack'}</span>
             <ArrowRight size={16} />
@@ -498,20 +361,8 @@ export default function CreateMultiPack() {
             </div>
             <button
               type="button"
+              className="mp-guide-trigger-btn"
               onClick={() => setGuideOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 7,
-                background: '#eff6ff',
-                color: '#2563eb',
-                border: '1px solid #bfdbfe',
-                borderRadius: 12,
-                padding: '8px 15px',
-                fontSize: 13,
-                fontWeight: 750,
-                cursor: 'pointer',
-              }}
             >
               <HelpCircle size={15} />
               <span>Why Multi-Pack? (මගපෙන්වීම)</span>
@@ -956,9 +807,9 @@ export default function CreateMultiPack() {
         <div className={`toast ${toastMsg ? 'show' : ''}`} role="status">
           {toastMsg}
         </div>
-
-        <MultiPackGuideModal isOpen={guideOpen} onClose={() => setGuideOpen(false)} />
       </div>
+
+      <MultiPackGuideModal isOpen={guideOpen} onClose={() => setGuideOpen(false)} />
     </PageTransition>
   );
 }
