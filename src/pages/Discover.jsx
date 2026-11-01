@@ -96,7 +96,7 @@ export default function Discover() {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
-              <button type="submit" className="mr-2 px-6 py-2.5 bg-[#2563EB] text-white rounded-xl font-medium text-sm hover:bg-[#1D4ED8] transition-all shadow-lg shadow-[#2563EB]/40 flex items-center gap-2">
+              <button type="submit" className="btn-primary mr-2 px-6 py-2.5 text-sm">
                 Search
               </button>
             </div>

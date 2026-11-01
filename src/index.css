@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
 /* ============================================================
    LORA DESIGN SYSTEM — Light Theme
@@ -107,12 +107,24 @@
    BASE STYLES
    ============================================================ */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    color: var(--color-gold);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-smooth);
+  }
+
+  a:hover {
+    color: var(--color-gold-dark);
+  }
 }
 
 html {
@@ -141,18 +153,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-lora-heading);
   line-height: 1.25;
   font-weight: 700;
-}
-
-@layer base {
-  a {
-    color: var(--color-gold);
-    text-decoration: none;
-    transition: color 0.2s var(--ease-smooth);
-  }
-
-  a:hover {
-    color: var(--color-gold-dark);
-  }
 }
 
 /* Scrollbar */
@@ -210,113 +210,341 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-4px);
 }
 
-/* Primary Button */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: var(--color-gold);
-  color: #FFFFFF;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s ease-out;
+/* ============================================================
+   CINEMATIC MAGIC BUTTONS & BUTTON SYSTEM
+   ============================================================ */
+
+@property --lora-beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: true;
 }
 
-.btn-primary:hover {
-  background: var(--color-gold-dark);
-  box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
-  transform: translateY(-2px);
+@property --lora-inner-glow {
+  syntax: '<number>';
+  initial-value: 0.3;
+  inherits: true;
 }
 
-.btn-primary:active {
-  transform: translateY(0);
+@keyframes loraMagicOrbit {
+  from {
+    --lora-beam-angle: 0deg;
+  }
+  to {
+    --lora-beam-angle: 360deg;
+  }
 }
 
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 28px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    border-radius: 9999px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* Secondary Button — Outlined */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 28px;
+    background: transparent;
+    color: var(--color-gold);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid var(--color-gold);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.22s var(--ease-smooth);
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-gold);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(0);
+  }
+
+  /* Danger Button */
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--color-error);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-smooth);
+  }
+
+  .btn-danger:hover {
+    background: rgba(192, 57, 43, 0.08);
+    border-color: var(--color-error);
+  }
+
+  /* Ghost Button */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--color-lora-text);
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.18s var(--ease-smooth);
+  }
+
+  .btn-ghost:hover {
+    background: #EFF6FF;
+    color: var(--color-gold);
+  }
+}
+
+/* Cinematic Orbiting-Beam Magic Button (Primary Theme CTA) */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled) {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  text-shadow: 0 1px 8px rgba(15, 23, 42, 0.24) !important;
+  --lora-inner-glow: 0.3;
+  box-shadow:
+    0 8px 26px -4px rgba(79, 70, 229, 0.5),
+    0 2px 10px rgba(37, 99, 235, 0.28),
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.36) !important;
+  animation: loraMagicOrbit 3.8s linear infinite !important;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    --lora-inner-glow 0.35s ease,
+    filter 0.32s ease !important;
+}
+
+/* Soft outer luminous comet halo synced to --lora-beam-angle */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled)::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -2.5px !important;
+  border-radius: inherit !important;
+  z-index: -2 !important;
+  pointer-events: none !important;
+  background: conic-gradient(
+    from var(--lora-beam-angle),
+    transparent 0deg,
+    transparent 235deg,
+    rgba(99, 102, 241, 0.5) 280deg,
+    rgba(167, 139, 250, 0.92) 322deg,
+    #ffffff 346deg,
+    rgba(147, 197, 253, 0.78) 356deg,
+    transparent 360deg
+  ) !important;
+  filter: blur(6px) !important;
+  opacity: 0.85 !important;
+  transition: opacity 0.35s ease, filter 0.35s ease, inset 0.35s ease !important;
+}
+
+/* Crisp 1.5px orbiting star-white border arc + rich royal indigo-blue pill interior */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled)::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  border: 1.5px solid transparent !important;
+  background:
+    radial-gradient(
+      78% 98% at 50% 108%,
+      rgba(221, 214, 254, var(--lora-inner-glow, 0.3)) 0%,
+      rgba(129, 140, 248, calc(var(--lora-inner-glow, 0.3) * 0.5)) 48%,
+      transparent 78%
+    ) padding-box,
+    radial-gradient(
+      115% 75% at 50% -15%,
+      rgba(255, 255, 255, 0.28) 0%,
+      transparent 55%
+    ) padding-box,
+    linear-gradient(135deg, #3b5bdb 0%, #5b3df5 52%, #4f46e5 100%) padding-box,
+    conic-gradient(
+      from var(--lora-beam-angle),
+      rgba(165, 180, 252, 0.34) 0deg,
+      rgba(99, 102, 241, 0.3) 235deg,
+      rgba(165, 180, 252, 0.85) 292deg,
+      #ddd6fe 325deg,
+      #ffffff 346deg,
+      #bfdbfe 355deg,
+      rgba(165, 180, 252, 0.34) 360deg
+    ) border-box !important;
+}
+
+/* Hover illumination, scale lift & outer aura expansion */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled):hover {
+  --lora-inner-glow: 0.62;
+  color: #ffffff !important;
+  transform: translateY(-2px) scale(1.03) !important;
+  filter: brightness(1.05) !important;
+  box-shadow:
+    0 14px 36px -4px rgba(91, 61, 245, 0.65),
+    0 0 22px rgba(99, 102, 241, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55) !important;
+}
+
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled):hover::before {
+  inset: -3.5px !important;
+  filter: blur(8px) !important;
+  opacity: 1 !important;
+}
+
+/* Subtle magic sparkle micro-motion on button icons */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+) svg {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+}
+
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled):hover svg {
+  transform: scale(1.1) rotate(-5deg);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
+/* Tactile press feedback */
+:is(
+  .btn-primary,
+  .lora-dash .pill.pri,
+  .lora-wizard .btn.pri,
+  .mp-guide-continue-btn,
+  .lora-edit .save,
+  .lora-guide .lg-btn-pri,
+  .lora-home .btn.pri,
+  .lora-course .btn.pri,
+  .lora-signup-page .btn,
+  .lora-sub .trial-btn,
+  .setup-btn-next
+):not(:disabled):active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+/* Disabled Primary Button State */
 .btn-primary:disabled {
-  opacity: 0.5;
+  background: #94a3b8 !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Secondary Button — Outlined gold */
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: transparent;
-  color: var(--color-gold);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 2px solid var(--color-gold);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s var(--ease-smooth);
-}
-
-.btn-secondary:hover {
-  background: var(--color-gold);
-  color: #FFFFFF;
-  transform: translateY(-2px);
-}
-
-.btn-secondary:active {
-  transform: translateY(0);
-}
-
-/* Danger Button */
-.btn-danger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: transparent;
-  color: var(--color-error);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid rgba(192, 57, 43, 0.3);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s var(--ease-smooth);
-}
-
-.btn-danger:hover {
-  background: rgba(192, 57, 43, 0.06);
-  border-color: var(--color-error);
-}
-
-/* Ghost Button */
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: transparent;
-  color: var(--color-lora-text);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s var(--ease-smooth);
-}
-
-.btn-ghost:hover {
-  background: rgba(240, 224, 176, 0.3);
-  color: var(--color-gold);
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* Input Fields */

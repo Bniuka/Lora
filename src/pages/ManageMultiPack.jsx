@@ -223,7 +223,7 @@ export default function ManageMultiPack() {
 
   return (
     <PageTransition>
-      <div className="max-w-5xl mx-auto">
+      <div className="p-5 sm:p-8 pb-24 max-w-5xl mx-auto">
         {/* Breadcrumb */}
         <Link
           to="/creator/packs"
@@ -279,13 +279,13 @@ export default function ManageMultiPack() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 to={`/creator/packs/new?parent=${pack.id}`}
-                className="btn-primary text-sm py-3 px-5 shadow-md shadow-[#2563EB]/20"
+                className="btn-primary text-sm py-3 px-6"
               >
                 <PlusCircle size={17} /> Create Sub-Pack
               </Link>
               <Link
                 to={`/learner/pack/${pack.slug || pack.id}`}
-                className="btn-ghost text-sm py-3 px-4 border border-[#E2E8F0]"
+                className="btn-ghost rounded-full text-sm py-3 px-5 border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC]"
               >
                 <Eye size={16} /> View Page
               </Link>

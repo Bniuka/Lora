@@ -74,7 +74,7 @@ export default function MyPacks() {
 
   return (
     <PageTransition>
-      <div>
+      <div className="p-5 sm:p-8 pb-24 max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A]" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -85,7 +85,7 @@ export default function MyPacks() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/creator/multi-packs/new"
-              className="btn-ghost text-sm py-3 px-5 border-2 border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] font-semibold"
+              className="btn-ghost rounded-full text-sm py-3 px-5 border border-[#C7D2FE] bg-[#EEF2FF] text-[#4338CA] hover:bg-[#E0E7FF] font-semibold"
             >
               <Layers size={16} /> New Multi-Pack
             </Link>
@@ -107,11 +107,11 @@ export default function MyPacks() {
             title="No session packs yet"
             description="Create a normal session pack or a Multi-Pack with monthly/batch sub-packs to start teaching."
             action={
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link to="/creator/packs/new" className="btn-primary text-sm py-2.5 px-6">
+              <div className="flex flex-wrap items-center justify-center gap-3.5">
+                <Link to="/creator/packs/new" className="btn-primary text-sm py-3 px-6">
                   <PlusCircle size={16} /> Create Normal Pack
                 </Link>
-                <Link to="/creator/multi-packs/new" className="btn-ghost text-sm py-2.5 px-5 border border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB]">
+                <Link to="/creator/multi-packs/new" className="btn-ghost rounded-full text-sm py-3 px-5 border border-[#C7D2FE] bg-[#EEF2FF] text-[#4338CA] hover:bg-[#E0E7FF] font-semibold">
                   <Layers size={16} /> Create Multi-Pack
                 </Link>
               </div>

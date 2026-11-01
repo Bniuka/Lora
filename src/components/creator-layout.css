@@ -30,12 +30,14 @@
   box-sizing: border-box !important;
 }
 
-.lora-creator a {
+.lora-creator aside a,
+.lora-creator .top a {
   color: inherit !important;
   text-decoration: none !important;
 }
 
-.lora-creator button {
+.lora-creator aside button,
+.lora-creator .top button {
   font: inherit !important;
   color: inherit !important;
 }
