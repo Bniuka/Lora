@@ -66,7 +66,10 @@ export default function Discover() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchPacks(); }, [query, category, hasFreeSession]);
+  useEffect(() => {
+    document.title = 'Discover Courses & Live Classes | LoraSpace';
+    fetchPacks();
+  }, [query, category, hasFreeSession]);
 
   const handleSearch = (e) => {
     e.preventDefault();

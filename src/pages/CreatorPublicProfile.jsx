@@ -24,6 +24,10 @@ export default function CreatorPublicProfile() {
           .order('created_at', { ascending: false }),
       ]);
       setCreator(creatorRes.data);
+      const fullName = [creatorRes.data?.profiles?.first_name, creatorRes.data?.profiles?.last_name].filter(Boolean).join(' ');
+      if (fullName) {
+        document.title = `${fullName} — Courses & Classes | LoraSpace`;
+      }
       const allPub = packsRes.data || [];
       const subByParent = allPub.reduce((acc, p) => {
         if (p.parent_pack_id) {

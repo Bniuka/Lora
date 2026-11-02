@@ -9,8 +9,9 @@ export default function LandingPage() {
   const { user, profile } = useAuth();
   const dashboardLink = profile?.role === 'creator' ? '/creator/dashboard' : '/learner/dashboard';
 
-  /* Scroll-reveal observer (visual effect) */
+  /* Scroll-reveal observer (visual effect) & SEO Title */
   useEffect(() => {
+    document.title = 'LoraSpace — Sell Courses Online | Direct Bank Transfers & 0% Commission';
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

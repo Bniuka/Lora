@@ -853,6 +853,9 @@ export default function PackDetail() {
       if (packData) {
         setPack(packData);
         setCreator(packData.creator_profiles);
+        if (packData.title) {
+          document.title = `${packData.title} | LoraSpace`;
+        }
 
         const realId = packData.id;
 

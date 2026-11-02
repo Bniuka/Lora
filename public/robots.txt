@@ -1,2 +1,14 @@
 User-agent: *
 Allow: /
+Disallow: /creator/dashboard
+Disallow: /creator/settings
+Disallow: /creator/enrollments
+Disallow: /creator/packs/new
+Disallow: /creator/multi-packs/new
+Disallow: /creator/subscription
+Disallow: /creator/admin
+Disallow: /admin
+Disallow: /learner/dashboard
+Disallow: /api/
+
+Sitemap: https://www.loraspace.com/sitemap.xml
