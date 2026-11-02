@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import {
   Sparkles, Building2, Video, Ticket, BellRing,
   CheckCircle2, ArrowRight, Play, HelpCircle, ChevronDown,
-  MessageCircle, Globe
+  MessageCircle, Globe, Download, ExternalLink, FileText, Copy, Check
 } from 'lucide-react';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
 import './creator-guide.css';
+
+const PDF_GUIDE_URL = '/LoraSpace_Creator_Guide.pdf';
+const PDF_GUIDE_FILENAME = 'LoraSpace_Creator_Guide.pdf';
 
 const GUIDE_CONTENT = {
   si: {
@@ -16,6 +19,22 @@ const GUIDE_CONTENT = {
       'ඔයාගේ Creator ගිණුම සකසා ගන්නා ආකාරය, බැංකු ගිණුම් 4ක් දක්වා එක් කර සිසුන්ගෙන් කෙලින්ම මුදල් ලබාගන්නා ආකාරය, Live හෝ Recorded පන්ති පැවැත්වීම සහ Promo Codes (LORA-FREE-7X9) හරහා නොමිලේ පන්ති ලබාදෙන ආකාරය සිංහලෙන්ම මෙතැනින් දැනගන්න.',
     btnTour: 'Slide Tour එක බලන්න',
     btnCreate: 'අලුත් Session Pack එකක් හදන්න',
+    btnPdfHero: 'සිංහල PDF අත්පොත Download කරන්න',
+    pdfBadge: 'නිල CREATOR PDF අත්පොත · A4 පිටු 10',
+    pdfTitle: 'සම්පූර්ණ සිංහල Creator මාර්ගෝපදේශය (PDF) Download කරගන්න',
+    pdfDesc:
+      'LoraSpace ක්‍රියාත්මක වන ආකාරය, බැංකු ගිණුම් 4ක් සැකසීම, Normal Packs හා මාසික Multi-Packs සෑදීම, Promo Codes, Private VIP පන්ති සහ 0% Commission ආදායම් වාසිය පියවරෙන් පියවර Screenshots සමඟ විස්තර කෙරෙන පිටු 10ක නිල PDF අත්පොත Phone එකට හෝ Computer එකට Save කරගන්න.',
+    pdfTags: [
+      '0% Commission',
+      'Normal & Multi-Packs',
+      'බැංකු ගිණුම් 4ක්',
+      'Promo & VIP Links',
+      'Screenshots සහිතයි',
+    ],
+    pdfDownloadBtn: 'PDF එක Download කරන්න',
+    pdfViewBtn: 'කියවන්න',
+    pdfCopyBtn: 'Link Copy',
+    pdfCopiedBtn: 'Copy වුණා!',
     roadmapTitle: 'පියවර 4 කින් LoraSpace වැඩ කරන හැටි',
     roadmapSub: 'ඔයා අලුතින්ම සම්බන්ධ වුණු කෙනෙක් නම්, මුල්ම ළමයා පන්තියට බඳවා ගන්නා තෙක් මේ පියවර 4 අනුගමනය කරන්න.',
     featuresTitle: 'Creators ලා වෙනුවෙන්ම නිර්මාණය කළ විශේෂ පහසුකම්',
@@ -188,6 +207,22 @@ const GUIDE_CONTENT = {
       'Learn how to set up your creator account, accept direct multi-bank student transfers, host live or recorded sessions, and grant free access using usage-limited promo codes.',
     btnTour: 'Launch Interactive Slide Tour',
     btnCreate: 'Create a Session Pack',
+    btnPdfHero: 'Download Sinhala PDF Guide',
+    pdfBadge: 'OFFICIAL CREATOR PDF HANDBOOK · 10 A4 PAGES',
+    pdfTitle: 'Download the Complete Creator Guidebook (Sinhala A4 PDF)',
+    pdfDesc:
+      'Save our illustrated 10-page A4 vertical Sinhala handbook with real UI screenshots — covering direct 0% commission payouts, 4-bank setup, Normal Packs, monthly Multi-Packs, Promo Codes, Private VIP courses, and 1-click slip approvals.',
+    pdfTags: [
+      '0% Commission',
+      'Normal & Multi-Packs',
+      'Up to 4 Banks',
+      'Promo & VIP Links',
+      'Sinhala + Screenshots',
+    ],
+    pdfDownloadBtn: 'Download PDF Guide',
+    pdfViewBtn: 'Preview PDF',
+    pdfCopyBtn: 'Copy Link',
+    pdfCopiedBtn: 'Copied!',
     roadmapTitle: 'How LoraSpace Works in 4 Simple Steps',
     roadmapSub: 'New here? Follow this roadmap from signup to your first enrolled student.',
     featuresTitle: 'Power Features Built for Creators',
@@ -358,6 +393,7 @@ const GUIDE_CONTENT = {
 export default function CreatorGuide() {
   const [tourOpen, setTourOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [pdfLinkCopied, setPdfLinkCopied] = useState(false);
   const [lang, setLang] = useState(() => localStorage.getItem('lora_guide_lang') || 'si');
 
   useEffect(() => {
@@ -368,6 +404,17 @@ export default function CreatorGuide() {
   const handleLangChange = (newLang) => {
     setLang(newLang);
     localStorage.setItem('lora_guide_lang', newLang);
+  };
+
+  const handleCopyPdfLink = async () => {
+    const fullUrl = `${window.location.origin}${PDF_GUIDE_URL}`;
+    try {
+      await navigator.clipboard.writeText(fullUrl);
+      setPdfLinkCopied(true);
+      setTimeout(() => setPdfLinkCopied(false), 2200);
+    } catch {
+      window.prompt('Copy PDF Link:', fullUrl);
+    }
   };
 
   const t = GUIDE_CONTENT[lang] || GUIDE_CONTENT.si;
@@ -414,11 +461,94 @@ export default function CreatorGuide() {
               <Play size={16} fill="#ffffff" /> {t.btnTour}
             </button>
 
+            <a
+              href={PDF_GUIDE_URL}
+              download={PDF_GUIDE_FILENAME}
+              className="lg-btn-pdf-hero"
+            >
+              <Download size={16} /> {t.btnPdfHero}
+            </a>
+
             <Link to="/creator/packs/new" className="lg-btn-sec">
               {t.btnCreate} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
+
+        {/* ── Official Downloadable A4 Sinhala PDF Guidebook Card ── */}
+        <section className="lg-pdf-banner">
+          <a
+            href={PDF_GUIDE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="lg-pdf-thumb"
+            title={t.pdfViewBtn}
+          >
+            <span className="lg-pdf-thumb-badge">PDF · A4</span>
+            <div className="lg-pdf-thumb-lines">
+              <div className="lg-pdf-thumb-title">LoraSpace Creator Guide</div>
+              <div className="lg-pdf-thumb-bar" />
+              <div style={{ fontSize: 9.5, color: '#cbd5e1', lineHeight: 1.3 }}>
+                සිංහල අත්පොත
+              </div>
+            </div>
+            <div className="lg-pdf-thumb-foot">10 PAGES · HD</div>
+          </a>
+
+          <div className="lg-pdf-body">
+            <span className="lg-pdf-pill">
+              <FileText size={13} /> {t.pdfBadge}
+            </span>
+            <h2>{t.pdfTitle}</h2>
+            <p>{t.pdfDesc}</p>
+            <div className="lg-pdf-tags">
+              {t.pdfTags.map((tag, idx) => (
+                <span key={idx} className="lg-pdf-tag">
+                  <CheckCircle2 size={13} style={{ color: '#60a5fa' }} />
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg-pdf-actions">
+            <a
+              href={PDF_GUIDE_URL}
+              download={PDF_GUIDE_FILENAME}
+              className="lg-pdf-dl-btn"
+            >
+              <Download size={17} /> {t.pdfDownloadBtn}
+            </a>
+
+            <div className="lg-pdf-sec-row">
+              <a
+                href={PDF_GUIDE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lg-pdf-sub-btn"
+              >
+                <ExternalLink size={14} /> {t.pdfViewBtn}
+              </a>
+
+              <button
+                type="button"
+                onClick={handleCopyPdfLink}
+                className="lg-pdf-sub-btn"
+              >
+                {pdfLinkCopied ? (
+                  <>
+                    <Check size={14} style={{ color: '#34d399' }} />
+                    <span style={{ color: '#6ee7b7' }}>{t.pdfCopiedBtn}</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} /> {t.pdfCopyBtn}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* ── 4-Step Creator Workflow Roadmap ── */}
         <section>

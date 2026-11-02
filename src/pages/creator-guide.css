@@ -179,6 +179,236 @@
   color: #2f5bff !important;
 }
 
+/* Hero Quick PDF Download Button */
+.lora-guide .lg-btn-pdf-hero {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%) !important;
+  color: #4338ca !important;
+  border: 1.5px solid #c7d2fe !important;
+  border-radius: 13px !important;
+  padding: 12px 20px !important;
+  min-height: 46px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  box-shadow: 0 6px 18px -8px rgba(79, 70, 229, 0.35) !important;
+  transition: all 0.15s ease !important;
+}
+
+.lora-guide .lg-btn-pdf-hero:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%) !important;
+  border-color: #6366f1 !important;
+  color: #3730a3 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Official A4 PDF Guide Download Showcase Banner ── */
+.lora-guide .lg-pdf-banner {
+  position: relative !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(520px 320px at 8% 12%, rgba(59, 91, 219, 0.42), transparent 68%),
+    radial-gradient(480px 320px at 92% 85%, rgba(124, 58, 237, 0.38), transparent 68%),
+    linear-gradient(145deg, #070b1e 0%, #0f1738 52%, #090e26 100%) !important;
+  border: 1.5px solid rgba(129, 140, 248, 0.38) !important;
+  border-radius: 24px !important;
+  padding: clamp(22px, 3.2vw, 32px) !important;
+  color: #ffffff !important;
+  box-shadow: 0 22px 46px -18px rgba(15, 23, 42, 0.45), 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+/* Mini A4 Vertical PDF Cover Preview Card */
+.lora-guide .lg-pdf-thumb {
+  width: 112px !important;
+  height: 154px !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(120px 90px at 20% 15%, rgba(96, 165, 250, 0.35), transparent 70%),
+    linear-gradient(160deg, #0b1333 0%, #1e1b4b 55%, #0f172a 100%) !important;
+  border: 1.5px solid rgba(165, 180, 252, 0.45) !important;
+  box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  padding: 12px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+  text-decoration: none !important;
+  transition: transform 0.2s ease, border-color 0.2s ease !important;
+}
+
+.lora-guide .lg-pdf-thumb:hover {
+  transform: translateY(-3px) rotate(-1deg) !important;
+  border-color: #93c5fd !important;
+}
+
+.lora-guide .lg-pdf-thumb-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  padding: 2.5px 7px !important;
+  border-radius: 6px !important;
+  width: fit-content !important;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4) !important;
+}
+
+.lora-guide .lg-pdf-thumb-lines {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+
+.lora-guide .lg-pdf-thumb-title {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  color: #ffffff !important;
+}
+
+.lora-guide .lg-pdf-thumb-bar {
+  height: 4px !important;
+  border-radius: 99px !important;
+  background: linear-gradient(90deg, #60a5fa, #c084fc) !important;
+  width: 78% !important;
+}
+
+.lora-guide .lg-pdf-thumb-foot {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  color: #93c5fd !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.22) !important;
+  padding-top: 6px !important;
+}
+
+.lora-guide .lg-pdf-body {
+  min-width: 0 !important;
+}
+
+.lora-guide .lg-pdf-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 12px !important;
+  border-radius: 99px !important;
+  background: rgba(99, 102, 241, 0.24) !important;
+  border: 1px solid rgba(165, 180, 252, 0.38) !important;
+  color: #c7d2fe !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em !important;
+  margin-bottom: 10px !important;
+}
+
+.lora-guide .lg-pdf-body h2 {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  font-size: clamp(19px, 2.3vw, 24px) !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 0 8px !important;
+  line-height: 1.28 !important;
+}
+
+.lora-guide .lg-pdf-body p {
+  margin: 0 0 14px !important;
+  font-size: 14px !important;
+  color: #cbd5e1 !important;
+  line-height: 1.6 !important;
+  max-width: 680px !important;
+}
+
+.lora-guide .lg-pdf-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.lora-guide .lg-pdf-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  color: #e2e8f0 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.lora-guide .lg-pdf-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  min-width: 225px !important;
+  flex-shrink: 0 !important;
+}
+
+.lora-guide .lg-pdf-dl-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  padding: 13px 20px !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 52%, #7c3aed 100%) !important;
+  border: 1.5px solid rgba(224, 231, 255, 0.65) !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 12px 28px -8px rgba(79, 70, 229, 0.75) !important;
+  transition: transform 0.15s ease, filter 0.15s ease !important;
+}
+
+.lora-guide .lg-pdf-dl-btn:hover {
+  color: #ffffff !important;
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+.lora-guide .lg-pdf-sec-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+
+.lora-guide .lg-pdf-sub-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 9px 12px !important;
+  border-radius: 11px !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border: 1px solid rgba(165, 180, 252, 0.3) !important;
+  color: #e2e8f0 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.lora-guide .lg-pdf-sub-btn:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: #93c5fd !important;
+  color: #ffffff !important;
+}
+
 /* Section Headers */
 .lora-guide .lg-sec-head h2 {
   font-family: 'Bricolage Grotesque', sans-serif !important;
@@ -307,5 +537,19 @@
 @media (max-width: 900px) {
   .lora-guide .lg-wrap {
     padding: 20px 16px 104px !important;
+  }
+
+  .lora-guide .lg-pdf-banner {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .lora-guide .lg-pdf-thumb {
+    display: none !important;
+  }
+
+  .lora-guide .lg-pdf-actions {
+    width: 100% !important;
+    min-width: 0 !important;
   }
 }
