@@ -594,6 +594,7 @@ export default function PackDetail() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [selectedBankName, setSelectedBankName] = useState('');
   const [reviewStats, setReviewStats] = useState({ avgRating: 0, totalReviews: 0, verifiedCount: 0 });
+  const [descExpanded, setDescExpanded] = useState(false);
 
   // Promo Code State
   const navigate = useNavigate();
@@ -1685,11 +1686,30 @@ export default function PackDetail() {
               </div>
 
               {/* About this session */}
-              <section className="sec">
-                <h2>About this session</h2>
-                <p style={{ whiteSpace: 'pre-wrap' }}>
-                  {pack.description || 'Learn practical ways to master the topic. This course covers real strategies, tools, and step-by-step methods.'}
-                </p>
+              <section className="sec sec-desc">
+                <h2>{isMultiPack ? 'About this course' : 'About this session'}</h2>
+                <div>
+                  <p
+                    className={!descExpanded && ((pack.description?.length > 200) || (pack.description?.split('\n').length >= 4)) ? 'desc-clamped' : ''}
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {pack.description || 'Learn practical ways to master the topic. This course covers real strategies, tools, and step-by-step methods.'}
+                  </p>
+                  {Boolean((pack.description?.length > 200) || (pack.description?.split('\n').length >= 4)) && (
+                    <button
+                      type="button"
+                      className="btn-desc-toggle"
+                      onClick={() => setDescExpanded(prev => !prev)}
+                      aria-expanded={descExpanded}
+                    >
+                      {descExpanded ? (
+                        <>See less <ChevronUp size={16} /></>
+                      ) : (
+                        <>See more <ChevronDown size={16} /></>
+                      )}
+                    </button>
+                  )}
+                </div>
               </section>
 
               {/* What you'll learn */}

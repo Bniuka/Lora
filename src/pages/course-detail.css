@@ -253,11 +253,38 @@
   color: var(--ink) !important;
 }
 
-.lora-course .sec > p {
+.lora-course .sec > p,
+.lora-course .sec-desc p {
   margin: 0 !important;
   color: var(--muted) !important;
   font-size: 16px !important;
   line-height: 1.6 !important;
+}
+
+.lora-course .desc-clamped {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 4 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.lora-course .btn-desc-toggle {
+  background: none !important;
+  border: none !important;
+  color: var(--brand, #2563eb) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  padding: 8px 0 0 0 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: opacity 0.15s ease !important;
+}
+
+.lora-course .btn-desc-toggle:hover {
+  opacity: 0.8 !important;
+  text-decoration: underline !important;
 }
 
 /* ── What you'll learn ── */
