@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -22,12 +22,25 @@ import {
   Loader2,
   GitBranch,
   Settings,
+  UploadCloud,
+  Image as ImageIcon,
+  Video,
+  MessageCircle,
+  Send,
+  Sparkles,
+  ExternalLink,
+  ShieldCheck,
+  HelpCircle,
+  CheckCircle2,
+  Smartphone,
+  Info,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Modal, ShareMenu, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { getPackShareUrl, generateInviteToken, generateUniquePackSlug } from '../lib/utils';
+import './manage-multi-pack.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
@@ -46,6 +59,8 @@ export default function ManageMultiPack() {
   const [savingMain, setSavingMain] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbPreview, setThumbPreview] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
   const [copiedInvite, setCopiedInvite] = useState(false);
   const [deleteSubModal, setDeleteSubModal] = useState(null);
   const [deletingSub, setDeletingSub] = useState(false);
@@ -220,10 +235,12 @@ export default function ManageMultiPack() {
   }
 
   const totalStudents = subPacks.reduce((acc, s) => acc + (s.enrollments?.[0]?.count || 0), 0);
+  const paidPrices = subPacks.map(s => Number(s.price)).filter(n => n > 0);
+  const minSubPrice = paidPrices.length > 0 ? Math.min(...paidPrices) : null;
 
   return (
     <PageTransition>
-      <div className="p-5 sm:p-8 pb-24 max-w-5xl mx-auto">
+      <div className={`p-5 sm:p-8 pb-24 mx-auto transition-all ${activeTab === 'details' ? 'max-w-6xl' : 'max-w-5xl'}`}>
         {/* Breadcrumb */}
         <Link
           to="/creator/packs"
@@ -367,7 +384,6 @@ export default function ManageMultiPack() {
                 {subPacks.map((sub, idx) => {
                   const sessionCount = sub.sessions?.[0]?.count || 0;
                   const studentCount = sub.enrollments?.[0]?.count || 0;
-                  const effectiveLocked = idx > 0 && (Boolean(pack.sequential_unlock) || Boolean(sub.require_previous_pack));
 
                   return (
                     <div
@@ -516,172 +532,562 @@ export default function ManageMultiPack() {
 
         {/* TAB 2: EDIT MAIN COURSE DETAILS */}
         {activeTab === 'details' && (
-          <form
-            onSubmit={handleSaveMainDetails}
-            className="bg-white rounded-3xl border border-[#E2E8F0] p-6 sm:p-8 space-y-6"
-          >
-            <div>
-              <h2 className="text-lg font-bold text-[#0F172A]">Main Course Showcase Settings</h2>
-              <p className="text-xs text-[#64748B] mt-1">
-                Changes here update the main course page shown on Discover and your Creator Profile.
-              </p>
-            </div>
+          <div className="mmp-layout">
+            {/* Left: Bento Form Cards */}
+            <form onSubmit={handleSaveMainDetails} className="space-y-6">
 
-            <div className="grid sm:grid-cols-3 gap-3">
-              {[
-                { id: 'public', label: 'Public', icon: Globe2 },
-                { id: 'private', label: 'Private Showcase', icon: Lock },
-                { id: 'unlisted', label: 'Unlisted (Hidden)', icon: EyeOff },
-              ].map(opt => {
-                const Icon = opt.icon;
-                const active = (pack.visibility || 'public') === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setPack(prev => ({ ...prev, visibility: opt.id }))}
-                    className={`p-3.5 rounded-xl border text-left flex items-center gap-2.5 text-sm font-semibold cursor-pointer transition-all ${
-                      active
-                        ? 'border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]'
-                        : 'border-[#E2E8F0] bg-white text-[#475569]'
-                    }`}
+              {/* BENTO 1: Course Identity & Visibility */}
+              <div className="mmp-bento">
+                <div className="mmp-bento-header">
+                  <div className="mmp-bento-icon bg-blue-50 text-blue-600 border border-blue-200">
+                    <Globe2 size={22} />
+                  </div>
+                  <div>
+                    <h2 className="mmp-bento-title">Course Identity & Visibility</h2>
+                    <p className="mmp-bento-sub">Control how learners discover and access your main multi-course showcase.</p>
+                  </div>
+                </div>
+
+                {/* Visibility Selector */}
+                <div className="mb-5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 block">
+                    Course Visibility
+                  </label>
+                  <div className="mmp-vis-grid">
+                    {[
+                      {
+                        id: 'public',
+                        label: 'Public on Discover',
+                        desc: 'Searchable on Discover & listed on your creator profile for all learners.',
+                        icon: Globe2,
+                        iconColor: 'text-emerald-600',
+                        activeClass: 'is-active-public',
+                      },
+                      {
+                        id: 'private',
+                        label: 'Private Showcase',
+                        desc: 'Hidden from search. Learners can only view & enroll via your secret invite link.',
+                        icon: Lock,
+                        iconColor: 'text-purple-600',
+                        activeClass: 'is-active-private',
+                      },
+                      {
+                        id: 'unlisted',
+                        label: 'Unlisted (Hidden)',
+                        desc: 'Hidden from Discover. Only learners with the exact link can view it.',
+                        icon: EyeOff,
+                        iconColor: 'text-amber-600',
+                        activeClass: 'is-active-unlisted',
+                      },
+                    ].map(opt => {
+                      const Icon = opt.icon;
+                      const active = (pack.visibility || 'public') === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setPack(prev => ({ ...prev, visibility: opt.id }))}
+                          className={`mmp-vis-btn ${active ? opt.activeClass : ''}`}
+                        >
+                          <div className="mmp-vis-top">
+                            <span className="mmp-vis-label">
+                              <Icon size={16} className={opt.iconColor} />
+                              {opt.label}
+                            </span>
+                            {active && (
+                              <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px]">
+                                <Check size={11} />
+                              </span>
+                            )}
+                          </div>
+                          <p className="mmp-vis-desc">{opt.desc}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Course Title */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Main Course Title *
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      {(pack.title || '').length} / 120 chars
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 font-semibold text-base focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                    placeholder="e.g. Complete Full-Stack Web Mastery (Monthly Cohort)"
+                    value={pack.title || ''}
+                    onChange={e => setPack(prev => ({ ...prev, title: e.target.value }))}
+                    maxLength={120}
+                    required
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Full Course Description *
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      {(pack.description || '').length} characters
+                    </span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none leading-relaxed"
+                    placeholder="Describe what learners will learn across all batches, who this multi-course is for, and prerequisites..."
+                    value={pack.description || ''}
+                    onChange={e => setPack(prev => ({ ...prev, description: e.target.value }))}
+                    required
+                  />
+                </div>
+
+                {/* Category & Currency */}
+                <div className="grid sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+                      Course Category
+                    </label>
+                    <select
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none mb-2"
+                      value={pack.category || ''}
+                      onChange={e => setPack(prev => ({ ...prev, category: e.target.value }))}
+                    >
+                      <option value="">Select category</option>
+                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {CATEGORIES.slice(0, 5).map(cat => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setPack(prev => ({ ...prev, category: cat }))}
+                          className={`mmp-cat-chip ${pack.category === cat ? 'is-active' : ''}`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+                      Default Currency for New Batches
+                    </label>
+                    <select
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-semibold focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                      value={pack.currency || 'LKR'}
+                      onChange={e => setPack(prev => ({ ...prev, currency: e.target.value }))}
+                    >
+                      {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <p className="text-[11px] text-slate-400 mt-2">
+                      New sub-packs created under this multi-course will inherit this currency by default.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* BENTO 2: Visual Showcase & Media */}
+              <div className="mmp-bento">
+                <div className="mmp-bento-header">
+                  <div className="mmp-bento-icon bg-purple-50 text-purple-600 border border-purple-200">
+                    <ImageIcon size={22} />
+                  </div>
+                  <div>
+                    <h2 className="mmp-bento-title">Visual Media & Showcase</h2>
+                    <p className="mmp-bento-sub">Attract learners with high-resolution 16:9 imagery and a preview video.</p>
+                  </div>
+                </div>
+
+                {/* Drag and Drop Cover Image */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Main Showcase Cover Image
+                    </label>
+                    <span className="text-[11px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200">
+                      1280 × 720 (16:9)
+                    </span>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={e => {
+                      const f = e.target.files?.[0];
+                      if (f) {
+                        setThumbnailFile(f);
+                        setThumbPreview(URL.createObjectURL(f));
+                      }
+                    }}
+                  />
+
+                  <div
+                    className={`mmp-dropzone ${isDragging ? 'is-dragover' : ''}`}
+                    onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={e => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      const f = e.dataTransfer?.files?.[0];
+                      if (f && f.type.startsWith('image/')) {
+                        setThumbnailFile(f);
+                        setThumbPreview(URL.createObjectURL(f));
+                      }
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
                   >
-                    <Icon size={16} />
-                    <span>{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+                    {thumbPreview ? (
+                      <div className="mmp-dropzone-preview-wrap">
+                        <img
+                          src={thumbPreview}
+                          alt="Cover preview"
+                          className="mmp-dropzone-preview-img"
+                        />
+                        <div className="mmp-dropzone-overlay">
+                          <UploadCloud size={30} />
+                          <span className="text-sm font-bold">Click or drag new image to replace</span>
+                          <span className="text-xs text-white/80">Supports PNG, JPG, WebP up to 5MB</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mmp-dropzone-inner">
+                        <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
+                          <UploadCloud size={28} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800">
+                            Upload Main Course Cover Image
+                          </p>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Drag & drop an image here, or <span className="text-purple-600 font-semibold underline">browse file</span>
+                          </p>
+                        </div>
+                        <span className="text-[11px] text-slate-400">
+                          Recommended 1280 × 720px • PNG, JPG, WebP max 5MB
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-            <div>
-              <label className="form-label">Main Course Title *</label>
-              <input
-                className="input-field"
-                value={pack.title || ''}
-                onChange={e => setPack(prev => ({ ...prev, title: e.target.value }))}
-                required
-              />
-            </div>
+                  {thumbPreview && (
+                    <div className="mt-2.5 flex items-center justify-between text-xs text-slate-500 px-1">
+                      <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+                        <CheckCircle2 size={13} /> Cover image ready
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-purple-600 font-bold hover:underline cursor-pointer"
+                      >
+                        Change Image
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-            <div>
-              <label className="form-label">Full Course Description *</label>
-              <textarea
-                rows={4}
-                className="input-field"
-                value={pack.description || ''}
-                onChange={e => setPack(prev => ({ ...prev, description: e.target.value }))}
-                required
-              />
-            </div>
+                {/* Intro Video URL */}
+                <div className="pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                      <Video size={14} className="text-red-500" /> Intro Video Preview URL
+                    </label>
+                    {pack.intro_video_url && (
+                      <a
+                        href={pack.intro_video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-semibold text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        Test Link <ExternalLink size={10} />
+                      </a>
+                    )}
+                  </div>
+                  <input
+                    type="url"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none"
+                    placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+                    value={pack.intro_video_url || ''}
+                    onChange={e => setPack(prev => ({ ...prev, intro_video_url: e.target.value }))}
+                  />
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    YouTube or Vimeo trailer shown on the course hero section to boost enrollments.
+                  </p>
+                </div>
+              </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="form-label">Category</label>
-                <select
-                  className="select-field"
-                  value={pack.category || ''}
-                  onChange={e => setPack(prev => ({ ...prev, category: e.target.value }))}
+              {/* BENTO 3: Step-by-Step Batch Progression */}
+              <div className="mmp-flowchart">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-lg bg-purple-200/80 text-purple-700 flex items-center justify-center font-bold">
+                        <GitBranch size={16} />
+                      </span>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        Step-by-Step Batch Progression (1st → 2nd → 3rd)
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                      When enabled, learners must enroll in <b>Batch #1</b> before unlocking <b>Batch #2</b>, and so on. Turn off to allow students to join any monthly batch directly without prerequisites.
+                    </p>
+
+                    <div className="mmp-flow-steps">
+                      <span className="mmp-flow-node">
+                        <Sparkles size={12} className="text-amber-500" /> 1. Batch #1 (Base)
+                      </span>
+                      <span className="mmp-flow-arrow">➔</span>
+                      <span className="mmp-flow-node">
+                        <Lock size={12} className="text-purple-600" /> 2. Batch #2
+                      </span>
+                      <span className="mmp-flow-arrow">➔</span>
+                      <span className="mmp-flow-node">
+                        <Lock size={12} className="text-purple-600" /> 3. Batch #3
+                      </span>
+                    </div>
+                  </div>
+
+                  <label className="mmp-switch" title="Toggle step-by-step progression">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(pack.sequential_unlock)}
+                      onChange={e => setPack(prev => ({ ...prev, sequential_unlock: e.target.checked }))}
+                    />
+                    <span className="mmp-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              {/* BENTO 4: Community & Contact Hub */}
+              <div className="mmp-bento">
+                <div className="mmp-bento-header">
+                  <div className="mmp-bento-icon bg-emerald-50 text-emerald-600 border border-emerald-200">
+                    <MessageCircle size={22} />
+                  </div>
+                  <div>
+                    <h2 className="mmp-bento-title">Community & Support Channels</h2>
+                    <p className="mmp-bento-sub">Give enrolled learners instant access to WhatsApp & Telegram channels.</p>
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {/* WhatsApp Hub */}
+                  <div className="mmp-brand-card whatsapp">
+                    <div className="mmp-brand-head">
+                      <div className="mmp-brand-pill wa">
+                        <MessageCircle size={15} />
+                      </div>
+                      <span className="mmp-brand-title">WhatsApp Support & Group</span>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1 block">
+                          Inquiry WhatsApp Number
+                        </label>
+                        <PhoneInput
+                          international
+                          defaultCountry="LK"
+                          value={pack.whatsapp_number || ''}
+                          onChange={v => setPack(prev => ({ ...prev, whatsapp_number: v || '' }))}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1 block">
+                          Default WhatsApp Group Link
+                        </label>
+                        <input
+                          type="url"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-emerald-200 bg-white text-slate-800 text-xs focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none"
+                          placeholder="https://chat.whatsapp.com/..."
+                          value={pack.whatsapp_link || ''}
+                          onChange={e => setPack(prev => ({ ...prev, whatsapp_link: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Telegram Hub */}
+                  <div className="mmp-brand-card telegram">
+                    <div className="mmp-brand-head">
+                      <div className="mmp-brand-pill tg">
+                        <Send size={14} />
+                      </div>
+                      <span className="mmp-brand-title">Telegram Community</span>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-sky-900 mb-1 block">
+                          Default Telegram Channel / Group
+                        </label>
+                        <input
+                          type="url"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 bg-white text-slate-800 text-xs focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all outline-none"
+                          placeholder="https://t.me/..."
+                          value={pack.telegram_link || ''}
+                          onChange={e => setPack(prev => ({ ...prev, telegram_link: e.target.value }))}
+                        />
+                      </div>
+                      <p className="text-[11px] text-sky-700/80 leading-relaxed pt-2">
+                        Shared with learners automatically after enrollment into any sub-pack or batch.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* SAVE ACTION BAR */}
+              <div className="mmp-save-bar">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <CheckCircle2 size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">
+                      Ready to apply changes?
+                    </p>
+                    <p className="text-[11px] text-slate-500">
+                      Updates are published immediately to your public course showcase.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="mmp-save-btn"
+                  disabled={savingMain}
                 >
-                  <option value="">Select category</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                  {savingMain ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" /> Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Check size={16} /> Save Main Course Details
+                    </>
+                  )}
+                </button>
               </div>
-              <div>
-                <label className="form-label">Default Currency for New Sub-Packs</label>
-                <select
-                  className="select-field"
-                  value={pack.currency || 'LKR'}
-                  onChange={e => setPack(prev => ({ ...prev, currency: e.target.value }))}
-                >
-                  {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-            </div>
+            </form>
 
-            <div className="p-4 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                  <GitBranch size={15} className="text-[#6D28D9]" />
-                  Require Step-by-Step Batch Progression (1st → 2nd → 3rd)
+            {/* Right: Sticky Live Learner Preview */}
+            <aside className="mmp-preview-sticky">
+              <div className="mmp-preview-badge-row">
+                <span className="mmp-live-pill">
+                  <span className="mmp-live-dot"></span> Live Discover Preview
+                </span>
+                <span className="text-[11px] font-semibold text-slate-400">
+                  Learner View
+                </span>
+              </div>
+
+              {/* Discover Card Mock */}
+              <div className="mmp-discover-card">
+                <div className="mmp-discover-thumb">
+                  {thumbPreview ? (
+                    <img
+                      src={thumbPreview}
+                      alt={pack.title || 'Course Preview'}
+                      className="mmp-discover-img"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-slate-400 gap-2">
+                      <Layers size={36} className="text-blue-400" />
+                      <span className="text-xs font-bold text-slate-300">No cover image yet</span>
+                    </div>
+                  )}
+
+                  {/* Top Badges */}
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-600/95 text-white backdrop-blur-sm shadow-sm">
+                      <Layers size={11} />
+                      {subPacks.length > 0 ? `${subPacks.length} Batch${subPacks.length !== 1 ? 'es' : ''}` : 'Multi-Pack'}
+                    </span>
+
+                    {pack.visibility === 'private' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-900/90 text-purple-200 backdrop-blur-sm shadow-sm">
+                        <Lock size={10} /> Private
+                      </span>
+                    )}
+
+                    {pack.visibility === 'unlisted' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-900/90 text-amber-200 backdrop-blur-sm shadow-sm">
+                        <EyeOff size={10} /> Unlisted
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mmp-discover-body">
+                  <h3 className="font-bold text-slate-900 text-base mb-1 line-clamp-1">
+                    {pack.title || 'Untitled Multi-Course Pack'}
+                  </h3>
+
+                  <p className="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
+                    <span>
+                      {profile?.first_name ? `${profile.first_name} ${profile?.last_name || ''}` : 'Creator'}
+                    </span>
+                    <span>•</span>
+                    <span className="font-medium text-blue-600">
+                      {pack.category || 'General'}
+                    </span>
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2.5 border-t border-slate-100">
+                    <div>
+                      {pack.visibility === 'private' ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
+                          <Lock size={11} /> Invite Only
+                        </span>
+                      ) : (
+                        <p className="text-sm font-extrabold text-blue-600">
+                          {minSubPrice !== null ? `From ${pack.currency || 'USD'} ${minSubPrice}` : 'View Batches →'}
+                        </p>
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                      <Users size={12} /> {totalStudents} student{totalStudents !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pro Tip Card */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50/60 rounded-2xl border border-amber-200/70 p-4 text-xs text-amber-950">
+                <div className="flex items-center gap-2 font-bold text-amber-900 mb-1">
+                  <Sparkles size={14} className="text-amber-600" />
+                  <span>Pro Tip for Multi-Packs</span>
+                </div>
+                <p className="text-slate-600 leading-relaxed text-[11.5px]">
+                  Courses with an enticing 16:9 cover image and an active WhatsApp group see <b>3x higher enrollment</b> and repeat retention across monthly cohorts.
                 </p>
-                <p className="text-xs text-[#64748B] mt-1">
-                  When enabled, learners must enroll in Batch #1 before unlocking Batch #2, and so on. Turn off to allow students to join any monthly sub-pack directly.
-                </p>
+                <div className="mt-3 pt-2.5 border-t border-amber-200/60 flex items-center justify-between">
+                  <Link
+                    to={`/learner/pack/${pack.slug || pack.id}`}
+                    target="_blank"
+                    className="inline-flex items-center gap-1 text-amber-800 font-bold hover:underline text-[11px]"
+                  >
+                    View Public Course Page <ExternalLink size={11} />
+                  </Link>
+                  <span className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider">
+                    Auto Synced
+                  </span>
+                </div>
               </div>
-              <input
-                type="checkbox"
-                className="w-5 h-5 accent-[#2563EB] cursor-pointer flex-shrink-0"
-                checked={Boolean(pack.sequential_unlock)}
-                onChange={e => setPack(prev => ({ ...prev, sequential_unlock: e.target.checked }))}
-              />
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="form-label">Main Cover Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={e => {
-                    const f = e.target.files?.[0];
-                    if (f) {
-                      setThumbnailFile(f);
-                      setThumbPreview(URL.createObjectURL(f));
-                    }
-                  }}
-                  className="text-sm text-[#475569]"
-                />
-              </div>
-              <div>
-                <label className="form-label">Intro Video URL (YouTube / Vimeo)</label>
-                <input
-                  type="url"
-                  className="input-field"
-                  placeholder="https://youtube.com/watch?v=..."
-                  value={pack.intro_video_url || ''}
-                  onChange={e => setPack(prev => ({ ...prev, intro_video_url: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div>
-                <label className="form-label">WhatsApp Inquiry Number</label>
-                <PhoneInput
-                  international
-                  defaultCountry="LK"
-                  value={pack.whatsapp_number || ''}
-                  onChange={v => setPack(prev => ({ ...prev, whatsapp_number: v || '' }))}
-                />
-              </div>
-              <div>
-                <label className="form-label">Default WhatsApp Group</label>
-                <input
-                  type="url"
-                  className="input-field"
-                  placeholder="https://chat.whatsapp.com/..."
-                  value={pack.whatsapp_link || ''}
-                  onChange={e => setPack(prev => ({ ...prev, whatsapp_link: e.target.value }))}
-                />
-              </div>
-              <div>
-                <label className="form-label">Default Telegram Channel</label>
-                <input
-                  type="url"
-                  className="input-field"
-                  placeholder="https://t.me/..."
-                  value={pack.telegram_link || ''}
-                  onChange={e => setPack(prev => ({ ...prev, telegram_link: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-[#F1F5F9] flex justify-end">
-              <button type="submit" className="btn-primary py-3 px-7" disabled={savingMain}>
-                {savingMain ? <Loader2 size={16} className="animate-spin" /> : 'Save Main Course Details'}
-              </button>
-            </div>
-          </form>
+            </aside>
+          </div>
         )}
 
         {/* Delete Sub-Pack Modal */}

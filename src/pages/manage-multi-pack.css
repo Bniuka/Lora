@@ -1,0 +1,482 @@
+/* ================================================================
+   Manage Multi-Pack — Vibrant Bento Studio & Live Preview Styles
+   ================================================================ */
+
+.mmp-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+@media (min-width: 1024px) {
+  .mmp-layout {
+    grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+    align-items: start;
+  }
+}
+
+/* ── Bento Cards ── */
+.mmp-bento {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
+  padding: 24px sm:p-7;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mmp-bento:hover {
+  box-shadow: 0 10px 30px -6px rgba(15, 23, 42, 0.07);
+}
+
+.mmp-bento-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.mmp-bento-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.mmp-bento-title {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.mmp-bento-sub {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+/* ── Visibility Switcher ── */
+.mmp-vis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.mmp-vis-btn {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.mmp-vis-btn:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.mmp-vis-btn.is-active-public {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #4ade80;
+  box-shadow: 0 6px 18px -4px rgba(34, 197, 94, 0.2);
+}
+
+.mmp-vis-btn.is-active-private {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-color: #c084fc;
+  box-shadow: 0 6px 18px -4px rgba(168, 85, 247, 0.2);
+}
+
+.mmp-vis-btn.is-active-unlisted {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #fcd34d;
+  box-shadow: 0 6px 18px -4px rgba(245, 158, 11, 0.2);
+}
+
+.mmp-vis-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.mmp-vis-label {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mmp-vis-desc {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+/* ── Interactive Image Dropzone ── */
+.mmp-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 20px;
+  background: #f8fafc;
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.mmp-dropzone:hover,
+.mmp-dropzone.is-dragover {
+  border-color: #8b5cf6;
+  background: #faf5ff;
+}
+
+.mmp-dropzone-inner {
+  padding: 32px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mmp-dropzone-preview-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.mmp-dropzone-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.mmp-dropzone-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.2) 60%, transparent 100%);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  transition: opacity 0.2s ease;
+  padding: 16px;
+}
+
+.mmp-dropzone:hover .mmp-dropzone-overlay {
+  opacity: 1;
+}
+
+.mmp-dropzone:hover .mmp-dropzone-preview-img {
+  transform: scale(1.03);
+}
+
+/* ── Sequential Flowchart Banner ── */
+.mmp-flowchart {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #eff6ff 100%);
+  border: 1.5px solid #e9d5ff;
+  border-radius: 20px;
+  padding: 20px 22px;
+}
+
+.mmp-flow-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0 10px 0;
+}
+
+.mmp-flow-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #ffffff;
+  color: #6b21a8;
+  border: 1px solid #d8b4fe;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.08);
+}
+
+.mmp-flow-arrow {
+  color: #a855f7;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* ── iOS Switch ── */
+.mmp-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.mmp-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.mmp-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.25s;
+  border-radius: 99px;
+}
+
+.mmp-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.25s;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mmp-switch input:checked + .mmp-slider {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+}
+
+.mmp-switch input:checked + .mmp-slider:before {
+  transform: translateX(20px);
+}
+
+/* ── Community Brand Cards ── */
+.mmp-brand-card {
+  border-radius: 18px;
+  padding: 18px 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 1.5px solid transparent;
+}
+
+.mmp-brand-card.whatsapp {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-color: #bbf7d0;
+}
+
+.mmp-brand-card.whatsapp:focus-within {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.mmp-brand-card.telegram {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #bae6fd;
+}
+
+.mmp-brand-card.telegram:focus-within {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.mmp-brand-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mmp-brand-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.mmp-brand-pill.wa {
+  background: #25d366;
+  box-shadow: 0 3px 8px rgba(37, 211, 102, 0.3);
+}
+
+.mmp-brand-pill.tg {
+  background: #229ed9;
+  box-shadow: 0 3px 8px rgba(34, 158, 217, 0.3);
+}
+
+.mmp-brand-title {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+/* ── Sticky Live Preview Column ── */
+.mmp-preview-sticky {
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mmp-preview-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.mmp-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mmp-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: mmpPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes mmpPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+.mmp-discover-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 8px 30px -6px rgba(15, 23, 42, 0.09);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.mmp-discover-thumb {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mmp-discover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mmp-discover-body {
+  padding: 18px 20px;
+}
+
+/* ── Save Action Bar ── */
+.mmp-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  padding: 16px 22px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+}
+
+.mmp-save-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14.5px;
+  padding: 12px 28px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px -4px rgba(37, 99, 235, 0.45);
+  transition: all 0.2s ease;
+}
+
+.mmp-save-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.55);
+}
+
+.mmp-save-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ── Category Chips ── */
+.mmp-cat-chip {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.mmp-cat-chip:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.mmp-cat-chip.is-active {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #2563eb;
+  font-weight: 700;
+}
