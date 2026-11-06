@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Loader2, Crown, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Loader2, Crown, Sparkles, Camera, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { isUserAdmin } from '../lib/admin';
 import { Link } from 'react-router-dom';
+import { processAndSquareImage, verifyHumanAuthenticity, uploadAvatarAndSaveProfile } from '../lib/avatarVerification';
 import './settings.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -18,6 +19,11 @@ export default function CreatorSettings() {
   const [savingProf, setSavingProf] = useState(false);
   const [savingPw, setSavingPw] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+
+  // Avatar upload and AI verification state
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarStatus, setAvatarStatus] = useState({ stage: 'idle', message: '', isError: false });
+  const fileInputRef = useRef(null);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -204,6 +210,66 @@ export default function CreatorSettings() {
       showToast('Error: ' + err.message);
     } finally {
       setSavingProf(false);
+    }
+  };
+
+  const handleAvatarFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset file input so user can pick again if desired
+    e.target.value = '';
+
+    setUploadingAvatar(true);
+    setAvatarStatus({ stage: 'processing', message: 'Optimizing and squaring photo (1:1)...', isError: false });
+
+    try {
+      // 1. Process & square image via canvas (enforces 1:1, max 5MB, 500x500px)
+      const { blob, base64 } = await processAndSquareImage(file);
+
+      // 2. Automated AI authenticity inspection (verifies real human vs cartoon/anime/object/AI art)
+      setAvatarStatus({ stage: 'verifying', message: 'AI inspecting photo (confirming authentic human instructor)...', isError: false });
+      const { verified, reason } = await verifyHumanAuthenticity(base64);
+
+      if (!verified) {
+        setAvatarStatus({
+          stage: 'rejected',
+          message: reason || 'Photo rejected: Please upload an authentic photograph of yourself. Cartoon avatars, logos, and AI art are not allowed.',
+          isError: true
+        });
+        setUploadingAvatar(false);
+        return;
+      }
+
+      // 3. Upload to Supabase Storage & update profiles table
+      setAvatarStatus({ stage: 'uploading', message: 'Uploading verified instructor photo...', isError: false });
+      await uploadAvatarAndSaveProfile(user.id, blob);
+
+      // 4. Refresh auth profile
+      await refreshProfile();
+      setAvatarStatus({ stage: 'success', message: 'Photo verified and updated successfully!', isError: false });
+      showToast('Profile photo updated & verified!');
+    } catch (err) {
+      console.error('[CreatorSettings] Avatar upload error:', err);
+      setAvatarStatus({ stage: 'error', message: err.message || 'Failed to update photo.', isError: true });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!window.confirm('Are you sure you want to remove your profile picture?')) return;
+    try {
+      setUploadingAvatar(true);
+      await supabase.from('profiles').update({ avatar_url: null }).eq('id', user.id);
+      await refreshProfile();
+      setAvatarStatus({ stage: 'idle', message: '', isError: false });
+      showToast('Profile photo removed');
+    } catch (err) {
+      console.error('Remove avatar error:', err);
+      showToast('Could not remove photo: ' + err.message);
+    } finally {
+      setUploadingAvatar(false);
     }
   };
 
@@ -609,6 +675,78 @@ export default function CreatorSettings() {
               <h2>Profile information</h2>
               <p>This is what learners see on your courses.</p>
             </header>
+
+            {/* Profile Photo Upload & AI Authenticity Card */}
+            <div className="s-avatar-card">
+              <div className="s-avatar-preview-wrap">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="s-avatar-img" />
+                ) : (
+                  <span>{profile?.first_name?.[0] || 'C'}{profile?.last_name?.[0] || ''}</span>
+                )}
+              </div>
+
+              <div className="s-avatar-info">
+                <div className="s-avatar-title-row">
+                  <h3 className="s-avatar-title">Instructor Profile Photo</h3>
+                  {profile?.avatar_url && (
+                    <span className="s-avatar-verified-pill">
+                      <CheckCircle2 size={13} /> Real Instructor Photo
+                    </span>
+                  )}
+                </div>
+
+                <p className="s-avatar-desc">
+                  Upload a real photograph of yourself. Authentic photos confirm instructor credibility for new learners and boost course enrollments.
+                </p>
+
+                <div className="s-avatar-specs">
+                  <span className="s-avatar-spec-chip">✓ Square 1:1 (auto-cropped)</span>
+                  <span className="s-avatar-spec-chip">✓ Real human face required</span>
+                  <span className="s-avatar-spec-chip">✓ Max 5 MB (JPG, PNG, WEBP)</span>
+                  <span className="s-avatar-spec-chip">🚫 No cartoons, AI art or objects</span>
+                </div>
+
+                <div className="s-avatar-actions">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarFileSelect}
+                    accept="image/jpeg,image/png,image/webp"
+                    style={{ display: 'none' }}
+                  />
+                  <button
+                    type="button"
+                    className="s-btn-upload-photo"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                  >
+                    {uploadingAvatar ? (
+                      <><Loader2 size={15} className="animate-spin" /> {avatarStatus.message || 'Verifying photo...'}</>
+                    ) : (
+                      <><Camera size={15} /> {profile?.avatar_url ? 'Change Photo' : 'Upload Real Photo'}</>
+                    )}
+                  </button>
+
+                  {profile?.avatar_url && !uploadingAvatar && (
+                    <button
+                      type="button"
+                      className="s-btn-remove-photo"
+                      onClick={handleRemoveAvatar}
+                    >
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  )}
+                </div>
+
+                {avatarStatus.message && (
+                  <div className={`s-avatar-alert ${avatarStatus.isError ? 'error' : 'scanning'}`}>
+                    {avatarStatus.isError ? <AlertTriangle size={16} /> : <Loader2 size={16} className="animate-spin" />}
+                    <span>{avatarStatus.message}</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="s-grid">
               <div className="s-field">

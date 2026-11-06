@@ -750,6 +750,171 @@
   border-color: var(--s-brand);
 }
 
+/* ── Profile Avatar Upload Card ── */
+.lora-settings .s-avatar-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #f8fafc;
+  border: 1.5px solid var(--s-line);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.lora-settings .s-avatar-preview-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(14, 23, 51, 0.08);
+  flex-shrink: 0;
+  border: 3px solid #fff;
+  outline: 2px solid #e2e8f0;
+}
+
+.lora-settings .s-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lora-settings .s-avatar-info {
+  flex: 1;
+  min-width: 240px;
+}
+
+.lora-settings .s-avatar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.lora-settings .s-avatar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--s-ink);
+  margin: 0;
+}
+
+.lora-settings .s-avatar-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.lora-settings .s-avatar-desc {
+  font-size: 13px;
+  color: var(--s-muted);
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.lora-settings .s-avatar-specs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.lora-settings .s-avatar-spec-chip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.lora-settings .s-avatar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lora-settings .s-btn-upload-photo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--s-brand);
+  color: #fff;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.lora-settings .s-btn-upload-photo:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.lora-settings .s-btn-upload-photo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lora-settings .s-btn-remove-photo {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lora-settings .s-btn-remove-photo:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #d6334a;
+  border-color: #fecaca;
+}
+
+.lora-settings .s-avatar-alert {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.lora-settings .s-avatar-alert.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.lora-settings .s-avatar-alert.scanning {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lora-settings *, .lora-settings-toast {
     animation: none !important;
