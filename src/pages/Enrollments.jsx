@@ -266,13 +266,28 @@ export default function Enrollments() {
               const packTitle = parentTitle
                 ? `${parentTitle} › ${x.session_packs?.title || 'Sub-Pack'}`
                 : (x.session_packs?.title || 'Course Pack');
-              const amount = `${x.session_packs?.currency || 'LKR'} ${x.session_packs?.price != null ? Number(x.session_packs.price).toFixed(0) : '0'}`;
               const isBank = x.payment_method_used === 'bank' || x.payment_method_used?.startsWith('bank');
               let bankName = x.bank_name_used;
               if (!bankName && x.payment_method_used?.includes(':')) {
                 bankName = x.payment_method_used.split(':')[1].trim();
               }
-              const method = isBank 
+              const isFree = x.payment_method_used === 'free'
+                || x.payment_reference_code?.startsWith('FREE_')
+                || Number(x.session_packs?.price) === 0;
+
+              const isPromo = Boolean(x.promo_code_used || x.payment_method_used?.startsWith('promo:'));
+
+              const amount = isFree
+                ? 'FREE'
+                : (isPromo && Number(x.amount_paid) === 0)
+                ? 'FREE (Promo)'
+                : `${x.session_packs?.currency || 'LKR'} ${x.session_packs?.price != null ? Number(x.session_packs.price).toFixed(0) : '0'}`;
+
+              const method = isFree
+                ? 'Free enrollment'
+                : isPromo
+                ? `Promo code (${x.promo_code_used || x.payment_method_used?.split(':')[1] || ''})`
+                : isBank 
                 ? (bankName ? `Bank transfer (${bankName})` : 'Bank transfer')
                 : (x.payment_method_used || 'Payment link');
               const submittedText = x.submitted_at ? format(new Date(x.submitted_at), 'MMM dd, yyyy · h:mm a') : 'N/A';

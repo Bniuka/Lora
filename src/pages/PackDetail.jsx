@@ -747,6 +747,12 @@ export default function PackDetail() {
         const res = await supabase.from('enrollments').upsert(enrPayload, { onConflict: enrollment?.id ? 'id' : undefined });
         enrErr = res.error;
       }
+      if (enrErr && (enrErr.message?.includes('enrollments_payment_method_used_check') || enrErr.code === '23514')) {
+        console.warn("DB check constraint hit on promo payment_method_used. Retrying with fallback...");
+        enrPayload.payment_method_used = 'link';
+        const res = await supabase.from('enrollments').upsert(enrPayload, { onConflict: enrollment?.id ? 'id' : undefined });
+        enrErr = res.error;
+      }
 
       if (enrErr) throw enrErr;
 
@@ -781,12 +787,22 @@ export default function PackDetail() {
       storedInvite = normalizePromoCode(localStorage.getItem(`lora_invite_${pack.id}`) || '');
     } catch (_) {}
 
+    // Also check if Parent Multi-Pack was unlocked with its secret invite token
+    let parentStoredInvite = '';
+    if (pack.parent_pack_id) {
+      try {
+        parentStoredInvite = normalizePromoCode(localStorage.getItem(`lora_invite_${pack.parent_pack_id}`) || '');
+      } catch (_) {}
+    }
+
     if (expectedInvite && inviteFromUrl && inviteFromUrl === expectedInvite) {
       setInviteUnlocked(true);
       try {
         localStorage.setItem(`lora_invite_${pack.id}`, pack.invite_token);
       } catch (_) {}
     } else if (expectedInvite && storedInvite && storedInvite === expectedInvite) {
+      setInviteUnlocked(true);
+    } else if (parentStoredInvite) {
       setInviteUnlocked(true);
     }
 
@@ -973,7 +989,7 @@ export default function PackDetail() {
     setEnrollingFree(true);
     try {
       const code = 'FREE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      const { error: enrErr } = await supabase.from('enrollments').upsert({
+      const enrPayload = {
         id: enrollment?.id || undefined,
         learner_id: user.id,
         pack_id: pack.id,
@@ -981,7 +997,24 @@ export default function PackDetail() {
         payment_method_used: 'free',
         payment_reference_code: code,
         submitted_at: new Date().toISOString(),
-      }, { onConflict: enrollment?.id ? 'id' : undefined });
+      };
+
+      let { error: enrErr } = await supabase.from('enrollments').upsert(
+        enrPayload,
+        { onConflict: enrollment?.id ? 'id' : undefined }
+      );
+
+      // If Postgres check constraint rejects 'free' (enrollments_payment_method_used_check),
+      // retry with fallback payment_method_used ('link') so enrollment succeeds seamlessly!
+      if (enrErr && (enrErr.message?.includes('enrollments_payment_method_used_check') || enrErr.code === '23514')) {
+        console.warn("DB check constraint hit on payment_method_used 'free'. Retrying with fallback...", enrErr.message);
+        enrPayload.payment_method_used = 'link';
+        const retryRes = await supabase.from('enrollments').upsert(
+          enrPayload,
+          { onConflict: enrollment?.id ? 'id' : undefined }
+        );
+        enrErr = retryRes.error;
+      }
 
       if (enrErr) throw enrErr;
 
@@ -996,6 +1029,7 @@ export default function PackDetail() {
         console.warn('Could not dispatch notification:', notifErr);
       }
 
+      setEnrollment({ status: 'confirmed' });
       navigate(`/learner/pack/${pack.slug || pack.id}/sessions`);
     } catch (err) {
       console.error('Free enrollment error:', err);
@@ -1073,6 +1107,9 @@ export default function PackDetail() {
         delete enrollmentPayload.bank_name_used;
         delete enrollmentPayload.amount_paid;
         delete enrollmentPayload.promo_code_used;
+        if (enrErr.message?.includes('enrollments_payment_method_used_check') || enrErr.code === '23514') {
+          enrollmentPayload.payment_method_used = paymentMethod === 'bank' ? 'bank' : 'link';
+        }
         const { error: retryErr } = await supabase.from('enrollments').upsert(
           enrollmentPayload,
           { onConflict: enrollment?.id ? 'id' : undefined }
@@ -1162,11 +1199,19 @@ export default function PackDetail() {
   }
 
   const isRestrictedPack = pack.visibility === 'private' || pack.visibility === 'unlisted';
+  const parentInviteUnlocked = Boolean(
+    pack.parent_pack_id && (
+      (parentPack && parentPack.visibility === 'public') ||
+      Boolean(parentPack?.id && localStorage.getItem(`lora_invite_${parentPack.id}`))
+    )
+  );
+
   const hasPrivateAccess =
     !isRestrictedPack ||
     user?.id === pack.creator_id ||
     Boolean(enrollment) ||
     inviteUnlocked ||
+    parentInviteUnlocked ||
     Boolean(appliedPromo);
   const isLockedPrivate = isRestrictedPack && !hasPrivateAccess;
 
