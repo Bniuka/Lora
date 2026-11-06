@@ -187,6 +187,7 @@ export default function CreatorLayout({ children }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMascotClosed, setMobileMascotClosed] = useState(false);
   const notifRef = useRef(null);
   const userMenuRef = useRef(null);
 
@@ -304,47 +305,74 @@ export default function CreatorLayout({ children }) {
           </nav>
 
           {/* ══════════════ DREAMY MASCOT (CREATOR COMPANION) ══════════════ */}
-          <div
-            className="creator-mascot-widget"
-            onClick={() => navigate('/creator/guide')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/creator/guide')}
-            title="Dream big! Click to open Creator Guide"
-          >
-            {/* Ambient Aura Glow */}
-            <div className="creator-mascot-aura" aria-hidden="true" />
-
-            {/* Floating Sparkles */}
-            <div className="creator-mascot-sparkles" aria-hidden="true">
-              <span className="creator-sparkle s1">✦</span>
-              <span className="creator-sparkle s2">✨</span>
-              <span className="creator-sparkle s3">★</span>
+          {mobileMascotClosed ? (
+            <div
+              className="creator-mascot-widget-min"
+              onClick={() => setMobileMascotClosed(false)}
+              role="button"
+              tabIndex={0}
+              title="Dreamy Mascot - Tap to expand"
+            >
+              <img src="/mascot-dreamy.png" alt="Dreamy" className="creator-mascot-min-img" />
+              <span className="creator-mascot-min-sparkle" aria-hidden="true">✨</span>
             </div>
+          ) : (
+            <div
+              className="creator-mascot-widget"
+              onClick={() => navigate('/creator/guide')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/creator/guide')}
+              title="Dream big! Click to open Creator Guide"
+            >
+              {/* Mobile Minimize Button */}
+              <button
+                type="button"
+                className="creator-mascot-close-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMobileMascotClosed(true);
+                }}
+                aria-label="Minimize companion"
+                title="Minimize mascot"
+              >
+                ×
+              </button>
 
-            {/* Floating Mascot Image */}
-            <div className="creator-mascot-img-wrap">
-              <img
-                src="/mascot-dreamy.png"
-                alt="Lora Creator Mascot"
-                className="creator-mascot-img"
-                loading="lazy"
-                draggable={false}
-              />
+              {/* Ambient Aura Glow */}
+              <div className="creator-mascot-aura" aria-hidden="true" />
+
+              {/* Floating Sparkles */}
+              <div className="creator-mascot-sparkles" aria-hidden="true">
+                <span className="creator-sparkle s1">✦</span>
+                <span className="creator-sparkle s2">✨</span>
+                <span className="creator-sparkle s3">★</span>
+              </div>
+
+              {/* Floating Mascot Image */}
+              <div className="creator-mascot-img-wrap">
+                <img
+                  src="/mascot-dreamy.png"
+                  alt="Lora Creator Mascot"
+                  className="creator-mascot-img"
+                  loading="lazy"
+                  draggable={false}
+                />
+              </div>
+
+              {/* Synchronized Dynamic Ground Shadow */}
+              <div className="creator-mascot-shadow" aria-hidden="true" />
+
+              {/* Dreamy Interactive Speech Bubble / Pill */}
+              <div className="creator-mascot-bubble">
+                <span className="bubble-text">Dream big, Creator!</span>
+                <span className="bubble-hint">
+                  <span>Guide</span>
+                  <svg viewBox="0 0 24 24" className="bubble-arrow" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+              </div>
             </div>
-
-            {/* Synchronized Dynamic Ground Shadow */}
-            <div className="creator-mascot-shadow" aria-hidden="true" />
-
-            {/* Dreamy Interactive Speech Bubble / Pill */}
-            <div className="creator-mascot-bubble">
-              <span className="bubble-text">Dream big, Creator!</span>
-              <span className="bubble-hint">
-                <span>Guide</span>
-                <svg viewBox="0 0 24 24" className="bubble-arrow" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </span>
-            </div>
-          </div>
+          )}
         </aside>
 
         {/* ══════════════ MAIN COLUMN ══════════════ */}
@@ -372,13 +400,13 @@ export default function CreatorLayout({ children }) {
                 aria-label="Creator Guide"
                 title="Dream big! Tap for Creator Guide"
               >
-                <div className="creator-mascot-mobile-ring">
+                <span className="creator-mascot-mobile-ring">
                   <img
                     src="/mascot-dreamy.png"
                     alt="Dreamy"
                     className="creator-mascot-mobile-avatar"
                   />
-                </div>
+                </span>
                 <span className="creator-mascot-mobile-badge" aria-hidden="true">✨</span>
               </button>
 
