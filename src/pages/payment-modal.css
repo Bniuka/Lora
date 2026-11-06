@@ -645,28 +645,18 @@
 /* ── Buttons (foot) ── */
 .lora-pay .pm-btn {
   flex: 1 !important;
-  border: 0 !important;
-  border-radius: 14px !important;
+  border: 0;
+  border-radius: 9999px !important;
   padding: 14px 20px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
-  background: var(--pm-brand) !important;
   color: #fff !important;
   display: flex !important;
   gap: 8px !important;
   justify-content: center !important;
   align-items: center !important;
-  transition: filter 0.15s, transform 0.1s !important;
   font-family: 'Figtree', sans-serif !important;
   font-size: 15px !important;
-}
-
-.lora-pay .pm-btn:hover:not(:disabled) {
-  filter: brightness(1.08) !important;
-}
-
-.lora-pay .pm-btn:active:not(:disabled) {
-  transform: scale(0.99) !important;
 }
 
 .lora-pay .pm-btn:disabled {
@@ -680,11 +670,22 @@
   background: none !important;
   border: 1.5px solid var(--pm-line) !important;
   color: var(--pm-ink) !important;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease !important;
 }
 
 .lora-pay .pm-btn.ghost:hover:not(:disabled) {
   background: var(--pm-soft) !important;
+  border-color: var(--pm-brand) !important;
+  color: var(--pm-brand) !important;
+  transform: translateY(-1.5px) !important;
   filter: none !important;
+}
+
+.lora-pay .pm-btn.ghost:active:not(:disabled) {
+  transform: scale(0.96) !important;
 }
 
 /* ── Loader spinner ── */

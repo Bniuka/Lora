@@ -83,23 +83,33 @@
   gap: 8px;
   color: var(--muted);
   font-weight: 600;
-  padding: 6px 12px 6px 6px;
-  border-radius: 10px;
+  padding: 7px 14px 7px 8px;
+  border-radius: 999px;
   margin-bottom: 16px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.22s ease;
 }
 
 .lora-sessions .backl:hover {
-  color: var(--ink);
+  color: var(--brand);
   background: #fff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px -6px rgba(14, 23, 51, 0.15);
+}
+
+.lora-sessions .backl:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .lora-sessions .backl .ic {
-  transition: transform 0.2s;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lora-sessions .backl:hover .ic {
-  transform: translateX(-3px);
+  transform: translateX(-4px);
 }
 
 .lora-sessions .card {
@@ -139,14 +149,28 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   display: grid;
   place-items: center;
   color: var(--brand);
-  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5);
-  transition: 0.2s;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.45);
+  animation: loraPlayPulse 2.8s ease-in-out infinite;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.25s ease;
   border: 0;
   cursor: pointer;
+}
+
+@keyframes loraPlayPulse {
+  0%, 100% {
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.48);
+  }
+  65% {
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 10px rgba(255, 255, 255, 0);
+  }
 }
 
 .lora-sessions .play .ic {
@@ -155,11 +179,18 @@
   fill: currentColor;
   stroke: none;
   margin-left: 3px;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lora-sessions .th:hover .play,
 .lora-sessions .sess:hover .play {
-  transform: translate(-50%, -50%) scale(1.08);
+  background: var(--brand);
+  color: #fff;
+  transform: translate(-50%, -50%) scale(1.14);
+}
+
+.lora-sessions .play:active {
+  transform: translate(-50%, -50%) scale(0.94) !important;
 }
 
 .lora-sessions .hb {
@@ -197,25 +228,45 @@
   gap: 7px;
   border: 1.5px solid var(--line);
   background: #fff;
-  border-radius: 12px;
-  padding: 8px 14px;
+  border-radius: 999px;
+  padding: 8px 16px;
   font-weight: 600;
   cursor: pointer;
   min-height: 40px;
   white-space: nowrap;
-  transition: 0.15s;
   font-size: 14px;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.25s ease;
+}
+
+.lora-sessions .save .ic {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lora-sessions .save:hover {
   border-color: var(--brand);
   color: var(--brand);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 18px -6px rgba(47, 91, 255, 0.28);
+}
+
+.lora-sessions .save:hover .ic {
+  transform: scale(1.16) rotate(-6deg);
+}
+
+.lora-sessions .save:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .lora-sessions .save.on {
   background: var(--brand-soft);
   border-color: var(--brand);
   color: var(--brand);
+  box-shadow: 0 4px 14px -4px rgba(47, 91, 255, 0.25);
 }
 
 .lora-sessions .save.on .ic {
@@ -559,8 +610,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 14px;
-  padding: 12px 20px;
+  border-radius: 9999px;
+  padding: 12px 22px;
   font-weight: 600;
   border: 1.5px solid var(--brand);
   color: var(--brand);
@@ -568,34 +619,75 @@
   cursor: pointer;
   min-height: 46px;
   white-space: nowrap;
-  transition: 0.15s;
   font-size: 14.5px;
   text-decoration: none;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.28s ease;
 }
 
-.lora-sessions .btn:hover {
+.lora-sessions .btn:not(.live) {
+  position: relative;
+  overflow: hidden;
+}
+
+.lora-sessions .btn:not(.live)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.34) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.lora-sessions .btn:not(.live):hover:not(:disabled) {
   background: var(--brand);
   color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 22px -6px rgba(47, 91, 255, 0.42);
+}
+
+.lora-sessions .btn:not(.live):hover:not(:disabled)::after {
+  left: 140%;
+}
+
+.lora-sessions .btn:not(.live):active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.lora-sessions .btn .ic {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lora-sessions .btn:not(.live):hover:not(:disabled) .ic {
+  transform: scale(1.12);
 }
 
 .lora-sessions .btn.live {
-  background: #2563eb;
-  border-color: #2563eb;
   color: #fff;
-}
-
-.lora-sessions .btn.live:hover {
-  background: #1d4ed8;
 }
 
 .lora-sessions .btn.yt-live {
-  background: #cc0000;
-  border-color: #cc0000;
+  background: linear-gradient(135deg, #e11d48 0%, #cc0000 100%);
+  border-color: transparent;
   color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(204, 0, 0, 0.45);
 }
 
-.lora-sessions .btn.yt-live:hover {
-  background: #990000;
+.lora-sessions .btn.yt-live:hover:not(:disabled) {
+  background: linear-gradient(135deg, #be123c 0%, #990000 100%);
+  box-shadow: 0 12px 24px -4px rgba(204, 0, 0, 0.58);
 }
 
 /* Upsell Next Course Card */
@@ -642,25 +734,65 @@
 }
 
 .lora-sessions .upsell-btn {
-  background: #0f9d6b;
-  color: #fff;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #10b981 0%, #0d9468 100%);
+  color: #fff !important;
   border: 0;
-  border-radius: 12px;
-  padding: 12px 22px;
+  border-radius: 9999px;
+  padding: 12px 24px;
   font-weight: 700;
   font-size: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  box-shadow: 0 8px 16px -6px rgba(15, 157, 107, 0.4);
-  transition: 0.15s ease;
+  box-shadow: 0 8px 20px -6px rgba(15, 157, 107, 0.45);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    filter 0.22s ease;
   white-space: nowrap;
 }
 
+.lora-sessions .upsell-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.36) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.lora-sessions .upsell-btn svg {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .lora-sessions .upsell-btn:hover {
-  background: #0b7a53;
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.025);
+  box-shadow: 0 12px 26px -4px rgba(15, 157, 107, 0.58);
+  filter: brightness(1.04);
+}
+
+.lora-sessions .upsell-btn:hover::after {
+  left: 140%;
+}
+
+.lora-sessions .upsell-btn:hover svg {
+  transform: translateX(4px);
+}
+
+.lora-sessions .upsell-btn:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .lora-sessions .catchup-badge {
@@ -743,13 +875,12 @@
   background: #ffffff;
   border: 1.5px solid var(--brand);
   color: var(--brand);
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
   min-height: 38px;
-  border-radius: 12px;
+  border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.15s ease;
 }
 
 .lora-sessions .btn.req-btn:hover:not(:disabled) {
@@ -815,41 +946,81 @@
 }
 
 .lora-sessions .btn-wa {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   background: #fff;
   border: 1.5px solid #25D366;
   color: #0f9d6b;
-  border-radius: 12px;
+  border-radius: 9999px;
   font-weight: 600;
   font-size: 14px;
-  transition: 0.15s;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.28s ease;
+}
+
+.lora-sessions .btn-wa svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lora-sessions .btn-wa:hover {
   background: #25D366;
   color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 22px -6px rgba(37, 211, 102, 0.45);
+}
+
+.lora-sessions .btn-wa:hover svg {
+  transform: scale(1.14) rotate(-8deg);
+}
+
+.lora-sessions .btn-wa:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .lora-sessions .btn-tg {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   background: #fff;
   border: 1.5px solid #229ED9;
   color: #229ED9;
-  border-radius: 12px;
+  border-radius: 9999px;
   font-weight: 600;
   font-size: 14px;
-  transition: 0.15s;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.28s ease;
+}
+
+.lora-sessions .btn-tg svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lora-sessions .btn-tg:hover {
   background: #229ED9;
   color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 22px -6px rgba(34, 158, 217, 0.45);
+}
+
+.lora-sessions .btn-tg:hover svg {
+  transform: translate(2px, -2px) scale(1.1);
+}
+
+.lora-sessions .btn-tg:active {
+  transform: translateY(0) scale(0.97);
 }
 
 /* Media queries */

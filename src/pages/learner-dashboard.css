@@ -176,17 +176,27 @@
   color: var(--muted) !important;
   text-decoration: none !important;
   font-size: 15px;
-  transition: 0.15s;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.22s ease;
 }
 
 .lora-learner .links a:hover {
   background: var(--bg);
   color: var(--ink) !important;
+  transform: translateY(-1.5px);
+}
+
+.lora-learner .links a:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .lora-learner .links a.on {
   color: var(--brand) !important;
   background: var(--brand-soft) !important;
+  box-shadow: 0 2px 10px -2px rgba(47, 91, 255, 0.22);
 }
 
 .lora-learner .bell {
@@ -202,11 +212,35 @@
   position: relative;
   margin-left: 6px;
   padding: 0;
-  transition: 0.15s;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.25s ease;
 }
 
 .lora-learner .bell:hover {
-  color: var(--ink);
+  color: var(--brand);
+  border-color: #bfd0ff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 18px -6px rgba(47, 91, 255, 0.28);
+}
+
+.lora-learner .bell:hover svg {
+  animation: loraBellChime 0.55s ease-in-out;
+  transform-origin: 50% 15%;
+}
+
+.lora-learner .bell:active {
+  transform: translateY(0) scale(0.93);
+}
+
+@keyframes loraBellChime {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(13deg); }
+  45% { transform: rotate(-11deg); }
+  70% { transform: rotate(7deg); }
+  85% { transform: rotate(-4deg); }
 }
 
 .lora-learner .bell:after {
@@ -224,6 +258,12 @@
 
 .lora-learner .bell.has:after {
   display: block;
+  animation: loraBellDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes loraBellDotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.55); }
+  65% { box-shadow: 0 0 0 5px rgba(229, 72, 77, 0); }
 }
 
 .lora-learner .av {
@@ -241,6 +281,20 @@
   border: 0;
   padding: 0;
   text-decoration: none;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    filter 0.22s ease;
+}
+
+.lora-learner .av:hover {
+  transform: translateY(-2px) scale(1.07);
+  box-shadow: 0 8px 20px -4px rgba(91, 61, 245, 0.48), 0 0 0 3px rgba(47, 91, 255, 0.16);
+  filter: brightness(1.05);
+}
+
+.lora-learner .av:active {
+  transform: translateY(0) scale(0.94);
 }
 
 /* ── Page Wrapper & Hero Heading ── */
@@ -298,21 +352,36 @@
   margin-left: auto;
   color: var(--brand) !important;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
+  padding: 6px 12px;
+  border-radius: 999px;
   text-decoration: none;
-  transition: gap 0.15s;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    gap 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lora-learner .va:hover {
-  gap: 8px;
+  gap: 9px;
+  background: var(--brand-soft);
+  transform: translateY(-1px);
+}
+
+.lora-learner .va:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .lora-learner .va .ic {
   width: 16px;
   height: 16px;
-  transition: 0.15s;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lora-learner .va:hover .ic {
+  transform: translateX(3px);
 }
 
 .lora-learner .sec {
@@ -370,29 +439,72 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--brand) !important;
+  background: var(--brand);
   color: #fff !important;
-  border: 0 !important;
-  border-radius: 14px !important;
+  border: 0;
+  border-radius: 9999px;
   padding: 13px 26px !important;
   font-weight: 600 !important;
   cursor: pointer;
-  box-shadow: 0 12px 26px -14px rgba(47, 91, 255, 0.9) !important;
-  transition: 0.15s;
   text-decoration: none;
   font-size: 15px;
 }
 
-.lora-learner .btn:hover {
-  background: var(--brand2) !important;
-  transform: translateY(-1px);
+.lora-learner .btn .ic {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lora-learner .btn:hover .ic,
+.lora-learner .course:hover .btn.sm .ic {
+  transform: translateX(3px);
 }
 
 .lora-learner .btn.sm {
-  padding: 9px 16px !important;
+  position: relative;
+  overflow: hidden;
+  padding: 9px 17px !important;
   font-size: 14px !important;
-  box-shadow: none !important;
-  border-radius: 11px !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #2f5bff 0%, #4f46e5 100%) !important;
+  box-shadow: 0 6px 16px -6px rgba(47, 91, 255, 0.45) !important;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    filter 0.22s ease !important;
+}
+
+.lora-learner .btn.sm::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.34) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.lora-learner .btn.sm:hover,
+.lora-learner .course:hover .btn.sm {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 22px -6px rgba(79, 70, 229, 0.58) !important;
+  filter: brightness(1.05);
+}
+
+.lora-learner .btn.sm:hover::after,
+.lora-learner .course:hover .btn.sm::after {
+  left: 140%;
+}
+
+.lora-learner .btn.sm:active {
+  transform: translateY(0) scale(0.96);
 }
 
 /* ── Grid & Course Cards ── */
@@ -529,12 +641,26 @@
   color: var(--brand);
   display: grid;
   place-items: center;
-  transition: 0.2s;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.25s ease;
+}
+
+.lora-learner .arrow .ic {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lora-learner .course:hover .arrow {
   background: var(--brand);
   color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 8px 18px -4px rgba(47, 91, 255, 0.48);
+}
+
+.lora-learner .course:hover .arrow .ic {
+  transform: translateX(2px);
 }
 
 /* ── Dropdowns for Profile & Notifications ── */
@@ -549,6 +675,19 @@
   box-shadow: 0 12px 32px rgba(14, 23, 51, 0.12);
   padding: 8px;
   z-index: 50;
+  transform-origin: top right;
+  animation: loraDropdownPop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes loraDropdownPop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .lora-learner .dropdown-header {
@@ -587,11 +726,27 @@
   color: var(--ink);
   cursor: pointer;
   text-align: left;
-  transition: 0.15s;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.lora-learner .dropdown-item svg {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lora-learner .dropdown-item:hover {
   background: var(--bg);
+  transform: translateX(3px);
+}
+
+.lora-learner .dropdown-item:hover svg {
+  transform: scale(1.12);
+}
+
+.lora-learner .dropdown-item:active {
+  transform: translateX(1px) scale(0.98);
 }
 
 .lora-learner .dropdown-item.danger {
@@ -701,37 +856,57 @@
   border: 0;
   color: var(--muted);
   cursor: pointer;
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  transition: 0.15s;
+  font-weight: 600;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .lora-learner .card-alert-copy:hover {
   color: var(--brand);
-  background: rgba(47, 91, 255, 0.08);
+  background: rgba(47, 91, 255, 0.1);
+  transform: translateY(-1px) scale(1.04);
+}
+
+.lora-learner .card-alert-copy:active {
+  transform: translateY(0) scale(0.95);
 }
 
 .lora-learner .card-alert-btn {
   display: block;
   width: 100%;
   margin-top: 8px;
-  padding: 6px 12px;
+  padding: 7px 12px;
   border: 0;
-  border-radius: 8px;
-  background: var(--brand);
-  color: #fff;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--brand) 0%, #4f46e5 100%);
+  color: #fff !important;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
+  box-shadow: 0 4px 12px -4px rgba(47, 91, 255, 0.45);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    filter 0.2s ease;
 }
 
-.lora-learner .card-alert-btn:hover {
-  background: var(--brand2);
+.lora-learner .card-alert-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 18px -4px rgba(79, 70, 229, 0.55);
+  filter: brightness(1.06);
+}
+
+.lora-learner .card-alert-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
 }
 
 /* ── Responsive rules ── */

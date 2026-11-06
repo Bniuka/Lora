@@ -266,17 +266,22 @@ h1, h2, h3, h4, h5, h6 {
     border: 2px solid var(--color-gold);
     border-radius: 9999px;
     cursor: pointer;
-    transition: all 0.22s var(--ease-smooth);
+    transition:
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.22s ease,
+      color 0.22s ease,
+      box-shadow 0.28s ease;
   }
 
   .btn-secondary:hover {
     background: var(--color-gold);
     color: #FFFFFF;
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 24px -6px rgba(37, 99, 235, 0.38);
   }
 
   .btn-secondary:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.97);
   }
 
   /* Danger Button */
@@ -294,12 +299,20 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(192, 57, 43, 0.3);
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.2s var(--ease-smooth);
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .btn-danger:hover {
     background: rgba(192, 57, 43, 0.08);
     border-color: var(--color-error);
+    transform: translateY(-1.5px);
+  }
+
+  .btn-danger:active {
+    transform: translateY(0) scale(0.97);
   }
 
   /* Ghost Button */
@@ -317,18 +330,45 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid transparent;
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.18s var(--ease-smooth);
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.18s ease,
+      color 0.18s ease,
+      box-shadow 0.22s ease;
   }
 
   .btn-ghost:hover {
     background: #EFF6FF;
     color: var(--color-gold);
+    transform: translateY(-1.5px);
+  }
+
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  .btn-ghost svg,
+  .btn-secondary svg {
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-ghost:hover svg {
+    transform: scale(1.12) rotate(6deg);
+  }
+
+  .btn-secondary:hover svg {
+    transform: translateX(3px);
   }
 }
 
 /* Cinematic Orbiting-Beam Magic Button (Primary Theme CTA) */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -365,6 +405,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Soft outer luminous comet halo synced to --lora-beam-angle */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -400,6 +445,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Crisp 1.5px orbiting star-white border arc + rich royal indigo-blue pill interior */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -446,6 +496,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Hover illumination, scale lift & outer aura expansion */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -469,6 +524,11 @@ h1, h2, h3, h4, h5, h6 {
 
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -488,6 +548,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Subtle magic sparkle micro-motion on button icons */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -504,6 +569,11 @@ h1, h2, h3, h4, h5, h6 {
 
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,
@@ -522,6 +592,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Tactile press feedback */
 :is(
   .btn-primary,
+  .lora-mascot-hero__btn-primary,
+  .lora-learner .btn:not(.sm),
+  .lora-sessions .btn.live,
+  .lora-pay .pm-btn:not(.ghost),
+  .lora-btn-post-review,
   .lora-dash .pill.pri,
   .lora-wizard .btn.pri,
   .mp-guide-continue-btn,

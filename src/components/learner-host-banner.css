@@ -89,62 +89,82 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 20px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #3965ff 0%, #2550f5 100%);
+  padding: 12px 22px;
+  border-radius: 9999px;
   color: #ffffff !important;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none !important;
-  box-shadow: 0 6px 18px -4px rgba(47, 91, 255, 0.42), 0 1px 2px rgba(14, 23, 51, 0.08);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-}
-
-.lora-mascot-hero__btn-primary:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 10px 22px -4px rgba(47, 91, 255, 0.5);
-  filter: brightness(1.03);
-}
-
-.lora-mascot-hero__btn-primary:active {
-  transform: translateY(0);
 }
 
 .lora-mascot-hero__btn-icon {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  transition: transform 0.18s ease;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 .lora-mascot-hero__btn-primary:hover .lora-mascot-hero__btn-icon {
-  transform: translateX(3px);
+  transform: translateX(4px) scale(1.08) !important;
 }
 
 .lora-mascot-hero__stat-chip {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 15px;
-  border-radius: 12px;
+  padding: 10px 16px;
+  border-radius: 9999px;
   background: #ffffff;
   border: 1px solid #dfe5f2;
   color: #334155;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(14, 23, 51, 0.04);
-  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  box-shadow: 0 2px 8px rgba(14, 23, 51, 0.04);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s ease,
+    background-color 0.22s ease,
+    box-shadow 0.28s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
+.lora-mascot-hero__stat-chip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(47, 91, 255, 0.1) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
 .lora-mascot-hero__stat-chip:hover {
   background: #f8faff;
-  border-color: #bfd0ff;
-  transform: translateY(-1px);
+  border-color: #93b4ff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 22px -8px rgba(47, 91, 255, 0.26);
+}
+
+.lora-mascot-hero__stat-chip:hover::before {
+  left: 140%;
+}
+
+.lora-mascot-hero__stat-chip:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .lora-mascot-hero__stat-count {
@@ -159,6 +179,13 @@
   color: #2550f5;
   font-size: 12px;
   font-weight: 700;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.22s ease, color 0.22s ease;
+}
+
+.lora-mascot-hero__stat-chip:hover .lora-mascot-hero__stat-count {
+  transform: scale(1.12);
+  background: #2550f5;
+  color: #ffffff;
 }
 
 /* ── Right Mascot Stage (Big, Unboxed, Grounded) ── */
@@ -466,9 +493,9 @@
   }
 
   .lora-mascot-hero__btn-primary {
-    padding: 9px 14px;
+    padding: 9px 15px;
     font-size: 13px;
-    border-radius: 10px;
+    border-radius: 9999px;
     gap: 6px;
   }
 
@@ -478,9 +505,9 @@
   }
 
   .lora-mascot-hero__stat-chip {
-    padding: 7px 11px;
+    padding: 8px 12px;
     font-size: 12px;
-    border-radius: 10px;
+    border-radius: 9999px;
     gap: 6px;
   }
 

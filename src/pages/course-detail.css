@@ -279,12 +279,17 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  transition: opacity 0.15s ease !important;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease !important;
 }
 
 .lora-course .btn-desc-toggle:hover {
-  opacity: 0.8 !important;
+  opacity: 0.9 !important;
+  transform: translateX(2px) !important;
   text-decoration: underline !important;
+}
+
+.lora-course .btn-desc-toggle:active {
+  transform: scale(0.96) !important;
 }
 
 /* ── What you'll learn ── */
@@ -404,36 +409,76 @@
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  border-radius: 14px !important;
-  padding: 12px 20px !important;
+  border-radius: 9999px !important;
+  padding: 12px 22px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   border: 1.5px solid var(--brand) !important;
   color: var(--brand) !important;
-  background: var(--surface) !important;
+  background: var(--surface);
   white-space: nowrap !important;
-  transition: 0.15s !important;
   text-decoration: none !important;
   font-size: 14px !important;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.28s ease !important;
 }
 
-.lora-course .btn:hover {
+.lora-course .btn:not(.pri) {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.lora-course .btn:not(.pri)::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -120% !important;
+  width: 65% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 100%
+  ) !important;
+  transform: skewX(-20deg) !important;
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  pointer-events: none !important;
+}
+
+.lora-course .btn:not(.pri):hover:not(:disabled) {
   background: var(--brand) !important;
   color: #fff !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 10px 22px -6px rgba(47, 91, 255, 0.42) !important;
+}
+
+.lora-course .btn:not(.pri):hover:not(:disabled)::after {
+  left: 140% !important;
+}
+
+.lora-course .btn:not(.pri):active:not(:disabled) {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+.lora-course .btn .ic,
+.lora-course .btn svg {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.lora-course .btn:not(.pri):hover:not(:disabled) .ic,
+.lora-course .btn:not(.pri):hover:not(:disabled) svg {
+  transform: translateX(3px) !important;
 }
 
 .lora-course .btn.pri {
-  background: var(--brand) !important;
   color: #fff !important;
   width: 100% !important;
   padding: 15px !important;
   font-size: 16px !important;
-  box-shadow: 0 12px 26px -12px rgba(47, 91, 255, 0.8) !important;
-  border: none !important;
-}
-
-.lora-course .btn.pri:hover {
-  background: var(--brand2) !important;
 }
 
 .lora-course .btn:disabled {
@@ -716,29 +761,68 @@
 }
 
 .lora-course .btn-wa {
+  position: relative !important;
+  overflow: hidden !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  background: #25D366 !important;
+  background: linear-gradient(135deg, #25D366 0%, #16b853 100%) !important;
   color: #FFFFFF !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   padding: 11px 18px !important;
-  border-radius: 14px !important;
+  border-radius: 9999px !important;
   border: none !important;
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35) !important;
-  transition: all 0.18s ease !important;
+  box-shadow: 0 6px 18px -4px rgba(37, 211, 102, 0.42) !important;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    filter 0.22s ease !important;
   text-decoration: none !important;
   cursor: pointer !important;
   width: 100% !important;
 }
 
+.lora-course .btn-wa::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -120% !important;
+  width: 65% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.34) 50%,
+    transparent 100%
+  ) !important;
+  transform: skewX(-20deg) !important;
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  pointer-events: none !important;
+}
+
 .lora-course .btn-wa:hover {
-  background: #1eb857 !important;
   color: #FFFFFF !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 12px 24px -4px rgba(37, 211, 102, 0.55) !important;
+  filter: brightness(1.04) !important;
+}
+
+.lora-course .btn-wa:hover::after {
+  left: 140% !important;
+}
+
+.lora-course .btn-wa:active {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+.lora-course .btn-wa svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.lora-course .btn-wa:hover svg {
+  transform: scale(1.15) rotate(-8deg) !important;
 }
 
 .lora-course .btn-call {
@@ -751,9 +835,14 @@
   font-weight: 600 !important;
   font-size: 13.5px !important;
   padding: 10px 18px !important;
-  border-radius: 14px !important;
+  border-radius: 9999px !important;
   border: 1.5px solid var(--line) !important;
-  transition: all 0.18s ease !important;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s ease,
+    color 0.22s ease,
+    background-color 0.22s ease,
+    box-shadow 0.28s ease !important;
   text-decoration: none !important;
   cursor: pointer !important;
   width: 100% !important;
@@ -763,6 +852,20 @@
   border-color: var(--brand) !important;
   color: var(--brand) !important;
   background: var(--brand-soft) !important;
+  transform: translateY(-2px) scale(1.015) !important;
+  box-shadow: 0 8px 20px -6px rgba(47, 91, 255, 0.28) !important;
+}
+
+.lora-course .btn-call:active {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+.lora-course .btn-call svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.lora-course .btn-call:hover svg {
+  transform: scale(1.14) rotate(10deg) !important;
 }
 
 /* Main column Instructor Trust Card */
@@ -847,16 +950,21 @@
   justify-content: center !important;
   width: 44px !important;
   height: 44px !important;
-  border-radius: 12px !important;
-  background: #25D366 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #25D366 0%, #16b853 100%) !important;
   color: #FFFFFF !important;
   flex: none !important;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35) !important;
-  transition: 0.15s !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.38) !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
 }
 
 .lora-course .btn-mbar-wa:hover {
-  background: #1eb857 !important;
+  transform: translateY(-2px) scale(1.08) !important;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.5) !important;
+}
+
+.lora-course .btn-mbar-wa:active {
+  transform: scale(0.92) !important;
 }
 
 .lora-course .btn-mbar-call {
@@ -865,18 +973,27 @@
   justify-content: center !important;
   width: 44px !important;
   height: 44px !important;
-  border-radius: 12px !important;
+  border-radius: 50% !important;
   background: #FFFFFF !important;
   color: var(--ink) !important;
   border: 1.5px solid var(--line) !important;
   flex: none !important;
-  transition: 0.15s !important;
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease !important;
 }
 
 .lora-course .btn-mbar-call:hover {
   background: var(--brand-soft) !important;
   border-color: var(--brand) !important;
   color: var(--brand) !important;
+  transform: translateY(-2px) scale(1.08) !important;
+}
+
+.lora-course .btn-mbar-call:active {
+  transform: scale(0.92) !important;
 }
 
 /* ── Promo Code Box in Course Detail ── */
@@ -896,11 +1013,16 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  transition: opacity 0.15s !important;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s !important;
 }
 
 .lora-course .promo-toggle-btn:hover {
+  transform: translateX(3px) !important;
   text-decoration: underline !important;
+}
+
+.lora-course .promo-toggle-btn:active {
+  transform: scale(0.96) !important;
 }
 
 .lora-course .promo-input-group {
@@ -931,19 +1053,29 @@
 
 .lora-course .promo-apply-btn {
   height: 40px !important;
-  padding: 0 14px !important;
-  background: var(--brand) !important;
+  padding: 0 16px !important;
+  background: linear-gradient(135deg, var(--brand) 0%, #4f46e5 100%) !important;
   color: #fff !important;
   border: 0 !important;
   border-radius: 10px !important;
   font-size: 13px !important;
   font-weight: 700 !important;
   cursor: pointer !important;
-  transition: opacity 0.15s !important;
+  box-shadow: 0 4px 12px -4px rgba(47, 91, 255, 0.45) !important;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    filter 0.18s ease !important;
 }
 
-.lora-course .promo-apply-btn:hover {
-  filter: brightness(1.08) !important;
+.lora-course .promo-apply-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px) scale(1.03) !important;
+  box-shadow: 0 8px 18px -4px rgba(79, 70, 229, 0.55) !important;
+  filter: brightness(1.07) !important;
+}
+
+.lora-course .promo-apply-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.96) !important;
 }
 
 .lora-course .promo-err-msg {

@@ -241,19 +241,30 @@
   padding: 6px 14px;
   border-radius: 99px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.22s ease;
 }
 
 .lora-reviews-pill:hover {
   background: #f8fafc;
-  border-color: #cbd5e1;
+  border-color: #93c5fd;
+  color: #2563eb;
+  transform: translateY(-1.5px);
+}
+
+.lora-reviews-pill:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .lora-reviews-pill.active {
   background: #2563eb;
   color: #ffffff;
   border-color: #2563eb;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.32);
 }
 
 .lora-reviews-sort-group {
@@ -378,23 +389,17 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #2563eb;
   color: #ffffff;
   border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
+  border-radius: 9999px;
+  padding: 10px 22px;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
-}
-
-.lora-btn-post-review:hover:not(:disabled) {
-  background: #1d4ed8;
-  transform: translateY(-1px);
 }
 
 .lora-btn-post-review:disabled {
+  background: #94a3b8;
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -403,15 +408,25 @@
   background: none;
   border: 1px solid #cbd5e1;
   color: #475569;
-  border-radius: 10px;
-  padding: 9px 16px;
+  border-radius: 9999px;
+  padding: 9px 18px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .lora-btn-cancel-edit:hover {
   background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.lora-btn-cancel-edit:active {
+  transform: scale(0.96);
 }
 
 /* ── Guest / Instructor Notice Banners ── */
@@ -434,13 +449,28 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
   color: #ffffff !important;
-  padding: 8px 18px;
-  border-radius: 8px;
+  padding: 9px 20px;
+  border-radius: 9999px;
   font-weight: 700;
   font-size: 13px;
   text-decoration: none;
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.42);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    filter 0.2s ease;
+}
+
+.lora-review-guest-banner a:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 22px -4px rgba(79, 70, 229, 0.55);
+  filter: brightness(1.05);
+}
+
+.lora-review-guest-banner a:active {
+  transform: scale(0.96);
 }
 
 .lora-review-instructor-notice {
@@ -585,18 +615,37 @@
   background: none;
   border: 1px solid #e2e8f0;
   color: #64748b;
-  padding: 5px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.22s ease;
+}
+
+.lora-btn-helpful svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lora-btn-helpful:hover {
   background: #f8fafc;
   color: #2563eb;
-  border-color: #cbd5e1;
+  border-color: #93c5fd;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.22);
+}
+
+.lora-btn-helpful:hover svg {
+  transform: scale(1.18) rotate(-8deg);
+}
+
+.lora-btn-helpful:active {
+  transform: scale(0.95);
 }
 
 .lora-btn-helpful.active {
@@ -621,14 +670,22 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: background 0.15s ease;
+  padding: 5px 10px;
+  border-radius: 999px;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .lora-author-action-btn:hover {
   background: #f1f5f9;
   color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.lora-author-action-btn:active {
+  transform: scale(0.95);
 }
 
 .lora-author-action-btn.delete:hover {

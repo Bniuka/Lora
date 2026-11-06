@@ -89,7 +89,7 @@ export default function Discover() {
             {/* Cinematic Light Decoration */}
             <div className="absolute -inset-1 bg-gradient-to-r from-[#2563EB] via-[#93C5FD] to-[#3B82F6] rounded-[20px] blur-lg opacity-30 group-focus-within:opacity-70 group-hover:opacity-50 transition duration-700"></div>
             
-            <div className="relative flex items-center bg-white rounded-2xl border border-[#E2E8F0] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-hidden h-[60px]">
+            <div className="relative flex items-center bg-white rounded-2xl border border-[#E2E8F0] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-visible h-[60px]">
               <div className="pl-5 pr-3">
                 <Search size={22} className="text-[#2563EB]" />
               </div>
@@ -107,14 +107,14 @@ export default function Discover() {
           
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`relative h-[60px] px-6 sm:px-8 rounded-2xl font-medium flex items-center gap-2 transition-all shadow-lg overflow-hidden group ${
+            className={`relative h-[60px] px-6 sm:px-8 rounded-2xl font-medium flex items-center gap-2 transition-all duration-300 ease-out shadow-lg overflow-hidden group cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-xl active:translate-y-0 active:scale-[0.97] ${
               showFilters 
-                ? 'text-[#2563EB] border-2 border-[#2563EB] bg-[#DBEAFE]/30' 
-                : 'text-[#475569] border border-[#E2E8F0] bg-white hover:border-[#94A6B8]'
+                ? 'text-[#2563EB] border-2 border-[#2563EB] bg-[#DBEAFE]/30 shadow-blue-500/15' 
+                : 'text-[#475569] border border-[#E2E8F0] bg-white hover:border-[#93C5FD] hover:text-[#2563EB]'
             }`}
           >
             {showFilters && <div className="absolute inset-0 bg-[#2563EB]/5 blur-md" />}
-            <Filter size={20} className="relative z-10" /> 
+            <Filter size={20} className="relative z-10 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" /> 
             <span className="hidden sm:inline relative z-10">Filters</span>
           </button>
         </div>
