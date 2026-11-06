@@ -155,40 +155,39 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 10px 6px 12px !important;
-  border-radius: 20px !important;
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0.6) 0%, rgba(241, 245, 249, 0.85) 100%) !important;
-  border: 1px solid rgba(226, 232, 240, 0.8) !important;
-  box-shadow: 0 4px 20px -4px rgba(99, 102, 241, 0.08) !important;
+  padding: 6px 0 10px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   cursor: pointer !important;
   user-select: none !important;
   outline: none !important;
   overflow: visible !important;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
 .lora-creator .creator-mascot-widget:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(180deg, rgba(238, 242, 255, 0.75) 0%, rgba(245, 243, 255, 0.95) 100%) !important;
-  border-color: rgba(165, 180, 252, 0.65) !important;
-  box-shadow: 0 10px 28px -4px rgba(99, 102, 241, 0.18) !important;
+  transform: translateY(-3px) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .lora-creator .creator-mascot-widget:focus-visible {
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35) !important;
+  outline: none !important;
 }
 
 /* Glowing Ambient Aura Behind Mascot */
 .lora-creator .creator-mascot-aura {
   position: absolute !important;
-  top: 8% !important;
+  top: 10% !important;
   left: 50% !important;
   transform: translate(-50%, 0) !important;
-  width: 140px !important;
-  height: 140px !important;
+  width: 165px !important;
+  height: 165px !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle, rgba(129, 140, 248, 0.22) 0%, rgba(192, 132, 252, 0.14) 40%, transparent 72%) !important;
-  filter: blur(14px) !important;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.24) 0%, rgba(192, 132, 252, 0.15) 45%, transparent 72%) !important;
+  filter: blur(16px) !important;
   pointer-events: none !important;
   z-index: 0 !important;
   animation: loraDreamyAura 5s ease-in-out infinite !important;
@@ -220,18 +219,18 @@
 }
 
 .lora-creator .creator-sparkle.s1 {
-  top: 12px !important;
-  right: 18px !important;
-  font-size: 15px !important;
+  top: 10px !important;
+  right: 12px !important;
+  font-size: 16px !important;
   color: #f59e0b !important;
   animation: loraDreamySparkle 3.6s ease-in-out infinite !important;
   animation-delay: 0.2s !important;
 }
 
 .lora-creator .creator-sparkle.s2 {
-  top: 6px !important;
-  left: 16px !important;
-  font-size: 16px !important;
+  top: 4px !important;
+  left: 10px !important;
+  font-size: 17px !important;
   color: #8b5cf6 !important;
   animation: loraDreamySparkle 4.2s ease-in-out infinite !important;
   animation-delay: 1.8s !important;
@@ -239,8 +238,8 @@
 
 .lora-creator .creator-sparkle.s3 {
   top: 50% !important;
-  right: 10px !important;
-  font-size: 13px !important;
+  right: 4px !important;
+  font-size: 14px !important;
   color: #10b981 !important;
   animation: loraDreamySparkle 3.8s ease-in-out infinite !important;
   animation-delay: 2.6s !important;
@@ -269,13 +268,13 @@
 }
 
 .lora-creator .creator-mascot-img {
-  width: 176px !important;
-  max-width: 186px !important;
+  width: 204px !important;
+  max-width: 216px !important;
   height: auto !important;
-  max-height: 195px !important;
+  max-height: 228px !important;
   object-fit: contain !important;
   display: block !important;
-  filter: drop-shadow(0 10px 16px rgba(15, 23, 42, 0.1)) !important;
+  filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.12)) !important;
   animation: loraDreamyFloat 4.6s ease-in-out infinite !important;
   transform-origin: 50% 90% !important;
   transition: filter 0.3s ease !important;
@@ -305,14 +304,14 @@
 
 /* Synchronized Dynamic Ground Shadow */
 .lora-creator .creator-mascot-shadow {
-  width: 95px !important;
-  height: 12px !important;
+  width: 120px !important;
+  height: 14px !important;
   border-radius: 50% !important;
-  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.26) 0%, rgba(15, 23, 42, 0.08) 55%, transparent 72%) !important;
-  margin-top: -6px !important;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.24) 0%, rgba(15, 23, 42, 0.06) 55%, transparent 72%) !important;
+  margin-top: -8px !important;
   margin-bottom: 8px !important;
   z-index: 0 !important;
-  filter: blur(4px) !important;
+  filter: blur(4.5px) !important;
   animation: loraDreamyShadow 4.6s ease-in-out infinite !important;
   pointer-events: none !important;
 }
@@ -628,20 +627,19 @@
     align-items: center !important;
     justify-content: center !important;
     position: relative !important;
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.14)) !important;
-    border: 1.5px solid rgba(99, 102, 241, 0.3) !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12) !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     padding: 0 !important;
     cursor: pointer !important;
     flex-shrink: 0 !important;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   }
 
   .lora-creator .creator-mascot-mobile:active {
-    transform: scale(0.9) !important;
+    transform: scale(0.92) !important;
   }
 
   .lora-creator .creator-mascot-mobile-ring {
@@ -650,23 +648,22 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow: hidden !important;
-    border-radius: 50% !important;
+    overflow: visible !important;
   }
 
   .lora-creator .creator-mascot-mobile-avatar {
-    width: 32px !important;
-    height: 32px !important;
+    width: 38px !important;
+    height: 38px !important;
     object-fit: contain !important;
     animation: loraDreamyFloatMobile 3.5s ease-in-out infinite !important;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12)) !important;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.14)) !important;
   }
 
   .lora-creator .creator-mascot-mobile-badge {
     position: absolute !important;
     top: -2px !important;
     right: -2px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     line-height: 1 !important;
     animation: loraDreamySparkle 2.8s ease-in-out infinite !important;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
