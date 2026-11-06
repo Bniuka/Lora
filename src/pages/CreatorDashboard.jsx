@@ -374,6 +374,9 @@ export default function CreatorDashboard() {
   const [stats, setStats] = useState({ packs: 0, students: 0, revenue: 0, pending: 0 });
   const [recentPacks, setRecentPacks] = useState([]);
   const [activity, setActivity] = useState([]);
+  const [expandedNotifIds, setExpandedNotifIds] = useState({});
+  const [dismissedNotifIds, setDismissedNotifIds] = useState([]);
+  const [feedAtBottom, setFeedAtBottom] = useState(false);
   const [missingRecordings, setMissingRecordings] = useState([]);
   const [hasBankDetails, setHasBankDetails] = useState(false);
   const [savingSessionId, setSavingSessionId] = useState(null);
@@ -390,6 +393,15 @@ export default function CreatorDashboard() {
     const seenTour = localStorage.getItem(`lora_welcome_tour_seen_${user.id}`) === 'true';
     if (!seenTour) {
       setTourOpen(true);
+    }
+
+    try {
+      const savedDismissed = JSON.parse(localStorage.getItem(`lora_dismissed_activity_${user.id}`) || '[]');
+      if (Array.isArray(savedDismissed)) {
+        setDismissedNotifIds(savedDismissed);
+      }
+    } catch {
+      setDismissedNotifIds([]);
     }
   }, [user]);
 
@@ -439,7 +451,7 @@ export default function CreatorDashboard() {
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(5),
+          .limit(12),
         supabase
           .from('creator_bank_details')
           .select('*')
@@ -907,46 +919,157 @@ export default function CreatorDashboard() {
             </section>
 
             {/* Recent Activity */}
-            <section className="card sec">
-              <div className="sh">
-                <span className="ib"><IcActivity /></span>
-                <h2>Recent activity</h2>
-                <Link className="va" to="/creator/enrollments">View all</Link>
-              </div>
+            {(() => {
+              const visibleActivity = activity.filter(n => !dismissedNotifIds.includes(n.id));
 
-              {activity.length > 0 ? (
-                <ul className="feed">
-                  {activity.map(n => (
-                    <li key={n.id}>
-                      <span
-                        className="ib"
-                        style={{ background: 'var(--c3s)', color: 'var(--c3)' }}
-                      >
-                        <IcCheck />
-                      </span>
-                      <div>
-                        <b>{n.title}</b>
-                        <small>{n.message}</small>
-                      </div>
-                      <time>
-                        {(() => {
+              const toggleExpandActivity = async (n) => {
+                setExpandedNotifIds(prev => ({ ...prev, [n.id]: !prev[n.id] }));
+                if (!n.is_read) {
+                  setActivity(prev => prev.map(item => (item.id === n.id ? { ...item, is_read: true } : item)));
+                  try {
+                    await supabase.from('notifications').update({ is_read: true }).eq('id', n.id);
+                  } catch {
+                    // ignore
+                  }
+                }
+              };
+
+              const handleDismissActivity = async (e, id) => {
+                e.stopPropagation();
+                setDismissedNotifIds(prev => {
+                  const next = [...new Set([...prev, id])].slice(-100);
+                  if (user) {
+                    localStorage.setItem(`lora_dismissed_activity_${user.id}`, JSON.stringify(next));
+                  }
+                  return next;
+                });
+                try {
+                  await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+                } catch {
+                  // ignore
+                }
+              };
+
+              const handleClearAllActivity = async () => {
+                const idsToDismiss = visibleActivity.map(n => n.id);
+                setDismissedNotifIds(prev => {
+                  const next = [...new Set([...prev, ...idsToDismiss])].slice(-100);
+                  if (user) {
+                    localStorage.setItem(`lora_dismissed_activity_${user.id}`, JSON.stringify(next));
+                  }
+                  return next;
+                });
+                if (user) {
+                  try {
+                    await supabase
+                      .from('notifications')
+                      .update({ is_read: true })
+                      .eq('user_id', user.id)
+                      .eq('is_read', false);
+                  } catch {
+                    // ignore
+                  }
+                }
+              };
+
+              const handleFeedScroll = (e) => {
+                const el = e.currentTarget;
+                const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= 8;
+                setFeedAtBottom(atBottom);
+              };
+
+              return (
+                <section className="card sec activity-sec">
+                  <div className="sh">
+                    <span className="ib"><IcActivity /></span>
+                    <div className="sh-title-row">
+                      <h2>Recent activity</h2>
+                      {visibleActivity.length > 0 && (
+                        <span className="feed-count">{visibleActivity.length}</span>
+                      )}
+                    </div>
+                    <div className="sh-actions">
+                      {visibleActivity.length > 0 && (
+                        <button
+                          type="button"
+                          className="feed-clear-btn"
+                          onClick={handleClearAllActivity}
+                          title="Clear recent activity"
+                        >
+                          Clear
+                        </button>
+                      )}
+                      <Link className="va" to="/creator/enrollments">View all</Link>
+                    </div>
+                  </div>
+
+                  {visibleActivity.length > 0 ? (
+                    <div className={`feed-wrap ${visibleActivity.length > 3 && !feedAtBottom ? 'has-fade' : ''}`}>
+                      <ul className="feed feed-scroll" onScroll={handleFeedScroll}>
+                        {visibleActivity.map(n => {
+                          const isExpanded = Boolean(expandedNotifIds[n.id]);
                           const diff = Date.now() - new Date(n.created_at).getTime();
-                          const mins = Math.floor(diff / 60000);
-                          if (mins < 60) return `${mins}m ago`;
-                          const hrs = Math.floor(mins / 60);
-                          if (hrs < 24) return `${hrs}h ago`;
-                          return `${Math.floor(hrs / 24)}d ago`;
-                        })()}
-                      </time>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div style={{ padding: '12px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
-                  No recent activity yet.
-                </div>
-              )}
-            </section>
+                          const mins = Math.max(0, Math.floor(diff / 60000));
+                          const timeLabel = mins < 1
+                            ? 'Just now'
+                            : mins < 60
+                              ? `${mins}m ago`
+                              : mins < 1440
+                                ? `${Math.floor(mins / 60)}h ago`
+                                : `${Math.floor(mins / 1440)}d ago`;
+
+                          return (
+                            <li
+                              key={n.id}
+                              className={`feed-item ${isExpanded ? 'is-expanded' : ''} ${!n.is_read ? 'is-unread' : ''}`}
+                              onClick={() => toggleExpandActivity(n)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  toggleExpandActivity(n);
+                                }
+                              }}
+                              title={isExpanded ? 'Click to collapse' : 'Click to read full message'}
+                            >
+                              <span
+                                className="ib"
+                                style={{ background: 'var(--c3s)', color: 'var(--c3)' }}
+                              >
+                                <IcCheck />
+                              </span>
+                              <div className="feed-body">
+                                <div className="feed-top">
+                                  <b>{n.title}</b>
+                                  <div className="feed-meta">
+                                    <time>{timeLabel}</time>
+                                    <button
+                                      type="button"
+                                      className="feed-dismiss"
+                                      onClick={(e) => handleDismissActivity(e, n.id)}
+                                      aria-label="Dismiss notification"
+                                      title="Dismiss"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                </div>
+                                <small>{n.message}</small>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div className="feed-empty">
+                      No recent activity right now.
+                    </div>
+                  )}
+                </section>
+              );
+            })()}
 
           </div>
         </div>
