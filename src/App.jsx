@@ -29,6 +29,7 @@ import Enrollments from './pages/Enrollments';
 import CreatorSettings from './pages/CreatorSettings';
 import CreatorSubscription from './pages/CreatorSubscription';
 import CreatorGuide from './pages/CreatorGuide';
+import CreatorReports from './pages/CreatorReports';
 import AdminPanel from './pages/AdminPanel';
 /* ── Learner Pages ── */
 import LearnerDashboard from './pages/LearnerDashboard';
@@ -94,6 +95,11 @@ export default function App() {
         <Route path="/creator/enrollments" element={
           <ProtectedRoute allowedRole="creator">
             <CreatorLayout><Enrollments /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/reports" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><CreatorReports /></CreatorLayout>
           </ProtectedRoute>
         } />
         <Route path="/creator/settings" element={

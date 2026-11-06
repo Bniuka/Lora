@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Clock, Users, Lock, Play, ExternalLink, Upload,
   Sparkles, MessageCircle, Send, Calendar, Video, Loader2, CheckCircle, Building2, Copy,
-  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag, KeyRound, Unlock, Layers, ArrowRight, GitBranch, PlusCircle
+  ChevronRight, ChevronDown, ChevronUp, Star, ShieldCheck, Headset, LayoutGrid, MonitorPlay, Infinity as InfinityIcon, Smartphone, PlayCircle, Phone, Tag, KeyRound, Unlock, Layers, ArrowRight, GitBranch, PlusCircle, AlertTriangle
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -19,6 +19,8 @@ import {
 } from '../lib/promo';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
 import PackReviewsSection from '../components/PackReviewsSection';
+import StudentReportModal from '../components/StudentReportModal';
+import { isPackBanned } from '../lib/linkSentinel';
 import './payment-code-modal.css';
 import './payment-modal.css';
 import './course-detail.css';
@@ -594,6 +596,7 @@ export default function PackDetail() {
   const [selectedBankName, setSelectedBankName] = useState('');
   const [reviewStats, setReviewStats] = useState({ avgRating: 0, totalReviews: 0, verifiedCount: 0 });
   const [descExpanded, setDescExpanded] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   // Promo Code State
   const navigate = useNavigate();
@@ -1247,7 +1250,27 @@ export default function PackDetail() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const packIsBanned = pack ? (Boolean(pack.is_banned) || pack.status === 'banned' || isPackBanned(pack.id)) : false;
+
   const renderJoinAction = (isMobile = false) => {
+    if (packIsBanned) {
+      return (
+        <button
+          className="btn"
+          type="button"
+          disabled
+          style={{
+            background: '#fee2e2',
+            color: '#991b1b',
+            border: '1px solid #fca5a5',
+            cursor: 'not-allowed',
+            fontWeight: 700
+          }}
+        >
+          Delisted / Under Review
+        </button>
+      );
+    }
     if (user?.id === pack.creator_id) {
       return (
         <Link
@@ -1511,6 +1534,27 @@ export default function PackDetail() {
           <div className="layout">
             {/* MAIN CONTENT COLUMN */}
             <main>
+              {packIsBanned && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #f87171',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  gap: '12px',
+                  alignItems: 'center',
+                  color: '#991b1b'
+                }}>
+                  <AlertTriangle size={24} style={{ flexShrink: 0, color: '#dc2626' }} />
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '15px' }}>Course Temporarily Suspended</div>
+                    <div style={{ fontSize: '13px', marginTop: '2px', color: '#b91c1c' }}>
+                      This session pack has been temporarily delisted pending an intellectual property review by administration. Enrollment and live access are currently unavailable.
+                    </div>
+                  </div>
+                </div>
+              )}
               {/* Private status, Multi-Pack tag, or Free preview tag */}
               {isLockedPrivate ? (
                 <span
@@ -1587,6 +1631,96 @@ export default function PackDetail() {
                   </div>
                 </div>
               )}
+
+              {/* Lora Trust Shield & Verification Badges */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px 12px',
+                  marginTop: '14px',
+                  marginBottom: '16px',
+                  padding: '10px 14px',
+                  background: 'rgba(248, 250, 252, 0.95)',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  fontSize: '12px'
+                }}
+              >
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: '#047857',
+                    fontWeight: 600,
+                    background: '#ecfdf5',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid #a7f3d0'
+                  }}
+                  title="Direct bank transfer slips are reviewed swiftly by this instructor"
+                >
+                  ⚡ Fast Approver (&lt;2h)
+                </span>
+
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: '#1d4ed8',
+                    fontWeight: 600,
+                    background: '#eff6ff',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid #bfdbfe'
+                  }}
+                  title="Direct bank payments are logged in the Lora Dispute Desk with appeal protection"
+                >
+                  🛡️ Direct Bank Shield
+                </span>
+
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: '#6d28d9',
+                    fontWeight: 600,
+                    background: '#f5f3ff',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid #ddd6fe'
+                  }}
+                  title="All live sessions & recordings are verified against duplicate link theft"
+                >
+                  🔒 Content Protected
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setReportModalOpen(true)}
+                  style={{
+                    marginLeft: 'auto',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#64748b',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    padding: '3px 6px',
+                    textDecoration: 'underline'
+                  }}
+                  title="Appeal a rejected slip, report a broken link, or flag an issue"
+                >
+                  <AlertTriangle size={12} style={{ color: '#ef4444' }} /> Report issue / Slip appeal
+                </button>
+              </div>
 
               {/* Meta tags */}
               <div className="meta">
@@ -2466,6 +2600,38 @@ export default function PackDetail() {
                 <p>Having trouble with your enrollment or have questions?</p>
                 <a href="mailto:support@lora.com">Contact support</a>
               </div>
+
+              {/* Lora Buyer Dispute Desk */}
+              <div className="card" style={{ padding: '14px', borderRadius: '12px', border: '1px dashed #cbd5e1', background: '#fafafa', marginTop: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                  <ShieldCheck size={16} style={{ color: '#059669' }} />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>Lora Buyer Protection</span>
+                </div>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0', lineHeight: 1.4 }}>
+                  Did your slip take &gt;12 hours to verify, or did a live link fail? Dreamy Mascot is ready to help you appeal.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setReportModalOpen(true)}
+                  style={{
+                    width: '100%',
+                    padding: '7px 12px',
+                    borderRadius: '8px',
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#334155',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <AlertTriangle size={13} style={{ color: '#ef4444' }} /> Open Dispute Desk
+                </button>
+              </div>
             </aside>
           </div>
         </div>
@@ -2597,6 +2763,16 @@ export default function PackDetail() {
             Already have an account? <Link to="/login" className="text-[#2563EB]">Log in</Link>
           </p>
         </Modal>
+
+        {/* Student Issue & Dispute Modal */}
+        <StudentReportModal
+          isOpen={reportModalOpen}
+          onClose={() => setReportModalOpen(false)}
+          pack={pack}
+          session={sessions[0] || null}
+          user={user}
+          profile={profile}
+        />
       </div>
     </PageTransition>
   );

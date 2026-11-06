@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, Send, Sparkles, ArrowRight, Layers, PlayCircle
+  MessageCircle, Send, Sparkles, ArrowRight, Layers, PlayCircle, AlertTriangle
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
+import StudentReportModal from '../components/StudentReportModal';
 import './course-sessions.css';
 
 function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }) {
@@ -255,13 +256,14 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
 
 export default function MySessions() {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [pack, setPack] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [parentPack, setParentPack] = useState(null);
   const [nextSubPack, setNextSubPack] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -355,11 +357,36 @@ export default function MySessions() {
     <PageTransition>
       <div className="lora-sessions">
         <div className="wrap">
-          {/* Back link */}
-          <Link to={`/learner/pack/${pack.slug || id}`} className="backl">
-            <svg className="ic" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-            Back to course details
-          </Link>
+          {/* Back link & SOS Action */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+            <Link to={`/learner/pack/${pack.slug || id}`} className="backl" style={{ margin: 0 }}>
+              <svg className="ic" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+              Back to course details
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setReportModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                borderRadius: '9999px',
+                color: '#ef4444',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              title="Report broken live link, missing passcode, or slip issues"
+            >
+              <AlertTriangle size={15} />
+              <span>Classroom SOS / Issue</span>
+            </button>
+          </div>
 
           {/* Top Header Card */}
           <section className="card hero">
@@ -559,6 +586,16 @@ export default function MySessions() {
               </div>
             </div>
           )}
+
+          {/* Student Report / SOS Modal */}
+          <StudentReportModal
+            isOpen={reportModalOpen}
+            onClose={() => setReportModalOpen(false)}
+            pack={pack}
+            session={sessions[0] || null}
+            user={user}
+            profile={profile}
+          />
         </div>
       </div>
     </PageTransition>

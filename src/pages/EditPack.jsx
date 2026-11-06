@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug, generateInviteToken, getPackShareUrl } from '../lib/utils';
+import { checkDuplicateSessionLinks, registerCopyrightAlert } from '../lib/linkSentinel';
 import {
   generatePromoCode,
   normalizePromoCode,
@@ -370,6 +371,25 @@ export default function EditPack() {
             throw upErr;
           }
         }
+      }
+
+      // 🛡️ Run Link Piracy & Duplicate Sentinel Check
+      try {
+        const sentinelCheck = await checkDuplicateSessionLinks(form.sessions, id, user.id);
+        if (sentinelCheck.isDuplicate) {
+          for (const match of sentinelCheck.matches) {
+            await registerCopyrightAlert({
+              match,
+              copierPackId: id,
+              copierPackTitle: form.title,
+              copierCreatorId: user.id,
+              copierCreatorName: `${profile?.first_name || 'Creator'} ${profile?.last_name || ''}`.trim(),
+              copierCreatorEmail: user?.email,
+            });
+          }
+        }
+      } catch (sentinelErr) {
+        console.debug('[EditPack] Link sentinel check non-blocking:', sentinelErr);
       }
 
       setIsDirty(false);

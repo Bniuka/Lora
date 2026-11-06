@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug, generateInviteToken } from '../lib/utils';
+import { checkDuplicateSessionLinks, registerCopyrightAlert } from '../lib/linkSentinel';
 import PackSetupModal from '../components/PackSetupModal';
 import './create-pack.css';
 
@@ -418,6 +419,25 @@ export default function CreatePack() {
           sessErr = retrySess.error;
         }
         if (sessErr) throw sessErr;
+      }
+
+      // 🛡️ Run Link Piracy & Duplicate Sentinel Check
+      try {
+        const sentinelCheck = await checkDuplicateSessionLinks(sessionsToInsert, pack.id, user.id);
+        if (sentinelCheck.isDuplicate) {
+          for (const match of sentinelCheck.matches) {
+            await registerCopyrightAlert({
+              match,
+              copierPackId: pack.id,
+              copierPackTitle: pack.title,
+              copierCreatorId: user.id,
+              copierCreatorName: `${profile?.first_name || 'Creator'} ${profile?.last_name || ''}`.trim(),
+              copierCreatorEmail: user?.email,
+            });
+          }
+        }
+      } catch (sentinelErr) {
+        console.debug('[CreatePack] Link sentinel check non-blocking:', sentinelErr);
       }
 
       showToast(publish ? (parentPackId ? 'Sub-Pack published!' : 'Pack published!') : 'Saved as draft');

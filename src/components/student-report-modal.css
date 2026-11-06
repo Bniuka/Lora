@@ -1,0 +1,327 @@
+/* ══════════════════════════════════════════════════════
+   STUDENT REPORT & DISPUTE MODAL (DREAMY POWERED)
+   ══════════════════════════════════════════════════════ */
+.lora-report-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: loraModalFadeIn 0.2s ease-out;
+}
+
+@keyframes loraModalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lora-report-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: loraModalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes loraModalPop {
+  from { transform: scale(0.94) translateY(12px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.lora-report-modal-hd {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px 16px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-bottom: 1px solid #f1f5f9;
+  position: relative;
+}
+
+.lora-report-mascot-head {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.report-dreamy-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+  animation: loraDreamyFloatMobile 3.5s ease-in-out infinite;
+}
+
+.report-mascot-sparkle {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 14px;
+  animation: loraDreamySparkle 2.5s ease-in-out infinite;
+}
+
+.lora-report-modal-title {
+  flex: 1;
+}
+
+.lora-report-modal-title h3 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.lora-report-modal-title p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.lora-report-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lora-report-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.lora-report-target-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 22px;
+  background: #f1f5f9;
+  font-size: 12px;
+  color: #475569;
+}
+
+.lora-report-target-badge .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6366f1;
+}
+
+.lora-report-form {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.report-err-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecdd3;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-lbl {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: -4px;
+}
+
+.report-types-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.report-type-card {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.report-type-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.report-type-card.active {
+  border-color: #6366f1;
+  background: #eef2ff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.report-type-card .card-top .badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.report-type-card .card-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.report-slip-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.lora-report-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lora-report-form .form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.lora-report-form .form-group input,
+.lora-report-form .form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 13.5px;
+  color: #0f172a;
+  font-family: inherit;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+
+.lora-report-form .form-group input:focus,
+.lora-report-form .form-group textarea:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.report-actions .btn-cancel {
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.report-actions .btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 12px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.report-actions .btn-submit:hover:not(:disabled) {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+
+.lora-report-success {
+  padding: 36px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.success-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.lora-report-success h4 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.lora-report-success p {
+  font-size: 13.5px;
+  color: #64748b;
+  max-width: 360px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+}
+
+.lora-report-success .btn-done {
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
