@@ -1,273 +1,268 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { motion as Motion, useReducedMotion } from 'framer-motion';
 import './learner-host-banner.css';
 
-export default function LearnerHostBanner({ profile, enrollmentsCount = 0 }) {
-  const learnerName = profile?.first_name || 'there';
-  const [speechText, setSpeechText] = useState(`Hi ${learnerName}! 👋`);
+function getTimeGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return { label: 'Good morning', icon: '☀️' };
+  if (hour < 18) return { label: 'Good afternoon', icon: '🌤️' };
+  return { label: 'Good evening', icon: '🌙' };
+}
+
+export default function LearnerHostBanner({
+  profile,
+  enrollmentsCount = 0,
+  enrollments = [],
+}) {
+  const prefersReducedMotion = useReducedMotion();
+  const firstName = profile?.first_name?.trim() || '';
+  const timeGreeting = useMemo(() => getTimeGreeting(), []);
+
+  const confirmedCount = useMemo(
+    () => enrollments.filter((e) => e.status === 'confirmed').length,
+    [enrollments]
+  );
+
+  const messages = useMemo(
+    () => [
+      firstName ? `Hi ${firstName}! 👋` : 'Hi, welcome back! 👋',
+      "You've got this today! ✨",
+      'Ready to learn something new? 🎓',
+      'Keep up the great momentum! 🚀',
+    ],
+    [firstName]
+  );
+
+  const [msgIndex, setMsgIndex] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
-  const [isIdle, setIsIdle] = useState(false);
+  const [isWavingBurst, setIsWavingBurst] = useState(false);
 
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const keyColorRef = useRef([255, 0, 255]); // Magenta #FF00FF
-  const calibratedRef = useRef(false);
-  const animFrameIdRef = useRef(null);
-  const idleTimerRef = useRef(null);
-  const bubbleTimerRef = useRef(null);
+  const burstTimeoutRef = useRef(null);
+  const bubbleTimeoutRef = useRef(null);
+  const periodicWaveRef = useRef(null);
 
-  // Update speech text when profile name loads
-  useEffect(() => {
-    if (profile?.first_name) {
-      setSpeechText(`Hi ${profile.first_name}! 👋`);
-      setBubbleVisible(true);
+  const triggerWaveGreeting = (advanceMessage = false) => {
+    if (advanceMessage) {
+      setMsgIndex((prev) => (prev + 1) % messages.length);
     }
-  }, [profile?.first_name]);
-
-  // Auto-hide bubble after initial greeting, reappears on wave
-  useEffect(() => {
-    bubbleTimerRef.current = setTimeout(() => {
-      setBubbleVisible(false);
-    }, 5500);
-    return () => clearTimeout(bubbleTimerRef.current);
-  }, []);
-
-  // Frame processing loop with real-time chroma keying & despill
-  const renderFrame = useCallback(() => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
-
-    if (video.readyState >= 2 && !video.paused && !video.ended) {
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (ctx) {
-        const w = canvas.width;
-        const h = canvas.height;
-
-        try {
-          ctx.drawImage(video, 0, 0, w, h);
-
-          // Calibrate background key from corner pixel on first clear frame
-          if (!calibratedRef.current) {
-            const sample = ctx.getImageData(4, 4, 1, 1).data;
-            if (sample[0] > 140 && sample[2] > 140 && sample[1] < 120) {
-              keyColorRef.current = [sample[0], sample[1], sample[2]];
-              calibratedRef.current = true;
-            }
-          }
-
-          const frame = ctx.getImageData(0, 0, w, h);
-          const data = frame.data;
-          const len = data.length;
-          const [keyR, keyG, keyB] = keyColorRef.current;
-
-          for (let i = 0; i < len; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-
-            // 1. Strict protection for white blouse / clothing
-            if (r > 175 && g > 175 && b > 175 && Math.abs(r - g) < 45 && Math.abs(b - g) < 45) {
-              continue;
-            }
-
-            // 2. Strict protection for green skirt
-            if (g > 85 && g > r + 15 && g > b + 15) {
-              continue;
-            }
-
-            // 3. Distance from Magenta key
-            const dR = r - keyR;
-            const dG = g - keyG;
-            const dB = b - keyB;
-            const dist = Math.sqrt(dR * dR + dG * dG + dB * dB);
-
-            if (dist < 112) {
-              // Background: 100% transparent
-              data[i + 3] = 0;
-            } else if (dist < 152) {
-              // Smooth edge transition
-              const factor = (dist - 112) * 0.025; // / 40
-              const smooth = factor * factor * (3 - 2 * factor);
-              data[i + 3] = Math.round(smooth * data[i + 3]);
-
-              // Despill magenta fringe on edge pixels
-              if (r > g && b > g) {
-                data[i] = Math.min(r, Math.max(g, r - 45));
-                data[i + 2] = Math.min(b, Math.max(g, b - 45));
-              }
-            } else if (dist < 178) {
-              // Subtle edge cleanup
-              if (r > g + 40 && b > g + 40) {
-                data[i] = Math.min(r, g + 35);
-                data[i + 2] = Math.min(b, g + 35);
-              }
-            }
-          }
-
-          ctx.putImageData(frame, 0, 0);
-        } catch {
-          // Fail silently without breaking page
-        }
-      }
-    }
-
-    if (document.visibilityState !== 'hidden') {
-      if ('requestVideoFrameCallback' in video) {
-        animFrameIdRef.current = video.requestVideoFrameCallback(renderFrame);
-      } else {
-        animFrameIdRef.current = requestAnimationFrame(renderFrame);
-      }
-    }
-  }, []);
-
-  // Play wave animation safely (always muted)
-  const playWave = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.currentTime = 0;
-    video.muted = true;
-    setIsIdle(false);
-
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          renderFrame();
-        })
-        .catch(() => {});
-    }
-  }, [renderFrame]);
-
-  // Video loop & lifecycle
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    // Permanent muted guarantee
-    video.muted = true;
-    video.volume = 0;
-
-    const onCanPlay = () => {
-      playWave();
-    };
-
-    const onEnded = () => {
-      // Natural resting state
-      setIsIdle(true);
-
-      // Repeated lifelike action: wait 7 seconds naturally, then wave again
-      clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = setTimeout(() => {
-        playWave();
-      }, 7000);
-    };
-
-    video.addEventListener('canplay', onCanPlay);
-    video.addEventListener('ended', onEnded);
-
-    // Pause when tab is hidden, resume when visible
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        video.pause();
-        if (animFrameIdRef.current) {
-          cancelAnimationFrame(animFrameIdRef.current);
-        }
-      } else {
-        video.play().catch(() => {});
-        renderFrame();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    return () => {
-      video.removeEventListener('canplay', onCanPlay);
-      video.removeEventListener('ended', onEnded);
-      document.removeEventListener('visibilitychange', onVisibility);
-      clearTimeout(idleTimerRef.current);
-      clearTimeout(bubbleTimerRef.current);
-      if (animFrameIdRef.current) {
-        cancelAnimationFrame(animFrameIdRef.current);
-      }
-    };
-  }, [playWave, renderFrame]);
-
-  // User click on the girl: wave and show bubble
-  const handleGirlClick = () => {
-    clearTimeout(idleTimerRef.current);
-    clearTimeout(bubbleTimerRef.current);
     setBubbleVisible(true);
-    playWave();
 
-    bubbleTimerRef.current = setTimeout(() => {
+    if (!prefersReducedMotion) {
+      setIsWavingBurst(false);
+      // Allow state reset before triggering fresh wave burst
+      requestAnimationFrame(() => {
+        setIsWavingBurst(true);
+      });
+      clearTimeout(burstTimeoutRef.current);
+      burstTimeoutRef.current = setTimeout(() => {
+        setIsWavingBurst(false);
+      }, 1250);
+    }
+
+    clearTimeout(bubbleTimeoutRef.current);
+    bubbleTimeoutRef.current = setTimeout(() => {
       setBubbleVisible(false);
-    }, 4500);
+    }, 5200);
   };
 
+  // Initial friendly wave burst & periodic lifelike wave every 9 seconds
+  useEffect(() => {
+    const initialTimer = setTimeout(() => {
+      triggerWaveGreeting(false);
+    }, 450);
+
+    periodicWaveRef.current = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        triggerWaveGreeting(false);
+      }
+    }, 9500);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearTimeout(burstTimeoutRef.current);
+      clearTimeout(bubbleTimeoutRef.current);
+      clearInterval(periodicWaveRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefersReducedMotion]);
+
+  // Keep first greeting synced once profile name resolves
+  useEffect(() => {
+    if (firstName && msgIndex === 0) {
+      setBubbleVisible(true);
+    }
+  }, [firstName, msgIndex]);
+
+  const scrollToEnrolled = () => {
+    const el = document.getElementById('my-enrolled-packs');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const subtitleText =
+    confirmedCount > 0
+      ? 'Pick up right where you left off, keep your streak alive, or explore a new skill today.'
+      : enrollmentsCount > 0
+      ? 'Your enrollment is on the way — browse more expert-led sessions while you wait.'
+      : 'Pick up where you left off, or discover your next expert-led course today.';
+
   return (
-    <div className="lora-hero-host">
-      {/* Left Side: Welcome Text (Clean, Unboxed) */}
-      <div className="lora-hero-text">
-        <h1 className="lora-hero-greeting">
-          Welcome back, {learnerName}!
+    <section className="lora-mascot-hero" aria-label="Welcome banner">
+      {/* Left Column: Greeting, Context & Actions */}
+      <Motion.div
+        className="lora-mascot-hero__content"
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="lora-mascot-hero__eyebrow">
+          <span className="lora-mascot-hero__eyebrow-dot" aria-hidden="true" />
+          <span>
+            {timeGreeting.icon} {timeGreeting.label}
+          </span>
+        </div>
+
+        <h1 className="lora-mascot-hero__title">
+          Welcome back{firstName ? ',' : '!'}{' '}
+          {firstName && (
+            <span className="lora-mascot-hero__name">{firstName}!</span>
+          )}
         </h1>
-        <p className="lora-hero-subtext">
-          Pick up where you left off, or find your next course.
-        </p>
 
-        {enrollmentsCount > 0 && (
-          <div className="lora-hero-stat-pill">
-            <span className="lora-hero-stat-dot" />
-            <span>{enrollmentsCount} active course{enrollmentsCount > 1 ? 's' : ''} in progress</span>
-          </div>
-        )}
-      </div>
+        <p className="lora-mascot-hero__subtitle">{subtitleText}</p>
 
-      {/* Right Side: Big, Free-Standing Animated Girl (No Box, Completely Transparent) */}
-      <div
-        className="lora-hero-character-stage"
-        onClick={handleGirlClick}
+        <div className="lora-mascot-hero__actions">
+          <Link to="/learner/discover" className="lora-mascot-hero__btn-primary">
+            <span>Explore courses</span>
+            <svg
+              className="lora-mascot-hero__btn-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </Link>
+
+          {enrollmentsCount > 0 && (
+            <button
+              type="button"
+              onClick={scrollToEnrolled}
+              className="lora-mascot-hero__stat-chip"
+            >
+              <span className="lora-mascot-hero__stat-count">
+                {enrollmentsCount}
+              </span>
+              <span>
+                enrolled {enrollmentsCount === 1 ? 'pack' : 'packs'}
+              </span>
+            </button>
+          )}
+        </div>
+      </Motion.div>
+
+      {/* Right Column: Big, Unboxed Animated Mascot Illustration */}
+      <Motion.div
+        className="lora-mascot-hero__stage"
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 20, scale: 0.94 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{
+          type: 'spring',
+          stiffness: 210,
+          damping: 20,
+          delay: 0.08,
+        }}
+        onClick={() => triggerWaveGreeting(true)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            triggerWaveGreeting(true);
+          }
+        }}
         role="button"
         tabIndex={0}
-        aria-label="Interactive learning guide"
-        title="Click to say hi!"
+        aria-label="Say hi to your learning companion"
+        title="Tap to say hi!"
       >
-        {/* Floating Speech Bubble */}
+        {/* Soft Unboxed Ambient Glow Behind Character */}
+        <div className="lora-mascot-hero__aura" aria-hidden="true" />
+
+        {/* Subtle Twinkling Sparkles */}
+        {!prefersReducedMotion && (
+          <>
+            <svg
+              className="lora-mascot-hero__sparkle lora-mascot-hero__sparkle--gold"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 1.5c.7 5.2 4.3 8.8 9.5 9.5-5.2.7-8.8 4.3-9.5 9.5-.7-5.2-4.3-8.8-9.5-9.5 5.2-.7 8.8-4.3 9.5-9.5z" />
+            </svg>
+            <svg
+              className="lora-mascot-hero__sparkle lora-mascot-hero__sparkle--blue"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 2c.6 4.8 4.2 8.4 9 9-4.8.6-8.4 4.2-9 9-.6-4.8-4.2-8.4-9-9 4.8-.6 8.4-4.2 9-9z" />
+            </svg>
+            <svg
+              className="lora-mascot-hero__sparkle lora-mascot-hero__sparkle--green"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 3c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" />
+            </svg>
+          </>
+        )}
+
+        {/* Speech Bubble */}
         <div
-          className="lora-hero-bubble"
-          style={{
-            opacity: bubbleVisible ? 1 : 0,
-            transform: bubbleVisible ? 'translateY(0)' : 'translateY(6px)',
-          }}
+          className={`lora-mascot-hero__bubble ${
+            bubbleVisible ? 'is-visible' : ''
+          }`}
           role="status"
           aria-live="polite"
         >
-          {speechText}
+          {messages[msgIndex]}
         </div>
 
-        {/* Big Grounded Character Canvas + Realistic Floor Shadow */}
-        <div className={`lora-hero-character-wrap ${isIdle ? 'is-idle' : ''}`}>
-          <canvas
-            ref={canvasRef}
-            className="lora-hero-canvas"
-            width={360}
-            height={640}
+        {/* Character Image with Grounded Idle + Happy Wave Animation */}
+        <div
+          className={`lora-mascot-hero__figure ${
+            !prefersReducedMotion ? 'is-animated' : ''
+          } ${isWavingBurst ? 'is-waving-burst' : ''}`}
+        >
+          <img
+            src="/mascot-waving.png"
+            srcSet="/mascot-waving-sm.png 420w, /mascot-waving.png 680w"
+            sizes="(max-width: 680px) 190px, 320px"
+            alt="Lora learning mascot waving hello"
+            className="lora-mascot-hero__img"
+            width="680"
+            height="1020"
+            decoding="async"
+            fetchPriority="high"
+            draggable={false}
           />
-          <div className="lora-hero-floor-shadow" />
         </div>
 
-        {/* Hidden Video Feed (Muted Forever) */}
-        <video
-          ref={videoRef}
-          className="lora-hero-hidden-video"
-          src="/greetin.mp4"
-          playsInline
-          muted
-          autoPlay
-          preload="auto"
-          crossOrigin="anonymous"
+        {/* Synchronized Floor Contact Shadow */}
+        <div
+          className={`lora-mascot-hero__shadow ${
+            !prefersReducedMotion ? 'is-animated' : ''
+          }`}
+          aria-hidden="true"
         />
-      </div>
-    </div>
+      </Motion.div>
+    </section>
   );
 }

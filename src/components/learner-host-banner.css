@@ -1,236 +1,566 @@
 /* ==========================================================================
-   Learner Dashboard Hero Host — Big, Unboxed & Natural Standing Character
+   Learner Dashboard Hero — Left Greeting + Right Animated Mascot Illustration
+   Scoped under .lora-mascot-hero so it never collides with global styles
    ========================================================================== */
 
-.lora-hero-host {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 34px;
-  padding: 8px 0 0;
+.lora-mascot-hero {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 36px;
+  padding: 4px 0 22px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(227, 231, 241, 0.85);
   background: transparent !important;
-  border: none !important;
   box-shadow: none !important;
+  overflow: visible;
 }
 
-@media (max-width: 768px) {
-  .lora-hero-host {
-    flex-direction: column-reverse;
-    align-items: center;
-    text-align: center;
-    gap: 18px;
-    margin-bottom: 28px;
-  }
-}
-
-/* ── Left Side: Clean Typography ── */
-.lora-hero-text {
-  flex: 1;
+/* ── Left Content Column ── */
+.lora-mascot-hero__content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: 16px;
+  min-width: 0;
   z-index: 2;
 }
 
-@media (max-width: 768px) {
-  .lora-hero-text {
-    align-items: center;
-    padding-bottom: 0;
-  }
-}
-
-.lora-hero-greeting {
-  font-family: 'Bricolage Grotesque', sans-serif !important;
-  font-size: clamp(34px, 5.2vw, 50px) !important;
-  font-weight: 800 !important;
-  color: #0e1733 !important;
-  line-height: 1.08 !important;
-  letter-spacing: -0.025em !important;
-  margin: 0 !important;
-}
-
-.lora-hero-subtext {
-  font-size: 16.5px !important;
-  color: #556280 !important;
-  line-height: 1.5 !important;
-  margin: 10px 0 0 !important;
-  max-width: 520px;
-}
-
-.lora-hero-stat-pill {
+.lora-mascot-hero__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  color: #2563eb;
-  border: 1px solid #dbeafe;
-  padding: 6px 14px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 700;
-  margin-top: 16px;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #dde5f7;
+  color: #3b4a6b;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(14, 23, 51, 0.04);
 }
 
-.lora-hero-stat-dot {
+.lora-mascot-hero__eyebrow-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #10b981;
-  display: inline-block;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
-  animation: heroDotPulse 2s infinite;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+  flex-shrink: 0;
 }
 
-@keyframes heroDotPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.85);
-  }
+.lora-mascot-hero__title {
+  font-family: 'Bricolage Grotesque', Figtree, sans-serif !important;
+  font-size: clamp(32px, 4.6vw, 50px) !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.028em !important;
+  color: #0e1733 !important;
+  margin: 0 !important;
+  word-break: break-word;
 }
 
-/* ── Right Side: Big, Free-Standing Character Stage ── */
-.lora-hero-character-stage {
+.lora-mascot-hero__name {
+  background: linear-gradient(135deg, #1d3fd1 0%, #2f5bff 65%, #0f9d6b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lora-mascot-hero__subtitle {
+  font-size: 16.5px !important;
+  line-height: 1.55 !important;
+  color: #5b6682 !important;
+  margin: 12px 0 0 !important;
+  max-width: 530px;
+}
+
+.lora-mascot-hero__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.lora-mascot-hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #3965ff 0%, #2550f5 100%);
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none !important;
+  box-shadow: 0 6px 18px -4px rgba(47, 91, 255, 0.42), 0 1px 2px rgba(14, 23, 51, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lora-mascot-hero__btn-primary:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 22px -4px rgba(47, 91, 255, 0.5);
+  filter: brightness(1.03);
+}
+
+.lora-mascot-hero__btn-primary:active {
+  transform: translateY(0);
+}
+
+.lora-mascot-hero__btn-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.lora-mascot-hero__btn-primary:hover .lora-mascot-hero__btn-icon {
+  transform: translateX(3px);
+}
+
+.lora-mascot-hero__stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #dfe5f2;
+  color: #334155;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(14, 23, 51, 0.04);
+  transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lora-mascot-hero__stat-chip:hover {
+  background: #f8faff;
+  border-color: #bfd0ff;
+  transform: translateY(-1px);
+}
+
+.lora-mascot-hero__stat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e9eeff;
+  color: #2550f5;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Right Mascot Stage (Big, Unboxed, Grounded) ── */
+.lora-mascot-hero__stage {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  /* Enhanced Big Character Size */
-  height: clamp(320px, 34vw, 440px);
-  min-width: 200px;
+  height: clamp(295px, 28vw, 370px);
+  padding: 8px 10px 0;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  background: transparent !important;
-  border: none !important;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  z-index: 3;
 }
 
-@media (max-width: 768px) {
-  .lora-hero-character-stage {
-    height: clamp(260px, 60vw, 340px);
-    min-width: auto;
-  }
+.lora-mascot-hero__stage:focus-visible {
+  border-radius: 20px;
+  box-shadow: 0 0 0 3px rgba(47, 91, 255, 0.35);
 }
 
-/* ── Floating Speech Bubble ── */
-.lora-hero-bubble {
+/* Soft radial glow (completely unboxed, fades to 0% alpha) */
+.lora-mascot-hero__aura {
   position: absolute;
-  top: -10px;
-  background: #ffffff;
-  color: #0e1733;
-  padding: 8px 16px;
-  border-radius: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 6px 20px rgba(14, 23, 51, 0.12), 0 1px 3px rgba(14, 23, 51, 0.06);
-  border: 1px solid #e2e8f0;
-  white-space: nowrap;
+  inset: 6% -12% 4% -12%;
+  background: radial-gradient(
+    circle at 52% 48%,
+    rgba(47, 91, 255, 0.11) 0%,
+    rgba(16, 185, 129, 0.07) 38%,
+    rgba(244, 246, 251, 0) 70%
+  );
   pointer-events: none;
-  z-index: 10;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  animation: heroBubbleFloat 3s ease-in-out infinite;
+  z-index: 0;
 }
 
-.lora-hero-bubble::after {
-  content: '';
+/* ── Twinkling Accent Sparkles ── */
+.lora-mascot-hero__sparkle {
   position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 10px;
-  height: 10px;
-  background: #ffffff;
-  border-right: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  pointer-events: none;
+  z-index: 4;
 }
 
-@keyframes heroBubbleFloat {
+.lora-mascot-hero__sparkle--gold {
+  top: 14%;
+  right: 4%;
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  animation: loraSparkleTwinkle 3.6s ease-in-out infinite;
+}
+
+.lora-mascot-hero__sparkle--blue {
+  top: 28%;
+  left: 2%;
+  width: 16px;
+  height: 16px;
+  color: #3b82f6;
+  animation: loraSparkleTwinkle 4.2s ease-in-out 1.1s infinite;
+}
+
+.lora-mascot-hero__sparkle--green {
+  bottom: 24%;
+  right: 3%;
+  width: 14px;
+  height: 14px;
+  color: #10b981;
+  animation: loraSparkleTwinkle 4.8s ease-in-out 2.1s infinite;
+}
+
+@keyframes loraSparkleTwinkle {
   0%, 100% {
-    transform: translateY(0);
+    opacity: 0.35;
+    transform: scale(0.78) rotate(0deg);
   }
   50% {
-    transform: translateY(-5px);
+    opacity: 0.95;
+    transform: scale(1.15) rotate(15deg);
   }
 }
 
-/* ── Grounded Character & Realistic Floor Shadow ── */
-.lora-hero-character-wrap {
+/* ── Speech Bubble ── */
+.lora-mascot-hero__bubble {
+  position: absolute;
+  top: -8px;
+  left: -18px;
+  background: #ffffff;
+  color: #0e1733;
+  padding: 8px 15px;
+  border-radius: 16px;
+  border: 1px solid #dbe5f8;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px -6px rgba(14, 23, 51, 0.14), 0 1px 3px rgba(14, 23, 51, 0.05);
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transform: translateY(8px) scale(0.94);
+  transition: opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lora-mascot-hero__bubble.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.lora-mascot-hero__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 26px;
+  width: 9px;
+  height: 9px;
+  background: #ffffff;
+  border-right: 1px solid #dbe5f8;
+  border-bottom: 1px solid #dbe5f8;
+  transform: rotate(45deg);
+}
+
+/* ── Animated Character Figure ── */
+.lora-mascot-hero__figure {
   position: relative;
   height: 100%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+  /* Anchor pivot right at her sneakers so feet stay planted on the ground */
+  transform-origin: 50% 93%;
+  will-change: transform;
+  transition: filter 0.22s ease;
 }
 
-.lora-hero-character-stage:hover .lora-hero-character-wrap {
-  transform: scale(1.02);
+.lora-mascot-hero__img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 12px 22px rgba(14, 23, 51, 0.11));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.lora-hero-character-stage:active .lora-hero-character-wrap {
+.lora-mascot-hero__stage:hover .lora-mascot-hero__img {
+  transform: scale(1.03);
+}
+
+.lora-mascot-hero__stage:active .lora-mascot-hero__img {
   transform: scale(0.98);
 }
 
-.lora-hero-character-wrap.is-idle {
-  animation: heroGentleIdle 3.8s ease-in-out infinite;
+/* Continuous organic breathing + friendly welcoming sway */
+.lora-mascot-hero__figure.is-animated {
+  animation: loraMascotAlive 5.6s ease-in-out infinite;
 }
 
-@keyframes heroGentleIdle {
+/* Cheerful happy wave burst on greeting / tap */
+.lora-mascot-hero__figure.is-waving-burst {
+  animation: loraMascotWaveBurst 1.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) 1;
+}
+
+@keyframes loraMascotAlive {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg) scale(1, 1);
   }
-  50% {
-    transform: translateY(-4px);
+  25% {
+    transform: translateY(-4px) rotate(-1.7deg) scale(1.005, 1.012);
+  }
+  52% {
+    transform: translateY(-2px) rotate(1.3deg) scale(1.002, 1.006);
+  }
+  78% {
+    transform: translateY(-5px) rotate(-1.1deg) scale(1.006, 1.014);
   }
 }
 
-.lora-hero-canvas {
-  height: 100%;
-  width: auto;
-  object-fit: contain;
-  display: block;
-  z-index: 2;
-  filter: drop-shadow(0 8px 18px rgba(14, 23, 51, 0.1));
+@keyframes loraMascotWaveBurst {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  18% {
+    transform: translateY(-8px) rotate(-4.5deg) scale(1.025);
+  }
+  38% {
+    transform: translateY(-3px) rotate(3.6deg) scale(1.018);
+  }
+  58% {
+    transform: translateY(-7px) rotate(-3.2deg) scale(1.02);
+  }
+  78% {
+    transform: translateY(-2px) rotate(1.8deg) scale(1.008);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
 }
 
-/* Realistic Grounded Elliptical Contact Shadow on the page floor */
-.lora-hero-floor-shadow {
+/* ── Synchronized Contact Shadow ── */
+.lora-mascot-hero__shadow {
   position: absolute;
-  bottom: 0px;
+  bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 180px;
-  height: 22px;
-  background: radial-gradient(ellipse at center, rgba(14, 23, 51, 0.22) 0%, rgba(14, 23, 51, 0) 72%);
+  width: 58%;
+  height: 16px;
   border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(14, 23, 51, 0.2) 0%,
+    rgba(14, 23, 51, 0.07) 48%,
+    rgba(14, 23, 51, 0) 75%
+  );
   pointer-events: none;
   z-index: 1;
-  filter: blur(2px);
 }
 
-@media (max-width: 768px) {
-  .lora-hero-floor-shadow {
-    width: 140px;
-    height: 18px;
+.lora-mascot-hero__shadow.is-animated {
+  animation: loraMascotShadowSync 5.6s ease-in-out infinite;
+}
+
+@keyframes loraMascotShadowSync {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 0.95;
+  }
+  25%, 78% {
+    transform: translateX(-50%) scaleX(0.91);
+    opacity: 0.72;
+  }
+  52% {
+    transform: translateX(-50%) scaleX(0.96);
+    opacity: 0.86;
   }
 }
 
-/* Hidden Video Element (Permanently Muted, Only Feeds Canvas) */
-.lora-hero-hidden-video {
-  display: none !important;
-  visibility: hidden !important;
-  position: absolute;
-  pointer-events: none;
-  opacity: 0;
-  width: 0;
-  height: 0;
+/* ==========================================================================
+   Tablet Optimization (641px – 900px)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .lora-mascot-hero {
+    gap: 20px;
+    padding-bottom: 18px;
+  }
+
+  .lora-mascot-hero__stage {
+    height: clamp(240px, 31vw, 300px);
+    padding-right: 4px;
+  }
+
+  .lora-mascot-hero__subtitle {
+    font-size: 15px !important;
+  }
+}
+
+/* ==========================================================================
+   Mobile Optimization (<= 640px)
+   Side-by-side tailored split layout so greeting & waving mascot match
+   harmoniously above the fold without pushing courses off-screen!
+   ========================================================================== */
+@media (max-width: 640px) {
+  .lora-mascot-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 2px 0 16px;
+    margin-bottom: 24px;
+  }
+
+  .lora-mascot-hero__content {
+    padding-bottom: 4px;
+  }
+
+  .lora-mascot-hero__eyebrow {
+    font-size: 11px;
+    padding: 4px 10px;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .lora-mascot-hero__eyebrow-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .lora-mascot-hero__title {
+    font-size: clamp(23px, 6.5vw, 30px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .lora-mascot-hero__subtitle {
+    font-size: 13.5px !important;
+    line-height: 1.45 !important;
+    margin-top: 8px !important;
+  }
+
+  .lora-mascot-hero__actions {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .lora-mascot-hero__btn-primary {
+    padding: 9px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+    gap: 6px;
+  }
+
+  .lora-mascot-hero__btn-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .lora-mascot-hero__stat-chip {
+    padding: 7px 11px;
+    font-size: 12px;
+    border-radius: 10px;
+    gap: 6px;
+  }
+
+  .lora-mascot-hero__stat-count {
+    min-width: 19px;
+    height: 19px;
+    font-size: 11px;
+  }
+
+  /* Mascot stays nicely prominent on the right, waving right at the learner */
+  .lora-mascot-hero__stage {
+    height: clamp(185px, 47vw, 232px);
+    padding: 12px 0 0;
+    margin-right: -4px;
+  }
+
+  .lora-mascot-hero__bubble {
+    top: -4px;
+    left: auto;
+    right: 2px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    border-radius: 12px;
+    max-width: 44vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lora-mascot-hero__bubble::after {
+    right: 22px;
+    width: 7px;
+    height: 7px;
+    bottom: -4px;
+  }
+
+  .lora-mascot-hero__sparkle--gold {
+    width: 15px;
+    height: 15px;
+    top: 16%;
+    right: 2%;
+  }
+
+  .lora-mascot-hero__sparkle--blue {
+    width: 12px;
+    height: 12px;
+  }
+
+  .lora-mascot-hero__sparkle--green {
+    display: none;
+  }
+}
+
+/* Ultra-compact narrow phones (<= 350px) */
+@media (max-width: 350px) {
+  .lora-mascot-hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .lora-mascot-hero__content {
+    align-items: center;
+  }
+
+  .lora-mascot-hero__actions {
+    justify-content: center;
+  }
+
+  .lora-mascot-hero__stage {
+    height: 205px;
+    margin-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lora-mascot-hero__figure.is-animated,
+  .lora-mascot-hero__figure.is-waving-burst,
+  .lora-mascot-hero__shadow.is-animated,
+  .lora-mascot-hero__sparkle {
+    animation: none !important;
+  }
 }

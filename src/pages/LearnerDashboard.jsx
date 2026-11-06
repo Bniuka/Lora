@@ -91,10 +91,14 @@ export default function LearnerDashboard() {
     <div className="lora-learner">
       <div className="wrap">
         {/* Integrated Hero Host Banner */}
-        <LearnerHostBanner profile={profile} enrollmentsCount={enrollments.length} />
+        <LearnerHostBanner
+          profile={profile}
+          enrollmentsCount={enrollments.length}
+          enrollments={enrollments}
+        />
 
         {/* Section 1: My enrolled packs */}
-        <section className="sec">
+        <section className="sec" id="my-enrolled-packs">
           <div className="sh">
             <h2>My enrolled packs</h2>
             {enrollments.length > 0 && <span className="cnt">{enrollments.length}</span>}
