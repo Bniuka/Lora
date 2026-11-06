@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { Layers, Package, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
@@ -791,48 +792,80 @@ export default function CreatorDashboard() {
               </Link>
             </div>
 
-            {latestPack ? (
-              <article className="pack">
-                <div className="thumb">
-                  {latestPack.thumbnail_url && (
-                    <img src={latestPack.thumbnail_url} alt={latestPack.title} />
-                  )}
-                  <span className={`badge${latestPack.is_published ? '' : ' draft'}`}>
-                    {latestPack.is_published ? 'Published' : 'Draft'}
-                  </span>
-                </div>
+            {topLevelRecentPacks.length > 0 ? (
+              <div className="pack-list">
+                {topLevelRecentPacks.slice(0, 3).map((pack) => {
+                  const isMulti = Boolean(pack.is_multi_pack);
+                  const children = recentPacks.filter(cp => cp.parent_pack_id === pack.id);
+                  const lessons = isMulti
+                    ? children.reduce((sum, cp) => sum + (cp.sessions?.[0]?.count || 0), 0)
+                    : (pack.sessions?.[0]?.count || 0);
+                  const isFree = Number(pack.price) === 0;
 
-                <div className="pb">
-                  <h3>{latestPack.title}</h3>
-                  <p>{latestPack.description || 'No description provided.'}</p>
+                  return (
+                    <article key={pack.id} className="pack-mini">
+                      {/* Compact Thumbnail */}
+                      <div className="pm-thumb">
+                        {pack.thumbnail_url ? (
+                          <img src={pack.thumbnail_url} alt={pack.title} />
+                        ) : (
+                          <div className={`pm-fallback ${isMulti ? 'multi' : 'single'}`}>
+                            {isMulti ? <Layers size={20} /> : <Package size={20} />}
+                          </div>
+                        )}
+                        <span className={`pm-badge ${pack.is_published ? 'pub' : 'dft'}`}>
+                          {pack.is_published ? 'Live' : 'Draft'}
+                        </span>
+                      </div>
 
-                  <div className="meta">
-                    <span>
-                      <IcLesson />
-                      {sessionCount} lesson{sessionCount !== 1 ? 's' : ''}
-                    </span>
-                    <span>
-                      <IcClock />
-                      Learn at your own pace
-                    </span>
-                    {latestPack.category && (
-                      <span>
-                        <IcZap />
-                        {latestPack.category}
-                      </span>
-                    )}
-                  </div>
+                      {/* Info Center */}
+                      <div className="pm-info">
+                        <div className="pm-top">
+                          <span className={`pm-cat ${isMulti ? 'multi' : ''}`}>
+                            {isMulti ? `Multi-Pack · ${children.length} Batches` : (pack.category || 'Course')}
+                          </span>
+                          {pack.visibility === 'private' && (
+                            <span className="pm-priv-badge">
+                              <Lock size={10} /> Private
+                            </span>
+                          )}
+                        </div>
 
-                  <div className="pf">
-                    <span className="price">
-                      {latestPack.is_multi_pack ? 'Multi-Course Pack' : `${latestPack.currency} ${latestPack.price}`}
-                    </span>
-                    <Link className="btn" to={latestPack.is_multi_pack ? `/creator/multi-packs/${latestPack.id}` : `/learner/pack/${latestPack.id}`}>
-                      {latestPack.is_multi_pack ? 'Manage batches' : 'View details'} <IcArrowRight />
-                    </Link>
-                  </div>
-                </div>
-              </article>
+                        <h3 className="pm-title" title={pack.title}>
+                          {pack.title}
+                        </h3>
+
+                        <div className="pm-meta">
+                          <span>
+                            <IcLesson />
+                            {lessons} lesson{lessons !== 1 ? 's' : ''}
+                          </span>
+                          <span>·</span>
+                          <span>
+                            {isMulti ? (
+                              <span className="pm-price">Multi-Course</span>
+                            ) : isFree ? (
+                              <span className="pm-price free">FREE</span>
+                            ) : (
+                              <span className="pm-price">{pack.currency} {Number(pack.price || 0).toLocaleString()}</span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right Action Button */}
+                      <div className="pm-action">
+                        <Link
+                          className={`pm-btn ${isMulti ? 'pri' : ''}`}
+                          to={isMulti ? `/creator/multi-packs/${pack.id}` : `/creator/packs/${pack.id}/edit`}
+                        >
+                          {isMulti ? 'Batches' : 'Edit'} <IcArrowRight />
+                        </Link>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             ) : (
               <div className="empty">
                 <span className="ib"><IcPack /></span>
