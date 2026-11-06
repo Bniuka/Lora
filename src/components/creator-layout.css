@@ -74,6 +74,13 @@
   top: 0 !important;
   height: 100vh !important;
   z-index: 10 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.lora-creator aside::-webkit-scrollbar {
+  display: none !important;
 }
 
 .lora-creator .logo {
@@ -138,39 +145,252 @@
   font-weight: 600 !important;
 }
 
-.lora-creator .tip {
+/* ══════════════════════════════════════════════════════
+   DREAMY MASCOT COMPANION WIDGET (DESKTOP SIDEBAR)
+   ══════════════════════════════════════════════════════ */
+.lora-creator .creator-mascot-widget {
   margin-top: auto !important;
-  border-radius: 16px !important;
-  padding: 16px !important;
-  background: var(--brand-soft) !important;
-  font-size: 13px !important;
-  color: var(--muted) !important;
-  line-height: 1.4 !important;
-}
-
-.lora-creator .tip b {
-  display: block !important;
-  color: var(--ink) !important;
-  font: 700 15px 'Bricolage Grotesque', sans-serif !important;
-  margin-bottom: 4px !important;
-}
-
-.lora-creator .tip button {
-  margin-top: 10px !important;
-  background: var(--ink) !important;
-  color: #fff !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  padding: 8px 14px !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 6px 12px !important;
+  border-radius: 20px !important;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.6) 0%, rgba(241, 245, 249, 0.85) 100%) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 4px 20px -4px rgba(99, 102, 241, 0.08) !important;
   cursor: pointer !important;
-  width: 100% !important;
-  transition: 0.15s !important;
+  user-select: none !important;
+  outline: none !important;
+  overflow: visible !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
-.lora-creator .tip button:hover {
-  opacity: 0.9 !important;
+.lora-creator .creator-mascot-widget:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(180deg, rgba(238, 242, 255, 0.75) 0%, rgba(245, 243, 255, 0.95) 100%) !important;
+  border-color: rgba(165, 180, 252, 0.65) !important;
+  box-shadow: 0 10px 28px -4px rgba(99, 102, 241, 0.18) !important;
+}
+
+.lora-creator .creator-mascot-widget:focus-visible {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35) !important;
+}
+
+/* Glowing Ambient Aura Behind Mascot */
+.lora-creator .creator-mascot-aura {
+  position: absolute !important;
+  top: 8% !important;
+  left: 50% !important;
+  transform: translate(-50%, 0) !important;
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.22) 0%, rgba(192, 132, 252, 0.14) 40%, transparent 72%) !important;
+  filter: blur(14px) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  animation: loraDreamyAura 5s ease-in-out infinite !important;
+}
+
+@keyframes loraDreamyAura {
+  0%, 100% {
+    opacity: 0.45;
+    transform: translate(-50%, 0) scale(0.92);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translate(-50%, 0) scale(1.08);
+  }
+}
+
+/* Floating Sparkles */
+.lora-creator .creator-mascot-sparkles {
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.lora-creator .creator-sparkle {
+  position: absolute !important;
+  line-height: 1 !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12)) !important;
+}
+
+.lora-creator .creator-sparkle.s1 {
+  top: 12px !important;
+  right: 18px !important;
+  font-size: 15px !important;
+  color: #f59e0b !important;
+  animation: loraDreamySparkle 3.6s ease-in-out infinite !important;
+  animation-delay: 0.2s !important;
+}
+
+.lora-creator .creator-sparkle.s2 {
+  top: 6px !important;
+  left: 16px !important;
+  font-size: 16px !important;
+  color: #8b5cf6 !important;
+  animation: loraDreamySparkle 4.2s ease-in-out infinite !important;
+  animation-delay: 1.8s !important;
+}
+
+.lora-creator .creator-sparkle.s3 {
+  top: 50% !important;
+  right: 10px !important;
+  font-size: 13px !important;
+  color: #10b981 !important;
+  animation: loraDreamySparkle 3.8s ease-in-out infinite !important;
+  animation-delay: 2.6s !important;
+}
+
+@keyframes loraDreamySparkle {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(24deg);
+  }
+}
+
+/* Mascot Image Wrapper & Floating Animation */
+.lora-creator .creator-mascot-img-wrap {
+  position: relative !important;
+  z-index: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  padding: 4px 0 0 !important;
+}
+
+.lora-creator .creator-mascot-img {
+  width: 176px !important;
+  max-width: 186px !important;
+  height: auto !important;
+  max-height: 195px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 10px 16px rgba(15, 23, 42, 0.1)) !important;
+  animation: loraDreamyFloat 4.6s ease-in-out infinite !important;
+  transform-origin: 50% 90% !important;
+  transition: filter 0.3s ease !important;
+}
+
+.lora-creator .creator-mascot-widget:hover .creator-mascot-img {
+  filter: drop-shadow(0 14px 22px rgba(99, 102, 241, 0.22)) !important;
+}
+
+@keyframes loraDreamyFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(0.8deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(-0.8deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* Synchronized Dynamic Ground Shadow */
+.lora-creator .creator-mascot-shadow {
+  width: 95px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.26) 0%, rgba(15, 23, 42, 0.08) 55%, transparent 72%) !important;
+  margin-top: -6px !important;
+  margin-bottom: 8px !important;
+  z-index: 0 !important;
+  filter: blur(4px) !important;
+  animation: loraDreamyShadow 4.6s ease-in-out infinite !important;
+  pointer-events: none !important;
+}
+
+@keyframes loraDreamyShadow {
+  0%, 100% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 0.35;
+    filter: blur(4px);
+  }
+  50% {
+    transform: scaleX(0.74) scaleY(0.7);
+    opacity: 0.16;
+    filter: blur(7px);
+  }
+}
+
+/* Dreamy Interactive Speech Bubble / Pill */
+.lora-creator .creator-mascot-bubble {
+  position: relative !important;
+  z-index: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 5px 12px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(203, 213, 225, 0.9) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+  transition: all 0.25s ease !important;
+  max-width: 95% !important;
+}
+
+.lora-creator .creator-mascot-widget:hover .creator-mascot-bubble {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18) !important;
+}
+
+.lora-creator .bubble-text {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  white-space: nowrap !important;
+  transition: color 0.2s ease !important;
+}
+
+.lora-creator .creator-mascot-widget:hover .bubble-text {
+  color: #f8fafc !important;
+}
+
+.lora-creator .bubble-hint {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #6366f1 !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  transition: all 0.2s ease !important;
+}
+
+.lora-creator .creator-mascot-widget:hover .bubble-hint {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.lora-creator .bubble-arrow {
+  width: 12px !important;
+  height: 12px !important;
+  transition: transform 0.2s ease !important;
+}
+
+.lora-creator .creator-mascot-widget:hover .bubble-arrow {
+  transform: translateX(2px) !important;
 }
 
 .lora-creator main {
@@ -342,6 +562,13 @@
   background: #fde8ec !important;
 }
 
+/* ══════════════════════════════════════════════════════
+   MOBILE COMPANION MASCOT (<= 900px)
+   ══════════════════════════════════════════════════════ */
+.lora-creator .creator-mascot-mobile {
+  display: none !important;
+}
+
 /* Responsive bottom bar */
 @media(max-width: 900px) {
   .lora-creator .app {
@@ -360,9 +587,12 @@
     border-right: 0 !important;
     border-top: 1px solid var(--line) !important;
     box-shadow: 0 -4px 16px rgba(14, 23, 51, 0.06) !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
   }
   .lora-creator .logo,
-  .lora-creator .tip {
+  .lora-creator .tip,
+  .lora-creator .creator-mascot-widget {
     display: none !important;
   }
   .lora-creator nav {
@@ -390,6 +620,65 @@
   }
   .lora-creator .who div:not(.relative) {
     display: none !important;
+  }
+
+  /* Display the cute companion mascot in the mobile top bar */
+  .lora-creator .creator-mascot-mobile {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.14)) !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12) !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
+  }
+
+  .lora-creator .creator-mascot-mobile:active {
+    transform: scale(0.9) !important;
+  }
+
+  .lora-creator .creator-mascot-mobile-ring {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+  }
+
+  .lora-creator .creator-mascot-mobile-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important;
+    animation: loraDreamyFloatMobile 3.5s ease-in-out infinite !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12)) !important;
+  }
+
+  .lora-creator .creator-mascot-mobile-badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    animation: loraDreamySparkle 2.8s ease-in-out infinite !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
+  }
+}
+
+@keyframes loraDreamyFloatMobile {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(2deg);
   }
 }
 

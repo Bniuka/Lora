@@ -1,5 +1,5 @@
 import { NavLink, useNavigate, Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, Package, PlusCircle, Layers, CreditCard,
@@ -13,7 +13,7 @@ import { isUserAdmin } from '../lib/admin';
 import AppLogo from './AppLogo';
 import './creator-layout.css';
 
-const navItems = [
+const _NAV_ITEMS = [
   { to: '/creator/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/creator/packs', icon: Package, label: 'My Packs' },
   { to: '/creator/packs/new', icon: PlusCircle, label: 'Create Pack' },
@@ -35,18 +35,6 @@ function NotificationPanel({ userId, onClose }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchNotifications = async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(20);
-    setNotifications(data || []);
-    setLoading(false);
-  };
-
   const markAllRead = async () => {
     await supabase
       .from('notifications')
@@ -61,12 +49,28 @@ function NotificationPanel({ userId, onClose }) {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
 
-  useEffect(() => { if (userId) fetchNotifications(); }, [userId]);
+  useEffect(() => {
+    let cancelled = false;
+    if (!userId) return;
+    supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        if (!cancelled) {
+          setNotifications(data || []);
+          setLoading(false);
+        }
+      });
+    return () => { cancelled = true; };
+  }, [userId]);
 
   const unread = notifications.filter(n => !n.is_read).length;
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 12, scale: 0.97 }}
@@ -171,7 +175,7 @@ function NotificationPanel({ userId, onClose }) {
           </div>
         )}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 }
 
@@ -298,10 +302,48 @@ export default function CreatorLayout({ children }) {
               </NavLink>
             )}
           </nav>
-          <div className="tip">
-            <b>New to LoraSpace?</b>
-            Discover all creator features, promo codes, and setup steps.
-            <button type="button" onClick={() => navigate('/creator/guide')}>Open Creator Guide</button>
+
+          {/* ══════════════ DREAMY MASCOT (CREATOR COMPANION) ══════════════ */}
+          <div
+            className="creator-mascot-widget"
+            onClick={() => navigate('/creator/guide')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/creator/guide')}
+            title="Dream big! Click to open Creator Guide"
+          >
+            {/* Ambient Aura Glow */}
+            <div className="creator-mascot-aura" aria-hidden="true" />
+
+            {/* Floating Sparkles */}
+            <div className="creator-mascot-sparkles" aria-hidden="true">
+              <span className="creator-sparkle s1">✦</span>
+              <span className="creator-sparkle s2">✨</span>
+              <span className="creator-sparkle s3">★</span>
+            </div>
+
+            {/* Floating Mascot Image */}
+            <div className="creator-mascot-img-wrap">
+              <img
+                src="/mascot-dreamy.png"
+                alt="Lora Creator Mascot"
+                className="creator-mascot-img"
+                loading="lazy"
+                draggable={false}
+              />
+            </div>
+
+            {/* Synchronized Dynamic Ground Shadow */}
+            <div className="creator-mascot-shadow" aria-hidden="true" />
+
+            {/* Dreamy Interactive Speech Bubble / Pill */}
+            <div className="creator-mascot-bubble">
+              <span className="bubble-text">Dream big, Creator!</span>
+              <span className="bubble-hint">
+                <span>Guide</span>
+                <svg viewBox="0 0 24 24" className="bubble-arrow" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </div>
           </div>
         </aside>
 
@@ -322,6 +364,24 @@ export default function CreatorLayout({ children }) {
             </form>
 
             <div className="who">
+              {/* Mobile Dreamy Mascot Companion (Visible on mobile <= 900px) */}
+              <button
+                type="button"
+                className="creator-mascot-mobile"
+                onClick={() => navigate('/creator/guide')}
+                aria-label="Creator Guide"
+                title="Dream big! Tap for Creator Guide"
+              >
+                <div className="creator-mascot-mobile-ring">
+                  <img
+                    src="/mascot-dreamy.png"
+                    alt="Dreamy"
+                    className="creator-mascot-mobile-avatar"
+                  />
+                </div>
+                <span className="creator-mascot-mobile-badge" aria-hidden="true">✨</span>
+              </button>
+
               {/* Bell with dropdown panel */}
               <div className="relative" ref={notifRef} style={{ position: 'relative' }}>
                 <button
