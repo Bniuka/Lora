@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { isUserAdmin } from '../lib/admin';
+import { FullPageLoader } from '../components/ui';
 import AppLogo from '../components/AppLogo';
 import './creator-subscription.css';
 
@@ -25,15 +26,6 @@ export default function CreatorSubscription() {
       navigate('/creator/dashboard', { replace: true });
     }
   }, [user, navigate]);
-
-  // Wait for profile to load before determining trial status
-  if (creatorProfile === undefined) {
-    return (
-      <div className="lora-sub" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Loader2 className="w-10 h-10 animate-spin" style={{ color: 'var(--brand)' }} />
-      </div>
-    );
-  }
 
   const isUpgrade = searchParams.get('upgrade') === 'true';
   const isTrialView = creatorProfile?.subscription_status === 'trial' && !isUpgrade;
@@ -76,7 +68,7 @@ export default function CreatorSubscription() {
             plan_id: 'P-29205712KU195831VNKVYZQQ'
           });
         },
-        onApprove: async (data, actions) => {
+        onApprove: async (data) => {
           try {
             setLoading(true);
             
@@ -121,6 +113,11 @@ export default function CreatorSubscription() {
       }).render('#paypal-button-container');
     }
   }, [isTrialView, scriptLoaded, creatorProfile, navigate, refreshProfile]);
+
+  // Wait for profile to load before determining trial status
+  if (creatorProfile === undefined) {
+    return <FullPageLoader message="Loading your subscription status..." />;
+  }
 
   const isCreatorInTrial = creatorProfile?.subscription_status === 'trial' &&
     (!creatorProfile.trial_ends_at || new Date(creatorProfile.trial_ends_at) > new Date());

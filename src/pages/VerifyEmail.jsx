@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import AppLogo from "../components/AppLogo";
+import { LoadingAnimation } from "../components/ui";
 import "./verify-email.css";
 
 const COOLDOWN_SECONDS = 60;
@@ -138,7 +139,7 @@ export default function VerifyEmail() {
           <main className="card">
             {verifying && (
               <>
-                <div className="direct-spin" aria-hidden="true" />
+                <LoadingAnimation size="sm" className="mx-auto mb-3" />
                 <h1>Verifying your email...</h1>
                 <p className="lead">Please wait a moment while we activate your account.</p>
               </>

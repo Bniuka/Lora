@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
 /* ============================================================
@@ -6,14 +6,14 @@ import { Loader2 } from 'lucide-react';
    ============================================================ */
 export function PageTransition({ children }) {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   );
 }
 
@@ -30,26 +30,52 @@ export function LoadingSpinner({ size = 'md', className = '' }) {
 }
 
 /* ============================================================
+   LOADING ANIMATION (Video MP4)
+   ============================================================ */
+export function LoadingAnimation({ size = 'md', className = '' }) {
+  const sizeMap = {
+    xs: 'w-16 h-16 max-w-[64px]',
+    sm: 'w-28 h-28 max-w-[112px]',
+    md: 'w-48 h-48 sm:w-56 sm:h-56 max-w-[220px]',
+    lg: 'w-64 h-64 sm:w-72 sm:h-72 max-w-[280px]',
+    xl: 'w-80 h-80 sm:w-96 sm:h-96 max-w-[360px]',
+    full: 'w-full h-full',
+  };
+
+  return (
+    <div className={`relative flex items-center justify-center overflow-hidden rounded-3xl ${sizeMap[size] || sizeMap.md} ${className}`}>
+      <video
+        src="/loading_animation.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-contain pointer-events-none select-none"
+      />
+    </div>
+  );
+}
+
+/* ============================================================
    FULL PAGE LOADER
    ============================================================ */
-export function FullPageLoader() {
+export function FullPageLoader({ message = null, className = '' }) {
   return (
-    <div className="fixed inset-0 bg-[#F8FAFC] flex items-center justify-center z-50">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+    <div className={`fixed inset-0 bg-[#F8FAFC] flex items-center justify-center z-50 ${className}`}>
+      <Motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center gap-6"
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="flex flex-col items-center justify-center text-center p-6 select-none"
       >
-        <motion.h1
-          className="text-4xl font-bold text-[#2563EB]"
-          style={{ fontFamily: 'var(--font-heading)' }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          Lora
-        </motion.h1>
-        <div className="spinner-lg spinner" />
-      </motion.div>
+        <LoadingAnimation size="lg" />
+        {message ? (
+          <p className="mt-2 text-sm font-semibold text-[#64748B] tracking-wide animate-pulse">
+            {message}
+          </p>
+        ) : null}
+      </Motion.div>
     </div>
   );
 }
@@ -86,7 +112,7 @@ export function StatusBadge({ status }) {
    ============================================================ */
 export function StatCard({ icon: Icon, label, value, accent = false }) {
   return (
-    <motion.div
+    <Motion.div
       className="stat-card"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -103,7 +129,7 @@ export function StatCard({ icon: Icon, label, value, accent = false }) {
         {value}
       </p>
       <span className="text-sm text-[#94A6B8]">{label}</span>
-    </motion.div>
+    </Motion.div>
   );
 }
 
@@ -114,14 +140,14 @@ export function Modal({ isOpen, onClose, title, children }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <Motion.div
           className="modal-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          <motion.div
+          <Motion.div
             className="modal-content"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -135,8 +161,8 @@ export function Modal({ isOpen, onClose, title, children }) {
               </h3>
             )}
             {children}
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
       )}
     </AnimatePresence>
   );
@@ -160,7 +186,7 @@ export function Skeleton({ className = '', count = 1 }) {
    ============================================================ */
 export function EmptyState({ icon: Icon, title, description, action }) {
   return (
-    <motion.div
+    <Motion.div
       className="bg-white rounded-2xl p-16 text-center border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.07)]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -175,7 +201,7 @@ export function EmptyState({ icon: Icon, title, description, action }) {
       </h3>
       <p className="text-sm text-[#475569] max-w-md mx-auto mb-8 leading-relaxed">{description}</p>
       {action}
-    </motion.div>
+    </Motion.div>
   );
 }
 
@@ -367,7 +393,7 @@ export function ShareMenu({ url, title, thumbnail, subtitle, creatorName, price,
       } else {
         throw new Error('Clipboard API unavailable');
       }
-    } catch (_) {
+    } catch {
       const input = document.getElementById('lora-share-url-input');
       if (input) {
         input.select();
@@ -395,7 +421,9 @@ export function ShareMenu({ url, title, thumbnail, subtitle, creatorName, price,
           title: displayTitle,
           url: shareUrl,
         });
-      } catch (_) {}
+      } catch {
+        // user cancelled or share failed
+      }
     }
   };
 
