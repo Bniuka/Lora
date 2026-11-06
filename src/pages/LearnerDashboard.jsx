@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { generatePaymentReference } from '../lib/utils';
+import LearnerHostBanner from '../components/LearnerHostBanner';
 import './learner-dashboard.css';
 
 export default function LearnerDashboard() {
@@ -89,13 +90,8 @@ export default function LearnerDashboard() {
   return (
     <div className="lora-learner">
       <div className="wrap">
-        {/* Welcome Heading */}
-        <div className="hello">
-          <div>
-            <h1>My dashboard</h1>
-            <p>Pick up where you left off, or find your next course.</p>
-          </div>
-        </div>
+        {/* Integrated Hero Host Banner */}
+        <LearnerHostBanner profile={profile} enrollmentsCount={enrollments.length} />
 
         {/* Section 1: My enrolled packs */}
         <section className="sec">
