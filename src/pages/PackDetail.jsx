@@ -18,6 +18,7 @@ import {
   getPromoExpiryInfo,
 } from '../lib/promo';
 import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } from '../components/ui';
+import PackReviewsSection from '../components/PackReviewsSection';
 import './payment-code-modal.css';
 import './payment-modal.css';
 import './course-detail.css';
@@ -592,6 +593,7 @@ export default function PackDetail() {
   const [refCode, setRefCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [selectedBankName, setSelectedBankName] = useState('');
+  const [reviewStats, setReviewStats] = useState({ avgRating: 0, totalReviews: 0, verifiedCount: 0 });
 
   // Promo Code State
   const navigate = useNavigate();
@@ -1622,6 +1624,22 @@ export default function PackDetail() {
                         </>
                       )}
                     </span>
+                    <a
+                      href="#reviews-section"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}
+                      title="View real learner reviews"
+                    >
+                      <svg className="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z" /></svg>
+                      {reviewStats.totalReviews > 0 ? (
+                        <span><b>{reviewStats.avgRating.toFixed(1)}</b> ({reviewStats.totalReviews} review{reviewStats.totalReviews !== 1 ? 's' : ''})</span>
+                      ) : (
+                        <span><b>New</b> (No reviews yet)</span>
+                      )}
+                    </a>
                   </>
                 ) : (
                   <>
@@ -1637,10 +1655,22 @@ export default function PackDetail() {
                       <svg className="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6" /></svg>
                       All levels
                     </span>
-                    <span>
+                    <a
+                      href="#reviews-section"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}
+                      title="View real learner reviews"
+                    >
                       <svg className="ic star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.3L12 17l-5.6 3.2 1.3-6.3L3 9.6l6.3-.7z" /></svg>
-                      <b>4.9</b> (128 reviews)
-                    </span>
+                      {reviewStats.totalReviews > 0 ? (
+                        <span><b>{reviewStats.avgRating.toFixed(1)}</b> ({reviewStats.totalReviews} review{reviewStats.totalReviews !== 1 ? 's' : ''})</span>
+                      ) : (
+                        <span><b>New</b> (No reviews yet)</span>
+                      )}
+                    </a>
                   </>
                 )}
               </div>
@@ -2097,6 +2127,17 @@ export default function PackDetail() {
                   </div>
                 </section>
               )}
+
+              {/* Real-time Learner Reviews & Fidelity Feedback */}
+              <PackReviewsSection
+                pack={pack}
+                creator={creator}
+                currentUser={user}
+                currentProfile={profile}
+                currentEnrollment={enrollment}
+                subEnrollmentsMap={subEnrollmentsMap}
+                onStatsChange={setReviewStats}
+              />
             </main>
 
             {/* SIDEBAR */}

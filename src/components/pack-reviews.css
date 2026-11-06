@@ -1,0 +1,781 @@
+/* ================================================================
+   Lora Course Reviews & Realtime Feedback — Component Styles
+   Scoped under .lora-reviews to avoid global collisions
+   ================================================================ */
+
+.lora-reviews {
+  margin-top: 10px;
+  color: #0e1733;
+  font-family: 'Figtree', system-ui, sans-serif;
+}
+
+/* ── Section Title & Subheading ── */
+.lora-reviews-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.lora-reviews-header h2 {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #0e1733 !important;
+  margin: 0 0 6px !important;
+  letter-spacing: -0.02em !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-reviews-header p {
+  color: #68728d;
+  font-size: 14px;
+  margin: 0;
+  max-width: 580px;
+  line-height: 1.5;
+}
+
+.lora-reviews-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.lora-reviews-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseLiveDot 2s infinite;
+}
+
+@keyframes pulseLiveDot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* ── Ratings Scorecard / Summary Banner ── */
+.lora-reviews-summary-card {
+  background: #ffffff;
+  border: 1px solid #e3e7f1;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(14, 23, 51, 0.04);
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .lora-reviews-summary-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px;
+  }
+}
+
+.lora-reviews-score-col {
+  text-align: center;
+  border-right: 1px solid #f1f5f9;
+  padding-right: 24px;
+}
+
+@media (max-width: 768px) {
+  .lora-reviews-score-col {
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+    padding-right: 0;
+    padding-bottom: 20px;
+  }
+}
+
+.lora-reviews-big-num {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+  color: #0e1733;
+  margin-bottom: 6px;
+}
+
+.lora-reviews-stars-row {
+  display: inline-flex;
+  gap: 3px;
+  color: #f59e0b;
+  margin-bottom: 8px;
+}
+
+.lora-reviews-count-text {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.lora-reviews-verified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* ── Star Breakdown Bars ── */
+.lora-reviews-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.lora-reviews-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #475569;
+}
+
+.lora-reviews-bar-label {
+  min-width: 55px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.lora-reviews-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lora-reviews-bar-fill {
+  height: 100%;
+  background: #f59e0b;
+  border-radius: 99px;
+  transition: width 0.35s ease;
+}
+
+.lora-reviews-bar-count {
+  min-width: 32px;
+  text-align: right;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* ── Trust / Fidelity Notice ── */
+.lora-reviews-trust-callout {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 24px;
+}
+
+.lora-reviews-trust-callout svg {
+  color: #059669;
+  flex-shrink: 0;
+}
+
+/* ── Filter / Sort Toolbar ── */
+.lora-reviews-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.lora-reviews-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lora-reviews-pill {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lora-reviews-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.lora-reviews-pill.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.lora-reviews-sort-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.lora-reviews-sort-select {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Leave Review Form / Box ── */
+.lora-review-write-box {
+  background: #ffffff;
+  border: 1.5px solid #dbeafe;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.05);
+}
+
+.lora-review-write-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lora-review-write-header h3 {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-interactive-stars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.lora-star-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition: transform 0.15s ease, color 0.15s ease;
+  border-radius: 4px;
+}
+
+.lora-star-btn:hover {
+  transform: scale(1.15);
+}
+
+.lora-star-btn.filled {
+  color: #f59e0b;
+}
+
+.lora-star-hint {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-left: 8px;
+}
+
+.lora-review-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #0f172a;
+  background: #f8fafc;
+  resize: vertical;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.lora-review-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.lora-review-write-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lora-review-write-footer small {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.lora-btn-post-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.lora-btn-post-review:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.lora-btn-post-review:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lora-btn-cancel-edit {
+  background: none;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lora-btn-cancel-edit:hover {
+  background: #f1f5f9;
+}
+
+/* ── Guest / Instructor Notice Banners ── */
+.lora-review-guest-banner {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.lora-review-guest-banner p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.lora-review-guest-banner a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2563eb;
+  color: #ffffff !important;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.lora-review-instructor-notice {
+  background: #f5f3ff;
+  border: 1.5px solid #ddd6fe;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  color: #5b21b6;
+  font-size: 13.5px;
+}
+
+/* ── Review Cards Feed ── */
+.lora-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lora-review-card {
+  background: #ffffff;
+  border: 1px solid #e3e7f1;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(14, 23, 51, 0.03);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lora-review-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 3px 10px rgba(14, 23, 51, 0.05);
+}
+
+.lora-review-card.mine {
+  border-left: 4px solid #2563eb;
+}
+
+.lora-review-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lora-reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lora-reviewer-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lora-reviewer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-cover: cover;
+}
+
+.lora-reviewer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lora-reviewer-name-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lora-reviewer-name {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: #0f172a;
+}
+
+.lora-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.lora-review-time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.lora-review-stars {
+  display: flex;
+  gap: 2px;
+  color: #f59e0b;
+}
+
+.lora-review-body {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #334155;
+  margin: 0 0 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lora-review-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lora-btn-helpful {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lora-btn-helpful:hover {
+  background: #f8fafc;
+  color: #2563eb;
+  border-color: #cbd5e1;
+}
+
+.lora-btn-helpful.active {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #93c5fd;
+}
+
+.lora-author-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lora-author-action-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.lora-author-action-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.lora-author-action-btn.delete:hover {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+/* ── Creator / Instructor Nested Reply ── */
+.lora-instructor-reply {
+  margin-top: 14px;
+  background: #f8fafc;
+  border-left: 3px solid #6366f1;
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+}
+
+.lora-reply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.lora-reply-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ede9fe;
+  color: #6d28d9;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.lora-reply-author {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1e1b4b;
+}
+
+.lora-reply-time {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin-left: auto;
+}
+
+.lora-reply-text {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #334155;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── Instructor Reply Input Box ── */
+.lora-instructor-reply-input {
+  margin-top: 14px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.lora-reply-textarea {
+  width: 100%;
+  min-height: 65px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.lora-reply-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ── Empty State ── */
+.lora-reviews-empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+}
+
+.lora-reviews-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+}
+
+.lora-reviews-empty h4 {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 0 6px !important;
+}
+
+.lora-reviews-empty p {
+  color: #64748b;
+  font-size: 14px;
+  max-width: 420px;
+  margin: 0 auto 16px;
+  line-height: 1.5;
+}
+
+/* ── SQL Migration Setup Alert ── */
+.lora-reviews-setup-alert {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 14px;
+  padding: 18px 20px;
+  color: #92400e;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+.lora-reviews-setup-alert h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #78350f;
+}
+
+.lora-reviews-setup-alert code {
+  background: #fef3c7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+}
