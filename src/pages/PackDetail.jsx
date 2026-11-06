@@ -60,10 +60,9 @@ function SessionButton({ session }) {
         href={session.recording_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="btn"
-        style={{ background: '#7c3aed', color: '#fff', borderColor: '#7c3aed' }}
+        className="btn rec"
       >
-        <svg className="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /></svg>
+        <PlayCircle size={15} />
         Watch recording
       </a>
     );

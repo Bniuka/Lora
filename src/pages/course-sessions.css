@@ -628,12 +628,12 @@
     box-shadow 0.28s ease;
 }
 
-.lora-sessions .btn:not(.live) {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording) {
   position: relative;
   overflow: hidden;
 }
 
-.lora-sessions .btn:not(.live)::after {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording)::after {
   content: "";
   position: absolute;
   top: 0;
@@ -651,18 +651,18 @@
   pointer-events: none;
 }
 
-.lora-sessions .btn:not(.live):hover:not(:disabled) {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording):hover:not(:disabled) {
   background: var(--brand);
   color: #fff;
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 22px -6px rgba(47, 91, 255, 0.42);
 }
 
-.lora-sessions .btn:not(.live):hover:not(:disabled)::after {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording):hover:not(:disabled)::after {
   left: 140%;
 }
 
-.lora-sessions .btn:not(.live):active:not(:disabled) {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording):active:not(:disabled) {
   transform: translateY(0) scale(0.97);
 }
 
@@ -670,8 +670,100 @@
   transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.lora-sessions .btn:not(.live):hover:not(:disabled) .ic {
+.lora-sessions .btn:not(.live):not(.rec):not(.btn-recording):hover:not(:disabled) .ic {
   transform: scale(1.12);
+}
+
+/* ── Watch Recording Button ── */
+.lora-sessions .btn.rec,
+.lora-sessions .act .btn.rec,
+.lora-sessions .btn-recording {
+  position: relative !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 10px 22px !important;
+  border-radius: 9999px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%) !important;
+  box-shadow:
+    0 6px 20px -3px rgba(124, 58, 237, 0.5),
+    0 2px 6px rgba(109, 40, 217, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.38) !important;
+  text-shadow: 0 1px 3px rgba(15, 23, 42, 0.24) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  width: auto !important;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease,
+    filter 0.22s ease !important;
+}
+
+.lora-sessions .btn.rec::after,
+.lora-sessions .act .btn.rec::after,
+.lora-sessions .btn-recording::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -120% !important;
+  width: 65% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.44) 50%,
+    transparent 100%
+  ) !important;
+  transform: skewX(-20deg) !important;
+  transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  pointer-events: none !important;
+}
+
+.lora-sessions .btn.rec:hover:not(:disabled),
+.lora-sessions .act .btn.rec:hover:not(:disabled),
+.lora-sessions .btn-recording:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9061f9 0%, #7c3aed 45%, #5b21b6 100%) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow:
+    0 12px 28px -4px rgba(124, 58, 237, 0.65),
+    0 4px 12px rgba(109, 40, 217, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+  filter: brightness(1.05) !important;
+}
+
+.lora-sessions .btn.rec:hover:not(:disabled)::after,
+.lora-sessions .act .btn.rec:hover:not(:disabled)::after,
+.lora-sessions .btn-recording:hover:not(:disabled)::after {
+  left: 140% !important;
+}
+
+.lora-sessions .btn.rec:active:not(:disabled),
+.lora-sessions .act .btn.rec:active:not(:disabled),
+.lora-sessions .btn-recording:active:not(:disabled) {
+  transform: translateY(0) scale(0.96) !important;
+  box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.4) !important;
+}
+
+.lora-sessions .btn.rec svg,
+.lora-sessions .act .btn.rec svg,
+.lora-sessions .btn-recording svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  flex-shrink: 0 !important;
+}
+
+.lora-sessions .btn.rec:hover:not(:disabled) svg,
+.lora-sessions .act .btn.rec:hover:not(:disabled) svg,
+.lora-sessions .btn-recording:hover:not(:disabled) svg {
+  transform: scale(1.22) translateX(2px) !important;
 }
 
 .lora-sessions .btn.live {

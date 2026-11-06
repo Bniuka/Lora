@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  MessageCircle, Send, Sparkles, ArrowRight, Layers
+  MessageCircle, Send, Sparkles, ArrowRight, Layers, PlayCircle
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes, isPast } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -183,15 +183,12 @@ function SessionCard({ session, index, packThumbnail, packCreatorId, packTitle }
           </div>
         ) : isCompleted ? (
           <a
-            className="btn"
+            className="btn rec"
             href={session.recording_url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <svg className="ic" viewBox="0 0 24 24">
-              <rect x="3" y="6" width="13" height="12" rx="2"/>
-              <path d="m16 10 5-3v10l-5-3"/>
-            </svg>
+            <PlayCircle size={15} />
             Watch recording
           </a>
         ) : isProcessing ? (
