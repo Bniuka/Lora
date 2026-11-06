@@ -34,16 +34,16 @@ export function LoadingSpinner({ size = 'md', className = '' }) {
    ============================================================ */
 export function LoadingAnimation({ size = 'md', className = '' }) {
   const sizeMap = {
-    xs: 'w-16 h-16 max-w-[64px]',
-    sm: 'w-28 h-28 max-w-[112px]',
-    md: 'w-48 h-48 sm:w-56 sm:h-56 max-w-[220px]',
-    lg: 'w-64 h-64 sm:w-72 sm:h-72 max-w-[280px]',
-    xl: 'w-80 h-80 sm:w-96 sm:h-96 max-w-[360px]',
-    full: 'w-full h-full',
+    xs: 'w-24 max-w-[96px] aspect-video',
+    sm: 'w-48 sm:w-60 max-w-[240px] aspect-video',
+    md: 'w-[320px] sm:w-[440px] max-w-[460px] aspect-video',
+    lg: 'w-[360px] sm:w-[520px] md:w-[620px] max-w-[94vw] aspect-video',
+    xl: 'w-[440px] sm:w-[640px] md:w-[760px] max-w-[96vw] aspect-video',
+    full: 'w-full aspect-video',
   };
 
   return (
-    <div className={`relative flex items-center justify-center overflow-hidden rounded-3xl ${sizeMap[size] || sizeMap.md} ${className}`}>
+    <div className={`relative flex items-center justify-center pointer-events-none select-none ${sizeMap[size] || sizeMap.md} ${className}`}>
       <video
         src="/loading_animation.mp4"
         autoPlay
@@ -51,6 +51,10 @@ export function LoadingAnimation({ size = 'md', className = '' }) {
         muted
         playsInline
         className="w-full h-full object-contain pointer-events-none select-none"
+        style={{
+          mixBlendMode: 'multiply',
+          filter: 'contrast(1.06) brightness(1.04)',
+        }}
       />
     </div>
   );
@@ -61,17 +65,17 @@ export function LoadingAnimation({ size = 'md', className = '' }) {
    ============================================================ */
 export function FullPageLoader({ message = null, className = '' }) {
   return (
-    <div className={`fixed inset-0 bg-[#F8FAFC] flex items-center justify-center z-50 ${className}`}>
+    <div className={`fixed inset-0 bg-white flex items-center justify-center z-50 ${className}`}>
       <Motion.div
-        initial={{ opacity: 0, scale: 0.92 }}
+        initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
+        exit={{ opacity: 0, scale: 0.96 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col items-center justify-center text-center p-6 select-none"
+        className="flex flex-col items-center justify-center text-center p-4 sm:p-6 select-none max-w-full"
       >
         <LoadingAnimation size="lg" />
         {message ? (
-          <p className="mt-2 text-sm font-semibold text-[#64748B] tracking-wide animate-pulse">
+          <p className="mt-1 text-sm font-semibold text-[#64748B] tracking-wide animate-pulse">
             {message}
           </p>
         ) : null}
