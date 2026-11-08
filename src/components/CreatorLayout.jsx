@@ -436,15 +436,17 @@ export default function CreatorLayout({ children }) {
               </div>
 
               {/* Profile dropdown */}
-              <div className="relative" ref={userMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div
+              <div className="relative profile-menu-wrap" ref={userMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <button
+                  type="button"
                   className="av"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   title="Profile menu"
+                  aria-label="Profile menu"
                 >
                   {initials}
-                </div>
-                <div onClick={() => setUserDropdownOpen(!userDropdownOpen)} style={{ cursor: 'pointer' }}>
+                </button>
+                <div className="who-user-text" onClick={() => setUserDropdownOpen(!userDropdownOpen)} style={{ cursor: 'pointer' }}>
                   <b>{fullName}</b>
                   <small>Creator</small>
                 </div>

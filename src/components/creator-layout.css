@@ -504,6 +504,14 @@
   font-size: 13px !important;
   flex: none !important;
   cursor: pointer !important;
+  border: 0 !important;
+  padding: 0 !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.lora-creator .who-user-text {
+  display: block !important;
 }
 
 .lora-creator .who b {
@@ -618,8 +626,25 @@
   .lora-creator .top {
     padding: 12px 16px !important;
   }
-  .lora-creator .who div:not(.relative) {
+  .lora-creator .who-user-text {
     display: none !important;
+  }
+  .lora-creator .av {
+    display: grid !important;
+    width: 38px !important;
+    height: 38px !important;
+    flex-shrink: 0 !important;
+  }
+  .lora-creator .who {
+    flex-shrink: 0 !important;
+    gap: 8px !important;
+  }
+  .lora-creator .user-dropdown {
+    z-index: 60 !important;
+    right: 0 !important;
+    top: calc(100% + 8px) !important;
+    min-width: 180px !important;
+    box-shadow: 0 14px 36px rgba(14, 23, 51, 0.22) !important;
   }
 
   /* Display the companion mascot in the mobile top bar */
@@ -812,7 +837,29 @@
 }
 
 @media(max-width: 560px) {
+  .lora-creator .top {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  .lora-creator .gsearch {
+    padding: 0 10px !important;
+    min-width: 0 !important;
+  }
+  .lora-creator .gsearch input {
+    font-size: 13px !important;
+  }
   .lora-creator .gsearch kbd {
     display: none !important;
+  }
+  .lora-creator .who {
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+  .lora-creator .av {
+    display: grid !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 12.5px !important;
+    flex-shrink: 0 !important;
   }
 }
