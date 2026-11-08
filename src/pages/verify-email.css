@@ -381,6 +381,116 @@
   color: var(--ink) !important;
 }
 
+/* ================================================================
+   6-Digit OTP Code Inputs
+   ================================================================ */
+.lora-verify .otp-wrapper {
+  margin: 24px 0 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.lora-verify .otp-grid {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.lora-verify .otp-box {
+  width: 50px !important;
+  height: 60px !important;
+  border: 2px solid var(--line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  transition: all 0.18s ease !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  box-shadow: 0 2px 6px rgba(14, 23, 51, 0.03) !important;
+}
+
+.lora-verify .otp-box:focus {
+  border-color: var(--brand) !important;
+  background: #fbfdff !important;
+  box-shadow: 0 0 0 4px rgba(47, 91, 255, 0.14) !important;
+  transform: translateY(-2px) !important;
+}
+
+.lora-verify .otp-box.filled {
+  border-color: #a4beff !important;
+  background: #f8faff !important;
+}
+
+.lora-verify .otp-box.has-error {
+  border-color: #ef4444 !important;
+  background: #fff5f5 !important;
+  color: #dc2626 !important;
+}
+
+.lora-verify .otp-divider {
+  width: 8px !important;
+  height: 2px !important;
+  background: var(--line) !important;
+  border-radius: 2px !important;
+  margin: 0 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.lora-verify .otp-error-msg {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 14px !important;
+  padding: 10px 16px !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 12px !important;
+  color: #dc2626 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  animation: lora-verify-shake 0.3s ease !important;
+}
+
+.lora-verify .otp-error-msg .ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: #dc2626 !important;
+  flex-shrink: 0 !important;
+}
+
+@keyframes lora-verify-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.lora-verify .change-email-btn {
+  margin-top: 12px !important;
+  background: none !important;
+  border: none !important;
+  color: var(--muted) !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  transition: color 0.15s ease !important;
+}
+
+.lora-verify .change-email-btn:hover {
+  color: var(--brand) !important;
+}
+
 .lora-verify .toast {
   position: fixed !important;
   left: 50% !important;
@@ -416,8 +526,17 @@
 
 @media(max-width: 480px) {
   .lora-verify .card {
-    padding: 32px 20px 24px !important;
+    padding: 32px 18px 24px !important;
     border-radius: 24px !important;
+  }
+  .lora-verify .otp-grid {
+    gap: 5px !important;
+  }
+  .lora-verify .otp-box {
+    width: 42px !important;
+    height: 52px !important;
+    font-size: 22px !important;
+    border-radius: 11px !important;
   }
 }
 
