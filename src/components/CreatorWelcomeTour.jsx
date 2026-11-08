@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Sparkles, Building2, Video, Ticket, Share2,
-  CheckCircle2, ArrowRight, ArrowLeft, X, BookOpen
+  CheckCircle2, ArrowRight, ArrowLeft, X, BookOpen, ShieldCheck
 } from 'lucide-react';
 import '../pages/creator-guide.css';
 
@@ -123,6 +123,29 @@ const TOUR_SLIDES = {
       ],
       previewType: 'share',
     },
+    {
+      badge: 'පියවර 5 · උසස් ආරක්‍ෂාව සහ විගණනය',
+      title: 'Copyright Sentinel සහ මූල්‍ය විගණන වාර්තා 🛡️',
+      subtitle: 'ඔයාගේ Live Zoom / Recording ලින්ක්ස් පිටපත් කිරීම වැළැක්වීමේ තාක්ෂණය සහ බැංකු Slip විගණනය.',
+      icon: ShieldCheck,
+      accent: '#dc2626',
+      accentSoft: '#fef2f2',
+      highlights: [
+        {
+          title: 'Automated Copyright Sentinel',
+          desc: 'වෙනත් කිසිවෙකුට ඔයාගේ Zoom හෝ Recording ලින්ක්ස් තමන්ගේ පන්තිවලට හොරෙන් දැමිය නොහැක. එසේ කළහොත් ලින්ක් එක Ban වී ඔයාට තහවුරු කිරීමේ පණිවිඩයක් ලැබේ.',
+        },
+        {
+          title: '15-Min Classroom SOS & Dispute Desk',
+          desc: 'Live පන්තියක ලින්ක් හෝ මුරපද ගැටලුවක් ආවොත් සිසුන්ට ක්ෂණික SOS වාර්තා කළ හැක. සිසුන් 3+ ක් වාර්තා කළ විට Creator ට Urgent Threshold Alert ලැබේ.',
+        },
+        {
+          title: 'Bank Slip Reconciliation & Attendance',
+          desc: 'Reports පිටුවෙන් (/creator/reports) BOC, Commercial, Sampath Slips විගණනය කර Print / CSV වාර්තා ලබාගන්න සහ සිසුන්ගේ Attendance පරීක්ෂා කරන්න.',
+        },
+      ],
+      previewType: 'security',
+    },
   ],
   en: [
     {
@@ -239,6 +262,29 @@ const TOUR_SLIDES = {
         },
       ],
       previewType: 'share',
+    },
+    {
+      badge: 'Step 5 · Security & Audits',
+      title: 'Copyright Sentinel & Financial Audit Desk 🛡️',
+      subtitle: 'Automated duplicate stream theft protection, Classroom SOS alerts, and bank slip reconciliation.',
+      icon: ShieldCheck,
+      accent: '#dc2626',
+      accentSoft: '#fef2f2',
+      highlights: [
+        {
+          title: 'Automated Copyright Sentinel',
+          desc: 'Prevents other creators from reusing your Zoom or recording links. Automatically bans infringing packs and notifies you with reassurance.',
+        },
+        {
+          title: '15-Min Classroom SOS & Dispute Desk',
+          desc: 'Learners can flag broken live links before class. Urgent priority alerts are triggered if 3+ students report the same session.',
+        },
+        {
+          title: 'Bank Slip Reconciliation & Attendance',
+          desc: 'Audit BOC, Commercial, Sampath slips separately with printable statements and WhatsApp tuition attendance registers at /creator/reports.',
+        },
+      ],
+      previewType: 'security',
     },
   ],
 };
@@ -434,6 +480,60 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
                 }}
               >
                 {lang === 'si' ? '16 වෙනියාට Auto-Expire වේ' : 'Auto-Expires on 16th'}
+              </span>
+            </div>
+          )}
+
+          {/* Visual mini-preview pill bar for Security slide */}
+          {current.previewType === 'security' && (
+            <div
+              style={{
+                background: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: 14,
+                padding: '12px 16px',
+                marginBottom: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 10,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span
+                  style={{
+                    fontFamily: 'monospace',
+                    fontWeight: 800,
+                    fontSize: 12.5,
+                    color: '#b91c1c',
+                    background: '#fee2e2',
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                    border: '1px solid #fca5a5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  🔒 Copyright Sentinel Active
+                </span>
+                <span style={{ fontSize: 13, color: '#991b1b', fontWeight: 600 }}>
+                  {lang === 'si' ? 'Zoom & Video Fingerprints සුරක්ෂිතයි' : 'Live Streams & Replays Protected'}
+                </span>
+              </div>
+              <span
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  background: '#ecfdf5',
+                  color: '#047857',
+                  border: '1px solid #a7f3d0',
+                  padding: '3px 9px',
+                  borderRadius: 99,
+                }}
+              >
+                {lang === 'si' ? '1-Click Delist / Ban' : 'Instant Anti-Theft Ban'}
               </span>
             </div>
           )}

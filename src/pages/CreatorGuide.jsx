@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import {
   Sparkles, Building2, Video, Ticket, BellRing,
   CheckCircle2, ArrowRight, Play, HelpCircle, ChevronDown,
-  MessageCircle, Globe, Download, ExternalLink, FileText, Copy, Check
+  MessageCircle, Globe, Download, ExternalLink, FileText, Copy, Check,
+  ShieldCheck, ShieldAlert
 } from 'lucide-react';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
 import './creator-guide.css';
@@ -16,16 +17,18 @@ const GUIDE_CONTENT = {
     heroBadge: 'නිල Creator මාර්ගෝපදේශය සහ විශේෂාංග',
     heroTitle: 'LoraSpace හරහා ඔයාට කළ හැකි සියලුම දේ 🚀',
     heroDesc:
-      'ඔයාගේ Creator ගිණුම සකසා ගන්නා ආකාරය, බැංකු ගිණුම් 4ක් දක්වා එක් කර සිසුන්ගෙන් කෙලින්ම මුදල් ලබාගන්නා ආකාරය, Live හෝ Recorded පන්ති පැවැත්වීම සහ Promo Codes (LORA-FREE-7X9) හරහා නොමිලේ පන්ති ලබාදෙන ආකාරය සිංහලෙන්ම මෙතැනින් දැනගන්න.',
+      'ඔයාගේ Creator ගිණුම සකසා ගන්නා ආකාරය, බැංකු ගිණුම් 4ක් දක්වා එක් කර සිසුන්ගෙන් කෙලින්ම මුදල් ලබාගැනීම, Live/Recorded පන්ති, Promo Codes, Copyright සබැඳි සොරකම් වැළැක්වීම සහ මූල්‍ය විගණන වාර්තා සිංහලෙන්ම මෙතැනින් දැනගන්න.',
     btnTour: 'Slide Tour එක බලන්න',
     btnCreate: 'අලුත් Session Pack එකක් හදන්න',
     btnPdfHero: 'සිංහල PDF අත්පොත Download කරන්න',
-    pdfBadge: 'නිල CREATOR PDF අත්පොත · A4 පිටු 10',
+    pdfBadge: 'නිල CREATOR PDF අත්පොත · A4 පිටු 11 (උසස් ආරක්‍ෂණ පරිච්ඡේදය සහිතයි)',
     pdfTitle: 'සම්පූර්ණ සිංහල Creator මාර්ගෝපදේශය (PDF) Download කරගන්න',
     pdfDesc:
-      'LoraSpace ක්‍රියාත්මක වන ආකාරය, බැංකු ගිණුම් 4ක් සැකසීම, Normal Packs හා මාසික Multi-Packs සෑදීම, Promo Codes, Private VIP පන්ති සහ 0% Commission ආදායම් වාසිය පියවරෙන් පියවර Screenshots සමඟ විස්තර කෙරෙන පිටු 10ක නිල PDF අත්පොත Phone එකට හෝ Computer එකට Save කරගන්න.',
+      'LoraSpace ක්‍රියාත්මක වන ආකාරය, බැංකු ගිණුම් 4ක් සැකසීම, Normal Packs හා මාසික Multi-Packs සෑදීම, Promo Codes, Copyright Sentinel සබැඳි සොරකම් වැළැක්වීම සහ 0% Commission ආදායම් වාසිය පියවරෙන් පියවර Screenshots සමඟ විස්තර කෙරෙන පිටු 11ක නිල PDF අත්පොත Phone එකට හෝ Computer එකට Save කරගන්න.',
     pdfTags: [
       '0% Commission',
+      'Copyright Sentinel',
+      'Dispute Desk & SOS',
       'Normal & Multi-Packs',
       'බැංකු ගිණුම් 4ක්',
       'Promo & VIP Links',
@@ -35,8 +38,8 @@ const GUIDE_CONTENT = {
     pdfViewBtn: 'කියවන්න',
     pdfCopyBtn: 'Link Copy',
     pdfCopiedBtn: 'Copy වුණා!',
-    roadmapTitle: 'පියවර 4 කින් LoraSpace වැඩ කරන හැටි',
-    roadmapSub: 'ඔයා අලුතින්ම සම්බන්ධ වුණු කෙනෙක් නම්, මුල්ම ළමයා පන්තියට බඳවා ගන්නා තෙක් මේ පියවර 4 අනුගමනය කරන්න.',
+    roadmapTitle: 'පියවර 5 කින් LoraSpace වැඩ කරන හැටි',
+    roadmapSub: 'ඔයා අලුතින්ම සම්බන්ධ වුණු කෙනෙක් නම්, මුල්ම ළමයා පන්තියට බඳවා ගන්නා තෙක් සහ මූල්‍ය විගණනය දක්වා මේ පියවර 5 අනුගමනය කරන්න.',
     featuresTitle: 'Creators ලා වෙනුවෙන්ම නිර්මාණය කළ විශේෂ පහසුකම්',
     featuresSub: 'ඔයාගේ Online පන්ති වඩාත් පහසුවෙන් සහ වෘත්තීය මට්ටමින් කරගෙන යාමට ඇති සියලුම Tools.',
     faqTitle: 'නිතර අසන ප්‍රශ්න (Creator FAQs)',
@@ -79,8 +82,35 @@ const GUIDE_CONTENT = {
         color: '#059669',
         bg: '#ecfdf5',
       },
+      {
+        step: '05',
+        title: 'Copyright ආරක්‍ෂාව සහ මූල්‍ය විගණනය',
+        desc: 'ඔයාගේ Live හා Recording ලින්ක්ස් වෙනත් කිසිවෙකුට හොරෙන් පාවිච්චි කළ නොහැක. Reports පිටුවෙන් බැංකු Slips විගණනය කර සිසුන්ගේ Attendance පරීක්ෂා කරන්න.',
+        ctaText: 'Reports බලන්න',
+        ctaLink: '/creator/reports',
+        color: '#dc2626',
+        bg: '#fef2f2',
+      },
     ],
     featureCards: [
+      {
+        icon: ShieldCheck,
+        badge: 'උසස් ආරක්‍ෂණ පද්ධතිය · CONTENT & FINANCIAL SHIELD',
+        title: 'ස්වයංක්‍රීය සබැඳි සොරකම් වැළැක්වීම (Copyright Sentinel) සහ Dispute Desk ආරක්‍ෂාව',
+        color: '#dc2626',
+        softBg: '#fef2f2',
+        description:
+          'ඔයා මහන්සියෙන් කරන Zoom Live පන්ති හෝ Recordings වෙනත් කිසිම කෙනෙකුට හොරෙන් තමන්ගේ පාඨමාලාවලට දැමිය නොහැක. සම්පූර්ණ අන්තර්ගත ආරක්‍ෂාව සහ මූල්‍ය විගණනය ඔයාට හිමිවේ.',
+        bullets: [
+          'ස්වයංක්‍රීය Link Fingerprint පරීක්ෂාව: Zoom Meeting ID හෝ Video ID වෙනත් කෙනෙකු යොදාගත් සැණින් පද්ධතිය හඳුනාගනී.',
+          'Founder Control Desk: සොරකම් කළ ලින්ක් එක ක්ෂණිකව BANNED & Delisted වන අතර, ඔයාට "Problem Solved & Content Protected" සනාථ කිරීම් පණිවිඩයක් ස්වයංක්‍රීයව ලැබේ.',
+          '15-Min Live Classroom SOS: පන්තියකට පෙර Zoom ලින්ක් හෝ මුරපද ගැටලුවක් ආවොත් සිසුන්ට ක්ෂණිකව වාර්තා කළ හැක. සිසුන් 3+ ක් වාර්තා කළ විට Creator ට Urgent Alert ලැබේ.',
+          'Bank-by-Bank Slip Reconciliation: BOC, Sampath, Commercial ආදී සියලුම ගිණුම්වල Slips විගණනය කර CSV / Print වාර්තා Reports පිටුවෙන් ලබාගන්න.',
+          'Tuition Attendance & Watch Register: WhatsApp quick-chat සමඟ සිසුන්ගේ පැමිණීම සහ Recording නැරඹූ ප්‍රතිශතය නිරීක්ෂණය කරන්න.',
+        ],
+        actionLabel: 'Reports & Security විගණනය බලන්න',
+        actionTo: '/creator/reports',
+      },
       {
         icon: Ticket,
         badge: 'අලුත්ම පහසුකම · නොමිලේ පන්ති',
@@ -198,22 +228,32 @@ const GUIDE_CONTENT = {
         q: 'සිසුන්ට පහසු වෙන්න මට බැංකු ගිණුම් එකකට වඩා වැඩි ගණනක් දාන්න පුළුවන්ද?',
         a: 'අනිවාර්යයෙන්ම පුළුවන්! "Settings" → "Payout Details" වෙත ගොස් "+ Add Another Bank Account" ඔබන්න. BOC, Sampath, Commercial, HNB වැනි බැංකු ගිණුම් 4ක් දක්වා ඇතුළත් කළ හැක.',
       },
+      {
+        q: 'මගේ Zoom Link එකක් හෝ Recording Link එකක් වෙනත් කෙනෙක් තමන්ගේ Course එකකට දමාගත හොත් කුමක් සිදුවේද?',
+        a: 'Lora Copyright Sentinel පද්ධතිය මගින් එම ලින්ක් එකේ Meeting ID හෝ Video ID එක හඳුනාගෙන එවෙලේම එම ක්‍රියාව අවහිර කර, Founder Panel එකට සහ ඔයාට Alert එකක් එවයි. Founder විසින් Unlocked Stream පරීක්ෂා කර හොර පාඨමාලාව ක්ෂණිකව Ban කරනු ලබන අතර, ඔයාගේ පාඨමාලාව ආරක්‍ෂා වූ බවට තහවුරු කිරීමේ පණිවිඩයක් ස්වයංක්‍රීයව එවනු ලැබේ.',
+      },
+      {
+        q: 'Live පන්තියක Zoom ලින්ක් එකක් වැඩ නොකළහොත් හෝ ළමයින්ගේ Bank Slip ප්‍රමාද වුවහොත් සිසුන්ට උදව් ලබාගන්නේ කෙසේද?',
+        a: 'සිසුන්ට පන්ති කාමරයේ ඇති "Classroom SOS / Issue" බටන් එකෙන් ක්ෂණිකව වාර්තා කළ හැක. එකම ගැටලුව සිසුන් තිදෙනෙකුට වඩා විනාඩි 10ක් ඇතුළත වාර්තා කළ විට ඔයාට Urgent Threshold Alert එකක් ලැබේ. එමෙන්ම පැය 12කට වඩා පමා වූ Slips සඳහා Dreamy Mascot මඟින් Dispute Desk එක හරහා Appeal කළ හැක.',
+      },
     ],
   },
   en: {
     heroBadge: 'Official Creator Guide & Feature Hub',
     heroTitle: 'Everything You Can Do on LoraSpace 🚀',
     heroDesc:
-      'Learn how to set up your creator account, accept direct multi-bank student transfers, host live or recorded sessions, and grant free access using usage-limited promo codes.',
+      'Learn how to set up your creator account, accept direct multi-bank student transfers, host live or recorded sessions, and protect your content with our automated Copyright Sentinel.',
     btnTour: 'Launch Interactive Slide Tour',
     btnCreate: 'Create a Session Pack',
     btnPdfHero: 'Download Sinhala PDF Guide',
-    pdfBadge: 'OFFICIAL CREATOR PDF HANDBOOK · 10 A4 PAGES',
+    pdfBadge: 'OFFICIAL CREATOR PDF HANDBOOK · 11 A4 PAGES (INCLUDES SECURITY CHAPTER)',
     pdfTitle: 'Download the Complete Creator Guidebook (Sinhala A4 PDF)',
     pdfDesc:
-      'Save our illustrated 10-page A4 vertical Sinhala handbook with real UI screenshots — covering direct 0% commission payouts, 4-bank setup, Normal Packs, monthly Multi-Packs, Promo Codes, Private VIP courses, and 1-click slip approvals.',
+      'Save our illustrated 11-page A4 vertical Sinhala handbook with real UI screenshots — covering direct 0% commission payouts, 4-bank setup, Normal Packs, monthly Multi-Packs, Promo Codes, Copyright Sentinel anti-piracy protection, and 1-click slip approvals.',
     pdfTags: [
       '0% Commission',
+      'Copyright Sentinel',
+      'Dispute Desk & SOS',
       'Normal & Multi-Packs',
       'Up to 4 Banks',
       'Promo & VIP Links',
@@ -223,8 +263,8 @@ const GUIDE_CONTENT = {
     pdfViewBtn: 'Preview PDF',
     pdfCopyBtn: 'Copy Link',
     pdfCopiedBtn: 'Copied!',
-    roadmapTitle: 'How LoraSpace Works in 4 Simple Steps',
-    roadmapSub: 'New here? Follow this roadmap from signup to your first enrolled student.',
+    roadmapTitle: 'How LoraSpace Works in 5 Simple Steps',
+    roadmapSub: 'New here? Follow this roadmap from signup to your first enrolled student and financial audits.',
     featuresTitle: 'Power Features Built for Creators',
     featuresSub: 'Explore every tool available in your account and how to make the most of it.',
     faqTitle: 'Frequently Asked Creator Questions',
@@ -267,8 +307,35 @@ const GUIDE_CONTENT = {
         color: '#059669',
         bg: '#ecfdf5',
       },
+      {
+        step: '05',
+        title: 'Copyright Shield & Financial Audits',
+        desc: 'All your Zoom and recording links are protected against theft by our Copyright Sentinel. Audit bank-by-bank slip reconciliations and tuition attendance registers under Reports.',
+        ctaText: 'View Reports & Audits',
+        ctaLink: '/creator/reports',
+        color: '#dc2626',
+        bg: '#fef2f2',
+      },
     ],
     featureCards: [
+      {
+        icon: ShieldCheck,
+        badge: 'ADVANCED PROTECTION · CONTENT & FINANCIAL SHIELD',
+        title: 'Automated Copyright & Link Theft Sentinel + Trust Dispute Desk',
+        color: '#dc2626',
+        softBg: '#fef2f2',
+        description:
+          'Never worry about other instructors pirating your Zoom links or replays. LoraSpace automatically detects duplicate links, dispatches copyright alerts, and provides full student dispute protection.',
+        bullets: [
+          'Automated Fingerprint Sentinel: Extracts Zoom meeting IDs and video hashes to detect any unauthorized duplicate link claims across the platform.',
+          'Founder Unlocked Review & 1-Click Ban: The Founder panel verifies stream authenticity and bans infringing packs with automated "Problem Solved & Content Protected" delivery to you.',
+          '15-Min Live Classroom SOS: Urgent learner reporting for broken live links. If 3+ students report within 10 minutes, creator receives an urgent priority alert.',
+          'Multi-Bank Slip Reconciliation: Audit BOC, Commercial, Sampath transfers separately and export clean CSV audit statements from /creator/reports.',
+          'Tuition Attendance & Watch-Through Register: WhatsApp quick-contact links, live attendance checks, and recording watch percentages for every enrolled student.',
+        ],
+        actionLabel: 'Open Reports & Dispute Desk',
+        actionTo: '/creator/reports',
+      },
       {
         icon: Ticket,
         badge: 'NEW · SCHOLARSHIPS & BATCHES',
@@ -385,6 +452,14 @@ const GUIDE_CONTENT = {
       {
         q: 'Can I add more than one bank account for students to choose from?',
         a: 'Yes! Go to "Settings" → "Payout Details" and click "+ Add Another Bank Account". You can add up to 4 bank accounts (e.g. BOC, Sampath, Commercial Bank) and choose which one is Primary. Learners will see interactive bank pills at checkout so they can do a same-bank transfer.',
+      },
+      {
+        q: 'What happens if another creator tries to use my Zoom meeting link or recording URL in their course?',
+        a: 'Lora Copyright Sentinel instantly normalizes the URL and detects duplicate meeting or video IDs. The system immediately flags the session, alerts both you and the Founder, unlocks both streams in the Founder Panel for verification, and allows the Founder to 1-click ban the infringing pack with an automated confirmation sent directly to you.',
+      },
+      {
+        q: 'How does Classroom SOS and Bank Slip Appeal work for my students?',
+        a: '15 minutes before or during any live session, learners can report broken links or missing passcodes via Classroom SOS. If 3 or more students report within 10 minutes, an urgent priority alert is fired to you. For bank slips taking over 12 hours or unfairly rejected, students can appeal through Dreamy Mascot with reference code and receipt proof.',
       },
     ],
   },
