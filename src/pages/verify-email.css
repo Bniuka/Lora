@@ -396,19 +396,20 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   width: 100% !important;
+  max-width: 440px !important;
 }
 
 .lora-verify .otp-box {
-  width: 50px !important;
-  height: 60px !important;
+  width: 42px !important;
+  height: 54px !important;
   border: 2px solid var(--line) !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   background: #fff !important;
   color: var(--ink) !important;
   font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
-  font-size: 26px !important;
+  font-size: 24px !important;
   font-weight: 700 !important;
   text-align: center !important;
   transition: all 0.18s ease !important;
@@ -526,17 +527,29 @@
 
 @media(max-width: 480px) {
   .lora-verify .card {
-    padding: 32px 18px 24px !important;
+    padding: 32px 14px 24px !important;
     border-radius: 24px !important;
   }
   .lora-verify .otp-grid {
-    gap: 5px !important;
+    gap: 4px !important;
   }
   .lora-verify .otp-box {
-    width: 42px !important;
-    height: 52px !important;
-    font-size: 22px !important;
-    border-radius: 11px !important;
+    width: 35px !important;
+    height: 48px !important;
+    font-size: 19px !important;
+    border-radius: 9px !important;
+  }
+}
+
+@media(max-width: 360px) {
+  .lora-verify .otp-grid {
+    gap: 3px !important;
+  }
+  .lora-verify .otp-box {
+    width: 31px !important;
+    height: 44px !important;
+    font-size: 17px !important;
+    border-radius: 7px !important;
   }
 }
 

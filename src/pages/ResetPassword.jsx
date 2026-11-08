@@ -17,8 +17,8 @@ export default function ResetPassword() {
   // Step 1: Email
   const [email, setEmail] = useState('');
 
-  // Step 2: OTP
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  // Step 2: OTP (8 digits)
+  const [otp, setOtp] = useState(Array(8).fill(''));
   const otpRefs = useRef([]);
   const [cooldown, setCooldown] = useState(0);
   const [resending, setResending] = useState(false);
@@ -66,7 +66,7 @@ export default function ResetPassword() {
 
       setStep('otp');
       setCooldown(COOLDOWN_SECONDS);
-      setOtp(['', '', '', '', '', '']);
+      setOtp(Array(8).fill(''));
     } catch (err) {
       console.error('[ResetPassword] send error:', err);
       setError(err.message || 'Could not send recovery code. Please check your email.');
@@ -79,9 +79,9 @@ export default function ResetPassword() {
   // STEP 2: Verify Recovery OTP Code
   // --------------------------------------------------------------------------
   const handleVerifyOtp = async (codeToVerify) => {
-    const code = (codeToVerify || otp.join('')).trim();
-    if (code.length !== 6) {
-      setError('Please enter all 6 digits of the code.');
+    const raw = (codeToVerify || otp.join('')).trim();
+    if (!raw || (raw.length !== 8 && raw.length !== 6)) {
+      setError('Please enter the complete verification code.');
       return;
     }
 
@@ -91,7 +91,7 @@ export default function ResetPassword() {
     try {
       const { data, error: verifyError } = await supabase.auth.verifyOtp({
         email: email.trim(),
-        token: code,
+        token: raw,
         type: 'recovery',
       });
 
@@ -101,7 +101,7 @@ export default function ResetPassword() {
       setStep('password');
     } catch (err) {
       console.error('[ResetPassword] verify error:', err);
-      setError('Invalid or expired 6-digit code. Please check your email or click Resend.');
+      setError('Invalid or expired code. Please check your email or click Resend.');
       otpRefs.current[0]?.focus();
     } finally {
       setLoading(false);
@@ -119,7 +119,7 @@ export default function ResetPassword() {
       if (resendError) throw resendError;
 
       setCooldown(COOLDOWN_SECONDS);
-      setOtp(['', '', '', '', '', '']);
+      setOtp(Array(8).fill(''));
       otpRefs.current[0]?.focus();
     } catch (err) {
       console.error('[ResetPassword] resend error:', err);
@@ -141,11 +141,11 @@ export default function ResetPassword() {
     setOtp(newOtp);
     setError('');
 
-    if (digit && index < 5) {
+    if (digit && index < 7) {
       otpRefs.current[index + 1]?.focus();
     }
 
-    if (newOtp.join('').length === 6) {
+    if (newOtp.join('').length === 8) {
       handleVerifyOtp(newOtp.join(''));
     }
   };
@@ -164,7 +164,7 @@ export default function ResetPassword() {
       }
     } else if (e.key === 'ArrowLeft' && index > 0) {
       otpRefs.current[index - 1]?.focus();
-    } else if (e.key === 'ArrowRight' && index < 5) {
+    } else if (e.key === 'ArrowRight' && index < 7) {
       otpRefs.current[index + 1]?.focus();
     }
   };
@@ -172,19 +172,19 @@ export default function ResetPassword() {
   const handleOtpPaste = (e) => {
     e.preventDefault();
     const pasteText = e.clipboardData.getData('text') || '';
-    const cleanDigits = pasteText.replace(/\D/g, '').slice(0, 6);
+    const cleanDigits = pasteText.replace(/\D/g, '').slice(0, 8);
 
     if (!cleanDigits) return;
 
-    const newOtp = ['', '', '', '', '', ''];
+    const newOtp = Array(8).fill('');
     for (let i = 0; i < cleanDigits.length; i++) {
       newOtp[i] = cleanDigits[i];
     }
     setOtp(newOtp);
     setError('');
 
-    if (cleanDigits.length === 6) {
-      otpRefs.current[5]?.focus();
+    if (cleanDigits.length === 8 || cleanDigits.length === 6) {
+      otpRefs.current[Math.min(cleanDigits.length, 7)]?.focus();
       handleVerifyOtp(cleanDigits);
     } else {
       otpRefs.current[cleanDigits.length]?.focus();
@@ -227,7 +227,8 @@ export default function ResetPassword() {
     }
   };
 
-  const isOtpComplete = otp.every((d) => d !== '');
+  const otpFilledCount = otp.filter((d) => d !== '').length;
+  const isOtpComplete = otpFilledCount === 8 || otpFilledCount === 6;
 
   return (
     <PageTransition>
@@ -375,7 +376,7 @@ export default function ResetPassword() {
                     Enter Recovery Code
                   </h1>
                   <p className="text-sm text-[#64748B] text-center mb-1 leading-relaxed">
-                    We sent a 6-digit recovery code to:
+                    We sent a recovery code to:
                   </p>
                   <p className="text-sm font-semibold text-[#0F172A] text-center mb-6">
                     {email}
@@ -387,9 +388,9 @@ export default function ResetPassword() {
                     </div>
                   )}
 
-                  {/* 6 OTP Numeric Input Boxes */}
-                  <div className="flex items-center justify-center gap-2 mb-6" onPaste={handleOtpPaste}>
-                    {[0, 1, 2].map((idx) => (
+                  {/* 8 OTP Numeric Input Boxes */}
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-6" onPaste={handleOtpPaste}>
+                    {[0, 1, 2, 3].map((idx) => (
                       <input
                         key={idx}
                         ref={(el) => (otpRefs.current[idx] = el)}
@@ -400,7 +401,7 @@ export default function ResetPassword() {
                         value={otp[idx]}
                         onChange={(e) => handleOtpChange(idx, e)}
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className={`w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold rounded-xl border-2 transition-all outline-none ${
+                        className={`w-9 h-12 sm:w-11 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-xl border-2 transition-all outline-none ${
                           otp[idx]
                             ? 'border-blue-500 bg-blue-50/30 text-blue-700'
                             : error
@@ -411,9 +412,9 @@ export default function ResetPassword() {
                       />
                     ))}
 
-                    <div className="w-2 h-0.5 bg-slate-300 rounded" aria-hidden="true" />
+                    <div className="w-1.5 sm:w-2 h-0.5 bg-slate-300 rounded" aria-hidden="true" />
 
-                    {[3, 4, 5].map((idx) => (
+                    {[4, 5, 6, 7].map((idx) => (
                       <input
                         key={idx}
                         ref={(el) => (otpRefs.current[idx] = el)}
@@ -424,7 +425,7 @@ export default function ResetPassword() {
                         value={otp[idx]}
                         onChange={(e) => handleOtpChange(idx, e)}
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className={`w-11 h-14 sm:w-12 sm:h-16 text-center text-2xl font-bold rounded-xl border-2 transition-all outline-none ${
+                        className={`w-9 h-12 sm:w-11 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-xl border-2 transition-all outline-none ${
                           otp[idx]
                             ? 'border-blue-500 bg-blue-50/30 text-blue-700'
                             : error

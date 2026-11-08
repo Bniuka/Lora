@@ -46,8 +46,8 @@ export default function VerifyEmail() {
     }
   }, [stateEmail, emailParam, stateRole]);
 
-  // 6-digit OTP state
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  // 8-digit OTP state (Supabase standard default)
+  const [otp, setOtp] = useState(["", "", "", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -111,9 +111,9 @@ export default function VerifyEmail() {
 
   // Submit OTP Verification
   const verifyCode = async (codeToVerify) => {
-    const code = (codeToVerify || otp.join("")).trim();
-    if (code.length !== 6) {
-      setOtpError("Please enter all 6 digits of the code.");
+    const raw = (codeToVerify || otp.join("")).trim();
+    if (!raw || (raw.length !== 8 && raw.length !== 6)) {
+      setOtpError("Please enter the complete verification code.");
       return;
     }
 
@@ -129,7 +129,7 @@ export default function VerifyEmail() {
       // 1. Try verifying with type: 'signup'
       let { error } = await supabase.auth.verifyOtp({
         email: email.trim(),
-        token: code,
+        token: raw,
         type: "signup",
       });
 
@@ -137,7 +137,7 @@ export default function VerifyEmail() {
       if (error) {
         const fallback = await supabase.auth.verifyOtp({
           email: email.trim(),
-          token: code,
+          token: raw,
           type: "email",
         });
         if (!fallback.error) {
@@ -168,7 +168,7 @@ export default function VerifyEmail() {
       }, 1600);
     } catch (err) {
       console.error("OTP Verification Error:", err);
-      setOtpError("Invalid or expired 6-digit code. Please check your code or click Resend.");
+      setOtpError("Invalid or expired code. Please check your code or click Resend.");
       // Shake focus on first box
       inputRefs.current[0]?.focus();
     } finally {
@@ -188,14 +188,14 @@ export default function VerifyEmail() {
     setOtp(newOtp);
     setOtpError("");
 
-    if (digit && index < 5) {
+    if (digit && index < 7) {
       // Move to next input box
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-verify if all 6 digits are filled
+    // Auto-verify if all 8 digits are filled
     const fullCode = newOtp.join("");
-    if (fullCode.length === 6) {
+    if (fullCode.length === 8) {
       verifyCode(fullCode);
     }
   };
@@ -216,7 +216,7 @@ export default function VerifyEmail() {
       }
     } else if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < 5) {
+    } else if (e.key === "ArrowRight" && index < 7) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -224,19 +224,19 @@ export default function VerifyEmail() {
   const handlePaste = (e) => {
     e.preventDefault();
     const pasteText = e.clipboardData.getData("text") || "";
-    const cleanDigits = pasteText.replace(/\D/g, "").slice(0, 6);
+    const cleanDigits = pasteText.replace(/\D/g, "").slice(0, 8);
 
     if (!cleanDigits) return;
 
-    const newOtp = ["", "", "", "", "", ""];
+    const newOtp = Array(8).fill("");
     for (let i = 0; i < cleanDigits.length; i++) {
       newOtp[i] = cleanDigits[i];
     }
     setOtp(newOtp);
     setOtpError("");
 
-    if (cleanDigits.length === 6) {
-      inputRefs.current[5]?.focus();
+    if (cleanDigits.length === 8 || cleanDigits.length === 6) {
+      inputRefs.current[Math.min(cleanDigits.length, 7)]?.focus();
       verifyCode(cleanDigits);
     } else {
       inputRefs.current[cleanDigits.length]?.focus();
@@ -268,7 +268,7 @@ export default function VerifyEmail() {
 
       showToast("New 6-digit code sent! Check your inbox.");
       setCooldown(COOLDOWN_SECONDS);
-      setOtp(["", "", "", "", "", ""]);
+      setOtp(Array(8).fill(""));
       inputRefs.current[0]?.focus();
     } catch (err) {
       console.error("Resend error:", err);
@@ -281,7 +281,8 @@ export default function VerifyEmail() {
   const domain = email.split("@")[1]?.toLowerCase() || "";
   const inboxUrl = PROVIDER_MAP[domain] || null;
   const displayEmail = email || "your registered email";
-  const isOtpComplete = otp.every((d) => d !== "");
+  const filledCount = otp.filter((d) => d !== "").length;
+  const isOtpComplete = filledCount === 8 || filledCount === 6;
 
   // Direct token_hash full-screen loader
   if (tokenHash && verifying) {
@@ -338,7 +339,7 @@ export default function VerifyEmail() {
           ) : (
             <>
               <h1>Enter Verification Code</h1>
-              <p className="lead">We sent a 6-digit code to:</p>
+              <p className="lead">We sent a verification code to:</p>
 
               <span className="em">
                 <svg className="ic" viewBox="0 0 24 24">
@@ -348,13 +349,13 @@ export default function VerifyEmail() {
               </span>
 
               <p className="sub">
-                Enter the 6-digit code from your email to activate your account.
+                Enter the code from your email to activate your account.
               </p>
 
-              {/* 6-Digit Numeric OTP Inputs */}
+              {/* 8-Digit Numeric OTP Inputs */}
               <div className="otp-wrapper">
                 <div className="otp-grid" onPaste={handlePaste}>
-                  {[0, 1, 2].map((idx) => (
+                  {[0, 1, 2, 3].map((idx) => (
                     <input
                       key={idx}
                       ref={(el) => (inputRefs.current[idx] = el)}
@@ -374,7 +375,7 @@ export default function VerifyEmail() {
 
                   <div className="otp-divider" aria-hidden="true" />
 
-                  {[3, 4, 5].map((idx) => (
+                  {[4, 5, 6, 7].map((idx) => (
                     <input
                       key={idx}
                       ref={(el) => (inputRefs.current[idx] = el)}
