@@ -6,6 +6,7 @@ import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { isUserAdmin } from '../lib/admin';
 import { Link } from 'react-router-dom';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import { processAndSquareImage, verifyHumanAuthenticity, uploadAvatarAndSaveProfile } from '../lib/avatarVerification';
 import './settings.css';
 
@@ -342,10 +343,11 @@ export default function CreatorSettings() {
         <div className="s-toc">
           <h1>Settings</h1>
           {[
-            { id: 'plan',     label: 'Subscription' },
-            { id: 'pay',      label: 'Payments' },
-            { id: 'profile',  label: 'Profile' },
-            { id: 'security', label: 'Password' },
+            { id: 'plan',       label: 'Subscription' },
+            { id: 'pay',        label: 'Payments' },
+            { id: 'profile',    label: 'Profile' },
+            { id: 'appearance', label: 'Appearance' },
+            { id: 'security',   label: 'Password' },
           ].map(({ id, label }) => (
             <a
               key={id}
@@ -785,6 +787,17 @@ export default function CreatorSettings() {
               <button className="s-btn" onClick={handleSaveProfile} disabled={savingProf}>
                 {savingProf ? <Loader2 size={16} className="animate-spin" /> : 'Save changes'}
               </button>
+            </div>
+          </section>
+
+          {/* ════ APPEARANCE & THEME ════ */}
+          <section className="s-section s-card" id="appearance">
+            <header>
+              <h2>Appearance &amp; Theme</h2>
+              <p>Choose your preferred interface theme or allow LoraSpace to auto-select based on your system settings.</p>
+            </header>
+            <div style={{ marginTop: 14 }}>
+              <ThemeSwitcher variant="segmented" />
             </div>
           </section>
 

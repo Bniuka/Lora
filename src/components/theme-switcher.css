@@ -1,5 +1,5 @@
 /* ================================================================
-   Lora Theme Switcher Styles
+   Lora Theme Switcher Styles (Light / Dark / Auto Support)
    Seamlessly integrates with Creator & Learner Layouts
    ================================================================ */
 
@@ -33,6 +33,13 @@
   transform: translateY(0) scale(0.95);
 }
 
+/* Light Active state */
+.lora-theme-btn.light-active:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 14px -3px rgba(245, 158, 11, 0.3);
+}
+
+/* Dark Active state */
 .lora-theme-btn.dark-active {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.18)) !important;
   border: none !important;
@@ -44,6 +51,36 @@
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(217, 119, 6, 0.28)) !important;
   color: #fde047 !important;
   box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.6), 0 0 24px rgba(245, 158, 11, 0.45) !important;
+}
+
+/* Auto Active state (System) */
+.lora-theme-btn.auto-active {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.12), rgba(57, 139, 255, 0.12)) !important;
+  border: 1px solid rgba(118, 87, 255, 0.35) !important;
+  color: #7657ff !important;
+  box-shadow: 0 2px 10px rgba(118, 87, 255, 0.16) !important;
+}
+
+.lora-theme-btn.auto-active:hover {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.22), rgba(57, 139, 255, 0.22)) !important;
+  color: #6366f1 !important;
+  border-color: #7657ff !important;
+  box-shadow: 0 4px 18px rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .lora-theme-btn.auto-active,
+[data-theme="dark"] .lora-theme-btn.auto-active {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.22), rgba(57, 139, 255, 0.18)) !important;
+  border: 1px solid rgba(167, 139, 250, 0.45) !important;
+  color: #C4B5FD !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .lora-theme-btn.auto-active:hover,
+[data-theme="dark"] .lora-theme-btn.auto-active:hover {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.32), rgba(57, 139, 255, 0.25)) !important;
+  color: #FFFFFF !important;
+  border-color: #A78BFA !important;
 }
 
 .lora-theme-btn.size-sm {
@@ -69,6 +106,44 @@
 .theme-sun-icon {
   color: #f59e0b;
   filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.45));
+}
+
+.theme-auto-icon {
+  color: #7657ff;
+  filter: drop-shadow(0 0 6px rgba(118, 87, 255, 0.4));
+}
+
+.dark .theme-auto-icon,
+[data-theme="dark"] .theme-auto-icon {
+  color: #A78BFA;
+  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.5));
+}
+
+/* Tiny badge indicating Auto mode is active on circular button */
+.lora-theme-auto-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 8.5px;
+  font-weight: 850;
+  line-height: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7657ff;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface, #ffffff);
+  box-shadow: 0 1px 4px rgba(118, 87, 255, 0.4);
+  pointer-events: none;
+}
+
+.dark .lora-theme-auto-dot,
+[data-theme="dark"] .lora-theme-auto-dot {
+  border-color: #111629;
+  background: #A78BFA;
+  color: #080A12;
 }
 
 /* ── Pill Variant (Dashboard Action Rows) ── */
@@ -110,52 +185,172 @@
   box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.6), 0 6px 24px rgba(245, 158, 11, 0.35) !important;
 }
 
-/* ── Menu Item Variant (Inside User Dropdown) ── */
-.lora-theme-menu-item {
-  width: 100%;
+.lora-theme-pill.auto-active {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.1), rgba(57, 139, 255, 0.08)) !important;
+  border: 1.5px solid rgba(118, 87, 255, 0.3) !important;
+  color: #5b21b6 !important;
+}
+
+.lora-theme-pill.auto-active:hover {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.18), rgba(57, 139, 255, 0.14)) !important;
+  color: #4338ca !important;
+  border-color: #7657ff !important;
+}
+
+.dark .lora-theme-pill.auto-active,
+[data-theme="dark"] .lora-theme-pill.auto-active {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.2), rgba(57, 139, 255, 0.15)) !important;
+  border: 1.5px solid rgba(167, 139, 250, 0.45) !important;
+  color: #C4B5FD !important;
+  box-shadow: 0 4px 18px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-theme-pill.auto-active:hover,
+[data-theme="dark"] .lora-theme-pill.auto-active:hover {
+  background: rgba(118, 87, 255, 0.3) !important;
+  color: #FFFFFF !important;
+}
+
+.lora-theme-pill-subtag {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 99px;
+  background: rgba(118, 87, 255, 0.14);
+  color: #7657ff;
+}
+
+.dark .lora-theme-pill-subtag,
+[data-theme="dark"] .lora-theme-pill-subtag {
+  background: rgba(167, 139, 250, 0.2);
+  color: #C4B5FD;
+}
+
+/* ── Menu Item Variant (Interactive 3-Choice Control for User Dropdowns) ── */
+.lora-theme-menu-group {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-bottom: 1px solid var(--line, #e2e8f0);
+  margin-bottom: 4px;
+}
+
+.dark .lora-theme-menu-group,
+[data-theme="dark"] .lora-theme-menu-group {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lora-theme-menu-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
-  border: 0;
-  background: none;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 500;
-  font-family: inherit;
-  color: var(--ink, #0f172a);
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.lora-theme-menu-item:hover {
-  background: var(--bg, #f4f6fb);
-  color: var(--brand, #2563eb);
-}
-
-.lora-theme-menu-left {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.lora-theme-badge {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 99px;
-  letter-spacing: 0.04em;
-  background: #e2e8f0;
-  color: #64748b;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted, #64748b);
 }
 
-.lora-theme-badge.active {
-  background: #10b981;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+.dark .lora-theme-menu-title,
+[data-theme="dark"] .lora-theme-menu-title {
+  color: #929BB0;
+}
+
+.lora-theme-menu-current {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand, #2563eb);
+  text-transform: none;
+}
+
+.dark .lora-theme-menu-current,
+[data-theme="dark"] .lora-theme-menu-current {
+  color: #A78BFA;
+}
+
+.lora-theme-menu-segments {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background: var(--bg, #f1f5f9);
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.dark .lora-theme-menu-segments,
+[data-theme="dark"] .lora-theme-menu-segments {
+  background: #0D1020;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lora-theme-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.dark .lora-theme-seg-btn,
+[data-theme="dark"] .lora-theme-seg-btn {
+  color: #929BB0;
+}
+
+.lora-theme-seg-btn:hover {
+  color: var(--ink, #0f172a);
+}
+
+.dark .lora-theme-seg-btn:hover,
+[data-theme="dark"] .lora-theme-seg-btn:hover {
+  color: #F5F5FA;
+}
+
+.lora-theme-seg-btn.active {
+  background: #ffffff;
+  color: var(--brand, #2563eb);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+  font-weight: 700;
+}
+
+.dark .lora-theme-seg-btn.active,
+[data-theme="dark"] .lora-theme-seg-btn.active {
+  background: #171D33;
+  color: #F5F5FA;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(118, 87, 255, 0.25);
+  border: 1px solid rgba(118, 87, 255, 0.35);
+}
+
+/* ── Standalone Segmented Bar Variant ── */
+.lora-theme-segmented-bar {
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 4px;
+  background: var(--bg, #f1f5f9);
+  padding: 3px;
+  border-radius: 12px;
+  border: 1px solid var(--line, #e2e8f0);
+}
+
+.dark .lora-theme-segmented-bar,
+[data-theme="dark"] .lora-theme-segmented-bar {
+  background: #0D1020;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.lora-theme-segmented-bar.size-sm .lora-theme-seg-btn {
+  padding: 4px 7px;
+  font-size: 11.5px;
 }
 
 /* ── Toggle Switch Variant ── */
@@ -175,6 +370,11 @@
 
 .lora-theme-switch-track.checked {
   background: #2563eb;
+}
+
+.dark .lora-theme-switch-track.checked,
+[data-theme="dark"] .lora-theme-switch-track.checked {
+  background: #7657ff;
 }
 
 .lora-theme-switch-thumb {
