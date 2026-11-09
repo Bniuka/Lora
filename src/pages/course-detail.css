@@ -1205,3 +1205,52 @@
     transition: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   DARK THEME REFINEMENTS FOR COURSE DETAIL & CALL BUTTON
+   ══════════════════════════════════════════════════════ */
+.dark .lora-course .btn-call,
+[data-theme="dark"] .lora-course .btn-call,
+.dark .btn-call,
+[data-theme="dark"] .btn-call {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  text-shadow: none !important;
+}
+
+.dark .lora-course .btn-call:hover,
+[data-theme="dark"] .lora-course .btn-call:hover,
+.dark .btn-call:hover,
+[data-theme="dark"] .btn-call:hover {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 6px 20px rgba(118, 87, 255, 0.32) !important;
+  transform: translateY(-2px) scale(1.015) !important;
+}
+
+.dark .lora-course .btn-call svg,
+[data-theme="dark"] .lora-course .btn-call svg,
+.dark .btn-call svg,
+[data-theme="dark"] .btn-call svg {
+  color: #A78BFA !important;
+}
+
+.dark .lora-course .buy-inquiry,
+[data-theme="dark"] .lora-course .buy-inquiry {
+  border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-course .buy-inquiry-div span,
+[data-theme="dark"] .lora-course .buy-inquiry-div span {
+  color: #929BB0 !important;
+}
+
+.dark .lora-course .trust-card,
+[data-theme="dark"] .lora-course .trust-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}

@@ -469,3 +469,106 @@
     font-size: 11px;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   DARK THEME REFINEMENTS FOR MULTI-PACK GUIDE MODAL
+   ══════════════════════════════════════════════════════ */
+.dark .mp-guide-modal,
+[data-theme="dark"] .mp-guide-modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8), 0 0 30px rgba(118, 87, 255, 0.12) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-topbar,
+[data-theme="dark"] .mp-guide-topbar {
+  background: #0D1020 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mp-guide-badge,
+[data-theme="dark"] .mp-guide-badge {
+  background: rgba(118, 87, 255, 0.15) !important;
+  color: #A78BFA !important;
+  border-color: rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .mp-guide-title,
+[data-theme="dark"] .mp-guide-title {
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-subtitle,
+[data-theme="dark"] .mp-guide-subtitle {
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-card,
+[data-theme="dark"] .mp-guide-card {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-card.highlight,
+[data-theme="dark"] .mp-guide-card.highlight {
+  background: rgba(118, 87, 255, 0.08) !important;
+  border-color: #7657FF !important;
+}
+
+.dark .mp-guide-card-kicker,
+[data-theme="dark"] .mp-guide-card-kicker {
+  color: #A78BFA !important;
+}
+
+.dark .mp-guide-card-heading,
+[data-theme="dark"] .mp-guide-card-heading {
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-card-desc,
+[data-theme="dark"] .mp-guide-card-desc {
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-feature-item,
+[data-theme="dark"] .mp-guide-feature-item {
+  color: #E2E8F0 !important;
+}
+
+.dark .mp-guide-compare-table th,
+[data-theme="dark"] .mp-guide-compare-table th {
+  background: #0D1020 !important;
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-compare-table td,
+[data-theme="dark"] .mp-guide-compare-table td {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-footer,
+[data-theme="dark"] .mp-guide-footer {
+  background: #0D1020 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mp-guide-switch-link,
+[data-theme="dark"] .mp-guide-switch-link {
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-switch-link:hover,
+[data-theme="dark"] .mp-guide-switch-link:hover {
+  color: #A78BFA !important;
+}
+
+.dark .mp-guide-continue-btn,
+[data-theme="dark"] .mp-guide-continue-btn {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: 0 4px 18px rgba(118, 87, 255, 0.45) !important;
+}

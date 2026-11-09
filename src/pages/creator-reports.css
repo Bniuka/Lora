@@ -696,3 +696,183 @@
     padding: 16px 14px 60px;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   DARK THEME REFINEMENTS FOR FINANCIAL & AUDIT REPORTS
+   ══════════════════════════════════════════════════════ */
+.dark .lora-creator-reports,
+[data-theme="dark"] .lora-creator-reports {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-rep-header h1,
+[data-theme="dark"] .lora-rep-header h1 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-rep-header p,
+[data-theme="dark"] .lora-rep-header p {
+  color: #929BB0 !important;
+}
+
+.dark .rep-table-wrap,
+[data-theme="dark"] .rep-table-wrap {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .table-header-bar,
+[data-theme="dark"] .table-header-bar {
+  background: #0D1020 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .table-header-bar h4,
+[data-theme="dark"] .table-header-bar h4 {
+  color: #F5F5FA !important;
+}
+
+.dark .table-search,
+[data-theme="dark"] .table-search {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .table-search input,
+[data-theme="dark"] .table-search input {
+  color: #F5F5FA !important;
+  background: transparent !important;
+}
+
+.dark .table-search input::placeholder,
+[data-theme="dark"] .table-search input::placeholder {
+  color: #64748B !important;
+}
+
+.dark .rep-table,
+[data-theme="dark"] .rep-table {
+  color: #929BB0 !important;
+}
+
+.dark .rep-table th,
+[data-theme="dark"] .rep-table th {
+  background: #0D1020 !important;
+  color: #929BB0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .rep-table td,
+[data-theme="dark"] .rep-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #929BB0 !important;
+}
+
+.dark .rep-table td b,
+[data-theme="dark"] .rep-table td b {
+  color: #F5F5FA !important;
+}
+
+.dark .rep-table td small,
+[data-theme="dark"] .rep-table td small {
+  color: #64748B !important;
+}
+
+.dark .rep-table tr:hover td,
+[data-theme="dark"] .rep-table tr:hover td {
+  background: rgba(118, 87, 255, 0.06) !important;
+}
+
+.dark .slip-ref,
+[data-theme="dark"] .slip-ref {
+  background: #171D33 !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .bank-card,
+[data-theme="dark"] .bank-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .bank-card-stat,
+[data-theme="dark"] .bank-card-stat {
+  background: #0D1020 !important;
+  color: #F5F5FA !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .bank-card-stat b,
+[data-theme="dark"] .bank-card-stat b {
+  color: #F5F5FA !important;
+}
+
+.dark .bank-card-footer,
+[data-theme="dark"] .bank-card-footer {
+  color: #929BB0 !important;
+}
+
+.dark .cohort-card,
+[data-theme="dark"] .cohort-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .cohort-card h4,
+[data-theme="dark"] .cohort-card h4 {
+  color: #F5F5FA !important;
+}
+
+.dark .cohort-num,
+[data-theme="dark"] .cohort-num {
+  color: #F5F5FA !important;
+}
+
+.dark .cohort-card small,
+[data-theme="dark"] .cohort-card small {
+  color: #929BB0 !important;
+}
+
+.dark .dispute-overview-bar h4,
+[data-theme="dark"] .dispute-overview-bar h4 {
+  color: #F5F5FA !important;
+}
+
+.dark .dispute-overview-bar p,
+[data-theme="dark"] .dispute-overview-bar p {
+  color: #929BB0 !important;
+}
+
+.dark .dispute-card,
+[data-theme="dark"] .dispute-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .dispute-body h5,
+[data-theme="dark"] .dispute-body h5 {
+  color: #F5F5FA !important;
+}
+
+.dark .dispute-desc,
+[data-theme="dark"] .dispute-desc {
+  background: #0D1020 !important;
+  color: #F5F5FA !important;
+  border-left-color: #7657FF !important;
+}
+
+.dark .btn-quick-ping,
+[data-theme="dark"] .btn-quick-ping {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .btn-dismiss,
+[data-theme="dark"] .btn-dismiss {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
