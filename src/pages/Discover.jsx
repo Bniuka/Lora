@@ -79,7 +79,7 @@ export default function Discover() {
   return (
     <PageTransition>
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] dark:text-[#f8fafc] mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-blue-200 dark:to-purple-300 mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
           Discover Courses
         </h1>
 
@@ -89,7 +89,7 @@ export default function Discover() {
             {/* Cinematic Light Decoration */}
             <div className="absolute -inset-1 bg-gradient-to-r from-[#2563EB] via-[#93C5FD] to-[#3B82F6] rounded-[20px] blur-lg opacity-30 group-focus-within:opacity-70 group-hover:opacity-50 transition duration-700"></div>
             
-            <div className="relative flex items-center bg-white dark:bg-[#141e33] rounded-2xl border border-[#E2E8F0] dark:border-[rgba(255,255,255,0.1)] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-visible h-[60px]">
+            <div className="relative flex items-center bg-white dark:bg-[#111a2e]/85 rounded-2xl border border-[#E2E8F0] dark:border-transparent dark:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.22),0_4px_16px_rgba(0,0,0,0.3)] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-visible h-[60px]">
               <div className="pl-5 pr-3">
                 <Search size={22} className="text-[#2563EB]" />
               </div>
@@ -110,7 +110,7 @@ export default function Discover() {
             className={`relative h-[60px] px-6 sm:px-8 rounded-2xl font-medium flex items-center gap-2 transition-all duration-300 ease-out shadow-lg overflow-hidden group cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-xl active:translate-y-0 active:scale-[0.97] ${
               showFilters 
                 ? 'text-[#2563EB] border-2 border-[#2563EB] bg-[#DBEAFE]/30 dark:bg-[#2563EB]/20 shadow-blue-500/15' 
-                : 'text-[#475569] dark:text-[#cbd5e1] border border-[#E2E8F0] dark:border-[rgba(255,255,255,0.1)] bg-white dark:bg-[#141e33] hover:border-[#93C5FD] hover:text-[#2563EB]'
+                : 'text-[#475569] dark:text-[#cbd5e1] border border-[#E2E8F0] dark:border-transparent bg-white dark:bg-[#111a2e]/85 dark:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.22)] hover:border-[#93C5FD] hover:text-[#2563EB]'
             }`}
           >
             {showFilters && <div className="absolute inset-0 bg-[#2563EB]/5 blur-md" />}
@@ -125,12 +125,12 @@ export default function Discover() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-8 p-5 rounded-xl border border-[#F1F5F9] dark:border-[rgba(255,255,255,0.1)] bg-white dark:bg-[#141e33] shadow-sm"
+            className="mb-8 p-5 rounded-xl border border-[#F1F5F9] dark:border-transparent bg-white dark:bg-[#111a2e]/95 dark:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2),0_12px_36px_rgba(0,0,0,0.5)] shadow-sm"
           >
             <div className="flex flex-wrap gap-5 items-end">
               <div className="flex-1 min-w-[200px]">
                 <label className="form-label text-xs">Category</label>
-                <select className="select-field text-sm dark:bg-[#151f33] dark:text-[#f8fafc] dark:border-[rgba(255,255,255,0.12)]" value={category} onChange={e => setCategory(e.target.value)}>
+                <select className="select-field text-sm dark:bg-[#151f33] dark:text-[#f8fafc] dark:border-transparent dark:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]" value={category} onChange={e => setCategory(e.target.value)}>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
@@ -161,7 +161,7 @@ export default function Discover() {
 
               return (
               <motion.div key={pack.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <Link to={`/learner/pack/${pack.id}`} className="bg-white dark:bg-[#141e33] rounded-2xl border border-[#F1F5F9] dark:border-[rgba(255,255,255,0.08)] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block group">
+                <Link to={`/learner/pack/${pack.id}`} className="bg-white dark:bg-gradient-to-b dark:from-[#141f36]/70 dark:to-[#0c1222]/85 rounded-2xl border border-[#F1F5F9] dark:border-transparent shadow-[0_2px_16px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.15),0_16px_40px_-10px_rgba(0,0,0,0.7)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block group">
                   <div className="h-40 bg-[#F8FAFC] dark:bg-[#0a0e17] relative overflow-hidden">
                     {pack.thumbnail_url ? (
                       <img src={pack.thumbnail_url} alt={pack.title}
