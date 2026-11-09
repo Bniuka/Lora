@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion as Motion, useReducedMotion } from 'framer-motion';
+import ThemeSwitcher from './ThemeSwitcher';
 import './learner-host-banner.css';
 
 function getTimeGreeting() {
@@ -150,6 +151,8 @@ export default function LearnerHostBanner({
               <path d="m13 6 6 6-6 6" />
             </svg>
           </Link>
+
+          <ThemeSwitcher variant="pill" />
 
           {enrollmentsCount > 0 && (
             <button

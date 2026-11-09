@@ -1,0 +1,189 @@
+/* ================================================================
+   Lora Theme Switcher Styles
+   Seamlessly integrates with Creator & Learner Layouts
+   ================================================================ */
+
+/* ── Circular Icon Button (Top Bar Header) ── */
+.lora-theme-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line, #e2e8f0);
+  background: var(--surface, #ffffff);
+  color: var(--muted, #64748b);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.lora-theme-btn:hover {
+  background: var(--bg, #f4f6fb);
+  border-color: #93c5fd;
+  color: #2563eb;
+  transform: translateY(-1.5px) scale(1.05);
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.2);
+}
+
+.lora-theme-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.lora-theme-btn.dark-active {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fbbf24;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.lora-theme-btn.dark-active:hover {
+  background: #25334c;
+  border-color: #f59e0b;
+  color: #fde047;
+  box-shadow: 0 6px 20px -2px rgba(245, 158, 11, 0.35);
+}
+
+.lora-theme-btn.size-sm {
+  width: 34px;
+  height: 34px;
+}
+
+.lora-theme-btn.size-lg {
+  width: 44px;
+  height: 44px;
+}
+
+.lora-theme-icon-wrap {
+  display: inline-grid;
+  place-items: center;
+}
+
+.theme-moon-icon {
+  color: #3b82f6;
+  filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.3));
+}
+
+.theme-sun-icon {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.45));
+}
+
+/* ── Pill Variant (Dashboard Action Rows) ── */
+.lora-theme-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 13px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Figtree', system-ui, sans-serif;
+  border: 1.5px solid var(--line, #e2e8f0);
+  background: var(--surface, #ffffff);
+  color: var(--ink, #0f172a);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.lora-theme-pill:hover {
+  border-color: var(--brand, #2563eb);
+  color: var(--brand, #2563eb);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.16);
+}
+
+.lora-theme-pill.dark-active {
+  background: #172136;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+}
+
+.lora-theme-pill.dark-active:hover {
+  background: #1e2c47;
+  border-color: #60a5fa;
+  color: #93c5fd;
+  box-shadow: 0 6px 20px -4px rgba(59, 130, 246, 0.25);
+}
+
+/* ── Menu Item Variant (Inside User Dropdown) ── */
+.lora-theme-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 0;
+  background: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--ink, #0f172a);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lora-theme-menu-item:hover {
+  background: var(--bg, #f4f6fb);
+  color: var(--brand, #2563eb);
+}
+
+.lora-theme-menu-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lora-theme-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  background: #e2e8f0;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.lora-theme-badge.active {
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* ── Toggle Switch Variant ── */
+.lora-theme-switch-track {
+  width: 48px;
+  height: 26px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background-color 0.25s ease;
+}
+
+.lora-theme-switch-track.checked {
+  background: #2563eb;
+}
+
+.lora-theme-switch-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

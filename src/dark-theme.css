@@ -1,0 +1,967 @@
+/* ================================================================
+   LORA DESIGN SYSTEM — Sleek Obsidian Dark Theme
+   Activated via .dark, [data-theme="dark"], body.dark-theme
+   Excludes public homepage to preserve default light appearance.
+   ================================================================ */
+
+/* ── 1. ROOT DESIGN TOKENS (DARK MODE) ── */
+[data-theme="dark"],
+.dark {
+  --color-lora-bg: #0a0e17;
+  --color-lora-surface: #111827;
+  --color-lora-card: #151d30;
+  --color-lora-border: rgba(255, 255, 255, 0.09);
+  --color-lora-border-light: rgba(255, 255, 255, 0.05);
+  --color-lora-muted: #94a3b8;
+  --color-lora-text: #cbd5e1;
+  --color-lora-heading: #f8fafc;
+
+  --color-gold: #3b82f6;
+  --color-gold-light: rgba(59, 130, 246, 0.2);
+  --color-gold-dark: #60a5fa;
+
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.45);
+  --shadow-card-hover: 0 12px 36px rgba(0, 0, 0, 0.65);
+  --shadow-navbar: 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.75);
+
+  color-scheme: dark;
+}
+
+/* ── 2. BASE BODY & SCROLLBAR (DARK MODE) ── */
+html.dark,
+body.dark-theme {
+  background-color: #0a0e17 !important;
+  color: #cbd5e1 !important;
+}
+
+.dark ::-webkit-scrollbar-track,
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0a0e17;
+}
+
+.dark ::-webkit-scrollbar-thumb,
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* ── 3. CREATOR SHELL & SIDEBAR (.lora-creator) ── */
+[data-theme="dark"] .lora-creator,
+.dark .lora-creator {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.15);
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 14px 32px -12px rgba(0,0,0,0.7);
+
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.dark .lora-creator aside {
+  background: #111827 !important;
+  border-right-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-creator nav a {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-creator nav a:hover {
+  background: #172136 !important;
+  color: #ffffff !important;
+}
+
+.dark .lora-creator nav a.on {
+  background: rgba(59, 130, 246, 0.18) !important;
+  color: #60a5fa !important;
+}
+
+/* Creator Top Navigation Bar */
+.dark .lora-creator .top {
+  background: rgba(17, 24, 39, 0.9) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-creator .gsearch {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-creator .gsearch:focus-within {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22) !important;
+  background: #17233a !important;
+}
+
+.dark .lora-creator .gsearch input {
+  color: #f8fafc !important;
+}
+
+.dark .lora-creator .gsearch input::placeholder {
+  color: #64748b !important;
+}
+
+.dark .lora-creator .gsearch kbd {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+.dark .lora-creator .bell {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+.dark .lora-creator .bell:hover {
+  background: #1c2a44 !important;
+  color: #60a5fa !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .lora-creator .unread-dot {
+  border-color: #111827 !important;
+}
+
+.dark .lora-creator .who b {
+  color: #f8fafc !important;
+}
+
+.dark .lora-creator .who small {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-creator .user-dropdown {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .lora-creator .user-dropdown button {
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-creator .user-dropdown button:hover {
+  background: #1c2a44 !important;
+  color: #ffffff !important;
+}
+
+/* Dreamy Mascot Sidebar Widget in Dark Mode */
+.dark .lora-creator .creator-mascot-bubble {
+  background: #172136 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+.dark .lora-creator .creator-mascot-bubble .bubble-text {
+  color: #f1f5f9 !important;
+}
+
+.dark .lora-creator .creator-mascot-bubble .bubble-hint {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+.dark .lora-creator .creator-mascot-shadow {
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 70%) !important;
+}
+
+.dark .lora-creator .creator-mascot-widget-min {
+  background: #172136 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .lora-creator .creator-mascot-mobile {
+  background: #172136 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Notification Panel Dark Mode */
+.dark [data-theme="dark"] .bg-white,
+.dark .bg-white {
+  /* Targeted dark background for notification & modal containers */
+}
+
+/* ── 4. CREATOR DASHBOARD (.lora-dash) ── */
+[data-theme="dark"] .lora-dash,
+.dark .lora-dash {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --soft: #172136;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: #223049;
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+  --violet: #a855f7;
+  --gold: #f59e0b;
+  --gold-soft: rgba(245, 158, 11, 0.15);
+  --c1: #3b82f6; --c1s: rgba(59, 130, 246, 0.15);
+  --c2: #a855f7; --c2s: rgba(168, 85, 247, 0.15);
+  --c3: #10b981; --c3s: rgba(16, 185, 129, 0.15);
+  --c4: #f97316; --c4s: rgba(249, 115, 22, 0.15);
+
+  background: radial-gradient(720px 420px at 0 0, rgba(37, 99, 235, 0.14), transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, rgba(168, 85, 247, 0.12), transparent 70%),
+              var(--bg) !important;
+}
+
+.dark .lora-dash .hello h1,
+.dark .lora-dash .ld-hello h1 {
+  color: #f8fafc !important;
+}
+
+.dark .lora-dash .hello p,
+.dark .lora-dash .ld-hello p {
+  color: #94a3b8 !important;
+}
+
+/* Pill buttons */
+.dark .lora-dash .pill {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .lora-dash .pill:hover {
+  background: #1c2a44 !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+
+.dark .lora-dash .pill.pri {
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+/* Dashboard Cards */
+.dark .lora-dash .card,
+.dark .lora-dash .ld-card {
+  background: linear-gradient(180deg, #151e33 0%, #111827 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Stat Cards */
+.dark .lora-dash .stat.t1, .dark .lora-dash .ld-stat.t1 {
+  background: linear-gradient(180deg, #162444 0%, #111827 100%) !important;
+}
+.dark .lora-dash .stat.t2, .dark .lora-dash .ld-stat.t2 {
+  background: linear-gradient(180deg, #231b42 0%, #111827 100%) !important;
+}
+.dark .lora-dash .stat.t3, .dark .lora-dash .ld-stat.t3 {
+  background: linear-gradient(180deg, #122822 0%, #111827 100%) !important;
+}
+.dark .lora-dash .stat.t4, .dark .lora-dash .ld-stat.t4 {
+  background: linear-gradient(180deg, #2b1f16 0%, #111827 100%) !important;
+}
+
+.dark .lora-dash .stat small,
+.dark .lora-dash .ld-stat small {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-dash .big,
+.dark .lora-dash .ld-big {
+  color: #f8fafc !important;
+}
+
+/* Trend tags */
+.dark .lora-dash .up,
+.dark .lora-dash .ld-up {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+}
+
+.dark .lora-dash .down,
+.dark .lora-dash .ld-down {
+  background: rgba(244, 63, 94, 0.18) !important;
+  color: #fb7185 !important;
+}
+
+/* Action Cards */
+.dark .lora-dash .act,
+.dark .lora-dash .ld-act {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .act:hover,
+.dark .lora-dash .ld-act:hover {
+  background: #1a2742 !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .lora-dash .act b,
+.dark .lora-dash .ld-act b {
+  color: #f8fafc !important;
+}
+
+.dark .lora-dash .act span,
+.dark .lora-dash .ld-act span {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-dash .act.dark,
+.dark .lora-dash .ld-act.dark {
+  background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+}
+
+.dark .lora-dash .sh h2,
+.dark .lora-dash .ld-sh h2 {
+  color: #f8fafc !important;
+}
+
+.dark .lora-dash .sh p,
+.dark .lora-dash .ld-sh p {
+  color: #94a3b8 !important;
+}
+
+/* Compact Recent Packs */
+.dark .lora-dash .pack-mini {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .pack-mini:hover {
+  background: #1a2742 !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .lora-dash .pm-title {
+  color: #f8fafc !important;
+}
+
+.dark .lora-dash .pm-meta {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-dash .pm-cat {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+}
+
+.dark .lora-dash .pm-cat.multi {
+  background: rgba(168, 85, 247, 0.18) !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  color: #d8b4fe !important;
+}
+
+/* Checklist and Tour */
+.dark .lora-dash .chk-item {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .chk-title {
+  color: #f8fafc !important;
+}
+
+.dark .lora-dash .chk-desc {
+  color: #94a3b8 !important;
+}
+
+/* ── 5. LEARNER SHELL & DASHBOARD (.lora-learner) ── */
+[data-theme="dark"] .lora-learner,
+.dark .lora-learner {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+  --ok: #10b981;
+  --ok-soft: rgba(16, 185, 129, 0.16);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245, 158, 11, 0.16);
+  --shadow: 0 1px 3px rgba(0,0,0,0.5), 0 14px 32px -16px rgba(0,0,0,0.7);
+
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.dark .lora-learner header {
+  background: rgba(17, 24, 39, 0.9) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-learner .search {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-learner .search:focus-within {
+  border-color: #3b82f6 !important;
+  background: #18233a !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.22) !important;
+}
+
+.dark .lora-learner .search input {
+  color: #f8fafc !important;
+}
+
+.dark .lora-learner .search input::placeholder {
+  color: #64748b !important;
+}
+
+.dark .lora-learner .links a {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-learner .links a:hover {
+  background: #172136 !important;
+  color: #ffffff !important;
+}
+
+.dark .lora-learner .links a.on {
+  color: #60a5fa !important;
+  background: rgba(59, 130, 246, 0.18) !important;
+}
+
+.dark .lora-learner .bell {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+.dark .lora-learner .bell:hover {
+  background: #1c2a44 !important;
+  color: #60a5fa !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .lora-learner .dropdown {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-learner .dropdown-item {
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-learner .dropdown-item:hover {
+  background: #1c2a44 !important;
+  color: #ffffff !important;
+}
+
+.dark .lora-learner .dropdown-name {
+  color: #f8fafc !important;
+}
+
+.dark .lora-learner .dropdown-email {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-learner .hello h1 {
+  color: #f8fafc !important;
+}
+
+.dark .lora-learner .hello p {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-learner .sh h2 {
+  color: #f8fafc !important;
+}
+
+.dark .lora-learner .card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Learner Host Banner in Dark Mode */
+.dark .lora-mascot-hero {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-mascot-hero__title {
+  color: #f8fafc !important;
+}
+
+.dark .lora-mascot-hero__eyebrow {
+  background: rgba(26, 36, 56, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-mascot-hero__subtitle {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-mascot-hero__stat {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-mascot-hero__stat-val {
+  color: #f8fafc !important;
+}
+
+.dark .lora-mascot-hero__stat-lbl {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-mascot-hero__bubble {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .lora-mascot-hero__bubble::after {
+  border-color: transparent transparent #1e293b #1e293b !important;
+}
+
+/* ── 6. MY PACKS STUDIO (.mpk-container) ── */
+[data-theme="dark"] .mpk-container,
+.dark .mpk-container {
+  --mpk-bg: #0a0e17;
+  --mpk-surface: #111827;
+  --mpk-ink: #f8fafc;
+  --mpk-muted: #94a3b8;
+  --mpk-line: rgba(255, 255, 255, 0.08);
+  --mpk-edge: #223049;
+  --mpk-primary: #3b82f6;
+  --mpk-primary-hover: #60a5fa;
+  --mpk-primary-soft: rgba(59, 130, 246, 0.18);
+  --mpk-indigo: #818cf8;
+  --mpk-violet: #a855f7;
+  --mpk-violet-soft: rgba(168, 85, 247, 0.18);
+  --mpk-emerald: #10b981;
+  --mpk-emerald-soft: rgba(16, 185, 129, 0.18);
+  --mpk-amber: #f59e0b;
+  --mpk-amber-soft: rgba(245, 158, 11, 0.18);
+  --mpk-rose: #f43f5e;
+  --mpk-rose-soft: rgba(244, 63, 94, 0.18);
+
+  color: var(--mpk-ink);
+}
+
+.dark .mpk-hero-title {
+  color: #f8fafc !important;
+}
+
+.dark .mpk-hero-sub {
+  color: #94a3b8 !important;
+}
+
+.dark .mpk-hero-tag {
+  background: rgba(26, 36, 56, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #93c5fd !important;
+}
+
+.dark .mpk-stats-ribbon {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mpk-stat-item {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mpk-stat-item:hover {
+  background: #18253f !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .mpk-stat-val {
+  color: #f8fafc !important;
+}
+
+.dark .mpk-stat-lbl {
+  color: #94a3b8 !important;
+}
+
+.dark .mpk-search-input {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+.dark .mpk-search-input:focus {
+  background: #17233c !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .mpk-filter-btn {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #94a3b8 !important;
+}
+
+.dark .mpk-filter-btn:hover {
+  color: #f8fafc !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .mpk-filter-btn.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.dark .mpk-card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mpk-card:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .mpk-card-title {
+  color: #f8fafc !important;
+}
+
+.dark .mpk-card-desc {
+  color: #94a3b8 !important;
+}
+
+.dark .mpk-card-meta {
+  color: #94a3b8 !important;
+}
+
+/* ── 7. WIZARD / CREATE PACK / EDIT PACK (.lora-wizard) ── */
+[data-theme="dark"] .lora-wizard,
+.dark .lora-wizard {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --soft: #172136;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: #223049;
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+  --violet: #a855f7;
+  --ok: #10b981;
+  --ok-soft: rgba(16, 185, 129, 0.16);
+  --bad: #f43f5e;
+  --gold: #f59e0b;
+  --gold-soft: rgba(245, 158, 11, 0.16);
+
+  background: radial-gradient(720px 420px at 0 0, rgba(37, 99, 235, 0.14), transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, rgba(168, 85, 247, 0.12), transparent 70%),
+              var(--bg) !important;
+}
+
+.dark .lora-wizard .card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-wizard input,
+.dark .lora-wizard select,
+.dark .lora-wizard textarea {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+.dark .lora-wizard input:focus,
+.dark .lora-wizard select:focus,
+.dark .lora-wizard textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22) !important;
+}
+
+/* ── 8. ENROLLMENTS & REPORTS (.lora-enroll, .lora-creator-reports) ── */
+[data-theme="dark"] .lora-enroll,
+.dark .lora-enroll {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+  --ok: #10b981;
+  --ok-soft: rgba(16, 185, 129, 0.16);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245, 158, 11, 0.16);
+  --bad: #f43f5e;
+  --bad-soft: rgba(244, 63, 94, 0.16);
+  --gray: #94a3b8;
+  --gray-soft: #172136;
+}
+
+.dark .lora-enroll .card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-enroll table {
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-enroll th {
+  background: #172136 !important;
+  color: #94a3b8 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-enroll td {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .lora-enroll tr:hover td {
+  background: #18243c !important;
+}
+
+/* ── 9. CREATOR SETTINGS (.lora-settings) ── */
+[data-theme="dark"] .lora-settings,
+.dark .lora-settings {
+  --s-bg: #0a0e17;
+  --s-surface: #141e33;
+  --s-ink: #f8fafc;
+  --s-muted: #94a3b8;
+  --s-line: rgba(255, 255, 255, 0.08);
+  --s-brand: #3b82f6;
+  --s-brand-soft: rgba(59, 130, 246, 0.16);
+  --s-ok: #10b981;
+  --s-bad: #f43f5e;
+  --s-hero: #111827;
+  --s-hero-ink: #f8fafc;
+}
+
+.dark .lora-settings .s-card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-settings input,
+.dark .lora-settings select,
+.dark .lora-settings textarea {
+  background: #151f33 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+/* ── 10. MODALS, TOASTS & SHARED POPUPS ── */
+.dark .modal-content {
+  background: #131b2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8) !important;
+}
+
+.dark .modal-overlay {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #151f33 25%, #1e2c47 50%, #151f33 75%) !important;
+}
+
+/* ── 11. COURSE SESSIONS (.lora-sessions) ── */
+[data-theme="dark"] .lora-sessions,
+.dark .lora-sessions {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #3b82f6;
+  --brand2: #2563eb;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+  --ok: #10b981;
+  --ok-soft: rgba(16, 185, 129, 0.16);
+  --gold: #f59e0b;
+  --gold-soft: rgba(245, 158, 11, 0.16);
+
+  background: radial-gradient(720px 420px at 0 0, rgba(37, 99, 235, 0.14), transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, rgba(168, 85, 247, 0.12), transparent 70%),
+              #0a0e17 !important;
+  color: var(--ink) !important;
+}
+
+.dark .lora-sessions .card {
+  background: linear-gradient(180deg, #151e33 0%, #111827 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-sessions .hero {
+  background: linear-gradient(135deg, #162035 0%, #111827 52%, #1e1b38 100%) !important;
+}
+
+.dark .lora-sessions .pill {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-sessions .row {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-sessions .row:hover {
+  background: #18243c !important;
+  border-color: #3b82f6 !important;
+}
+
+/* ── 12. MANAGE MULTI-PACK (.mmp-layout, .mmp-bento) ── */
+.dark .mmp-bento {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
+  color: #f8fafc !important;
+}
+
+.dark .mmp-bento-header h3 {
+  color: #f8fafc !important;
+}
+
+.dark .mmp-bento-header p {
+  color: #94a3b8 !important;
+}
+
+.dark .mmp-item {
+  background: #172136 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── 13. CREATOR GUIDE (.lora-guide) ── */
+[data-theme="dark"] .lora-guide,
+.dark .lora-guide {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --soft: #172136;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: #223049;
+  --brand: #3b82f6;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+
+  background: radial-gradient(720px 420px at 0 0, rgba(37, 99, 235, 0.14), transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, rgba(168, 85, 247, 0.12), transparent 70%),
+              var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+.dark .lora-guide .lg-hero {
+  background: linear-gradient(135deg, #162035 0%, #111827 55%, #1c183a 100%) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-guide .card,
+.dark .lora-guide .lg-card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── 14. CREATOR REPORTS (.lora-creator-reports) ── */
+.dark .lora-creator-reports {
+  color: #f8fafc !important;
+}
+
+.dark .lora-creator-reports .card,
+.dark .lora-creator-reports .rep-card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── 15. FOUNDER / ADMIN PANEL (.lora-admin) ── */
+.dark .lora-admin {
+  color: #f8fafc !important;
+}
+
+.dark .lora-admin-hd h1 {
+  color: #f8fafc !important;
+}
+
+.dark .lora-admin-hd p {
+  color: #94a3b8 !important;
+}
+
+.dark .lora-admin .card,
+.dark .lora-admin-card {
+  background: #141e33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-admin table {
+  color: #cbd5e1 !important;
+}
+
+.dark .lora-admin th {
+  background: #172136 !important;
+  color: #94a3b8 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-admin td {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .lora-admin tr:hover td {
+  background: #18243c !important;
+}
+
+/* ── 16. POPUPS & SPECIALIZED MODALS ── */
+.dark .lora-setup-modal {
+  background: #131b2e !important;
+  box-shadow: 0 30px 90px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+.dark .setup-top-bar {
+  background: #172136 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .setup-body {
+  background: #131b2e !important;
+}
+
+.dark .setup-footer {
+  background: #172136 !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-report-modal {
+  background: #131b2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .lora-share,
+.dark .lora-share {
+  --bg: #0a0e17;
+  --surface: #131b2e;
+  --soft: #172136;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #3b82f6;
+  --brand-soft: rgba(59, 130, 246, 0.16);
+}
+

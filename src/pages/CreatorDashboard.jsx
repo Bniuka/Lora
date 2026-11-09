@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './dashboard.css';
 
 /* ─── Sparkline SVG (pure, no external deps) ─── */
@@ -660,6 +661,8 @@ export default function CreatorDashboard() {
           </div>
 
           <div className="hb">
+            <ThemeSwitcher variant="pill" />
+
             <button
               type="button"
               className="pill"

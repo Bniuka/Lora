@@ -79,7 +79,7 @@ export default function Discover() {
   return (
     <PageTransition>
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] dark:text-[#f8fafc] mb-8" style={{ fontFamily: 'var(--font-heading)' }}>
           Discover Courses
         </h1>
 
@@ -89,12 +89,12 @@ export default function Discover() {
             {/* Cinematic Light Decoration */}
             <div className="absolute -inset-1 bg-gradient-to-r from-[#2563EB] via-[#93C5FD] to-[#3B82F6] rounded-[20px] blur-lg opacity-30 group-focus-within:opacity-70 group-hover:opacity-50 transition duration-700"></div>
             
-            <div className="relative flex items-center bg-white rounded-2xl border border-[#E2E8F0] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-visible h-[60px]">
+            <div className="relative flex items-center bg-white dark:bg-[#141e33] rounded-2xl border border-[#E2E8F0] dark:border-[rgba(255,255,255,0.1)] focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#2563EB] transition-all shadow-lg overflow-visible h-[60px]">
               <div className="pl-5 pr-3">
                 <Search size={22} className="text-[#2563EB]" />
               </div>
               <input
-                className="w-full h-full text-base sm:text-lg text-[#0F172A] placeholder-[#94A6B8] focus:outline-none bg-transparent"
+                className="w-full h-full text-base sm:text-lg text-[#0F172A] dark:text-[#f8fafc] placeholder-[#94A6B8] focus:outline-none bg-transparent"
                 placeholder="Search courses, topics, creators..."
                 value={query}
                 onChange={e => setQuery(e.target.value)}
@@ -109,8 +109,8 @@ export default function Discover() {
             onClick={() => setShowFilters(!showFilters)}
             className={`relative h-[60px] px-6 sm:px-8 rounded-2xl font-medium flex items-center gap-2 transition-all duration-300 ease-out shadow-lg overflow-hidden group cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-xl active:translate-y-0 active:scale-[0.97] ${
               showFilters 
-                ? 'text-[#2563EB] border-2 border-[#2563EB] bg-[#DBEAFE]/30 shadow-blue-500/15' 
-                : 'text-[#475569] border border-[#E2E8F0] bg-white hover:border-[#93C5FD] hover:text-[#2563EB]'
+                ? 'text-[#2563EB] border-2 border-[#2563EB] bg-[#DBEAFE]/30 dark:bg-[#2563EB]/20 shadow-blue-500/15' 
+                : 'text-[#475569] dark:text-[#cbd5e1] border border-[#E2E8F0] dark:border-[rgba(255,255,255,0.1)] bg-white dark:bg-[#141e33] hover:border-[#93C5FD] hover:text-[#2563EB]'
             }`}
           >
             {showFilters && <div className="absolute inset-0 bg-[#2563EB]/5 blur-md" />}
@@ -125,18 +125,18 @@ export default function Discover() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-8 p-5 rounded-xl border border-[#F1F5F9] bg-white shadow-sm"
+            className="mb-8 p-5 rounded-xl border border-[#F1F5F9] dark:border-[rgba(255,255,255,0.1)] bg-white dark:bg-[#141e33] shadow-sm"
           >
             <div className="flex flex-wrap gap-5 items-end">
               <div className="flex-1 min-w-[200px]">
                 <label className="form-label text-xs">Category</label>
-                <select className="select-field text-sm" value={category} onChange={e => setCategory(e.target.value)}>
+                <select className="select-field text-sm dark:bg-[#151f33] dark:text-[#f8fafc] dark:border-[rgba(255,255,255,0.12)]" value={category} onChange={e => setCategory(e.target.value)}>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <ToggleSwitch checked={hasFreeSession} onChange={setHasFreeSession} label="Has Free Session" />
               <button onClick={() => { setCategory('All'); setHasFreeSession(false); setQuery(''); }}
-                className="btn-ghost text-xs text-[#475569] border-transparent hover:bg-[#F5F5F5]"><X size={14} /> Clear</button>
+                className="btn-ghost text-xs text-[#475569] dark:text-[#94a3b8] border-transparent hover:bg-[#F5F5F5] dark:hover:bg-[#1e293b]"><X size={14} /> Clear</button>
             </div>
           </motion.div>
         )}
@@ -161,14 +161,14 @@ export default function Discover() {
 
               return (
               <motion.div key={pack.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <Link to={`/learner/pack/${pack.id}`} className="bg-white rounded-2xl border border-[#F1F5F9] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block group">
-                  <div className="h-40 bg-[#F8FAFC] relative overflow-hidden">
+                <Link to={`/learner/pack/${pack.id}`} className="bg-white dark:bg-[#141e33] rounded-2xl border border-[#F1F5F9] dark:border-[rgba(255,255,255,0.08)] shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden block group">
+                  <div className="h-40 bg-[#F8FAFC] dark:bg-[#0a0e17] relative overflow-hidden">
                     {pack.thumbnail_url ? (
                       <img src={pack.thumbnail_url} alt={pack.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        {isMulti ? <Layers size={36} className="text-[#93C5FD]" /> : <Package size={36} className="text-[#E2E8F0]" />}
+                        {isMulti ? <Layers size={36} className="text-[#93C5FD]" /> : <Package size={36} className="text-[#E2E8F0] dark:text-[#334155]" />}
                       </div>
                     )}
                     {pack.visibility === 'private' ? (
@@ -191,13 +191,13 @@ export default function Discover() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-1">{pack.title}</h3>
+                    <h3 className="font-semibold text-[#0F172A] dark:text-[#f8fafc] mb-1 line-clamp-1">{pack.title}</h3>
                     <p className="text-xs text-[#94A6B8] mb-3">
                       {pack.creator_profiles?.profiles?.first_name} {pack.creator_profiles?.profiles?.last_name} · {pack.category}
                     </p>
                     <div className="flex items-center justify-between">
                       {pack.visibility === 'private' ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F5F3FF] dark:bg-[#231b42] text-[#6D28D9] dark:text-[#c4b5fd] border border-[#DDD6FE] dark:border-[#4c1d95]">
                           <Lock size={12} /> Private · Invite Only
                         </span>
                       ) : isMulti ? (

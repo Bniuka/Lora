@@ -4,6 +4,7 @@ import { User, LogOut, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import AppLogo from './AppLogo';
+import ThemeSwitcher from './ThemeSwitcher';
 import '../pages/learner-dashboard.css';
 
 export default function LearnerLayout({ children }) {
@@ -88,7 +89,7 @@ export default function LearnerLayout({ children }) {
     ((profile?.first_name?.[0] || 'L') + (profile?.last_name?.[0] || '')).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb]">
+    <div className="min-h-screen bg-[#f4f6fb] dark:bg-[#0a0e17] text-[#0e1733] dark:text-[#f8fafc] transition-colors duration-200">
       {/* Redesigned Learner Top Bar */}
       <div className="lora-learner">
         <header>
@@ -128,6 +129,9 @@ export default function LearnerLayout({ children }) {
               >
                 Discover
               </NavLink>
+
+              {/* Mode Switcher */}
+              <ThemeSwitcher />
 
               {/* Notification Bell */}
               <div className="relative" ref={notifRef} style={{ position: 'relative' }}>
@@ -243,6 +247,7 @@ export default function LearnerLayout({ children }) {
                       </div>
                       <div className="dropdown-email">{profile?.email || user?.email}</div>
                     </div>
+                    <ThemeSwitcher variant="menu-item" />
                     <Link
                       to="/learner/dashboard"
                       className="dropdown-item"

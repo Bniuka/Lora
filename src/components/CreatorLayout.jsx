@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { isUserAdmin } from '../lib/admin';
 import AppLogo from './AppLogo';
+import ThemeSwitcher from './ThemeSwitcher';
 import './creator-layout.css';
 
 const _NAV_ITEMS = [
@@ -79,16 +80,12 @@ function NotificationPanel({ userId, onClose }) {
       style={{ width: 400 }}
     >
       <div
-        className="bg-white rounded-3xl overflow-hidden"
-        style={{
-          border: '1px solid #E8EDF3',
-          boxShadow: '0 12px 48px rgba(0,0,0,0.12)',
-        }}
+        className="bg-white dark:bg-[#141e33] rounded-3xl overflow-hidden border border-[#E8EDF3] dark:border-[rgba(255,255,255,0.1)] shadow-[0_12px_48px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.6)]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#F1F5F9]">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#F1F5F9] dark:border-[rgba(255,255,255,0.08)]">
           <div className="flex items-center gap-3">
-            <p className="text-[15px] font-bold text-[#0F172A]">Notifications</p>
+            <p className="text-[15px] font-bold text-[#0F172A] dark:text-[#F8FAFC]">Notifications</p>
             {unread > 0 && (
               <span className="bg-[#2563EB] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
                 {unread}
@@ -99,12 +96,12 @@ function NotificationPanel({ userId, onClose }) {
             {unread > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-[13px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] transition-colors"
+                className="text-[13px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] dark:text-[#60a5fa] dark:hover:text-[#93c5fd] transition-colors"
               >
                 Mark all read
               </button>
             )}
-            <button onClick={onClose} className="text-[#94A3B8] hover:text-[#0F172A] p-1 transition-colors">
+            <button onClick={onClose} className="text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] p-1 transition-colors">
               <X size={18} />
             </button>
           </div>
@@ -118,10 +115,10 @@ function NotificationPanel({ userId, onClose }) {
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
-              <div className="w-14 h-14 rounded-full bg-[#F1F5F9] flex items-center justify-center mb-4">
+              <div className="w-14 h-14 rounded-full bg-[#F1F5F9] dark:bg-[#1a253d] flex items-center justify-center mb-4">
                 <Bell size={24} className="text-[#94A3B8]" />
               </div>
-              <p className="text-[15px] font-semibold text-[#0F172A] mb-2">No notifications yet</p>
+              <p className="text-[15px] font-semibold text-[#0F172A] dark:text-[#F8FAFC] mb-2">No notifications yet</p>
               <p className="text-[13px] text-[#94A3B8] leading-relaxed">You'll be notified about enrollment activity here.</p>
             </div>
           ) : (
@@ -130,14 +127,14 @@ function NotificationPanel({ userId, onClose }) {
                 <button
                   key={n.id}
                   onClick={() => markOneRead(n.id)}
-                  className={`w-full text-left flex gap-4 px-6 py-5 transition-colors hover:bg-[#F8FAFC] ${
-                    i < notifications.length - 1 ? 'border-b border-[#F8FAFC]' : ''
+                  className={`w-full text-left flex gap-4 px-6 py-5 transition-colors hover:bg-[#F8FAFC] dark:hover:bg-[#1a253d] ${
+                    i < notifications.length - 1 ? 'border-b border-[#F8FAFC] dark:border-[rgba(255,255,255,0.06)]' : ''
                   }`}
                 >
                   {/* Icon */}
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1"
-                    style={{ background: n.is_read ? '#F1F5F9' : '#DCFCE7' }}
+                    style={{ background: n.is_read ? 'rgba(148, 163, 184, 0.15)' : 'rgba(34, 197, 94, 0.2)' }}
                   >
                     <CheckCircle size={18} color={n.is_read ? '#94A3B8' : '#16A34A'} />
                   </div>
@@ -145,14 +142,14 @@ function NotificationPanel({ userId, onClose }) {
                   {/* Text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3">
-                      <p className={`text-[14px] leading-relaxed ${n.is_read ? 'font-medium text-[#475569]' : 'font-semibold text-[#0F172A]'}`}>
+                      <p className={`text-[14px] leading-relaxed ${n.is_read ? 'font-medium text-[#475569] dark:text-[#94A3B8]' : 'font-semibold text-[#0F172A] dark:text-[#F8FAFC]'}`}>
                         {n.title}
                       </p>
                       {!n.is_read && (
                         <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] flex-shrink-0 mt-1.5" />
                       )}
                     </div>
-                    <p className="text-[13px] text-[#64748B] mt-1.5 leading-relaxed">
+                    <p className="text-[13px] text-[#64748B] dark:text-[#94A3B8] mt-1.5 leading-relaxed">
                       {n.message}
                     </p>
                     <p className="text-[12px] text-[#94A3B8] mt-2.5 flex items-center gap-1.5 font-medium">
@@ -168,7 +165,7 @@ function NotificationPanel({ userId, onClose }) {
 
         {/* Footer */}
         {notifications.length > 0 && (
-          <div className="px-6 py-4 border-t border-[#F1F5F9] bg-[#FAFBFC]">
+          <div className="px-6 py-4 border-t border-[#F1F5F9] dark:border-[rgba(255,255,255,0.08)] bg-[#FAFBFC] dark:bg-[#101827]">
             <p className="text-[12px] text-[#94A3B8] text-center font-medium">
               Showing last {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
             </p>
@@ -414,6 +411,9 @@ export default function CreatorLayout({ children }) {
                 <span className="creator-mascot-mobile-badge" aria-hidden="true">✨</span>
               </button>
 
+              {/* Mode Switcher */}
+              <ThemeSwitcher />
+
               {/* Bell with dropdown panel */}
               <div className="relative" ref={notifRef} style={{ position: 'relative' }}>
                 <button
@@ -453,6 +453,7 @@ export default function CreatorLayout({ children }) {
 
                 {userDropdownOpen && (
                   <div className="user-dropdown">
+                    <ThemeSwitcher variant="menu-item" />
                     {isUserAdmin(user?.email) && (
                       <button type="button" onClick={() => { setUserDropdownOpen(false); navigate('/creator/admin'); }} style={{ color: '#d97706', fontWeight: 600 }}>
                         <Crown size={15} style={{ color: '#f59e0b' }} /> Founder Panel
