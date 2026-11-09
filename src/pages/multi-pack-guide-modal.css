@@ -477,7 +477,7 @@
 [data-theme="dark"] .mp-guide-modal {
   background: #111629 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8), 0 0 30px rgba(118, 87, 255, 0.12) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8), 0 0 35px rgba(118, 87, 255, 0.12) !important;
   color: #F5F5FA !important;
 }
 
@@ -491,12 +491,52 @@
 [data-theme="dark"] .mp-guide-badge {
   background: rgba(118, 87, 255, 0.15) !important;
   color: #A78BFA !important;
-  border-color: rgba(118, 87, 255, 0.3) !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .mp-guide-lang-switch,
+[data-theme="dark"] .mp-guide-lang-switch {
+  background: #171D33 !important;
+}
+
+.dark .mp-guide-lang-btn,
+[data-theme="dark"] .mp-guide-lang-btn {
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-lang-btn.active,
+[data-theme="dark"] .mp-guide-lang-btn.active {
+  background: #111629 !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .mp-guide-close-btn,
+[data-theme="dark"] .mp-guide-close-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-close-btn:hover,
+[data-theme="dark"] .mp-guide-close-btn:hover {
+  background: #222B48 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-header,
+[data-theme="dark"] .mp-guide-header {
+  background: #0D1020 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .dark .mp-guide-title,
 [data-theme="dark"] .mp-guide-title {
   color: #F5F5FA !important;
+  background: linear-gradient(135deg, #FFFFFF 15%, #C4B5FD 55%, #7657FF 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
 }
 
 .dark .mp-guide-subtitle,
@@ -504,21 +544,32 @@
   color: #929BB0 !important;
 }
 
+.dark .mp-guide-body,
+[data-theme="dark"] .mp-guide-body {
+  background: #111629 !important;
+}
+
 .dark .mp-guide-card,
 [data-theme="dark"] .mp-guide-card {
   background: #0D1020 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
   color: #F5F5FA !important;
 }
 
 .dark .mp-guide-card.highlight,
 [data-theme="dark"] .mp-guide-card.highlight {
-  background: rgba(118, 87, 255, 0.08) !important;
-  border-color: #7657FF !important;
+  background: rgba(118, 87, 255, 0.1) !important;
+  border: 1.5px solid #7657FF !important;
+  box-shadow: 0 0 20px rgba(118, 87, 255, 0.15) !important;
 }
 
 .dark .mp-guide-card-kicker,
 [data-theme="dark"] .mp-guide-card-kicker {
+  color: #929BB0 !important;
+}
+
+.dark .mp-guide-card.highlight .mp-guide-card-kicker,
+[data-theme="dark"] .mp-guide-card.highlight .mp-guide-card-kicker {
   color: #A78BFA !important;
 }
 
@@ -532,21 +583,43 @@
   color: #929BB0 !important;
 }
 
-.dark .mp-guide-feature-item,
-[data-theme="dark"] .mp-guide-feature-item {
-  color: #E2E8F0 !important;
+.dark .mp-guide-card.highlight .mp-guide-card-desc,
+[data-theme="dark"] .mp-guide-card.highlight .mp-guide-card-desc {
+  color: #CBD5E1 !important;
 }
 
-.dark .mp-guide-compare-table th,
-[data-theme="dark"] .mp-guide-compare-table th {
+/* 3-Step Flow Box inside modal */
+.dark .mp-guide-steps,
+[data-theme="dark"] .mp-guide-steps {
   background: #0D1020 !important;
-  color: #929BB0 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-.dark .mp-guide-compare-table td,
-[data-theme="dark"] .mp-guide-compare-table td {
-  border-color: rgba(255, 255, 255, 0.06) !important;
+.dark .mp-guide-steps-heading,
+[data-theme="dark"] .mp-guide-steps-heading {
   color: #F5F5FA !important;
+}
+
+.dark .mp-guide-step-row,
+[data-theme="dark"] .mp-guide-step-row {
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-step-num,
+[data-theme="dark"] .mp-guide-step-num {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .mp-guide-step-title,
+[data-theme="dark"] .mp-guide-step-title {
+  color: #F5F5FA !important;
+}
+
+.dark .mp-guide-step-desc,
+[data-theme="dark"] .mp-guide-step-desc {
+  color: #929BB0 !important;
 }
 
 .dark .mp-guide-footer,
@@ -571,4 +644,26 @@
   color: #FFFFFF !important;
   border: none !important;
   box-shadow: 0 4px 18px rgba(118, 87, 255, 0.45) !important;
+}
+
+.dark .mp-guide-backdrop,
+[data-theme="dark"] .mp-guide-backdrop,
+body.dark-theme .mp-guide-backdrop {
+  background: rgba(4, 6, 12, 0.82) !important;
+}
+
+.dark .lora-wizard .mp-guide-trigger-btn,
+[data-theme="dark"] .lora-wizard .mp-guide-trigger-btn,
+body.dark-theme .lora-wizard .mp-guide-trigger-btn {
+  background: rgba(118, 87, 255, 0.14) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .lora-wizard .mp-guide-trigger-btn:hover,
+[data-theme="dark"] .lora-wizard .mp-guide-trigger-btn:hover,
+body.dark-theme .lora-wizard .mp-guide-trigger-btn:hover {
+  background: rgba(118, 87, 255, 0.25) !important;
+  color: #FFFFFF !important;
+  border-color: #7657FF !important;
 }

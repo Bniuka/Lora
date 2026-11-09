@@ -460,37 +460,16 @@ export default function CreatePack() {
       <div className="lora-wizard">
         <div className="page">
           {parentPack && (
-            <div
-              style={{
-                marginBottom: 14,
-                padding: '12px 16px',
-                borderRadius: 14,
-                background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)',
-                border: '1.5px solid #bfdbfe',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 10,
-              }}
-            >
+            <div className="mp-parent-banner">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Layers size={18} style={{ color: '#2563eb', flexShrink: 0 }} />
-                <div style={{ fontSize: 13.5, color: '#1e3a8a' }}>
+                <Layers size={18} className="mp-parent-banner-icon" />
+                <div className="mp-parent-banner-text">
                   Creating <b>Sub-Pack #{existingSubCount + 1}</b> under Main Course: <b>{parentPack.title}</b>
                 </div>
               </div>
               <Link
                 to={`/creator/multi-packs/${parentPack.id}`}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  color: '#2563eb',
-                  textDecoration: 'none',
-                }}
+                className="mp-parent-banner-link"
               >
                 <ArrowLeft size={14} /> Back to Multi-Pack
               </Link>
@@ -509,20 +488,7 @@ export default function CreatePack() {
             <button
               type="button"
               onClick={() => setSetupModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 7,
-                background: '#eff6ff',
-                color: '#2563eb',
-                border: '1px solid #bfdbfe',
-                borderRadius: 12,
-                padding: '8px 15px',
-                fontSize: 13,
-                fontWeight: 750,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className="smart-setup-trigger-btn"
               title="Open the step-by-step assistant again"
             >
               <Sparkles size={14} className="text-amber-500" />
@@ -597,24 +563,18 @@ export default function CreatePack() {
                             icon: <Globe2 size={16} />,
                             title: 'Public',
                             desc: 'Open to all learners on Discover',
-                            accent: '#2563eb',
-                            bg: '#eff6ff',
                           },
                           {
                             id: 'private',
                             icon: <Lock size={16} />,
                             title: 'Private Showcase',
                             desc: 'Shows as Private · Invite/Promo only',
-                            accent: '#d97706',
-                            bg: '#fffbeb',
                           },
                           {
                             id: 'unlisted',
                             icon: <EyeOff size={16} />,
                             title: 'Unlisted (Hidden)',
                             desc: 'Hidden from Discover · Direct link only',
-                            accent: '#7c3aed',
-                            bg: '#f5f3ff',
                           },
                         ].map(opt => {
                           const active = vis === opt.id;
@@ -626,24 +586,13 @@ export default function CreatePack() {
                                 update('visibility', opt.id);
                                 if (!form.invite_token) update('invite_token', generateInviteToken());
                               }}
-                              style={{
-                                textAlign: 'left',
-                                padding: '12px 14px',
-                                borderRadius: 14,
-                                border: active ? `2px solid ${opt.accent}` : '1.5px solid var(--line)',
-                                background: active ? opt.bg : '#fff',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 4,
-                                transition: 'all 0.15s ease',
-                              }}
+                              className={`mp-option-btn mp-vis-btn ${active ? 'active' : ''} ${opt.id}`}
                             >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 750, fontSize: 14, color: active ? opt.accent : '#0f172a' }}>
+                              <div className="mp-option-head">
                                 {opt.icon}
                                 <span>{opt.title}</span>
                               </div>
-                              <span style={{ fontSize: 12, color: '#64748b', lineHeight: 1.35 }}>
+                              <span className="mp-option-desc">
                                 {opt.desc}
                               </span>
                             </button>
@@ -652,16 +601,7 @@ export default function CreatePack() {
                       </div>
 
                       {(vis === 'private' || vis === 'unlisted') && (
-                        <div style={{
-                          marginTop: 10,
-                          padding: '11px 14px',
-                          borderRadius: 12,
-                          background: vis === 'private' ? '#fffbeb' : '#f5f3ff',
-                          border: `1px solid ${vis === 'private' ? '#fde68a' : '#ddd6fe'}`,
-                          fontSize: 12.5,
-                          color: vis === 'private' ? '#92400e' : '#5b21b6',
-                          lineHeight: 1.5,
-                        }}>
+                        <div className={`mp-visibility-notice ${vis}`}>
                           <b>{vis === 'private' ? '🔒 Private Showcase Active:' : '👻 Unlisted Mode Active:'}</b>{' '}
                           {vis === 'private'
                             ? 'Outside learners see this pack listed as "Private" with zero session details shown.'
@@ -762,11 +702,11 @@ export default function CreatePack() {
                           value={form.price}
                           disabled={isFreePack}
                           onChange={e => update('price', e.target.value)}
-                          style={isFreePack ? { background: '#f0fdf4', borderColor: '#86efac', color: '#047857', fontWeight: 700 } : {}}
+                          className={isFreePack ? 'free-input-field' : ''}
                           required
                         />
                         {isFreePack && (
-                          <small style={{ color: '#059669', fontWeight: 600, marginTop: 4, display: 'block' }}>
+                          <small className="free-active-note">
                             ✓ 100% Free mode is ON. Toggle switch above to set a price.
                           </small>
                         )}
@@ -774,14 +714,14 @@ export default function CreatePack() {
                     </div>
 
                     {parentPack && existingSubCount > 0 && (
-                      <label className={`sw free-banner ${form.require_previous_pack ? 'active' : ''}`} style={{ borderColor: form.require_previous_pack ? '#c4b5fd' : undefined, background: form.require_previous_pack ? '#f5f3ff' : undefined }}>
+                      <label className={`sw free-banner mp-seq-banner ${form.require_previous_pack ? 'active' : ''}`}>
                         <div className="sw-info">
                           <div className="sw-title">
                             <b style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                              <GitBranch size={15} style={{ color: '#6d28d9' }} />
+                              <GitBranch size={15} className="mp-seq-icon" />
                               Require previous Sub-Pack enrollment first
                             </b>
-                            <span className="sw-pill" style={form.require_previous_pack ? { background: '#6d28d9', color: '#fff' } : {}}>
+                            <span className={`sw-pill ${form.require_previous_pack ? 'seq-active' : ''}`}>
                               {form.require_previous_pack ? 'SEQUENTIAL' : 'OPEN'}
                             </span>
                           </div>
@@ -1227,11 +1167,7 @@ export default function CreatePack() {
                   <div className="chips">
                     <span>{form.category || 'General'}</span>
                     <span className="pr">{Number(form.price) === 0 ? 'FREE' : `${form.currency} ${form.price || '0'}`}</span>
-                    <span style={{
-                      background: form.visibility === 'private' ? '#fffbeb' : form.visibility === 'unlisted' ? '#f5f3ff' : '#eff6ff',
-                      color: form.visibility === 'private' ? '#b45309' : form.visibility === 'unlisted' ? '#6d28d9' : '#1d4ed8',
-                      border: `1px solid ${form.visibility === 'private' ? '#fde68a' : form.visibility === 'unlisted' ? '#ddd6fe' : '#bfdbfe'}`,
-                    }}>
+                    <span className={`chip-vis ${form.visibility || 'public'}`}>
                       {form.visibility === 'private' ? '🔒 Private Showcase' : form.visibility === 'unlisted' ? '👻 Unlisted (Hidden)' : '🌍 Public'}
                     </span>
                     {(form.whatsapp_number || profile?.contact_number) && (
@@ -1240,7 +1176,7 @@ export default function CreatePack() {
                       </span>
                     )}
                     {form.upsell_title && (
-                      <span style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe' }}>
+                      <span className="chip-upsell">
                         Upsell: {form.upsell_title}
                       </span>
                     )}

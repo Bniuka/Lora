@@ -548,8 +548,13 @@
 }
 
 .dark .setup-q-title,
-[data-theme="dark"] .setup-q-title {
+[data-theme="dark"] .setup-q-title,
+body.dark-theme .setup-q-title {
   color: #F5F5FA !important;
+  background: linear-gradient(135deg, #FFFFFF 15%, #C4B5FD 55%, #7657FF 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
 }
 
 .dark .setup-q-sub,

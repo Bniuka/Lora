@@ -351,7 +351,7 @@ export default function CreateMultiPack() {
         <div className="page">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '3px 10px', borderRadius: 99, marginBottom: 6 }}>
+              <div className="mp-badge-tag">
                 <Layers size={13} /> MULTI-COURSE PACK
               </div>
               <h1 style={{ margin: 0 }}>Create Multi-Pack</h1>
@@ -426,21 +426,8 @@ export default function CreateMultiPack() {
                 return (
                   <div className="g">
                     {/* Info Callout */}
-                    <div
-                      style={{
-                        padding: '12px 16px',
-                        borderRadius: 14,
-                        background: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
-                        border: '1.5px solid #bfdbfe',
-                        fontSize: 13,
-                        color: '#1e3a8a',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 10,
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      <Calendar size={18} style={{ flexShrink: 0, marginTop: 2, color: '#2563eb' }} />
+                    <div className="mp-info-callout">
+                      <Calendar size={18} className="mp-info-callout-icon" />
                       <div>
                         <b>No session dates or price needed here:</b> This Main Course acts as your public showcase on Discover. Once saved, you will create <b>Sub-Packs</b> underneath it (e.g. <i>August Month</i>, <i>September Month</i>, or <i>1st Batch</i>, <i>2nd Batch</i>) with their own session dates and prices.
                       </div>
@@ -456,24 +443,18 @@ export default function CreateMultiPack() {
                             icon: <Globe2 size={16} />,
                             title: 'Public',
                             desc: 'Shown on Discover & your profile',
-                            accent: '#2563eb',
-                            bg: '#eff6ff',
                           },
                           {
                             id: 'private',
                             icon: <Lock size={16} />,
                             title: 'Private Showcase',
                             desc: 'Shows as Private · Invite only',
-                            accent: '#d97706',
-                            bg: '#fffbeb',
                           },
                           {
                             id: 'unlisted',
                             icon: <EyeOff size={16} />,
                             title: 'Unlisted (Hidden)',
                             desc: 'Hidden from Discover · Link only',
-                            accent: '#7c3aed',
-                            bg: '#f5f3ff',
                           },
                         ].map(opt => {
                           const active = vis === opt.id;
@@ -482,23 +463,13 @@ export default function CreateMultiPack() {
                               key={opt.id}
                               type="button"
                               onClick={() => update('visibility', opt.id)}
-                              style={{
-                                textAlign: 'left',
-                                padding: '12px 14px',
-                                borderRadius: 14,
-                                border: active ? `2px solid ${opt.accent}` : '1.5px solid var(--line)',
-                                background: active ? opt.bg : '#fff',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 4,
-                              }}
+                              className={`mp-option-btn mp-vis-btn ${active ? 'active' : ''} ${opt.id}`}
                             >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 750, fontSize: 14, color: active ? opt.accent : '#0f172a' }}>
+                              <div className="mp-option-head">
                                 {opt.icon}
                                 <span>{opt.title}</span>
                               </div>
-                              <span style={{ fontSize: 12, color: '#64748b', lineHeight: 1.35 }}>
+                              <span className="mp-option-desc">
                                 {opt.desc}
                               </span>
                             </button>
@@ -561,23 +532,13 @@ export default function CreateMultiPack() {
                         <button
                           type="button"
                           onClick={() => update('sequential_unlock', false)}
-                          style={{
-                            textAlign: 'left',
-                            padding: '14px 16px',
-                            borderRadius: 14,
-                            border: !form.sequential_unlock ? '2px solid #2563eb' : '1.5px solid var(--line)',
-                            background: !form.sequential_unlock ? '#eff6ff' : '#fff',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 5,
-                          }}
+                          className={`mp-option-btn mp-unlock-btn ${!form.sequential_unlock ? 'active' : ''}`}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 750, fontSize: 14, color: !form.sequential_unlock ? '#2563eb' : '#0f172a' }}>
+                          <div className="mp-option-head">
                             <Unlock size={16} />
                             <span>Open Batch Selection (Default)</span>
                           </div>
-                          <span style={{ fontSize: 12.5, color: '#475569', lineHeight: 1.4 }}>
+                          <span className="mp-option-desc">
                             Learners can click &amp; pay for <b>any</b> Sub-Pack directly (ideal when new students join mid-year in September/October).
                           </span>
                         </button>
@@ -585,23 +546,13 @@ export default function CreateMultiPack() {
                         <button
                           type="button"
                           onClick={() => update('sequential_unlock', true)}
-                          style={{
-                            textAlign: 'left',
-                            padding: '14px 16px',
-                            borderRadius: 14,
-                            border: form.sequential_unlock ? '2px solid #7c3aed' : '1.5px solid var(--line)',
-                            background: form.sequential_unlock ? '#f5f3ff' : '#fff',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 5,
-                          }}
+                          className={`mp-option-btn mp-unlock-btn ${form.sequential_unlock ? 'active' : ''}`}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 750, fontSize: 14, color: form.sequential_unlock ? '#7c3aed' : '#0f172a' }}>
+                          <div className="mp-option-head">
                             <GitBranch size={16} />
                             <span>Step-by-Step Order (1st → 2nd → 3rd)</span>
                           </div>
-                          <span style={{ fontSize: 12.5, color: '#475569', lineHeight: 1.4 }}>
+                          <span className="mp-option-desc">
                             Learners must be approved in Batch 1 before unlocking Batch 2, and Batch 2 before Batch 3.
                           </span>
                         </button>
@@ -723,27 +674,16 @@ export default function CreateMultiPack() {
                     <div>
                       <span className="pill">{form.category || 'Uncategorized'} · Multi-Pack</span>
                       <h3>{form.title || 'Untitled Main Course'}</h3>
-                      <p style={{ marginTop: 6, fontSize: 13.5, color: '#475569' }}>
+                      <p className="mp-review-subtext">
                         Default Currency: <b>{form.currency}</b> ·{' '}
                         {form.sequential_unlock ? 'Step-by-Step Progression (1st → 2nd)' : 'Open Batch Selection'}
                       </p>
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      marginTop: 18,
-                      padding: '16px 18px',
-                      borderRadius: 16,
-                      background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)',
-                      border: '1.5px solid #c7d2fe',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 12,
-                    }}
-                  >
-                    <Sparkles size={20} style={{ color: '#4f46e5', flexShrink: 0, marginTop: 2 }} />
-                    <div style={{ fontSize: 13.5, color: '#1e1b4b', lineHeight: 1.55 }}>
+                  <div className="mp-review-callout">
+                    <Sparkles size={20} className="mp-review-callout-icon" />
+                    <div className="mp-review-callout-text">
                       <b>What happens next?</b> Right after you click Publish (or Save as Draft), you will open your <b>Multi-Pack Hub</b> where you can click <b>&ldquo;+ Create Sub-Pack&rdquo;</b> to add your first monthly pack or batch (with scheduled session dates, recordings, and price).
                     </div>
                   </div>
