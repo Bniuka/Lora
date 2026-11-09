@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { isUserAdmin } from '../lib/admin';
 import { FullPageLoader } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './creator-subscription.css';
 
 const LKR_TO_USD_RATE = 0.0034;
@@ -151,7 +152,8 @@ export default function CreatorSubscription() {
         <div className="grid">
           <div className="text">
             <div className="top-nav">
-              <div className="logo">
+              <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <ThemeSwitcher size="sm" />
                 <AppLogo role="creator" to="/creator/dashboard" height={52} />
               </div>
               {isCreatorInTrial && (

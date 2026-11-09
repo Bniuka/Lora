@@ -8,6 +8,7 @@ import 'react-phone-number-input/style.css';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './signup-page.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
@@ -148,7 +149,8 @@ export default function CreatorSignup() {
             </svg>
             Back
           </Link>
-          <div className="logo">
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <ThemeSwitcher size="sm" />
             <AppLogo role="creator" to="/" height={52} />
           </div>
         </div>

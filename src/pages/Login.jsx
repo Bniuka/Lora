@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './signup-page.css';
 
 function friendlyError(msg) {
@@ -82,6 +83,9 @@ export default function Login() {
           </Link>
           <div className="logo">
             <AppLogo to="/" height={52} />
+          </div>
+          <div style={{ marginLeft: 'auto' }}>
+            <ThemeSwitcher size="sm" />
           </div>
         </div>
 

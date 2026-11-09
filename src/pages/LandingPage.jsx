@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import blueLogo from '../../Logo/Blue_Logo_Cropped.png';
 import './home.css';
 
@@ -37,6 +38,7 @@ export default function LandingPage() {
               <img src={blueLogo} alt="Lora" />
             </Link>
             <nav>
+              <ThemeSwitcher size="sm" />
               {user ? (
                 <Link className="btn pri sm" to={dashboardLink}>Dashboard</Link>
               ) : (

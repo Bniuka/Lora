@@ -1,509 +1,2073 @@
 /* ================================================================
-   LORA DESIGN SYSTEM — Luminous Obsidian & Gradient Dark Theme
-   Frameless Design: Zero harsh white/gray box frames.
-   Vibrant multi-stop gradient titles, numbers, and glowing gradient lines.
+   LORASPACE — CINEMATIC $1M SAAS DARK THEME DESIGN SYSTEM
+   Professional Art-Directed Visual Experience
+   Color Palette:
+     Main BG: #080A12 | Secondary BG: #0D1020
+     Card BG: #111629 | Elevated: #171D33
+     Primary Accent: #7657FF | Secondary Accent: #398BFF
+     Highlight: #A78BFA | Border: rgba(255, 255, 255, 0.08)
+     Main Text: #F5F5FA | Secondary Text: #929BB0
    ================================================================ */
 
-/* ── 1. ROOT DESIGN TOKENS (DARK MODE) ── */
+/* ── 1. GLOBAL DESIGN TOKENS (CINEMATIC DARK MODE) ── */
 [data-theme="dark"],
 .dark {
-  --color-lora-bg: #07090e;
-  --color-lora-surface: #0e1424;
-  --color-lora-card: #111a2e;
-  --color-lora-border: transparent;
-  --color-lora-border-light: transparent;
-  --color-lora-muted: #8fa0be;
-  --color-lora-text: #e2e8f0;
-  --color-lora-heading: #f8fafc;
+  --color-lora-bg: #080A12;
+  --color-lora-surface: #0D1020;
+  --color-lora-card: #111629;
+  --color-lora-elevated: #171D33;
+  --color-lora-border: rgba(255, 255, 255, 0.08);
+  --color-lora-border-light: rgba(255, 255, 255, 0.05);
+  --color-lora-muted: #929BB0;
+  --color-lora-text: #F5F5FA;
+  --color-lora-heading: #F5F5FA;
 
-  --color-gold: #38bdf8;
-  --color-gold-light: rgba(56, 189, 248, 0.2);
-  --color-gold-dark: #60a5fa;
+  --color-gold: #7657FF;
+  --color-gold-light: rgba(118, 87, 255, 0.2);
+  --color-gold-dark: #398BFF;
 
-  --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.75);
-  --shadow-card-hover: 0 20px 50px -10px rgba(37, 99, 235, 0.25);
-  --shadow-navbar: 0 1px 0 transparent;
-  --shadow-modal: 0 30px 80px rgba(0, 0, 0, 0.85);
+  --shadow-card: 0 16px 40px -12px rgba(0, 0, 0, 0.65);
+  --shadow-card-hover: 0 24px 60px -12px rgba(118, 87, 255, 0.25);
+  --shadow-navbar: 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-modal: 0 32px 84px rgba(0, 0, 0, 0.85);
 
   color-scheme: dark;
 }
 
-/* ── 2. BASE BODY & SCROLLBAR (DARK MODE) ── */
+/* ── 2. BASE BODY & ATMOSPHERIC AMBIENT BACKGROUNDS ── */
 html.dark,
 body.dark-theme {
-  background-color: #07090e !important;
+  background-color: #080A12 !important;
   background-image: 
-    radial-gradient(800px 500px at 15% 10%, rgba(37, 99, 235, 0.16), transparent 70%),
-    radial-gradient(700px 500px at 85% 30%, rgba(139, 92, 246, 0.14), transparent 70%),
-    radial-gradient(600px 600px at 50% 90%, rgba(16, 185, 129, 0.08), transparent 70%) !important;
+    radial-gradient(900px 560px at 10% -5%, rgba(118, 87, 255, 0.16), transparent 70%),
+    radial-gradient(850px 520px at 90% 25%, rgba(57, 139, 255, 0.14), transparent 70%),
+    radial-gradient(750px 600px at 50% 85%, rgba(167, 139, 250, 0.08), transparent 70%) !important;
   background-attachment: fixed !important;
-  color: #e2e8f0 !important;
+  color: #F5F5FA !important;
+  font-family: 'Figtree', system-ui, -apple-system, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
+/* Subtle cinematic noise overlay simulation via radial blends */
+.dark ::selection {
+  background: rgba(118, 87, 255, 0.35) !important;
+  color: #ffffff !important;
+}
+
+/* Lora Logos in Dark Mode — Crisp & Luminous */
+.dark .logo img,
+.dark .lora-home .logo img,
+.dark .lora-creator .logo img,
+.dark .lora-learner .logo img {
+  filter: brightness(1.22) drop-shadow(0 0 18px rgba(118, 87, 255, 0.28)) !important;
+}
+
+/* Custom Scrollbar */
 .dark ::-webkit-scrollbar-track,
 [data-theme="dark"] ::-webkit-scrollbar-track {
-  background: #07090e;
+  background: #080A12 !important;
 }
 
 .dark ::-webkit-scrollbar-thumb,
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #1c2742;
-  border-radius: 999px;
+  background: #171D33 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover,
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #7657FF !important;
 }
 
-/* ── 3. LUMINOUS GRADIENT TITLES & COLOURFUL TEXT ── */
-/* Main page titles with radiant multi-stop gradients */
-.dark h1,
+/* ── 3. CINEMATIC TYPOGRAPHY SYSTEM ── */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #F5F5FA !important;
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
+  letter-spacing: -0.025em !important;
+}
+
+/* Radiant Cinematic Gradient Headlines */
+.dark .lora-home .hero h1,
 .dark .lora-dash .hello h1,
 .dark .lora-dash .ld-hello h1,
 .dark .mpk-hero-title,
 .dark .lora-mascot-hero__title,
 .dark .lora-sessions h1,
-.dark .lora-admin-hd h1 {
-  background: linear-gradient(135deg, #ffffff 15%, #93c5fd 50%, #c084fc 100%) !important;
+.dark .lora-admin-hd h1,
+.dark .lora-signup h1,
+.dark .lora-signup-page h1,
+.dark .lora-verify h1,
+.dark .lora-sub h1 {
+  background: linear-gradient(135deg, #FFFFFF 20%, #E0E7FF 60%, #A78BFA 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  letter-spacing: -0.025em !important;
-  text-shadow: none !important;
+  letter-spacing: -0.03em !important;
 }
 
-/* Secondary Section Titles */
-.dark h2,
-.dark .sh h2,
-.dark .ld-sh h2,
-.dark .lora-learner .sh h2 {
-  background: linear-gradient(135deg, #ffffff 30%, #bfdbfe 75%, #a5b4fc 100%) !important;
+/* Italic / Accent gradient text */
+.dark em,
+.dark .mpk-title-gradient,
+.dark .text-gold-gradient {
+  background: linear-gradient(135deg, #7657FF 0%, #A78BFA 50%, #398BFF 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  letter-spacing: -0.02em !important;
+  font-style: italic;
 }
 
-/* Subheadings & subtle text */
+/* Secondary & Muted Prose */
+.dark p,
+.dark .lead,
+.dark .muted-text,
+.dark .lora-home .lead,
 .dark .lora-dash .hello p,
-.dark .lora-dash .ld-hello p,
 .dark .mpk-hero-sub,
-.dark .lora-mascot-hero__subtitle,
-.dark .lora-learner .hello p {
-  color: #8fa0be !important;
+.dark .lora-mascot-hero__subtitle {
+  color: #929BB0 !important;
 }
 
-/* Eyebrows, Tags & Badges — ZERO BOX FRAMES */
+/* Eyebrows & Status Badges */
+.dark .eyebrow,
 .dark .mpk-hero-tag,
 .dark .lora-mascot-hero__eyebrow,
 .dark .rep-badge {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  background: rgba(118, 87, 255, 0.12) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+  color: #A78BFA !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
-  font-size: 13px !important;
   letter-spacing: 0.05em !important;
   text-transform: uppercase !important;
-  background: linear-gradient(90deg, #60a5fa, #c084fc) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+  box-shadow: 0 0 20px -4px rgba(118, 87, 255, 0.25) !important;
 }
 
-/* Eyebrow glowing dots */
-.dark .mpk-hero-tag .tag-dot,
+.dark .tag-dot,
 .dark .lora-mascot-hero__eyebrow-dot {
   width: 7px !important;
   height: 7px !important;
   border-radius: 50% !important;
-  background: #38bdf8 !important;
-  box-shadow: 0 0 10px #38bdf8, 0 0 20px rgba(56, 189, 248, 0.5) !important;
+  background: #7657FF !important;
+  box-shadow: 0 0 10px #7657FF, 0 0 18px rgba(118, 87, 255, 0.6) !important;
 }
 
-/* ── 4. STAT NUMBERS & METRICS (VIBRANT MULTI-COLOR GRADIENTS) ── */
-.dark .lora-dash .stat.t1 .big,
-.dark .lora-dash .stat.t1 .ld-big {
-  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+/* ── 4. PREMIUM BUTTON SYSTEM (VIOLET-TO-INDIGO GRADIENTS) ── */
+/* Primary Action Buttons */
+.dark .btn.pri,
+.dark .btn-primary,
+.dark .pill.pri,
+.dark .mpk-btn-new,
+.dark .lora-mascot-hero__btn-primary,
+.dark .cta.fill {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 8px 28px -6px rgba(118, 87, 255, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
 
-.dark .lora-dash .stat.t2 .big,
-.dark .lora-dash .stat.t2 .ld-big {
-  background: linear-gradient(135deg, #c084fc 0%, #e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+.dark .btn.pri:hover,
+.dark .btn-primary:hover,
+.dark .pill.pri:hover,
+.dark .mpk-btn-new:hover,
+.dark .lora-mascot-hero__btn-primary:hover,
+.dark .cta.fill:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.1) !important;
+  box-shadow: 0 12px 36px -4px rgba(118, 87, 255, 0.75), 0 0 24px rgba(57, 139, 255, 0.4) !important;
 }
 
-.dark .lora-dash .stat.t3 .big,
-.dark .lora-dash .stat.t3 .ld-big {
-  background: linear-gradient(135deg, #34d399 0%, #2dd4bf 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+.dark .btn.pri:active,
+.dark .btn-primary:active,
+.dark .pill.pri:active {
+  transform: translateY(0) scale(0.98) !important;
 }
 
-.dark .lora-dash .stat.t4 .big,
-.dark .lora-dash .stat.t4 .ld-big {
-  background: linear-gradient(135deg, #fb923c 0%, #facc15 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+/* Secondary Buttons */
+.dark .btn.sec,
+.dark .btn-secondary,
+.dark .pill,
+.dark .ld-pill,
+.dark .lora-theme-pill,
+.dark .cta.line {
+  background: rgba(23, 29, 51, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
 
-.dark .mpk-stat-val,
-.dark .lora-mascot-hero__stat-val {
-  background: linear-gradient(135deg, #ffffff 20%, #93c5fd 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+.dark .btn.sec:hover,
+.dark .btn-secondary:hover,
+.dark .pill:hover,
+.dark .ld-pill:hover,
+.dark .lora-theme-pill:hover,
+.dark .cta.line:hover {
+  background: #1C2440 !important;
+  border-color: rgba(167, 139, 250, 0.35) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.35) !important;
 }
 
-/* ── 5. CARDS & CONTAINERS (FRAMELESS WITH GRADIENT ACCENT LINES) ── */
-.dark .lora-dash .card,
-.dark .lora-dash .ld-card,
+/* Cosmic Multi-Pack CTA */
+.dark .mpk-btn-multi {
+  background: linear-gradient(135deg, #7657FF 0%, #4F46E5 50%, #398BFF 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 8px 28px -4px rgba(118, 87, 255, 0.6) !important;
+}
+
+/* ── 5. CARDS, SURFACES & GLASSMORPHISM ── */
+.dark .card,
+.dark .ld-card,
+.dark .glass-card,
+.dark .gold-card,
+.dark .stat-card,
+.dark .bc,
 .dark .mpk-card,
-.dark .lora-learner .card,
 .dark .mmp-bento,
+.dark .lora-course .card,
 .dark .lora-sessions .card,
 .dark .lora-guide .card,
 .dark .lora-admin .card,
 .dark .lora-settings .s-card,
-.dark .lora-enroll .card {
-  border: none !important;
-  background: linear-gradient(180deg, rgba(20, 30, 52, 0.65) 0%, rgba(10, 16, 30, 0.8) 100%) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(99, 102, 241, 0.14) !important;
+.dark .lora-enroll .card,
+.dark .lora-signup-page .card,
+.dark .lora-sub .plan-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
   position: relative !important;
+  overflow: hidden !important;
+  transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), border-color 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
 
-/* Radiant gradient line running across top edge of cards */
-.dark .lora-dash .card::before,
-.dark .lora-dash .ld-card::before,
+/* Controlled top hairline gradient highlight on all cards */
+.dark .card::before,
+.dark .ld-card::before,
+.dark .bc::before,
 .dark .mpk-card::before,
-.dark .lora-learner .card::before,
-.dark .mmp-bento::before {
+.dark .mmp-bento::before,
+.dark .lora-signup-page .card::before {
   content: "" !important;
   position: absolute !important;
   top: 0 !important;
-  left: 8% !important;
-  right: 8% !important;
+  left: 0 !important;
+  right: 0 !important;
   height: 1px !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(96, 165, 250, 0.6) 30%, rgba(192, 132, 252, 0.6) 70%, transparent 100%) !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(118, 87, 255, 0.6) 35%, rgba(57, 139, 255, 0.6) 70%, transparent 100%) !important;
   pointer-events: none !important;
   z-index: 2 !important;
 }
 
-/* Stat Cards in Creator Dashboard — no rectangular box border */
-.dark .lora-dash .stat,
-.dark .lora-dash .ld-stat {
-  border: none !important;
+.dark .card:hover,
+.dark .ld-card:hover,
+.dark .bc:hover,
+.dark .mpk-card:hover,
+.dark .mmp-bento:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(118, 87, 255, 0.3) !important;
+  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.75), 0 0 24px -4px rgba(118, 87, 255, 0.25) !important;
 }
 
-.dark .lora-dash .stat.t1, .dark .lora-dash .ld-stat.t1 {
-  background: linear-gradient(180deg, rgba(26, 42, 74, 0.5) 0%, rgba(10, 16, 30, 0.75) 100%) !important;
-}
-.dark .lora-dash .stat.t2, .dark .lora-dash .ld-stat.t2 {
-  background: linear-gradient(180deg, rgba(42, 28, 76, 0.5) 0%, rgba(10, 16, 30, 0.75) 100%) !important;
-}
-.dark .lora-dash .stat.t3, .dark .lora-dash .ld-stat.t3 {
-  background: linear-gradient(180deg, rgba(16, 52, 42, 0.5) 0%, rgba(10, 16, 30, 0.75) 100%) !important;
-}
-.dark .lora-dash .stat.t4, .dark .lora-dash .ld-stat.t4 {
-  background: linear-gradient(180deg, rgba(62, 36, 20, 0.5) 0%, rgba(10, 16, 30, 0.75) 100%) !important;
+/* ── 6. LANDING PAGE (.lora-home) ── */
+[data-theme="dark"] .lora-home,
+.dark .lora-home {
+  --bg: #080A12;
+  --soft: #0D1020;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+  --navy: #080A12;
+
+  background: #080A12 !important;
+  color: #F5F5FA !important;
 }
 
-/* ── 6. BUTTONS & PILLS (NO WHITE OR GRAY BOX FRAMES) ── */
-/* Modern glass pills with soft glowing gradient tint */
-.dark .lora-dash .pill,
-.dark .lora-dash .ld-pill,
-.dark .lora-sessions .pill {
-  border: none !important;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(124, 58, 237, 0.14)) !important;
-  color: #e0e7ff !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.28), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+.dark .lora-home header {
+  background: rgba(8, 10, 18, 0.82) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-home .hero {
+  position: relative !important;
+  background: radial-gradient(850px 520px at 50% 20%, rgba(118, 87, 255, 0.16), transparent 70%) !important;
+}
+
+.dark .lora-home .ticks li {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-home .ticks i {
+  background: rgba(118, 87, 255, 0.22) !important;
+  color: #A78BFA !important;
+}
+
+/* Payment pill tags */
+.dark .lora-home .pills span {
+  background: rgba(23, 29, 51, 0.8) !important;
   backdrop-filter: blur(12px) !important;
-  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
-.dark .lora-dash .pill:hover,
-.dark .lora-dash .ld-pill:hover {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(124, 58, 237, 0.28)) !important;
-  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.6), 0 8px 24px -4px rgba(59, 130, 246, 0.4) !important;
-  color: #ffffff !important;
-  transform: translateY(-2px) !important;
+/* Bento articles */
+.dark .lora-home .bc {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Primary buttons — rich vibrant gradient glow */
-.dark .lora-dash .pill.pri {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
-  color: #ffffff !important;
-  border: none !important;
-  box-shadow: 0 8px 26px -6px rgba(79, 70, 229, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+.dark .lora-home .bc .ico {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.22), rgba(57, 139, 255, 0.22)) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.3) !important;
 }
 
-.dark .lora-dash .pill.pri:hover {
-  filter: brightness(1.1) !important;
-  box-shadow: 0 12px 32px -4px rgba(99, 102, 241, 0.75) !important;
+.dark .lora-home .bc h3 {
+  color: #F5F5FA !important;
 }
 
-/* ── 7. NAVIGATION BARS & GRADIENT SEPARATORS ── */
+.dark .lora-home .bc p {
+  color: #929BB0 !important;
+}
+
+/* Steps section */
+.dark .lora-home .steps {
+  background: #0D1020 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-home .st i {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 20px rgba(118, 87, 255, 0.5) !important;
+}
+
+/* Comparison Table */
+.dark .lora-home .tbl {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-home .tbl th {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-home .tbl td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-home .tbl tr.hl td {
+  background: rgba(118, 87, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+/* CTA Banner */
+.dark .lora-home .cta-b {
+  background: linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+  box-shadow: 0 20px 60px -10px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-home footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #080A12 !important;
+}
+
+/* ── 7. CREATOR STUDIO & SHELL (.lora-creator) ── */
+[data-theme="dark"] .lora-creator,
+.dark .lora-creator {
+  --bg: #080A12;
+  --surface: #0D1020;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+
+  background: #080A12 !important;
+  color: #F5F5FA !important;
+}
+
 .dark .lora-creator aside {
-  border-right: none !important;
-  background: rgba(9, 13, 24, 0.9) !important;
-  backdrop-filter: blur(18px) !important;
-  box-shadow: inset -1px 0 0 rgba(99, 102, 241, 0.16) !important;
+  background: #0D1020 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .dark .lora-creator nav a {
-  color: #8fa0be !important;
+  color: #929BB0 !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
 }
 
 .dark .lora-creator nav a:hover {
-  background: rgba(30, 44, 76, 0.5) !important;
-  color: #ffffff !important;
+  background: #171D33 !important;
+  color: #F5F5FA !important;
 }
 
 .dark .lora-creator nav a.on {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.22), rgba(139, 92, 246, 0.12)) !important;
-  color: #60a5fa !important;
-  box-shadow: inset 2px 0 0 #3b82f6 !important;
+  background: linear-gradient(90deg, rgba(118, 87, 255, 0.2), rgba(57, 139, 255, 0.1)) !important;
+  color: #A78BFA !important;
+  font-weight: 700 !important;
+  box-shadow: inset 3px 0 0 #7657FF !important;
 }
 
-/* Sticky Header Bars with luminous gradient line */
-.dark .lora-creator .top,
-.dark .lora-learner header {
-  border-bottom: none !important;
-  background: rgba(9, 13, 24, 0.85) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  position: sticky !important;
-  box-shadow: inset 0 -1px 0 rgba(99, 102, 241, 0.15) !important;
+/* Creator Topbar */
+.dark .lora-creator .top {
+  background: rgba(8, 10, 18, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-.dark .lora-creator .top::after,
-.dark .lora-learner header::after {
-  content: "" !important;
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 1px !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.5) 30%, rgba(168, 85, 247, 0.5) 70%, transparent 100%) !important;
-  pointer-events: none !important;
+.dark .lora-creator .gsearch {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* ── 8. SEARCH BARS & CONTROLS (NO GRAY BOXES) ── */
-.dark .lora-creator .gsearch,
-.dark .lora-learner .search,
-.dark .mpk-search-input {
-  border: none !important;
-  background: rgba(18, 27, 46, 0.7) !important;
-  backdrop-filter: blur(14px) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.22), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-  color: #f8fafc !important;
-}
-
-.dark .lora-creator .gsearch:focus-within,
-.dark .lora-learner .search:focus-within,
-.dark .mpk-search-input:focus {
-  background: rgba(22, 33, 58, 0.85) !important;
-  box-shadow: inset 0 0 0 1.5px #3b82f6, 0 0 24px -4px rgba(59, 130, 246, 0.4) !important;
+.dark .lora-creator .gsearch:focus-within {
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22), 0 0 20px rgba(118, 87, 255, 0.2) !important;
+  background: #171D33 !important;
 }
 
 .dark .lora-creator .gsearch input {
-  color: #f8fafc !important;
+  color: #F5F5FA !important;
 }
 
-.dark .lora-creator .gsearch input::placeholder,
-.dark .lora-learner .search input::placeholder,
-.dark .mpk-search-input::placeholder {
-  color: #64748b !important;
+.dark .lora-creator .gsearch input::placeholder {
+  color: #6C7693 !important;
 }
 
 .dark .lora-creator .gsearch kbd {
-  border: none !important;
-  background: rgba(59, 130, 246, 0.18) !important;
-  color: #93c5fd !important;
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #A78BFA !important;
 }
 
-/* Circular topbar icons */
 .dark .lora-creator .bell,
 .dark .lora-learner .bell {
-  border: none !important;
-  background: rgba(18, 27, 46, 0.75) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.22), 0 2px 10px rgba(0, 0, 0, 0.3) !important;
-  color: #8fa0be !important;
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
 }
 
 .dark .lora-creator .bell:hover,
 .dark .lora-learner .bell:hover {
-  background: rgba(30, 44, 76, 0.85) !important;
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.5), 0 0 18px rgba(59, 130, 246, 0.35) !important;
-  color: #60a5fa !important;
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.4) !important;
+  color: #A78BFA !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.25) !important;
 }
 
-/* ── 9. MASCOT COMPANIONS & BUBBLES ── */
-.dark .creator-mascot-bubble,
-.dark .lora-mascot-hero__bubble {
-  border: none !important;
-  background: linear-gradient(135deg, rgba(28, 38, 66, 0.9), rgba(14, 20, 36, 0.96)) !important;
-  backdrop-filter: blur(18px) !important;
-  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.3), 0 14px 40px rgba(0, 0, 0, 0.65) !important;
-  color: #f1f5f9 !important;
+.dark .lora-creator .who b {
+  color: #F5F5FA !important;
 }
 
-.dark .creator-mascot-bubble .bubble-text {
-  color: #f1f5f9 !important;
+.dark .lora-creator .who small {
+  color: #929BB0 !important;
 }
 
-.dark .creator-mascot-bubble .bubble-hint {
-  border: none !important;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3)) !important;
-  color: #93c5fd !important;
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.4) !important;
-}
-
-.dark .lora-mascot-hero {
-  border-bottom: none !important;
-  position: relative !important;
-}
-
-.dark .lora-mascot-hero::after {
-  content: "" !important;
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 1px !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.4) 30%, rgba(168, 85, 247, 0.4) 70%, transparent 100%) !important;
-}
-
-.dark .lora-mascot-hero__stat-chip {
-  border: none !important;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12)) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.25) !important;
-  color: #c7d2fe !important;
-}
-
-/* ── 10. RECENT PACKS, ACTIONS & ITEMS (NO BOX FRAMES) ── */
-.dark .lora-dash .pack-mini,
-.dark .lora-dash .act,
-.dark .lora-dash .ld-act {
-  border: none !important;
-  background: linear-gradient(180deg, rgba(23, 33, 58, 0.6) 0%, rgba(12, 18, 32, 0.75) 100%) !important;
-  backdrop-filter: blur(14px) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.16), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-}
-
-.dark .lora-dash .pack-mini:hover,
-.dark .lora-dash .act:hover {
-  background: linear-gradient(180deg, rgba(30, 44, 76, 0.75) 0%, rgba(16, 24, 44, 0.85) 100%) !important;
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.5), 0 10px 28px -6px rgba(59, 130, 246, 0.35) !important;
-  transform: translateY(-2px) !important;
-}
-
-.dark .lora-dash .pm-title {
-  color: #f8fafc !important;
-}
-
-.dark .lora-dash .act b,
-.dark .lora-dash .ld-act b {
-  color: #f8fafc !important;
-}
-
-.dark .lora-dash .pm-cat {
-  border: none !important;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(139, 92, 246, 0.18)) !important;
-  color: #93c5fd !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.25) !important;
-}
-
-.dark .lora-dash .pm-cat.multi {
-  background: linear-gradient(90deg, rgba(168, 85, 247, 0.22), rgba(236, 72, 153, 0.22)) !important;
-  color: #f0abfc !important;
-  box-shadow: inset 0 0 0 1px rgba(217, 70, 239, 0.32) !important;
-}
-
-/* ── 11. MY PACKS STUDIO (GRADIENT LINES & ACCENTS) ── */
-.dark .mpk-ambient-orb {
-  opacity: 0.35 !important;
-}
-
-.dark .mpk-stats-ribbon {
-  border-top: none !important;
-  position: relative !important;
-}
-
-.dark .mpk-stats-ribbon::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 1px !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.4) 30%, rgba(168, 85, 247, 0.4) 70%, transparent 100%) !important;
-}
-
-.dark .mpk-stat-item {
-  border: none !important;
-  background: linear-gradient(180deg, rgba(22, 32, 56, 0.6), rgba(11, 16, 30, 0.75)) !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.18), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-}
-
-.dark .mpk-stat-item:hover {
-  background: linear-gradient(180deg, rgba(30, 44, 76, 0.75), rgba(16, 24, 44, 0.85)) !important;
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.5), 0 8px 24px -4px rgba(59, 130, 246, 0.3) !important;
-}
-
-.dark .mpk-filter-btn {
-  border: none !important;
-  background: rgba(18, 27, 46, 0.6) !important;
-  color: #8fa0be !important;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.18) !important;
-}
-
-.dark .mpk-filter-btn:hover {
-  background: rgba(30, 44, 76, 0.75) !important;
-  color: #ffffff !important;
-  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.5) !important;
-}
-
-.dark .mpk-filter-btn.active {
-  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-  color: #ffffff !important;
-  border: none !important;
-  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.5) !important;
-}
-
-/* ── 12. DROPDOWNS & MODALS (OBSIDIAN GLASS) ── */
 .dark .lora-creator .user-dropdown,
-.dark .lora-learner .dropdown,
-.dark .modal-content {
-  border: none !important;
-  background: linear-gradient(180deg, rgba(22, 32, 56, 0.95), rgba(12, 18, 34, 0.98)) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.25), 0 24px 64px rgba(0, 0, 0, 0.8) !important;
-  color: #f8fafc !important;
+.dark .lora-learner .dropdown {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 24px rgba(118, 87, 255, 0.15) !important;
+  border-radius: 18px !important;
 }
 
 .dark .lora-creator .user-dropdown button,
 .dark .lora-learner .dropdown-item {
-  color: #cbd5e1 !important;
+  color: #F5F5FA !important;
+  border-radius: 10px !important;
 }
 
 .dark .lora-creator .user-dropdown button:hover,
 .dark .lora-learner .dropdown-item:hover {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.15)) !important;
-  color: #ffffff !important;
+  background: #171D33 !important;
+  color: #A78BFA !important;
 }
 
-.dark .modal-overlay {
-  background: rgba(4, 7, 14, 0.82) !important;
-  backdrop-filter: blur(10px) !important;
+/* Dreamy Mascot in Creator Sidebar */
+.dark .lora-creator .creator-mascot-bubble {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
 }
 
-.dark .skeleton {
-  background: linear-gradient(90deg, #121b2d 25%, #1d2c48 50%, #121b2d 75%) !important;
+.dark .lora-creator .creator-mascot-bubble .bubble-text {
+  color: #F5F5FA !important;
 }
+
+.dark .lora-creator .creator-mascot-bubble .bubble-hint {
+  background: rgba(118, 87, 255, 0.2) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.35) !important;
+}
+
+/* ── 8. CREATOR DASHBOARD (.lora-dash) ── */
+[data-theme="dark"] .lora-dash,
+.dark .lora-dash {
+  --bg: #080A12;
+  --surface: #0D1020;
+  --soft: #111629;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+  --violet: #7657FF;
+  --gold: #F59E0B;
+  --c1: #7657FF; --c1s: rgba(118, 87, 255, 0.15);
+  --c2: #398BFF; --c2s: rgba(57, 139, 255, 0.15);
+  --c3: #10B981; --c3s: rgba(16, 185, 129, 0.15);
+  --c4: #F59E0B; --c4s: rgba(245, 158, 11, 0.15);
+
+  background: radial-gradient(850px 480px at 15% 5%, rgba(118, 87, 255, 0.16), transparent 70%),
+              radial-gradient(750px 450px at 85% 35%, rgba(57, 139, 255, 0.12), transparent 70%),
+              #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+/* Stat Cards in Dashboard */
+.dark .lora-dash .stat,
+.dark .lora-dash .ld-stat {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .stat.t1::before {
+  background: linear-gradient(90deg, #7657FF, #A78BFA) !important;
+}
+.dark .lora-dash .stat.t2::before {
+  background: linear-gradient(90deg, #398BFF, #60A5FA) !important;
+}
+.dark .lora-dash .stat.t3::before {
+  background: linear-gradient(90deg, #10B981, #34D399) !important;
+}
+.dark .lora-dash .stat.t4::before {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24) !important;
+}
+
+.dark .lora-dash .stat small {
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .big,
+.dark .lora-dash .ld-big {
+  color: #F5F5FA !important;
+}
+
+/* Recent Packs Mini List */
+.dark .lora-dash .pack-mini {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .pack-mini:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 10px 30px -4px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-dash .pm-title {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .pm-meta {
+  color: #929BB0 !important;
+}
+
+/* Action cards */
+.dark .lora-dash .act,
+.dark .lora-dash .ld-act {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .act:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 12px 36px -4px rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .lora-dash .act b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .act span {
+  color: #929BB0 !important;
+}
+
+/* ── 9. LEARNER DASHBOARD (.lora-learner) ── */
+[data-theme="dark"] .lora-learner,
+.dark .lora-learner {
+  --bg: #080A12;
+  --surface: #0D1020;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+
+  background: #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner header {
+  background: rgba(8, 10, 18, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-learner .search {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-learner .search:focus-within {
+  border-color: #7657FF !important;
+  background: #171D33 !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22), 0 0 20px rgba(118, 87, 255, 0.2) !important;
+}
+
+.dark .lora-learner .search input {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .links a {
+  color: #929BB0 !important;
+}
+
+.dark .lora-learner .links a:hover {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .links a.on {
+  color: #A78BFA !important;
+  background: rgba(118, 87, 255, 0.16) !important;
+}
+
+/* Learner Host Banner */
+.dark .lora-mascot-hero {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-mascot-hero__bubble {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .lora-mascot-hero__stat-chip {
+  background: rgba(23, 29, 51, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+/* ── 10. MY PACKS STUDIO (.mpk-container) ── */
+[data-theme="dark"] .mpk-container,
+.dark .mpk-container {
+  --mpk-bg: #080A12;
+  --mpk-surface: #111629;
+  --mpk-ink: #F5F5FA;
+  --mpk-muted: #929BB0;
+  --mpk-line: rgba(255, 255, 255, 0.08);
+  --mpk-primary: #7657FF;
+  --mpk-primary-hover: #398BFF;
+  --mpk-primary-soft: rgba(118, 87, 255, 0.16);
+
+  color: #F5F5FA !important;
+}
+
+.dark .mpk-ambient-orb {
+  opacity: 0.28 !important;
+}
+
+.dark .mpk-stats-ribbon {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mpk-stat-item {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mpk-stat-item:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .mpk-search-input {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .mpk-search-input:focus {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .mpk-filter-btn {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .mpk-filter-btn:hover {
+  color: #F5F5FA !important;
+  background: #171D33 !important;
+}
+
+.dark .mpk-filter-btn.active {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 18px rgba(118, 87, 255, 0.45) !important;
+}
+
+/* ── 11. COURSE DETAIL & SESSIONS (.lora-course, .lora-sessions) ── */
+[data-theme="dark"] .lora-course,
+.dark .lora-course,
+[data-theme="dark"] .lora-sessions,
+.dark .lora-sessions {
+  --bg: #080A12;
+  --surface: #111629;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+
+  background: #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-sessions .hero,
+.dark .lora-course .hero {
+  background: linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-sessions .row,
+.dark .lora-course .row {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-sessions .row:hover,
+.dark .lora-course .row:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+/* ── 12. ENROLLMENTS & TABLES (.lora-enroll) ── */
+[data-theme="dark"] .lora-enroll,
+.dark .lora-enroll {
+  --bg: #080A12;
+  --surface: #111629;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+
+  background: #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-enroll table {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-enroll th {
+  background: #0D1020 !important;
+  color: #929BB0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-enroll td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-enroll tr:hover td {
+  background: #171D33 !important;
+}
+
+/* ── 13. AUTH & ONBOARDING (.lora-signup, .lora-signup-page, .lora-verify, .lora-sub) ── */
+[data-theme="dark"] .lora-signup,
+.dark .lora-signup,
+[data-theme="dark"] .lora-signup-page,
+.dark .lora-signup-page,
+[data-theme="dark"] .lora-verify,
+.dark .lora-verify,
+[data-theme="dark"] .lora-sub,
+.dark .lora-sub {
+  --bg: #080A12;
+  --surface: #111629;
+  --soft: #0D1020;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.08);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+
+  background: radial-gradient(850px 520px at 15% 5%, rgba(118, 87, 255, 0.18), transparent 70%),
+              radial-gradient(750px 500px at 85% 90%, rgba(57, 139, 255, 0.14), transparent 70%),
+              #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+/* Role Selection Cards */
+.dark .lora-signup .role {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark .lora-signup .role:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.4) !important;
+  box-shadow: 0 24px 60px -10px rgba(118, 87, 255, 0.35) !important;
+  transform: translateY(-4px) !important;
+}
+
+.dark .lora-signup .role h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-signup .role p {
+  color: #929BB0 !important;
+}
+
+/* Form Inputs, Selects, and Textareas Across All Pages */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="tel"],
+.dark input[type="number"],
+.dark input[type="url"],
+.dark input[type="search"],
+.dark select,
+.dark textarea,
+.dark .input-field,
+.dark .select-field,
+.dark .PhoneInput {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.2s ease !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus,
+.dark .input-field:focus,
+.dark .select-field:focus {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22), 0 0 20px rgba(118, 87, 255, 0.2) !important;
+  outline: none !important;
+}
+
+.dark label,
+.dark .form-label {
+  color: #F5F5FA !important;
+  font-weight: 500 !important;
+}
+
+/* ── 14. MODALS & OVERLAYS ── */
+.dark .modal-overlay,
+.dark .lora-setup-backdrop,
+.dark .lora-report-modal-backdrop {
+  background: rgba(4, 6, 12, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.dark .modal-content,
+.dark .lora-setup-modal,
+.dark .lora-report-modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.9), 0 0 32px rgba(118, 87, 255, 0.2) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .setup-top-bar,
+.dark .setup-footer {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Notification Panel in Topbar */
+.dark .lora-creator .notif-panel,
+.dark [data-theme="dark"] .notif-panel {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* ── 15. SETTINGS, GUIDE & ADMIN (.lora-settings, .lora-guide, .lora-admin) ── */
+[data-theme="dark"] .lora-settings,
+.dark .lora-settings,
+[data-theme="dark"] .lora-guide,
+.dark .lora-guide,
+[data-theme="dark"] .lora-admin,
+.dark .lora-admin {
+  --s-bg: #080A12;
+  --s-surface: #111629;
+  --s-ink: #F5F5FA;
+  --s-muted: #929BB0;
+  --s-line: rgba(255, 255, 255, 0.08);
+  --s-brand: #7657FF;
+  --s-brand-soft: rgba(118, 87, 255, 0.16);
+
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-nav a {
+  color: #929BB0 !important;
+  border-radius: 12px !important;
+}
+
+.dark .lora-settings .s-nav a:hover {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-nav a.on {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+  font-weight: 700 !important;
+}
+
+.dark .lora-guide .lg-hero {
+  background: linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+  box-shadow: 0 20px 50px -10px rgba(118, 87, 255, 0.25) !important;
+}
+
+/* ================================================================
+   16. DEEP COMPONENT-LEVEL CINEMATIC DARK STYLING
+   Comprehensive overrides for all routes and components
+   ================================================================ */
+
+/* ── 16.1 COURSE SESSIONS DEEP CINEMATIC STYLING ── */
+.dark .lora-sessions {
+  background: radial-gradient(850px 480px at 15% 5%, rgba(118, 87, 255, 0.14), transparent 70%),
+              radial-gradient(750px 450px at 85% 35%, rgba(57, 139, 255, 0.12), transparent 70%),
+              #080A12 !important;
+}
+
+.dark .lora-sessions .hero {
+  background: linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px !important;
+}
+
+.dark .lora-sessions .sess {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+}
+
+.dark .lora-sessions .sess::before {
+  background: linear-gradient(180deg, #7657FF, #398BFF) !important;
+}
+
+.dark .lora-sessions .sess.ok {
+  background: #111629 !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .lora-sessions .sess.ok::before {
+  background: linear-gradient(180deg, #10B981, #34D399) !important;
+}
+
+.dark .lora-sessions .sess:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(118, 87, 255, 0.2) !important;
+}
+
+.dark .lora-sessions .sb h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-sessions .sb p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-sessions .save {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-sessions .save:hover {
+  background: #1C2440 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-sessions .enr {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(23, 29, 51, 0.8)) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .lora-sessions .enr b {
+  color: #34D399 !important;
+}
+
+.dark .lora-sessions .bar2 {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-sessions .bar2 i {
+  background: linear-gradient(90deg, #10B981, #34D399) !important;
+}
+
+.dark .lora-sessions .tot {
+  background: rgba(118, 87, 255, 0.16) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-sessions .tags {
+  color: #A78BFA !important;
+}
+
+.dark .lora-sessions .fp {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #FBBF24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.dark .lora-sessions .chips span {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-sessions .by .a {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+/* ── 16.2 COURSE DETAILS DEEP CINEMATIC STYLING ── */
+.dark .lora-course {
+  background: radial-gradient(850px 480px at 15% 5%, rgba(118, 87, 255, 0.14), transparent 70%),
+              radial-gradient(750px 450px at 85% 35%, rgba(57, 139, 255, 0.12), transparent 70%),
+              #080A12 !important;
+}
+
+.dark .lora-course .crumbs b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .crumbs a {
+  color: #A78BFA !important;
+}
+
+.dark .lora-course .by b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .meta span {
+  background: #111629 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-course .meta b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .side .buy,
+.dark .lora-course .side .box,
+.dark .lora-course .side .help,
+.dark .lora-course .learn {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .price {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .learn div {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .ul li,
+.dark .lora-course .inc li,
+.dark .lora-course .row b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .sess {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+}
+
+.dark .lora-course .sess:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-course .sess h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .sess .n {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-course .chk {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+}
+
+.dark .lora-course .btn.rec,
+.dark .lora-course .sess .btn.rec,
+.dark .lora-course .btn-recording {
+  background: linear-gradient(135deg, #7657FF 0%, #6366F1 50%, #398BFF 100%) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 6px 20px -3px rgba(118, 87, 255, 0.6) !important;
+}
+
+.dark .lora-course .btn-desc-toggle {
+  color: #A78BFA !important;
+}
+
+.dark .lora-course .secure {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+/* ── 16.3 PACK REVIEWS DEEP CINEMATIC STYLING ── */
+.dark .lora-reviews {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-reviews-header h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-reviews-header p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-reviews-summary-card,
+.dark .lora-review-card,
+.dark .lora-write-review-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-reviews-score-col {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-reviews-big-num {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-reviews-bar-label {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-reviews-bar-track {
+  background: #171D33 !important;
+}
+
+.dark .lora-reviews-bar-count {
+  color: #929BB0 !important;
+}
+
+.dark .lora-reviews-verified-tag {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .lora-review-card-author b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-review-card-text {
+  color: #929BB0 !important;
+}
+
+/* ── 16.4 CREATOR REPORTS DEEP CINEMATIC STYLING ── */
+.dark .lora-creator-reports {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-rep-tabs {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-rep-tabs button {
+  color: #929BB0 !important;
+}
+
+.dark .lora-rep-tabs button.active {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(118, 87, 255, 0.4) !important;
+}
+
+.dark .rep-btn-pri {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -6px rgba(118, 87, 255, 0.5) !important;
+}
+
+.dark .rep-btn-sec {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .rep-btn-sec:hover {
+  background: #1C2440 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .rep-kpi-card,
+.dark .bank-reconcile-card,
+.dark .rep-panel,
+.dark .lora-rep-table-wrap {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .rep-kpi-card b,
+.dark .bank-card-hd h4,
+.dark .section-title {
+  color: #F5F5FA !important;
+}
+
+.dark .rep-kpi-card small,
+.dark .rep-kpi-card span,
+.dark .bank-card-hd small {
+  color: #929BB0 !important;
+}
+
+.dark .bank-card-stat {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .rep-table th {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .rep-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .rep-table tr:hover td {
+  background: #171D33 !important;
+}
+
+/* ── 16.5 MULTI-PACK STUDIO DEEP CINEMATIC STYLING ── */
+.dark .mmp-bento {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
+}
+
+.dark .mmp-bento-title {
+  color: #F5F5FA !important;
+}
+
+.dark .mmp-bento-sub {
+  color: #929BB0 !important;
+}
+
+.dark .mmp-vis-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .mmp-vis-btn:hover {
+  background: #1C2440 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .mmp-vis-btn.is-active-public {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border-color: #10B981 !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .mmp-vis-btn.is-active-private {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 20px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .mmp-vis-btn.is-active-unlisted {
+  background: rgba(245, 158, 11, 0.16) !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25) !important;
+}
+
+.dark .mmp-vis-label {
+  color: #F5F5FA !important;
+}
+
+.dark .mmp-vis-desc {
+  color: #929BB0 !important;
+}
+
+.dark .mmp-dropzone {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .mmp-dropzone:hover {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+}
+
+/* ── 16.6 PAYMENT MODAL DEEP CINEMATIC STYLING ── */
+.dark .lora-pay-backdrop {
+  background: rgba(4, 6, 12, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.dark .lora-pay {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.9), 0 0 32px rgba(118, 87, 255, 0.2) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-head h1 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-close {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-pay .pm-close:hover {
+  background: #1C2440 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-pay .pm-total {
+  background: #171D33 !important;
+}
+
+.dark .lora-pay .pm-amt {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-tabs {
+  background: #0D1020 !important;
+}
+
+.dark .lora-pay .pm-tabs button {
+  color: #929BB0 !important;
+}
+
+.dark .lora-pay .pm-tabs button.on {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-pay .pm-btn-link {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
+}
+
+.dark .lora-pay .pm-bank-pill {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-bank-pill.active {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 16px rgba(118, 87, 255, 0.45) !important;
+}
+
+.dark .lora-pay .pm-bank {
+  background: linear-gradient(135deg, #171D33 0%, #1F2847 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-pay .pm-pick span {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-pick input:checked + span {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+}
+
+.dark .lora-pay .pm-drop {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-drop:hover {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+}
+
+.dark .lora-pay .pm-drop b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-foot {
+  background: #111629 !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-pay .pm-btn.ghost {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-pay .pm-btn.ghost:hover {
+  background: #1C2440 !important;
+  color: #FFFFFF !important;
+}
+
+/* ── 16.7 SETUP WIZARD MODAL ── */
+.dark .setup-card {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .setup-card:hover {
+  background: #1C2440 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .setup-card.selected {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 20px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .setup-q-title {
+  color: #F5F5FA !important;
+}
+
+.dark .setup-q-sub {
+  color: #929BB0 !important;
+}
+
+.dark .setup-close-btn,
+.dark .setup-lang-toggle {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+}
+
+.dark .setup-lang-btn.active {
+  background: #111629 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .setup-progress-track {
+  background: #171D33 !important;
+}
+
+.dark .setup-progress-fill {
+  background: linear-gradient(90deg, #7657FF, #398BFF) !important;
+}
+
+.dark .setup-btn-next {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+}
+
+.dark .setup-btn-back {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+/* ── 16.8 SHARE MODAL ── */
+.dark .lora-share .modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .hd h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .pv {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-share .x {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+}
+
+/* ── 16.9 CREATOR DASHBOARD DEEP ELEMENTS ── */
+.dark .lora-dash .act.dark,
+.dark .lora-dash .ld-act.dark {
+  background: linear-gradient(135deg, #171D33 0%, #1F2847 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+  box-shadow: 0 12px 30px -8px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-dash .sh .ib,
+.dark .lora-dash .ld-sh .ld-ib {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-dash .sh h2,
+.dark .lora-dash .ld-sh h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .feed li,
+.dark .lora-dash .ld-feed li {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .feed li:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-dash .feed li.is-unread {
+  border-left: 3px solid #7657FF !important;
+  background: #151B30 !important;
+}
+
+.dark .lora-dash .feed b,
+.dark .lora-dash .ld-feed b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .feed small,
+.dark .lora-dash .ld-feed small {
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .feed time,
+.dark .lora-dash .ld-feed time {
+  color: #6C7693 !important;
+}
+
+.dark .lora-dash .feed-wrap.has-fade::after {
+  background: linear-gradient(to bottom, transparent, #111629) !important;
+}
+
+.dark .lora-dash .activity-sec .feed-clear-btn {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .qs a:hover,
+.dark .lora-dash .ld-qs a:hover {
+  background: #171D33 !important;
+}
+
+.dark .lora-dash .qs a .ld-qs-val,
+.dark .lora-dash .qs a b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-onboard-step {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .ld-onboard-step:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-dash .ld-onboard-step.done {
+  background: #112028 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+.dark .lora-dash .ld-onboard-step h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-onboard-step p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .ld-guide-btn {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .ld-onboard-dismiss {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .ld-onboard-bar-track {
+  background: #171D33 !important;
+}
+
+.dark .lora-dash .ld-onboard-bar-fill {
+  background: linear-gradient(90deg, #7657FF, #398BFF) !important;
+}
+
+.dark .lora-dash .ld-trial {
+  background: linear-gradient(90deg, #112028, #171D33) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-trial p {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-missing-rec {
+  background: linear-gradient(135deg, #1B1824 0%, #171D33 100%) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.dark .lora-dash .ld-missing-rec-title {
+  color: #FBBF24 !important;
+}
+
+.dark .lora-dash .ld-missing-rec-item {
+  background: #111629 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .ld-missing-rec-input {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-missing-rec-name {
+  color: #F5F5FA !important;
+}
+
+/* ── 16.10 SETTINGS PAGE DEEP ELEMENTS ── */
+.dark .lora-settings .s-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-card > header h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-card > header p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-settings .s-plan {
+  background: linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-settings .s-opt {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-opt:hover {
+  background: #1C2440 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-settings .s-seg-input:checked + .s-opt {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 20px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-settings .s-opt b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-opt span {
+  color: #929BB0 !important;
+}
+
+.dark .lora-settings .s-opt-icon {
+  background: #0D1020 !important;
+  stroke: #A78BFA !important;
+}
+
+.dark .lora-settings .s-btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
+}
+
+.dark .lora-settings .s-btn-ghost {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-btn-ghost:hover {
+  background: #1C2440 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-settings .s-btn-light {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-settings .s-toc a {
+  color: #929BB0 !important;
+  border-left-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-settings .s-toc a.on,
+.dark .lora-settings .s-toc a.active {
+  color: #A78BFA !important;
+  border-left-color: #7657FF !important;
+}
+
+/* ── 16.11 LANDING PAGE DEEP ELEMENTS ── */
+.dark .lora-home .how {
+  background: #0D1020 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-image: radial-gradient(rgba(118, 87, 255, 0.1) 1px, transparent 1px) !important;
+}
+
+.dark .lora-home .step {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-home .step:after {
+  background: linear-gradient(90deg, #7657FF, #398BFF) !important;
+}
+
+.dark .lora-home .step small {
+  color: #A78BFA !important;
+}
+
+.dark .lora-home .step h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-home .step p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-home .banner {
+  background: radial-gradient(500px 300px at 80% 0, rgba(118, 87, 255, 0.35), transparent 70%),
+              linear-gradient(135deg, #111629 0%, #171D33 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.25) !important;
+  box-shadow: 0 24px 60px -12px rgba(118, 87, 255, 0.3) !important;
+}
+
+.dark .lora-home .banner .btn {
+  background: #FFFFFF !important;
+  color: #080A12 !important;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.25) !important;
+  font-weight: 700 !important;
+}
+
+.dark .lora-home .banner .btn:hover {
+  background: #E0E7FF !important;
+}
+
+.dark .lora-home .bc:nth-child(1) {
+  background: linear-gradient(135deg, #1A1F3B 0%, #111629 100%) !important;
+  border: 1px solid rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 16px 40px -10px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .lora-home .bc:nth-child(1) p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-home .final {
+  background: #080A12 !important;
+}
+
+/* ── 16.12 AUTH PAGES DEEP ELEMENTS ── */
+.dark .lora-signup-page .card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-signup-page .card:before {
+  background: linear-gradient(90deg, transparent 0%, rgba(118, 87, 255, 0.6) 35%, rgba(57, 139, 255, 0.6) 70%, transparent 100%) !important;
+  height: 1px !important;
+}
+
+.dark .lora-signup-page .in input,
+.dark .lora-signup-page .in select,
+.dark .lora-signup-page .in textarea,
+.dark .lora-signup-page .PhoneInput {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-signup-page .in input:focus,
+.dark .lora-signup-page .in select:focus,
+.dark .lora-signup-page .in textarea:focus,
+.dark .lora-signup-page .PhoneInput:focus-within {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .lora-signup-page .PhoneInputInput {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-signup-page .rem .bx {
+  background: #0D1020 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark .lora-signup-page .rem input:checked + .bx {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  border-color: #7657FF !important;
+}
+
+.dark .lora-signup-page .info {
+  background: rgba(118, 87, 255, 0.15) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-signup-page .meter i {
+  background: #171D33 !important;
+}
+
+.dark .lora-signup-page .btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 28px -6px rgba(118, 87, 255, 0.55) !important;
+}
+
+.dark .lora-signup-page .back:hover {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-verify .mail {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+  box-shadow: 0 0 0 12px rgba(118, 87, 255, 0.08), 0 0 0 26px rgba(118, 87, 255, 0.04) !important;
+}
+
+.dark .lora-verify .mail b {
+  border-color: #111629 !important;
+  background: #10B981 !important;
+}
+
+.dark .lora-verify .em {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-verify .steps {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-verify .steps li {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-verify .steps li::before {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.4) !important;
+}
+
+.dark .lora-verify .btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 28px -6px rgba(118, 87, 255, 0.55) !important;
+}
+
+.dark .lora-verify .btn.ghost {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-verify .btn.ghost:hover {
+  background: #1C2440 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-verify .resend button {
+  color: #A78BFA !important;
+}
+
+.dark .lora-signup .role::before {
+  background: radial-gradient(circle, rgba(118, 87, 255, 0.25) 0%, transparent 70%) !important;
+}
+
+.dark .lora-signup .role:hover .ico {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 24px rgba(118, 87, 255, 0.6) !important;
+}
+
+/* ── 16.13 ADMIN / FOUNDER PANEL DEEP STYLING ── */
+.dark .lora-admin-master-tabs {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-admin-master-tabs button {
+  color: #929BB0 !important;
+}
+
+.dark .lora-admin-master-tabs button.active {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-admin-stat-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-admin-stat-card b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-admin-stat-card small {
+  color: #929BB0 !important;
+}
+
+.dark .lora-admin-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-admin-card:hover {
+  background: #171D33 !important;
+  border-color: rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-admin-search input {
+  background: #0D1020 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-admin-tabs {
+  background: #0D1020 !important;
+}
+
+.dark .lora-admin-tabs button {
+  color: #929BB0 !important;
+}
+
+.dark .lora-admin-tabs button.active {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-admin-btn-lock {
+  background: rgba(23, 29, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .creator-grant-modal,
+.dark .admin-security-card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.9), 0 0 32px rgba(118, 87, 255, 0.2) !important;
+}
+

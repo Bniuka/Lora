@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, Loader2, Eye, EyeOff, KeyRound, Mail, ShieldCh
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 const COOLDOWN_SECONDS = 60;
 
@@ -232,11 +233,11 @@ export default function ResetPassword() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#F4F6FB] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      <div className="min-h-screen bg-[#F4F6FB] dark:bg-[#080A12] flex items-center justify-center px-4 py-12 relative overflow-hidden transition-colors">
         
         {/* Subtle decorative glow backdrops */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/60 dark:bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-100/60 dark:bg-blue-900/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-md w-full relative z-10">
           
@@ -244,11 +245,14 @@ export default function ResetPassword() {
           <div className="flex items-center justify-between mb-8">
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#64748B] hover:text-[#0F172A] dark:text-[#929BB0] dark:hover:text-[#F5F5FA] transition-colors"
             >
               <ArrowLeft size={16} /> Back to Login
             </Link>
-            <AppLogo to="/" height={42} />
+            <div className="flex items-center gap-3">
+              <ThemeSwitcher size="sm" />
+              <AppLogo to="/" height={42} />
+            </div>
           </div>
 
           {/* Step Progress Pills */}

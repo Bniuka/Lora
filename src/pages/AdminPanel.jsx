@@ -14,6 +14,7 @@ import { isUserAdmin } from '../lib/admin';
 import { getCopyrightAlerts, resolveCopyrightAlert } from '../lib/linkSentinel';
 import { getAllReportsForFounder, resolveStudentReport } from '../lib/disputeSystem';
 import { PageTransition } from '../components/ui';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './admin-panel.css';
 
 export default function AdminPanel() {
@@ -480,7 +481,8 @@ export default function AdminPanel() {
             <p>Master control for subscriptions, live link copyright protection, and student disputes.</p>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <ThemeSwitcher size="sm" />
             <button
               type="button"
               className="lora-admin-btn-lock"

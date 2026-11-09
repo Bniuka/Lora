@@ -8,6 +8,7 @@ import 'react-phone-number-input/style.css';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
 import AppLogo from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './signup-page.css';
 
 const schema = z.object({
@@ -139,7 +140,8 @@ export default function LearnerSignup() {
             </svg>
             Back
           </Link>
-          <div className="logo">
+          <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <ThemeSwitcher size="sm" />
             <AppLogo role="learner" to="/" height={52} />
           </div>
         </div>

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PageTransition } from '../components/ui';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 export default function UpdatePassword() {
   const { updatePassword, user } = useAuth();
@@ -49,24 +50,27 @@ export default function UpdatePassword() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 py-16">
+      <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#080A12] flex items-center justify-center px-6 py-16 transition-colors">
         <div className="max-w-md w-full relative z-10">
-          <Link to="/login" className="inline-flex items-center gap-2 text-sm text-[#475569] hover:text-[#2563EB] transition-colors mb-10">
-            <ArrowLeft size={16} /> Back to Login
-          </Link>
+          <div className="flex items-center justify-between mb-10">
+            <Link to="/login" className="inline-flex items-center gap-2 text-sm text-[#475569] dark:text-[#929BB0] hover:text-[#2563EB] dark:hover:text-[#F5F5FA] transition-colors">
+              <ArrowLeft size={16} /> Back to Login
+            </Link>
+            <ThemeSwitcher size="sm" />
+          </div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
+            <h1 className="text-3xl font-bold text-[#0F172A] dark:text-[#F5F5FA] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
               Update Password
             </h1>
-            <p className="text-sm text-[#475569]">Please enter your new password below.</p>
+            <p className="text-sm text-[#475569] dark:text-[#929BB0]">Please enter your new password below.</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+            className="bg-white dark:bg-[#111629] border border-slate-100 dark:border-white/10 rounded-3xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
           >
             {success ? (
               <div className="text-center">

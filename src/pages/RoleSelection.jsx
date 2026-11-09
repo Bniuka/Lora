@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import AppLogo, { creatorLogo, learnerLogo } from '../components/AppLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import './signup-choose.css';
 
 export default function RoleSelection() {
@@ -14,6 +15,9 @@ export default function RoleSelection() {
         </Link>
         <div className="logo">
           <AppLogo to="/" height={52} />
+        </div>
+        <div style={{ marginLeft: 'auto' }}>
+          <ThemeSwitcher size="sm" />
         </div>
       </header>
 

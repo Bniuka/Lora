@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import AppLogo from "../components/AppLogo";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 import { LoadingAnimation } from "../components/ui";
 import "./verify-email.css";
 
@@ -305,7 +306,8 @@ export default function VerifyEmail() {
   return (
     <div className="lora-verify">
       <div className="shell">
-        <div className="logo" style={{ display: "flex", justifyContent: "center" }}>
+        <div className="logo" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12 }}>
+          <ThemeSwitcher size="sm" />
           <AppLogo to="/" height={52} />
         </div>
 

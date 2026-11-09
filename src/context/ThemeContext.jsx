@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext({
   theme: 'light',
@@ -9,9 +8,7 @@ const ThemeContext = createContext({
 });
 
 export function ThemeProvider({ children }) {
-  const location = useLocation();
-
-  // Always default to 'light' for everyone
+  // Light mode default for initial visitors, persisted in localStorage
   const [theme, setThemeState] = useState(() => {
     try {
       const saved = localStorage.getItem('lora_theme');
@@ -35,16 +32,7 @@ export function ThemeProvider({ children }) {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // The homepage must always show in the current light theme as requested:
-  // "the homepage shows in light theme that we have right now and when we go to the leaner or creator dashboard there is a mode switcher"
-  const isHomepage = location.pathname === '/';
-
-  // Public non-dashboard routes (e.g. landing page) stay in light theme by default.
-  // When inside creator or learner areas, the user's chosen theme is active.
-  const isDark = useMemo(() => {
-    if (isHomepage) return false;
-    return theme === 'dark';
-  }, [isHomepage, theme]);
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const root = document.documentElement;
@@ -64,7 +52,7 @@ export function ThemeProvider({ children }) {
   }, [isDark]);
 
   return (
-    <ThemeContext.Provider value={{ theme, isDark, toggleTheme, setTheme, isHomepage }}>
+    <ThemeContext.Provider value={{ theme, isDark, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
