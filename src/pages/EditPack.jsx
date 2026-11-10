@@ -474,38 +474,29 @@ export default function EditPack() {
             </div>
 
             {/* Course Visibility & Access Selector + Secret Invite Link */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13.5, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>
+            <div className="edit-visibility-section">
+              <label className="edit-visibility-label">
                 Course visibility &amp; access
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))', gap: 10 }}>
+              <div className="edit-visibility-grid">
                 {[
                   {
                     id: 'public',
                     icon: Globe2,
                     label: 'Public Course',
                     sub: 'Open on Sessions page · Anyone can enroll',
-                    activeBorder: '#2563eb',
-                    activeBg: '#eff6ff',
-                    activeColor: '#1d4ed8',
                   },
                   {
                     id: 'private',
                     icon: Lock,
                     label: 'Private Showcase',
                     sub: 'Listed as 🔒 Private · Invite / Promo unlocks',
-                    activeBorder: '#7c3aed',
-                    activeBg: '#f5f3ff',
-                    activeColor: '#6d28d9',
                   },
                   {
                     id: 'unlisted',
                     icon: EyeOff,
                     label: 'Unlisted (Hidden)',
                     sub: 'Hidden everywhere · Secret Link / Promo only',
-                    activeBorder: '#0f172a',
-                    activeBg: '#f1f5f9',
-                    activeColor: '#0f172a',
                   },
                 ].map((opt) => {
                   const IconComp = opt.icon;
@@ -515,69 +506,35 @@ export default function EditPack() {
                       key={opt.id}
                       type="button"
                       onClick={() => updatePack('visibility', opt.id)}
-                      style={{
-                        textAlign: 'left',
-                        padding: '12px 13px',
-                        borderRadius: 14,
-                        border: `1.5px solid ${active ? opt.activeBorder : '#e2e8f0'}`,
-                        background: active ? opt.activeBg : '#ffffff',
-                        cursor: 'pointer',
-                        transition: 'all .15s',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 4,
-                      }}
+                      className={`edit-visibility-btn ${opt.id} ${active ? 'active' : ''}`}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 13.5, color: active ? opt.activeColor : '#0f172a' }}>
+                      <div className="edit-visibility-head">
                         <IconComp size={15} />
                         <span>{opt.label}</span>
                       </div>
-                      <span style={{ fontSize: 11.5, color: '#64748b', lineHeight: 1.35 }}>{opt.sub}</span>
+                      <span className="edit-visibility-sub">{opt.sub}</span>
                     </button>
                   );
                 })}
               </div>
 
               {(pack.visibility === 'private' || pack.visibility === 'unlisted') && (
-                <div
-                  style={{
-                    marginTop: 12,
-                    padding: '14px 16px',
-                    borderRadius: 14,
-                    background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
-                    border: '1.5px solid #ddd6fe',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 10,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#5b21b6', fontWeight: 700, fontSize: 13 }}>
+                <div className="edit-invite-box">
+                  <div className="edit-invite-row">
+                    <div className="edit-invite-left">
                       <KeyRound size={15} />
                       <span>
                         Secret Creator Invite Link &amp; Code:{' '}
-                        <code style={{ background: '#ede9fe', padding: '2px 7px', borderRadius: 6, fontSize: 12.5 }}>
+                        <code className="edit-invite-code">
                           {pack.invite_token}
                         </code>
                       </span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div className="edit-invite-btns">
                       <button
                         type="button"
                         onClick={handleCopySecretInviteLink}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          padding: '7px 12px',
-                          borderRadius: 9,
-                          background: '#6d28d9',
-                          color: '#ffffff',
-                          border: 'none',
-                          fontSize: 12,
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                        }}
+                        className="edit-invite-copy-btn"
                       >
                         <Copy size={13} /> Copy Secret Invite Link
                       </button>
@@ -585,25 +542,13 @@ export default function EditPack() {
                         type="button"
                         onClick={handleResetInviteToken}
                         title="Generate a new invite code and invalidate the old link"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 5,
-                          padding: '7px 10px',
-                          borderRadius: 9,
-                          background: '#ffffff',
-                          color: '#64748b',
-                          border: '1px solid #cbd5e1',
-                          fontSize: 12,
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        className="edit-invite-reset-btn"
                       >
                         <RefreshCw size={12} /> Reset Link
                       </button>
                     </div>
                   </div>
-                  <p style={{ margin: 0, fontSize: 12, color: '#6b21a8', lineHeight: 1.5 }}>
+                  <p className="edit-invite-desc">
                     {pack.visibility === 'private'
                       ? 'Learners on the Sessions page see this course as 🔒 Private with session details hidden. Share this Secret Invite Link (or any Promo Code / Promo Link below) with selected people to unlock enrollment & free previews.'
                       : 'This course is completely hidden from public pages. Only people with this Secret Invite Link (or a Promo Code / Promo Link below) can view and enroll.'}
@@ -1212,40 +1157,22 @@ export default function EditPack() {
         {/* Modal: Generate Discount & Promo Code */}
         {promoModalOpen && (
           <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(15, 23, 42, 0.65)',
-              backdropFilter: 'blur(5px)',
-              zIndex: 9999,
-              display: 'grid',
-              placeItems: 'center',
-              padding: 16,
-              overflowY: 'auto',
-            }}
+            className="lora-promo-modal-backdrop"
             onClick={() => !generatingPromo && setPromoModalOpen(false)}
           >
             <div
-              style={{
-                width: '100%',
-                maxWidth: 500,
-                background: '#fff',
-                borderRadius: 24,
-                boxShadow: '0 25px 60px -15px rgba(0,0,0,0.3)',
-                padding: '24px 26px',
-                margin: 'auto',
-              }}
+              className="lora-promo-modal"
               onClick={e => e.stopPropagation()}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <div className="lora-promo-modal-hd">
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#0f172a' }}>Create Discount &amp; Promo Code</h3>
-                  <p style={{ margin: '2px 0 0', fontSize: 13, color: '#64748b' }}>Give discounts for early birds or time-limited flash sales</p>
+                  <h3>Create Discount &amp; Promo Code</h3>
+                  <p>Give discounts for early birds or time-limited flash sales</p>
                 </div>
                 <button
                   type="button"
+                  className="lora-promo-close-btn"
                   onClick={() => setPromoModalOpen(false)}
-                  style={{ background: '#f1f5f9', border: 0, borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', display: 'grid', placeItems: 'center', color: '#64748b' }}
                 >
                   <X size={16} />
                 </button>
@@ -1253,11 +1180,9 @@ export default function EditPack() {
 
               <form onSubmit={handleCreatePromoCode}>
                 {/* 1. Discount Type Selector */}
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 7, color: '#1e293b' }}>
-                    Discount Type
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, background: '#f1f5f9', padding: 4, borderRadius: 12 }}>
+                <div className="lora-promo-field-group">
+                  <label className="lora-promo-label">Discount Type</label>
+                  <div className="lora-promo-type-grid">
                     {[
                       { id: 'percentage', label: '% Percentage', desc: 'e.g. 20% OFF' },
                       { id: 'fixed', label: 'Fixed Amount', desc: `e.g. ${pack?.currency || 'LKR'} 1,000` },
@@ -1274,25 +1199,10 @@ export default function EditPack() {
                             if (t.id === 'fixed') setNewPromoValue(1000);
                             setNewPromoCode(generatePromoCode(t.id));
                           }}
-                          style={{
-                            background: isSel ? '#fff' : 'transparent',
-                            color: isSel ? '#2563eb' : '#475569',
-                            boxShadow: isSel ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
-                            border: 0,
-                            borderRadius: 9,
-                            padding: '8px 6px',
-                            fontWeight: 700,
-                            fontSize: 12.5,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 2,
-                            transition: 'all 0.15s ease',
-                          }}
+                          className={`lora-promo-type-btn ${isSel ? 'active' : ''}`}
                         >
-                          <span>{t.label}</span>
-                          <span style={{ fontSize: 10.5, fontWeight: 500, opacity: 0.75 }}>{t.desc}</span>
+                          <span className="type-title">{t.label}</span>
+                          <span className="type-desc">{t.desc}</span>
                         </button>
                       );
                     })}
@@ -1301,55 +1211,35 @@ export default function EditPack() {
 
                 {/* 2. Value Input (for percentage and fixed) */}
                 {newPromoType === 'percentage' && (
-                  <div style={{ marginBottom: 16 }}>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
-                      Discount Percentage (%)
-                    </label>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <div style={{ position: 'relative', flex: 1 }}>
-                        <input
-                          type="number"
-                          min="1"
-                          max="100"
-                          required
-                          value={newPromoValue}
-                          onChange={e => setNewPromoValue(e.target.value)}
-                          style={{
-                            width: '100%',
-                            height: 44,
-                            border: '1.5px solid #cbd5e1',
-                            borderRadius: 12,
-                            padding: '0 32px 0 14px',
-                            fontSize: 15,
-                            fontWeight: 700,
-                          }}
-                        />
-                        <span style={{ position: 'absolute', right: 12, top: 12, fontWeight: 700, color: '#64748b' }}>%</span>
-                      </div>
+                  <div className="lora-promo-field-group">
+                    <label className="lora-promo-label">Discount Percentage (%)</label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        required
+                        value={newPromoValue}
+                        onChange={e => setNewPromoValue(e.target.value)}
+                        className="lora-promo-input"
+                        style={{ paddingRight: 32 }}
+                      />
+                      <span className="lora-promo-input-suffix">%</span>
                     </div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                    <div className="lora-promo-pills-row">
                       {[10, 20, 25, 30, 50, 75].map(pct => (
                         <button
                           key={pct}
                           type="button"
                           onClick={() => setNewPromoValue(pct)}
-                          style={{
-                            border: Number(newPromoValue) === pct ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                            background: Number(newPromoValue) === pct ? '#eff6ff' : '#fff',
-                            color: Number(newPromoValue) === pct ? '#2563eb' : '#475569',
-                            fontWeight: 700,
-                            fontSize: 12,
-                            padding: '4px 10px',
-                            borderRadius: 8,
-                            cursor: 'pointer',
-                          }}
+                          className={`lora-promo-pill ${Number(newPromoValue) === pct ? 'active' : ''}`}
                         >
                           {pct}%
                         </button>
                       ))}
                     </div>
                     {Number(pack?.price) > 0 && (
-                      <small style={{ color: '#059669', fontSize: 12, marginTop: 6, display: 'block', fontWeight: 600 }}>
+                      <small className="lora-promo-preview-calc">
                         ✓ Learner pays {pack.currency} {Math.max(0, Math.round(Number(pack.price) * (1 - (Number(newPromoValue) || 0) / 100))).toLocaleString()} (Saves {pack.currency} {Math.round((Number(pack.price) * (Number(newPromoValue) || 0)) / 100).toLocaleString()})
                       </small>
                     )}
@@ -1357,52 +1247,33 @@ export default function EditPack() {
                 )}
 
                 {newPromoType === 'fixed' && (
-                  <div style={{ marginBottom: 16 }}>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
+                  <div className="lora-promo-field-group">
+                    <label className="lora-promo-label">
                       Fixed Discount Amount ({pack?.currency || 'LKR'})
                     </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="number"
-                        min="1"
-                        max={pack?.price || 1000000}
-                        required
-                        value={newPromoValue}
-                        onChange={e => setNewPromoValue(e.target.value)}
-                        style={{
-                          width: '100%',
-                          height: 44,
-                          border: '1.5px solid #cbd5e1',
-                          borderRadius: 12,
-                          padding: '0 14px',
-                          fontSize: 15,
-                          fontWeight: 700,
-                        }}
-                      />
-                    </div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                    <input
+                      type="number"
+                      min="1"
+                      max={pack?.price || 1000000}
+                      required
+                      value={newPromoValue}
+                      onChange={e => setNewPromoValue(e.target.value)}
+                      className="lora-promo-input"
+                    />
+                    <div className="lora-promo-pills-row">
                       {[500, 1000, 1500, 2000, 3000].map(amt => (
                         <button
                           key={amt}
                           type="button"
                           onClick={() => setNewPromoValue(amt)}
-                          style={{
-                            border: Number(newPromoValue) === amt ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                            background: Number(newPromoValue) === amt ? '#eff6ff' : '#fff',
-                            color: Number(newPromoValue) === amt ? '#2563eb' : '#475569',
-                            fontWeight: 700,
-                            fontSize: 12,
-                            padding: '4px 10px',
-                            borderRadius: 8,
-                            cursor: 'pointer',
-                          }}
+                          className={`lora-promo-pill ${Number(newPromoValue) === amt ? 'active' : ''}`}
                         >
                           {pack?.currency || 'Rs.'} {amt.toLocaleString()}
                         </button>
                       ))}
                     </div>
                     {Number(pack?.price) > 0 && (
-                      <small style={{ color: '#059669', fontSize: 12, marginTop: 6, display: 'block', fontWeight: 600 }}>
+                      <small className="lora-promo-preview-calc">
                         ✓ Learner pays {pack.currency} {Math.max(0, Number(pack.price) - (Number(newPromoValue) || 0)).toLocaleString()} (Saves {pack.currency} {Math.min(Number(pack.price), Number(newPromoValue) || 0).toLocaleString()})
                       </small>
                     )}
@@ -1410,54 +1281,29 @@ export default function EditPack() {
                 )}
 
                 {newPromoType === 'free' && (
-                  <div style={{ marginBottom: 16, padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12 }}>
-                    <small style={{ color: '#166534', fontSize: 12.5, fontWeight: 600, display: 'block' }}>
+                  <div className="lora-promo-free-callout">
+                    <small>
                       🎁 100% Free Access: Learners will be able to enroll immediately in 1 click without paying.
                     </small>
                   </div>
                 )}
 
                 {/* 3. Promo Code String */}
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
-                    Promo Code (Customizable)
-                  </label>
+                <div className="lora-promo-field-group">
+                  <label className="lora-promo-label">Promo Code (Customizable)</label>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <input
                       type="text"
                       required
                       value={newPromoCode}
                       onChange={e => setNewPromoCode(e.target.value.toUpperCase())}
-                      style={{
-                        flex: 1,
-                        height: 44,
-                        border: '1.5px solid #cbd5e1',
-                        borderRadius: 12,
-                        padding: '0 14px',
-                        fontWeight: 700,
-                        fontSize: 15.5,
-                        fontFamily: 'monospace',
-                        letterSpacing: '0.04em',
-                        color: '#2563eb',
-                      }}
+                      className="lora-promo-input lora-promo-code-input"
                     />
                     <button
                       type="button"
                       title="Roll another code"
                       onClick={() => setNewPromoCode(generatePromoCode(newPromoType))}
-                      style={{
-                        padding: '0 14px',
-                        background: '#f1f5f9',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: 12,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: '#334155',
-                      }}
+                      className="lora-promo-roll-btn"
                     >
                       <RefreshCw size={14} /> Roll
                     </button>
@@ -1465,10 +1311,8 @@ export default function EditPack() {
                 </div>
 
                 {/* 4. Early-Bird Usage Limit */}
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#1e293b' }}>
-                    Usage Limit (Max Learners)
-                  </label>
+                <div className="lora-promo-field-group">
+                  <label className="lora-promo-label">Usage Limit (Max Learners)</label>
                   <input
                     type="number"
                     min="1"
@@ -1476,54 +1320,36 @@ export default function EditPack() {
                     required
                     value={newPromoMaxUses}
                     onChange={e => setNewPromoMaxUses(e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: 44,
-                      border: '1.5px solid #cbd5e1',
-                      borderRadius: 12,
-                      padding: '0 14px',
-                      fontSize: 14.5,
-                      fontWeight: 600,
-                      marginBottom: 8,
-                    }}
+                    className="lora-promo-input"
                   />
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <div className="lora-promo-pills-row">
                     {[5, 7, 10, 15, 25, 50].map((num) => (
                       <button
                         key={num}
                         type="button"
                         onClick={() => setNewPromoMaxUses(num)}
-                        style={{
-                          border: Number(newPromoMaxUses) === num ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                          background: Number(newPromoMaxUses) === num ? '#eff6ff' : '#fff',
-                          color: Number(newPromoMaxUses) === num ? '#2563eb' : '#475569',
-                          fontWeight: 700,
-                          fontSize: 12,
-                          padding: '4px 10px',
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                        }}
+                        className={`lora-promo-pill ${Number(newPromoMaxUses) === num ? 'active' : ''}`}
                       >
                         {num} learners
                       </button>
                     ))}
                   </div>
-                  <small style={{ color: '#64748b', fontSize: 11.5, marginTop: 5, display: 'block' }}>
+                  <small className="lora-promo-hint">
                     Auto-expires once {newPromoMaxUses} learner{newPromoMaxUses > 1 ? 's have' : ' has'} claimed it.
                   </small>
                 </div>
 
                 {/* 5. Expiry Date & Time (Optional) */}
-                <div style={{ marginBottom: 22 }}>
+                <div className="lora-promo-field-group">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>
-                      Expiry Date &amp; Time <span style={{ fontWeight: 400, color: '#64748b' }}>(Optional)</span>
+                    <label className="lora-promo-label" style={{ marginBottom: 0 }}>
+                      Expiry Date &amp; Time <span style={{ fontWeight: 400, opacity: 0.7 }}>(Optional)</span>
                     </label>
                     {newPromoExpiresAt && (
                       <button
                         type="button"
                         onClick={() => setNewPromoExpiresAt('')}
-                        style={{ background: 'none', border: 0, color: '#ef4444', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                        className="lora-promo-clear-btn"
                       >
                         Clear date
                       </button>
@@ -1533,18 +1359,9 @@ export default function EditPack() {
                     type="datetime-local"
                     value={newPromoExpiresAt}
                     onChange={e => setNewPromoExpiresAt(e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: 44,
-                      border: '1.5px solid #cbd5e1',
-                      borderRadius: 12,
-                      padding: '0 14px',
-                      fontSize: 13.5,
-                      fontWeight: 500,
-                      marginBottom: 8,
-                    }}
+                    className="lora-promo-input"
                   />
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <div className="lora-promo-pills-row">
                     <button
                       type="button"
                       onClick={() => {
@@ -1552,7 +1369,7 @@ export default function EditPack() {
                         const pad = n => n.toString().padStart(2, '0');
                         setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
                       }}
-                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                      className="lora-promo-pill"
                     >
                       ⚡ 24h Flash Sale
                     </button>
@@ -1563,7 +1380,7 @@ export default function EditPack() {
                         const pad = n => n.toString().padStart(2, '0');
                         setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
                       }}
-                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                      className="lora-promo-pill"
                     >
                       ⏱️ 48 Hours
                     </button>
@@ -1578,7 +1395,7 @@ export default function EditPack() {
                         const pad = n => n.toString().padStart(2, '0');
                         setNewPromoExpiresAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
                       }}
-                      style={{ border: '1px solid #e2e8f0', background: '#fff', fontSize: 11.5, fontWeight: 600, padding: '4px 9px', borderRadius: 7, cursor: 'pointer', color: '#475569' }}
+                      className="lora-promo-pill"
                     >
                       📅 This Sunday 23:59
                     </button>
@@ -1586,40 +1403,18 @@ export default function EditPack() {
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 12, borderTop: '1px solid #f1f5f9' }}>
+                <div className="lora-promo-actions">
                   <button
                     type="button"
                     onClick={() => setPromoModalOpen(false)}
-                    style={{
-                      border: '1px solid #e2e8f0',
-                      background: '#fff',
-                      padding: '10px 18px',
-                      borderRadius: 12,
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      color: '#475569',
-                    }}
+                    className="lora-promo-cancel-btn"
                     disabled={generatingPromo}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    style={{
-                      background: '#2563eb',
-                      color: '#fff',
-                      border: 0,
-                      padding: '10px 22px',
-                      borderRadius: 12,
-                      fontSize: 14,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
-                    }}
+                    className="lora-promo-submit-btn"
                     disabled={generatingPromo}
                   >
                     {generatingPromo ? <Loader2 size={16} className="animate-spin" /> : 'Create Promo Code'}

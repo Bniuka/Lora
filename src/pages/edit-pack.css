@@ -1217,3 +1217,986 @@ body.dark-theme .lora-edit .add {
   box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.4) !important;
   transform: translateY(-2px) !important;
 }
+
+/* ══════════════════════════════════════════════════════
+   COMPREHENSIVE DARK THEME SYSTEM FOR EDIT PACK
+   ══════════════════════════════════════════════════════ */
+.dark .lora-edit,
+[data-theme="dark"] .lora-edit,
+body.dark-theme .lora-edit {
+  --bg: #080A12;
+  --surface: #111629;
+  --soft: #171D33;
+  --ink: #F5F5FA;
+  --muted: #929BB0;
+  --line: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.1);
+  --brand: #7657FF;
+  --brand2: #398BFF;
+  --brand-soft: rgba(118, 87, 255, 0.16);
+  --gold: #FBBF24;
+  --gold-soft: rgba(245, 158, 11, 0.16);
+
+  background: radial-gradient(720px 420px at 0 0, rgba(118, 87, 255, 0.14), transparent 70%),
+              radial-gradient(640px 420px at 100% 35%, rgba(57, 139, 255, 0.12), transparent 70%),
+              #080A12 !important;
+  color: #F5F5FA !important;
+}
+
+/* Top Sticky Action Bar */
+.dark .lora-edit .actions,
+[data-theme="dark"] .lora-edit .actions {
+  background: rgba(8, 10, 18, 0.85) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.dark .lora-edit .backl,
+[data-theme="dark"] .lora-edit .backl {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .backl:hover,
+[data-theme="dark"] .lora-edit .backl:hover {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .save,
+[data-theme="dark"] .lora-edit .save {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(118, 87, 255, 0.38) !important;
+}
+
+.dark .lora-edit .save:hover:not(:disabled),
+[data-theme="dark"] .lora-edit .save:hover:not(:disabled) {
+  box-shadow: 0 8px 24px rgba(118, 87, 255, 0.55) !important;
+  filter: brightness(1.06) !important;
+}
+
+.dark .lora-edit .dirty,
+[data-theme="dark"] .lora-edit .dirty {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #FBBF24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.28) !important;
+}
+
+/* Page Title & Main Cards */
+.dark .lora-edit .page h1,
+[data-theme="dark"] .lora-edit .page h1 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .card,
+[data-theme="dark"] .lora-edit .card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .sh h2,
+[data-theme="dark"] .lora-edit .sh h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .sh p,
+[data-theme="dark"] .lora-edit .sh p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .sh .ib,
+[data-theme="dark"] .lora-edit .sh .ib {
+  background: rgba(118, 87, 255, 0.16) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-edit .c2 .ib,
+[data-theme="dark"] .lora-edit .c2 .ib {
+  background: rgba(167, 139, 250, 0.16) !important;
+  color: #C084FC !important;
+}
+
+.dark .lora-edit .c3 .ib,
+[data-theme="dark"] .lora-edit .c3 .ib {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+}
+
+.dark .lora-edit .c4 .ib,
+[data-theme="dark"] .lora-edit .c4 .ib {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #FBBF24 !important;
+}
+
+/* Form Inputs, Selects, Textareas */
+.dark .lora-edit .f label,
+[data-theme="dark"] .lora-edit .f label {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .f label span,
+.dark .lora-edit .f .h,
+[data-theme="dark"] .lora-edit .f label span,
+[data-theme="dark"] .lora-edit .f .h {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .f input,
+.dark .lora-edit .f select,
+.dark .lora-edit .f textarea,
+[data-theme="dark"] .lora-edit .f input,
+[data-theme="dark"] .lora-edit .f select,
+[data-theme="dark"] .lora-edit .f textarea {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .f input:focus,
+.dark .lora-edit .f select:focus,
+.dark .lora-edit .f textarea:focus,
+[data-theme="dark"] .lora-edit .f input:focus,
+[data-theme="dark"] .lora-edit .f select:focus,
+[data-theme="dark"] .lora-edit .f textarea:focus {
+  background: #0D1020 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .lora-edit .f input::placeholder,
+.dark .lora-edit .f textarea::placeholder,
+[data-theme="dark"] .lora-edit .f input::placeholder,
+[data-theme="dark"] .lora-edit .f textarea::placeholder {
+  color: rgba(146, 155, 176, 0.5) !important;
+}
+
+.dark .lora-edit .f select option,
+[data-theme="dark"] .lora-edit .f select option {
+  background: #111629 !important;
+  color: #F5F5FA !important;
+}
+
+/* Phone input */
+.dark .lora-edit .PhoneInputCountry,
+.dark .lora-edit .PhoneInputInput,
+[data-theme="dark"] .lora-edit .PhoneInputCountry,
+[data-theme="dark"] .lora-edit .PhoneInputInput {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .PhoneInputCountry:focus-within,
+.dark .lora-edit .PhoneInputInput:focus,
+[data-theme="dark"] .lora-edit .PhoneInputCountry:focus-within,
+[data-theme="dark"] .lora-edit .PhoneInputInput:focus {
+  background: #0D1020 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .lora-edit .use-profile-num,
+[data-theme="dark"] .lora-edit .use-profile-num {
+  color: #A78BFA !important;
+}
+
+/* ── Course Visibility & Secret Invite ── */
+.edit-visibility-section {
+  margin-bottom: 20px;
+}
+
+.edit-visibility-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.edit-visibility-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 10px;
+}
+
+.edit-visibility-btn {
+  text-align: left;
+  padding: 12px 13px;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edit-visibility-btn .edit-visibility-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.edit-visibility-btn .edit-visibility-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.edit-visibility-btn.public.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.edit-visibility-btn.public.active .edit-visibility-head {
+  color: #1d4ed8;
+}
+
+.edit-visibility-btn.private.active {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+.edit-visibility-btn.private.active .edit-visibility-head {
+  color: #6d28d9;
+}
+
+.edit-visibility-btn.unlisted.active {
+  border-color: #0f172a;
+  background: #f1f5f9;
+}
+.edit-visibility-btn.unlisted.active .edit-visibility-head {
+  color: #0f172a;
+}
+
+.edit-invite-box {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%);
+  border: 1.5px solid #ddd6fe;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-invite-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.edit-invite-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #5b21b6;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.edit-invite-code {
+  background: #ede9fe;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+
+.edit-invite-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-invite-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.edit-invite-copy-btn:hover {
+  background: #5b21b6;
+  transform: translateY(-1px);
+}
+
+.edit-invite-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-invite-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #6b21a8;
+  line-height: 1.5;
+}
+
+/* Visibility Dark Mode */
+.dark .edit-visibility-label,
+[data-theme="dark"] .edit-visibility-label {
+  color: #F5F5FA !important;
+}
+
+.dark .edit-visibility-btn,
+[data-theme="dark"] .edit-visibility-btn {
+  background: #171D33 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .edit-visibility-btn .edit-visibility-head,
+[data-theme="dark"] .edit-visibility-btn .edit-visibility-head {
+  color: #F5F5FA !important;
+}
+
+.dark .edit-visibility-btn .edit-visibility-sub,
+[data-theme="dark"] .edit-visibility-btn .edit-visibility-sub {
+  color: #929BB0 !important;
+}
+
+.dark .edit-visibility-btn:hover,
+[data-theme="dark"] .edit-visibility-btn:hover {
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  background: #1F2847 !important;
+}
+
+.dark .edit-visibility-btn.active,
+[data-theme="dark"] .edit-visibility-btn.active {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .edit-visibility-btn.active .edit-visibility-head,
+[data-theme="dark"] .edit-visibility-btn.active .edit-visibility-head {
+  color: #A78BFA !important;
+}
+
+.dark .edit-invite-box,
+[data-theme="dark"] .edit-invite-box {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.12) 0%, #111629 100%) !important;
+  border: 1.5px solid rgba(118, 87, 255, 0.28) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark .edit-invite-left,
+[data-theme="dark"] .edit-invite-left {
+  color: #A78BFA !important;
+}
+
+.dark .edit-invite-code,
+[data-theme="dark"] .edit-invite-code {
+  background: #171D33 !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .edit-invite-copy-btn,
+[data-theme="dark"] .edit-invite-copy-btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  box-shadow: 0 4px 12px rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .edit-invite-reset-btn,
+[data-theme="dark"] .edit-invite-reset-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #929BB0 !important;
+}
+
+.dark .edit-invite-reset-btn:hover,
+[data-theme="dark"] .edit-invite-reset-btn:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .edit-invite-desc,
+[data-theme="dark"] .edit-invite-desc {
+  color: #929BB0 !important;
+}
+
+/* ── 100% Free Pack Switch Banner ── */
+.dark .lora-edit .sw.free-banner,
+[data-theme="dark"] .lora-edit .sw.free-banner {
+  background: #171D33 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-edit .sw.free-banner:hover,
+[data-theme="dark"] .lora-edit .sw.free-banner:hover {
+  border-color: rgba(118, 87, 255, 0.4) !important;
+}
+
+.dark .lora-edit .sw.free-banner.active,
+[data-theme="dark"] .lora-edit .sw.free-banner.active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, #111629 100%) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 4px 16px -4px rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .lora-edit .sw.free-banner .sw-title b,
+[data-theme="dark"] .lora-edit .sw.free-banner .sw-title b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .sw.free-banner .sw-pill,
+[data-theme="dark"] .lora-edit .sw.free-banner .sw-pill {
+  background: #1F2847 !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .sw.free-banner.active .sw-pill,
+[data-theme="dark"] .lora-edit .sw.free-banner.active .sw-pill {
+  background: rgba(16, 185, 129, 0.22) !important;
+  color: #34D399 !important;
+}
+
+.dark .lora-edit .sw.free-banner .sw-desc,
+[data-theme="dark"] .lora-edit .sw.free-banner .sw-desc {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .sw .tg,
+[data-theme="dark"] .lora-edit .sw .tg {
+  background: #1F2847 !important;
+}
+
+.dark .lora-edit .sw input:checked + .tg,
+[data-theme="dark"] .lora-edit .sw input:checked + .tg {
+  background: #10B981 !important;
+}
+
+/* ── Thumbnail Section ── */
+.dark .lora-edit .thumb,
+[data-theme="dark"] .lora-edit .thumb {
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-edit .thumb-empty,
+[data-theme="dark"] .lora-edit .thumb-empty {
+  background: #171D33 !important;
+  border: 2px dashed rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-edit .thumb-empty:hover,
+[data-theme="dark"] .lora-edit .thumb-empty:hover {
+  background: rgba(118, 87, 255, 0.14) !important;
+  border-color: #7657FF !important;
+}
+
+.dark .lora-edit .thumb-empty b,
+[data-theme="dark"] .lora-edit .thumb-empty b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .thumb-empty span,
+[data-theme="dark"] .lora-edit .thumb-empty span {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .tb button,
+.dark .lora-edit .tb .btn-change,
+[data-theme="dark"] .lora-edit .tb button,
+[data-theme="dark"] .lora-edit .tb .btn-change {
+  background: #171D33 !important;
+  color: #F5F5FA !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-edit .tb button:hover,
+.dark .lora-edit .tb .btn-change:hover,
+[data-theme="dark"] .lora-edit .tb button:hover,
+[data-theme="dark"] .lora-edit .tb .btn-change:hover {
+  background: #1F2847 !important;
+  color: #A78BFA !important;
+  border-color: #7657FF !important;
+}
+
+/* ── Promo Codes Section ── */
+.dark .lora-edit .promo-card,
+[data-theme="dark"] .lora-edit .promo-card {
+  background: #171D33 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-edit .promo-code-badge,
+[data-theme="dark"] .lora-edit .promo-code-badge {
+  background: #080A12 !important;
+  border: 1.5px dashed #7657FF !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-edit .promo-uses,
+[data-theme="dark"] .lora-edit .promo-uses {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .promo-sub,
+[data-theme="dark"] .lora-edit .promo-sub {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .promo-btn-copy,
+[data-theme="dark"] .lora-edit .promo-btn-copy {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .promo-btn-copy:hover,
+[data-theme="dark"] .lora-edit .promo-btn-copy:hover {
+  border-color: #7657FF !important;
+  color: #A78BFA !important;
+  background: #171D33 !important;
+}
+
+.dark .lora-edit .promo-btn-del:hover,
+[data-theme="dark"] .lora-edit .promo-btn-del:hover {
+  background: rgba(239, 68, 68, 0.16) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   PROMO CODE MODAL STYLES (LIGHT & DARK THEMES)
+   ══════════════════════════════════════════════════════ */
+.lora-promo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.lora-promo-modal {
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+  padding: 24px 26px;
+  margin: auto;
+}
+
+.lora-promo-modal-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.lora-promo-modal-hd h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.lora-promo-modal-hd p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.lora-promo-close-btn {
+  background: #f1f5f9;
+  border: 0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+  transition: all 0.15s;
+}
+
+.lora-promo-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.lora-promo-field-group {
+  margin-bottom: 16px;
+}
+
+.lora-promo-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1e293b;
+}
+
+.lora-promo-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.lora-promo-type-btn {
+  background: transparent;
+  color: #475569;
+  border: 0;
+  border-radius: 9px;
+  padding: 8px 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.15s ease;
+}
+
+.lora-promo-type-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.lora-promo-type-btn .type-desc {
+  font-size: 10.5px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.lora-promo-input {
+  width: 100%;
+  height: 44px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  font-weight: 600;
+  background: #ffffff;
+  color: #0f172a;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.lora-promo-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.lora-promo-input-suffix {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.lora-promo-code-input {
+  font-family: monospace;
+  letter-spacing: 0.04em;
+  color: #2563eb;
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.lora-promo-pills-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.lora-promo-pill {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lora-promo-pill.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.lora-promo-preview-calc {
+  color: #059669;
+  font-size: 12px;
+  margin-top: 6px;
+  display: block;
+  font-weight: 600;
+}
+
+.lora-promo-free-callout {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  color: #166534;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lora-promo-roll-btn {
+  padding: 0 14px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.15s;
+}
+
+.lora-promo-roll-btn:hover {
+  background: #e2e8f0;
+}
+
+.lora-promo-hint {
+  color: #64748b;
+  font-size: 11.5px;
+  margin-top: 5px;
+  display: block;
+}
+
+.lora-promo-clear-btn {
+  background: none;
+  border: 0;
+  color: #ef4444;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.lora-promo-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.lora-promo-cancel-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+.lora-promo-cancel-btn:hover {
+  background: #f8fafc;
+}
+
+.lora-promo-submit-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: 0;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: all 0.15s;
+}
+
+.lora-promo-submit-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* ── Dark Mode for Promo Modal ── */
+.dark .lora-promo-modal,
+[data-theme="dark"] .lora-promo-modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.85) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-modal-hd h3,
+[data-theme="dark"] .lora-promo-modal-hd h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-modal-hd p,
+[data-theme="dark"] .lora-promo-modal-hd p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-close-btn,
+[data-theme="dark"] .lora-promo-close-btn {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-promo-close-btn:hover,
+[data-theme="dark"] .lora-promo-close-btn:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-label,
+[data-theme="dark"] .lora-promo-label {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-type-grid,
+[data-theme="dark"] .lora-promo-type-grid {
+  background: #080A12 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-promo-type-btn,
+[data-theme="dark"] .lora-promo-type-btn {
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-type-btn.active,
+[data-theme="dark"] .lora-promo-type-btn.active {
+  background: #171D33 !important;
+  color: #A78BFA !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .lora-promo-input,
+[data-theme="dark"] .lora-promo-input {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-input:focus,
+[data-theme="dark"] .lora-promo-input:focus {
+  background: #0D1020 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .lora-promo-code-input,
+[data-theme="dark"] .lora-promo-code-input {
+  color: #A78BFA !important;
+}
+
+.dark .lora-promo-input-suffix,
+[data-theme="dark"] .lora-promo-input-suffix {
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-pill,
+[data-theme="dark"] .lora-promo-pill {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-pill:hover,
+[data-theme="dark"] .lora-promo-pill:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-pill.active,
+[data-theme="dark"] .lora-promo-pill.active {
+  background: rgba(118, 87, 255, 0.18) !important;
+  border-color: #7657FF !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-promo-free-callout,
+[data-theme="dark"] .lora-promo-free-callout {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  color: #34D399 !important;
+}
+
+.dark .lora-promo-roll-btn,
+[data-theme="dark"] .lora-promo-roll-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-roll-btn:hover,
+[data-theme="dark"] .lora-promo-roll-btn:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-hint,
+[data-theme="dark"] .lora-promo-hint {
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-actions,
+[data-theme="dark"] .lora-promo-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-promo-cancel-btn,
+[data-theme="dark"] .lora-promo-cancel-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-promo-cancel-btn:hover,
+[data-theme="dark"] .lora-promo-cancel-btn:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-promo-submit-btn,
+[data-theme="dark"] .lora-promo-submit-btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
+}
