@@ -2804,6 +2804,29 @@ body.dark-theme .lora-wizard {
   color: #A78BFA !important;
 }
 
+.dark .lora-wizard .st span,
+[data-theme="dark"] .lora-wizard .st span {
+  color: #929BB0 !important;
+}
+
+.dark .lora-wizard .st.cur span,
+.dark .lora-wizard .st.done span,
+[data-theme="dark"] .lora-wizard .st.cur span,
+[data-theme="dark"] .lora-wizard .st.done span {
+  color: #F5F5FA !important;
+  font-weight: 700 !important;
+}
+
+.dark .lora-wizard .track i,
+[data-theme="dark"] .lora-wizard .track i {
+  background: linear-gradient(90deg, #7657FF, #398BFF) !important;
+}
+
+.dark .lora-wizard .mob,
+[data-theme="dark"] .lora-wizard .mob {
+  color: #A78BFA !important;
+}
+
 .dark .lora-wizard .sh h2,
 [data-theme="dark"] .lora-wizard .sh h2 {
   color: #F5F5FA !important;
@@ -2910,6 +2933,451 @@ body.dark-theme .lora-wizard {
 [data-theme="dark"] .lora-wizard .btn.sec:hover {
   background: #1E2642 !important;
   border-color: rgba(118, 87, 255, 0.3) !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   STEP 04: SESSIONS & REVIEW DARK MODE REDESIGN (Create Pack & Edit Pack)
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+/* Section Heading (Course Sessions) */
+.dark .lora-wizard .hd2,
+[data-theme="dark"] .lora-wizard .hd2,
+body.dark-theme .lora-wizard .hd2,
+.dark .lora-edit .hd2,
+[data-theme="dark"] .lora-edit .hd2,
+body.dark-theme .lora-edit .hd2 {
+  font: 800 13px 'Figtree', sans-serif !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: #A78BFA !important;
+  margin: 24px 0 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.dark .lora-wizard .hd2::before,
+[data-theme="dark"] .lora-wizard .hd2::before,
+.dark .lora-edit .hd2::before,
+[data-theme="dark"] .lora-edit .hd2::before {
+  content: '' !important;
+  width: 4px !important;
+  height: 14px !important;
+  border-radius: 4px !important;
+  background: linear-gradient(180deg, #7657FF, #398BFF) !important;
+}
+
+/* Free preview toggle switch box */
+.dark .lora-wizard .sw,
+[data-theme="dark"] .lora-wizard .sw,
+body.dark-theme .lora-wizard .sw,
+.dark .lora-edit .sw,
+[data-theme="dark"] .lora-edit .sw,
+body.dark-theme .lora-edit .sw {
+  background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  padding: 14px 18px !important;
+  color: #F5F5FA !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  cursor: pointer !important;
+}
+
+.dark .lora-wizard .sw:hover,
+[data-theme="dark"] .lora-wizard .sw:hover,
+.dark .lora-edit .sw:hover,
+[data-theme="dark"] .lora-edit .sw:hover {
+  border-color: rgba(118, 87, 255, 0.4) !important;
+  background: #171D33 !important;
+}
+
+.dark .lora-wizard .sw .tg,
+[data-theme="dark"] .lora-wizard .sw .tg,
+.dark .lora-edit .sw .tg,
+[data-theme="dark"] .lora-edit .sw .tg {
+  background: #171D33 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .lora-wizard .sw .tg:after,
+[data-theme="dark"] .lora-wizard .sw .tg:after,
+.dark .lora-edit .sw .tg:after,
+[data-theme="dark"] .lora-edit .sw .tg:after {
+  background: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .lora-wizard .sw input:checked + .tg,
+[data-theme="dark"] .lora-wizard .sw input:checked + .tg,
+.dark .lora-edit .sw input:checked + .tg,
+[data-theme="dark"] .lora-edit .sw input:checked + .tg {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 14px rgba(118, 87, 255, 0.5) !important;
+}
+
+/* Session Cards (Course & Free Preview) */
+.dark .lora-wizard .sess,
+[data-theme="dark"] .lora-wizard .sess,
+body.dark-theme .lora-wizard .sess,
+.dark .lora-edit .sess,
+[data-theme="dark"] .lora-edit .sess,
+body.dark-theme .lora-edit .sess {
+  background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 22px !important;
+  padding: 20px 20px 22px !important;
+  margin-bottom: 18px !important;
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65), 0 0 24px rgba(118, 87, 255, 0.05) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+}
+
+.dark .lora-wizard .sess::before,
+[data-theme="dark"] .lora-wizard .sess::before,
+.dark .lora-edit .sess::before,
+[data-theme="dark"] .lora-edit .sess::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, #7657FF 0%, #398BFF 50%, #A78BFA 100%) !important;
+  opacity: 0.8 !important;
+}
+
+.dark .lora-wizard .sess.free,
+[data-theme="dark"] .lora-wizard .sess.free,
+body.dark-theme .lora-wizard .sess.free,
+.dark .lora-edit .sess.free,
+[data-theme="dark"] .lora-edit .sess.free {
+  background: linear-gradient(145deg, rgba(57, 139, 255, 0.09) 0%, #111629 45%, #0D1020 100%) !important;
+  border-color: rgba(57, 139, 255, 0.35) !important;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 28px rgba(57, 139, 255, 0.12) !important;
+}
+
+.dark .lora-wizard .sess.free::before,
+[data-theme="dark"] .lora-wizard .sess.free::before,
+.dark .lora-edit .sess.free::before,
+[data-theme="dark"] .lora-edit .sess.free::before {
+  background: linear-gradient(90deg, #398BFF 0%, #00D2FF 100%) !important;
+}
+
+.dark .lora-wizard .sess.past,
+[data-theme="dark"] .lora-wizard .sess.past,
+body.dark-theme .lora-wizard .sess.past,
+.dark .lora-edit .sess.past,
+[data-theme="dark"] .lora-edit .sess.past {
+  background: linear-gradient(145deg, rgba(167, 139, 250, 0.09) 0%, #111629 45%, #0D1020 100%) !important;
+  border-color: rgba(167, 139, 250, 0.35) !important;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 28px rgba(124, 58, 237, 0.12) !important;
+}
+
+.dark .lora-wizard .sess.past::before,
+[data-theme="dark"] .lora-wizard .sess.past::before,
+.dark .lora-edit .sess.past::before,
+[data-theme="dark"] .lora-edit .sess.past::before {
+  background: linear-gradient(90deg, #A78BFA 0%, #7657FF 100%) !important;
+}
+
+/* Session Header Row (.sh2) */
+.dark .lora-wizard .sh2,
+[data-theme="dark"] .lora-wizard .sh2,
+.dark .lora-edit .sh2,
+[data-theme="dark"] .lora-edit .sh2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+  flex-wrap: wrap !important;
+}
+
+.dark .lora-wizard .sh2 b,
+[data-theme="dark"] .lora-wizard .sh2 b,
+body.dark-theme .lora-wizard .sh2 b,
+.dark .lora-edit .sh2 b,
+[data-theme="dark"] .lora-edit .sh2 b {
+  color: #F5F5FA !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.dark .lora-wizard .num,
+[data-theme="dark"] .lora-wizard .num,
+body.dark-theme .lora-wizard .num,
+.dark .lora-edit .num,
+[data-theme="dark"] .lora-edit .num {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(118, 87, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  font: 800 13px 'Bricolage Grotesque', sans-serif !important;
+}
+
+.dark .lora-wizard .tag,
+[data-theme="dark"] .lora-wizard .tag,
+body.dark-theme .lora-wizard .tag,
+.dark .lora-edit .tag,
+[data-theme="dark"] .lora-edit .tag {
+  background: linear-gradient(135deg, #398BFF, #7657FF) !important;
+  color: #FFFFFF !important;
+  border-radius: 99px !important;
+  box-shadow: 0 2px 10px rgba(57, 139, 255, 0.35) !important;
+  padding: 4px 12px !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.06em !important;
+}
+
+.dark .lora-wizard .hint,
+[data-theme="dark"] .lora-wizard .hint,
+body.dark-theme .lora-wizard .hint,
+.dark .lora-edit .hint,
+[data-theme="dark"] .lora-edit .hint {
+  color: #929BB0 !important;
+  font-size: 13.5px !important;
+  margin: 0 0 14px !important;
+}
+
+/* Session Type Switcher (Live Upcoming vs Past Recording) - Replaces ugly grey box */
+.dark .lora-wizard .session-type-toggle,
+[data-theme="dark"] .lora-wizard .session-type-toggle,
+body.dark-theme .lora-wizard .session-type-toggle,
+.dark .lora-edit .session-type-toggle,
+[data-theme="dark"] .lora-edit .session-type-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 99px !important;
+  padding: 3px !important;
+  gap: 3px !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .lora-wizard .st-opt,
+[data-theme="dark"] .lora-wizard .st-opt,
+body.dark-theme .lora-wizard .st-opt,
+.dark .lora-edit .st-opt,
+[data-theme="dark"] .lora-edit .st-opt {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+  border-radius: 99px !important;
+  padding: 6px 13px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: #929BB0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.2 !important;
+}
+
+.dark .lora-wizard .st-opt:hover,
+[data-theme="dark"] .lora-wizard .st-opt:hover,
+.dark .lora-edit .st-opt:hover,
+[data-theme="dark"] .lora-edit .st-opt:hover {
+  color: #F5F5FA !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .lora-wizard .st-opt.active.live,
+[data-theme="dark"] .lora-wizard .st-opt.active.live,
+body.dark-theme .lora-wizard .st-opt.active.live,
+.dark .lora-edit .st-opt.active.live,
+[data-theme="dark"] .lora-edit .st-opt.active.live {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+  font-weight: 700 !important;
+}
+
+.dark .lora-wizard .st-opt.active.past,
+[data-theme="dark"] .lora-wizard .st-opt.active.past,
+body.dark-theme .lora-wizard .st-opt.active.past,
+.dark .lora-edit .st-opt.active.past,
+[data-theme="dark"] .lora-edit .st-opt.active.past {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 12px rgba(118, 87, 255, 0.45) !important;
+  font-weight: 700 !important;
+}
+
+.dark .lora-wizard .st-dot.live,
+[data-theme="dark"] .lora-wizard .st-dot.live,
+.dark .lora-edit .st-dot.live,
+[data-theme="dark"] .lora-edit .st-dot.live {
+  background: #EF4444 !important;
+  box-shadow: 0 0 8px #EF4444, 0 0 14px rgba(239, 68, 68, 0.6) !important;
+}
+
+/* Delete Session Button */
+.dark .lora-wizard .del,
+[data-theme="dark"] .lora-wizard .del,
+body.dark-theme .lora-wizard .del,
+.dark .lora-edit .del,
+[data-theme="dark"] .lora-edit .del {
+  margin-left: auto !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #F87171 !important;
+  cursor: pointer !important;
+  display: grid !important;
+  place-items: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.dark .lora-wizard .del:hover,
+[data-theme="dark"] .lora-wizard .del:hover,
+.dark .lora-edit .del:hover,
+[data-theme="dark"] .lora-edit .del:hover {
+  background: #EF4444 !important;
+  color: #FFFFFF !important;
+  border-color: #EF4444 !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Inputs & Forms inside Session cards */
+.dark .lora-wizard .sess input,
+.dark .lora-wizard .sess select,
+.dark .lora-wizard .sess textarea,
+[data-theme="dark"] .lora-wizard .sess input,
+[data-theme="dark"] .lora-wizard .sess select,
+[data-theme="dark"] .lora-wizard .sess textarea,
+.dark .lora-edit .sess input,
+.dark .lora-edit .sess select,
+.dark .lora-edit .sess textarea,
+[data-theme="dark"] .lora-edit .sess input,
+[data-theme="dark"] .lora-edit .sess select,
+[data-theme="dark"] .lora-edit .sess textarea {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  color-scheme: dark !important;
+}
+
+.dark .lora-wizard .sess input:focus,
+.dark .lora-wizard .sess select:focus,
+.dark .lora-wizard .sess textarea:focus,
+[data-theme="dark"] .lora-wizard .sess input:focus,
+[data-theme="dark"] .lora-wizard .sess select:focus,
+[data-theme="dark"] .lora-wizard .sess textarea:focus,
+.dark .lora-edit .sess input:focus,
+.dark .lora-edit .sess select:focus,
+.dark .lora-edit .sess textarea:focus,
+[data-theme="dark"] .lora-edit .sess input:focus,
+[data-theme="dark"] .lora-edit .sess select:focus,
+[data-theme="dark"] .lora-edit .sess textarea:focus {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 4px rgba(118, 87, 255, 0.22) !important;
+}
+
+/* Luminous Catch-up and Free Preview helper badges */
+.dark .lora-wizard .sess small,
+[data-theme="dark"] .lora-wizard .sess small,
+.dark .lora-edit .sess small,
+[data-theme="dark"] .lora-edit .sess small {
+  color: #A78BFA !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+  margin-top: 6px !important;
+}
+
+.dark .lora-wizard .sess.free small,
+[data-theme="dark"] .lora-wizard .sess.free small,
+.dark .lora-edit .sess.free small,
+[data-theme="dark"] .lora-edit .sess.free small {
+  color: #34D399 !important;
+}
+
+/* Add another session button */
+.dark .lora-wizard .add,
+[data-theme="dark"] .lora-wizard .add,
+body.dark-theme .lora-wizard .add,
+.dark .lora-edit .add,
+[data-theme="dark"] .lora-edit .add,
+body.dark-theme .lora-edit .add {
+  width: 100% !important;
+  min-height: 54px !important;
+  border: 1.5px dashed rgba(118, 87, 255, 0.45) !important;
+  background: rgba(17, 22, 41, 0.75) !important;
+  border-radius: 18px !important;
+  color: #A78BFA !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+  cursor: pointer !important;
+}
+
+.dark .lora-wizard .add:hover,
+[data-theme="dark"] .lora-wizard .add:hover,
+.dark .lora-edit .add:hover,
+[data-theme="dark"] .lora-edit .add:hover {
+  background: rgba(118, 87, 255, 0.15) !important;
+  border-color: #7657FF !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Review Step session row items (.ri) */
+.dark .lora-wizard .ri,
+[data-theme="dark"] .lora-wizard .ri,
+body.dark-theme .lora-wizard .ri,
+.dark .lora-edit .ri,
+[data-theme="dark"] .lora-edit .ri {
+  background: #0D1020 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  padding: 14px 16px !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 8px !important;
+}
+
+.dark .lora-wizard .ri b,
+[data-theme="dark"] .lora-wizard .ri b {
+  color: #F5F5FA !important;
+  font-weight: 600 !important;
+}
+
+.dark .lora-wizard .ri small,
+[data-theme="dark"] .lora-wizard .ri small {
+  color: #929BB0 !important;
 }
 
 /* Guided Smart Setup Questionnaire Modal & See More Arrows */
