@@ -439,7 +439,7 @@ export function ShareMenu({ url, title, thumbnail, subtitle, creatorName, price,
           e.stopPropagation();
           setIsOpen(true);
         }}
-        className="w-10 h-10 bg-white border border-[#E2E8F0] rounded-full flex items-center justify-center text-[#64748B] hover:text-[#2563EB] hover:border-[#2563EB] transition-colors shadow-sm relative z-10"
+        className="lora-share-trigger-btn w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm relative z-10"
         aria-label="Share"
       >
         <Share2 size={18} />

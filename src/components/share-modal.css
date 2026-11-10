@@ -501,3 +501,231 @@
     transition: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   SHARE TRIGGER BUTTON (CIRCULAR ICON)
+   ══════════════════════════════════════════════════════ */
+.lora-share-trigger-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lora-share-trigger-btn:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  background: #f8fafc;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+.lora-share-trigger-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* ── DARK THEME: SHARE TRIGGER BUTTON & SHARE MODAL ── */
+.dark .lora-share-trigger-btn,
+[data-theme="dark"] .lora-share-trigger-btn {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #929BB0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .lora-share-trigger-btn:hover,
+[data-theme="dark"] .lora-share-trigger-btn:hover {
+  background: #171D33 !important;
+  color: #A78BFA !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.3) !important;
+  transform: translateY(-1.5px) scale(1.05) !important;
+}
+
+.dark .lora-share-trigger-btn:active,
+[data-theme="dark"] .lora-share-trigger-btn:active {
+  transform: translateY(0) scale(0.95) !important;
+}
+
+/* Dark Share Modal Container */
+.dark .lora-share .modal,
+[data-theme="dark"] .lora-share .modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.85) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .hd h2,
+[data-theme="dark"] .lora-share .hd h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .hd p,
+[data-theme="dark"] .lora-share .hd p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-share .x,
+[data-theme="dark"] .lora-share .x {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-share .x:hover,
+[data-theme="dark"] .lora-share .x:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+/* Dark Course Preview Strip */
+.dark .lora-share .pv,
+[data-theme="dark"] .lora-share .pv {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-share .pv b,
+[data-theme="dark"] .lora-share .pv b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .pv small,
+[data-theme="dark"] .lora-share .pv small {
+  color: #929BB0 !important;
+}
+
+/* Dark Social Channels */
+.dark .lora-share .c,
+[data-theme="dark"] .lora-share .c {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .wa .t,
+[data-theme="dark"] .lora-share .wa .t {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+}
+
+.dark .lora-share .tg .t,
+[data-theme="dark"] .lora-share .tg .t {
+  background: rgba(56, 189, 248, 0.16) !important;
+  color: #38BDF8 !important;
+}
+
+.dark .lora-share .tw .t,
+[data-theme="dark"] .lora-share .tw .t {
+  background: rgba(118, 87, 255, 0.16) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-share .ig .t,
+[data-theme="dark"] .lora-share .ig .t {
+  background: rgba(244, 114, 182, 0.16) !important;
+  color: #F472B6 !important;
+}
+
+.dark .lora-share .wa:hover .t,
+[data-theme="dark"] .lora-share .wa:hover .t {
+  background: #10B981 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-share .tg:hover .t,
+[data-theme="dark"] .lora-share .tg:hover .t {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-share .tw:hover .t,
+[data-theme="dark"] .lora-share .tw:hover .t {
+  background: #7657FF !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-share .ig:hover .t,
+[data-theme="dark"] .lora-share .ig:hover .t {
+  background: linear-gradient(45deg, #f59e0b, #ec4899, #8b5cf6) !important;
+  color: #FFFFFF !important;
+}
+
+/* Dark Divider */
+.dark .lora-share .or,
+[data-theme="dark"] .lora-share .or {
+  color: #64748B !important;
+}
+
+.dark .lora-share .or:before,
+.dark .lora-share .or:after,
+[data-theme="dark"] .lora-share .or:before,
+[data-theme="dark"] .lora-share .or:after {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dark Copy Link Box */
+.dark .lora-share .copy,
+[data-theme="dark"] .lora-share .copy {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-share .copy:focus-within,
+[data-theme="dark"] .lora-share .copy:focus-within {
+  border-color: #7657FF !important;
+  background: #0D1020 !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.2) !important;
+}
+
+.dark .lora-share .copy .ic,
+[data-theme="dark"] .lora-share .copy .ic {
+  color: #929BB0 !important;
+}
+
+.dark .lora-share .copy input,
+[data-theme="dark"] .lora-share .copy input {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .cp,
+[data-theme="dark"] .lora-share .cp {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(118, 87, 255, 0.35) !important;
+}
+
+.dark .lora-share .cp:hover,
+[data-theme="dark"] .lora-share .cp:hover {
+  box-shadow: 0 6px 18px rgba(118, 87, 255, 0.5) !important;
+}
+
+.dark .lora-share .cp.done,
+[data-theme="dark"] .lora-share .cp.done {
+  background: #10B981 !important;
+}
+
+.dark .lora-share .grip,
+[data-theme="dark"] .lora-share .grip {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .lora-share .more,
+[data-theme="dark"] .lora-share .more {
+  background: #171D33 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-share .more:hover,
+[data-theme="dark"] .lora-share .more:hover {
+  border-color: #7657FF !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-share .toast,
+[data-theme="dark"] .lora-share .toast {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}

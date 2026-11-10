@@ -707,6 +707,100 @@ body.dark-theme::before {
   color: #F5F5FA !important;
 }
 
+/* Learner Dashboard Cards & Elements in Dark Mode */
+.dark .lora-learner .card,
+[data-theme="dark"] .lora-learner .card {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .card.course:hover,
+[data-theme="dark"] .lora-learner .card.course:hover {
+  border-color: rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 20px 50px -10px rgba(118, 87, 255, 0.22) !important;
+}
+
+.dark .lora-learner .empty,
+[data-theme="dark"] .lora-learner .empty {
+  background: radial-gradient(500px 220px at 50% 0, rgba(118, 87, 255, 0.14), transparent 70%), #111629 !important;
+  border: 1px dashed rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .lora-learner .empty .ring,
+[data-theme="dark"] .lora-learner .empty .ring {
+  background: #171D33 !important;
+  color: #A78BFA !important;
+  box-shadow: 0 0 0 12px rgba(118, 87, 255, 0.1) !important;
+}
+
+.dark .lora-learner .empty h3,
+[data-theme="dark"] .lora-learner .empty h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .empty p,
+[data-theme="dark"] .lora-learner .empty p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-learner .cb h3,
+[data-theme="dark"] .lora-learner .cb h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .by,
+[data-theme="dark"] .lora-learner .by {
+  color: #929BB0 !important;
+}
+
+.dark .lora-learner .price,
+[data-theme="dark"] .lora-learner .price {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .card-alert,
+[data-theme="dark"] .lora-learner .card-alert {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .card-alert-code,
+[data-theme="dark"] .lora-learner .card-alert-code {
+  background: #080A12 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-learner .card-alert-copy,
+[data-theme="dark"] .lora-learner .card-alert-copy {
+  background: #1F2847 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-learner .card-alert-copy:hover,
+[data-theme="dark"] .lora-learner .card-alert-copy:hover {
+  background: #7657FF !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-learner .bell,
+[data-theme="dark"] .lora-learner .bell {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-learner .bell:hover,
+[data-theme="dark"] .lora-learner .bell:hover {
+  background: #1F2847 !important;
+  color: #A78BFA !important;
+  border-color: #7657FF !important;
+}
+
 /* ── 10. MY PACKS STUDIO (.mpk-container) ── */
 [data-theme="dark"] .mpk-container,
 .dark .mpk-container {
@@ -1424,12 +1518,30 @@ body.dark-theme .lora-guide .lg-hero-badge {
 
 .dark .lora-reviews-summary-card,
 .dark .lora-review-card,
-.dark .lora-write-review-card {
+.dark .lora-review-write-box,
+.dark .lora-write-review-card,
+[data-theme="dark"] .lora-reviews-summary-card,
+[data-theme="dark"] .lora-review-card,
+[data-theme="dark"] .lora-review-write-box {
   background: #111629 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 20px !important;
+  border-radius: 16px !important;
   box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65) !important;
   color: #F5F5FA !important;
+}
+
+.dark .lora-review-textarea,
+[data-theme="dark"] .lora-review-textarea {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-review-textarea:focus,
+[data-theme="dark"] .lora-review-textarea:focus {
+  background: #0D1020 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.2) !important;
 }
 
 .dark .lora-reviews-score-col {
@@ -1452,18 +1564,36 @@ body.dark-theme .lora-guide .lg-hero-badge {
   color: #929BB0 !important;
 }
 
-.dark .lora-reviews-verified-tag {
+.dark .lora-reviews-verified-tag,
+.dark .lora-verified-pill,
+[data-theme="dark"] .lora-verified-pill {
   background: rgba(16, 185, 129, 0.16) !important;
   color: #34D399 !important;
   border: 1px solid rgba(16, 185, 129, 0.25) !important;
 }
 
+.dark .lora-reviewer-name,
 .dark .lora-review-card-author b {
   color: #F5F5FA !important;
 }
 
+.dark .lora-review-body,
 .dark .lora-review-card-text {
+  color: #D1D5DB !important;
+}
+
+.dark .lora-reviews-pill,
+[data-theme="dark"] .lora-reviews-pill {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #929BB0 !important;
+}
+
+.dark .lora-reviews-sort-select,
+[data-theme="dark"] .lora-reviews-sort-select {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
 }
 
 /* ── 16.4 CREATOR REPORTS DEEP CINEMATIC STYLING ── */

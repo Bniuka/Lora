@@ -1254,3 +1254,222 @@
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #F5F5FA !important;
 }
+
+/* ══════════════════════════════════════════════════════
+   TRUST BAR & DISPUTE DESK (LIGHT & DARK THEMES)
+   ══════════════════════════════════════════════════════ */
+.lora-course .pack-trust-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 14px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.lora-course .pack-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.lora-course .pack-trust-pill.fast {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.lora-course .pack-trust-pill.bank {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.lora-course .pack-trust-pill.content {
+  color: #6d28d9;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+}
+
+.lora-course .pack-trust-report-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 3px 6px;
+  text-decoration: underline;
+  transition: color 0.18s ease;
+}
+
+.lora-course .pack-trust-report-btn:hover {
+  color: #ef4444;
+}
+
+/* Dispute Desk Card */
+.lora-course .pack-dispute-card {
+  padding: 14px !important;
+  border-radius: 14px !important;
+  border: 1px dashed #cbd5e1 !important;
+  background: #fafafa !important;
+  margin-top: 12px !important;
+  box-shadow: none !important;
+}
+
+.lora-course .pack-dispute-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.lora-course .pack-dispute-shield-icon {
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.lora-course .pack-dispute-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.lora-course .pack-dispute-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+/* Dispute Desk Button */
+.lora-course .pack-dispute-btn {
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 9px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.lora-course .pack-dispute-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.lora-course .pack-dispute-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.lora-course .pack-dispute-alert-icon {
+  color: #ef4444;
+  flex-shrink: 0;
+}
+
+/* ── DARK THEME FOR DISPUTE DESK & TRUST BAR ── */
+.dark .lora-course .pack-trust-bar,
+[data-theme="dark"] .lora-course .pack-trust-bar {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-course .pack-trust-pill.fast,
+[data-theme="dark"] .lora-course .pack-trust-pill.fast {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.28) !important;
+  color: #34d399 !important;
+}
+
+.dark .lora-course .pack-trust-pill.bank,
+[data-theme="dark"] .lora-course .pack-trust-pill.bank {
+  background: rgba(57, 139, 255, 0.12) !important;
+  border: 1px solid rgba(57, 139, 255, 0.28) !important;
+  color: #60a5fa !important;
+}
+
+.dark .lora-course .pack-trust-pill.content,
+[data-theme="dark"] .lora-course .pack-trust-pill.content {
+  background: rgba(118, 87, 255, 0.12) !important;
+  border: 1px solid rgba(118, 87, 255, 0.28) !important;
+  color: #a78bfa !important;
+}
+
+.dark .lora-course .pack-trust-report-btn,
+[data-theme="dark"] .lora-course .pack-trust-report-btn {
+  color: #929bb0 !important;
+}
+
+.dark .lora-course .pack-trust-report-btn:hover,
+[data-theme="dark"] .lora-course .pack-trust-report-btn:hover {
+  color: #f87171 !important;
+}
+
+/* Dark Dispute Desk Card */
+.dark .lora-course .pack-dispute-card,
+[data-theme="dark"] .lora-course .pack-dispute-card {
+  background: #111629 !important;
+  border: 1px dashed rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.45) !important;
+}
+
+.dark .lora-course .pack-dispute-title,
+[data-theme="dark"] .lora-course .pack-dispute-title {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-course .pack-dispute-desc,
+[data-theme="dark"] .lora-course .pack-dispute-desc {
+  color: #929BB0 !important;
+}
+
+/* Dark Dispute Desk Button */
+.dark .lora-course .pack-dispute-btn,
+[data-theme="dark"] .lora-course .pack-dispute-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #F5F5FA !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark .lora-course .pack-dispute-btn:hover,
+[data-theme="dark"] .lora-course .pack-dispute-btn:hover {
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.18), rgba(57, 139, 255, 0.18)) !important;
+  border-color: #7657FF !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 20px rgba(118, 87, 255, 0.28) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.dark .lora-course .pack-dispute-btn:active,
+[data-theme="dark"] .lora-course .pack-dispute-btn:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+.dark .lora-course .pack-dispute-alert-icon,
+[data-theme="dark"] .lora-course .pack-dispute-alert-icon {
+  color: #f87171 !important;
+}

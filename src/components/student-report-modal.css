@@ -325,3 +325,157 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* ══════════════════════════════════════════════════════
+   DARK THEME: STUDENT REPORT & DISPUTE MODAL
+   ══════════════════════════════════════════════════════ */
+.dark .lora-report-modal,
+[data-theme="dark"] .lora-report-modal {
+  background: #111629 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.85) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-report-modal-hd,
+[data-theme="dark"] .lora-report-modal-hd {
+  background: linear-gradient(180deg, #171D33 0%, #111629 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-report-modal-title h3,
+[data-theme="dark"] .lora-report-modal-title h3 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-report-modal-title p,
+[data-theme="dark"] .lora-report-modal-title p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-report-close,
+[data-theme="dark"] .lora-report-close {
+  background: #171D33 !important;
+  color: #929BB0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-report-close:hover,
+[data-theme="dark"] .lora-report-close:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-report-target-badge,
+[data-theme="dark"] .lora-report-target-badge {
+  background: rgba(118, 87, 255, 0.12) !important;
+  border-bottom: 1px solid rgba(118, 87, 255, 0.2) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-report-target-badge .dot,
+[data-theme="dark"] .lora-report-target-badge .dot {
+  background: #7657FF !important;
+  box-shadow: 0 0 8px rgba(118, 87, 255, 0.6) !important;
+}
+
+.dark .lora-report-form .field-lbl,
+[data-theme="dark"] .lora-report-form .field-lbl {
+  color: #929BB0 !important;
+}
+
+.dark .report-type-card,
+[data-theme="dark"] .report-type-card {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .report-type-card .card-lbl,
+[data-theme="dark"] .report-type-card .card-lbl {
+  color: #F5F5FA !important;
+}
+
+.dark .report-type-card:hover,
+[data-theme="dark"] .report-type-card:hover {
+  background: #1F2847 !important;
+  border-color: rgba(118, 87, 255, 0.4) !important;
+}
+
+.dark .report-type-card.active,
+[data-theme="dark"] .report-type-card.active {
+  background: rgba(118, 87, 255, 0.16) !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.25) !important;
+}
+
+.dark .report-slip-fields,
+[data-theme="dark"] .report-slip-fields {
+  background: #171D33 !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.dark .lora-report-form .form-group label,
+[data-theme="dark"] .lora-report-form .form-group label {
+  color: #929BB0 !important;
+}
+
+.dark .lora-report-form .form-group input,
+.dark .lora-report-form .form-group textarea,
+[data-theme="dark"] .lora-report-form .form-group input,
+[data-theme="dark"] .lora-report-form .form-group textarea {
+  background: #080A12 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-report-form .form-group input:focus,
+.dark .lora-report-form .form-group textarea:focus,
+[data-theme="dark"] .lora-report-form .form-group input:focus,
+[data-theme="dark"] .lora-report-form .form-group textarea:focus {
+  background: #0D1020 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 0 0 3px rgba(118, 87, 255, 0.2) !important;
+}
+
+.dark .report-actions .btn-cancel,
+[data-theme="dark"] .report-actions .btn-cancel {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #929BB0 !important;
+}
+
+.dark .report-actions .btn-cancel:hover,
+[data-theme="dark"] .report-actions .btn-cancel:hover {
+  background: #1F2847 !important;
+  color: #F5F5FA !important;
+}
+
+.dark .report-actions .btn-submit,
+[data-theme="dark"] .report-actions .btn-submit {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
+}
+
+.dark .report-actions .btn-submit:hover:not(:disabled),
+[data-theme="dark"] .report-actions .btn-submit:hover:not(:disabled) {
+  box-shadow: 0 12px 28px -4px rgba(118, 87, 255, 0.65) !important;
+  filter: brightness(1.06) !important;
+}
+
+.dark .lora-report-success h4,
+[data-theme="dark"] .lora-report-success h4 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-report-success p,
+[data-theme="dark"] .lora-report-success p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-report-success .btn-done,
+[data-theme="dark"] .lora-report-success .btn-done {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
+}
