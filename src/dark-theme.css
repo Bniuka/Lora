@@ -3898,6 +3898,31 @@ body.dark-theme .lora-wizard .ri,
     transform: none !important;
     box-shadow: 0 4px 16px rgba(118, 87, 255, 0.45) !important;
   }
+
+  /* Mobile Creator Dashboard Fluid Containers */
+  .dark .lora-dash .cols,
+  .dark .lora-dash .side,
+  [data-theme="dark"] .lora-dash .cols,
+  [data-theme="dark"] .lora-dash .side {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .dark .lora-dash .sec,
+  .dark .lora-dash .qs a,
+  .dark .lora-dash .pack-mini,
+  .dark .lora-dash .feed li,
+  [data-theme="dark"] .lora-dash .sec,
+  [data-theme="dark"] .lora-dash .qs a,
+  [data-theme="dark"] .lora-dash .pack-mini,
+  [data-theme="dark"] .lora-dash .feed li {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
 }
 
 

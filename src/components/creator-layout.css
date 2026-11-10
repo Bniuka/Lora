@@ -597,7 +597,9 @@
     border-top: 1px solid var(--line) !important;
     box-shadow: 0 -4px 16px rgba(14, 23, 51, 0.06) !important;
     overflow-y: visible !important;
-    overflow-x: visible !important;
+    overflow-x: auto !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
   }
   .lora-creator .logo,
   .lora-creator .tip {
