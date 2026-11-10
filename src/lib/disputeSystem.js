@@ -38,12 +38,14 @@ export const REPORT_TYPES = {
 
 /**
  * Submits a student report / dispute.
+ * Persists locally and syncs to Supabase notifications so creators and founders receive it immediately across devices.
  * Also checks if the 3+ student Classroom SOS threshold is met to trigger immediate alert.
  */
 export async function submitStudentReport({
   studentId,
   studentName,
   studentEmail,
+  studentPhone,
   creatorId,
   packId,
   packTitle,
@@ -62,6 +64,7 @@ export async function submitStudentReport({
     student_id: studentId,
     student_name: studentName || 'Student',
     student_email: studentEmail || 'student@loraspace.com',
+    student_phone: studentPhone || '',
     creator_id: creatorId,
     pack_id: packId,
     pack_title: packTitle,
@@ -103,7 +106,7 @@ export async function submitStudentReport({
           {
             user_id: creatorId,
             title: `🚨 URGENT: ${recentSosReports.length} Students Reported Live Link Issue!`,
-            message: `Multiple students cannot access the live stream for "${sessionTitle}" in "${packTitle}". Please verify your Zoom / YouTube meeting link immediately!`,
+            message: `Multiple students cannot access the live stream for "${sessionTitle}" in "${packTitle}". Please verify your Zoom / YouTube meeting link immediately!\n\n<!--DISPUTE_DATA:${JSON.stringify(newReport)}-->`,
             is_read: false,
             created_at: timestamp,
           },
@@ -114,7 +117,7 @@ export async function submitStudentReport({
     }
   }
 
-  // 4. Send standard notification to Creator
+  // 4. Send standard notification with structured payload to Creator
   try {
     const titleText =
       reportType === 'slip_appeal'
@@ -123,11 +126,13 @@ export async function submitStudentReport({
         ? `⏳ Recording Reminder for "${sessionTitle}"`
         : `⚠️ Student Issue Reported: ${sessionTitle}`;
 
+    const payloadMarker = `<!--DISPUTE_DATA:${JSON.stringify(newReport)}-->`;
+
     await supabase.from('notifications').insert([
       {
         user_id: creatorId,
         title: titleText,
-        message: `${studentName} reported an issue in "${packTitle}": ${issueDetails.slice(0, 100)}... Open your Creator Reports Desk to respond.`,
+        message: `${studentName} reported an issue in "${packTitle}": ${issueDetails.slice(0, 100)}... Open your Creator Reports Desk to respond.\n\n${payloadMarker}`,
         is_read: false,
         created_at: timestamp,
       },
@@ -141,9 +146,39 @@ export async function submitStudentReport({
 
 /**
  * Gets reports for a specific creator (for Creator Reports Desk).
+ * Parses both Supabase notifications and student_reports table + local storage.
  */
-export async function getCreatorReports(creatorId) {
+export async function getCreatorReports(creatorId, packIds = []) {
   let remoteReports = [];
+
+  // 1. Fetch remote notifications containing dispute data
+  try {
+    const { data: notifs, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', creatorId)
+      .order('created_at', { ascending: false });
+
+    if (!error && notifs) {
+      notifs.forEach(n => {
+        if (!n.message) return;
+        const match = n.message.match(/<!--DISPUTE_DATA:(.*?)-->/s);
+        if (match) {
+          try {
+            const parsed = JSON.parse(match[1]);
+            parsed.notification_id = n.id;
+            remoteReports.push(parsed);
+          } catch {
+            // ignore malformed
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.debug('[DisputeSystem] Remote notification dispute fetch failed:', err);
+  }
+
+  // 2. Fetch from student_reports table if it exists
   try {
     const { data, error } = await supabase
       .from('student_reports')
@@ -151,15 +186,29 @@ export async function getCreatorReports(creatorId) {
       .eq('creator_id', creatorId)
       .order('created_at', { ascending: false });
     if (!error && data) {
-      remoteReports = data;
+      remoteReports.push(...data);
     }
-  } catch (err) {
-    console.debug('[DisputeSystem] Remote fetch failed:', err);
+  } catch {
+    // table may not exist
   }
 
-  const localReports = getLocalReports().filter(r => r.creator_id === creatorId);
+  // 3. Merge with local reports
+  const localReports = getLocalReports().filter(r => 
+    r.creator_id === creatorId || (r.pack_id && packIds.includes(r.pack_id))
+  );
   const map = new Map();
-  [...localReports, ...remoteReports].forEach(r => map.set(r.id, r));
+
+  [...remoteReports, ...localReports].forEach(r => {
+    if (map.has(r.id)) {
+      const existing = map.get(r.id);
+      // Prioritize resolved/dismissed status over open
+      if (existing.status === 'resolved' || existing.status === 'dismissed') {
+        return;
+      }
+    }
+    map.set(r.id, r);
+  });
+
   return Array.from(map.values()).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
@@ -168,44 +217,110 @@ export async function getCreatorReports(creatorId) {
  */
 export async function getAllReportsForFounder() {
   let remoteReports = [];
+
+  try {
+    const { data: notifs, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && notifs) {
+      notifs.forEach(n => {
+        if (!n.message) return;
+        const match = n.message.match(/<!--DISPUTE_DATA:(.*?)-->/s);
+        if (match) {
+          try {
+            const parsed = JSON.parse(match[1]);
+            parsed.notification_id = n.id;
+            remoteReports.push(parsed);
+          } catch {}
+        }
+      });
+    }
+  } catch (err) {
+    console.debug('[DisputeSystem] Remote fetch skipped:', err);
+  }
+
   try {
     const { data, error } = await supabase
       .from('student_reports')
       .select('*')
       .order('created_at', { ascending: false });
     if (!error && data) {
-      remoteReports = data;
+      remoteReports.push(...data);
     }
-  } catch (err) {
-    console.debug('[DisputeSystem] Remote fetch skipped:', err);
+  } catch {
+    // table may not exist
   }
 
   const localReports = getLocalReports();
   const map = new Map();
-  [...localReports, ...remoteReports].forEach(r => map.set(r.id, r));
+
+  [...remoteReports, ...localReports].forEach(r => {
+    if (map.has(r.id)) {
+      const existing = map.get(r.id);
+      if (existing.status === 'resolved' || existing.status === 'dismissed') {
+        return;
+      }
+    }
+    map.set(r.id, r);
+  });
+
   return Array.from(map.values()).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
 /**
- * Resolves a student report (by Creator or Founder).
+ * Resolves a student report (by Creator or Founder) and dispatches a direct notification to the student.
  */
 export async function resolveStudentReport({ reportId, resolutionStatus, notes, actorEmail }) {
+  let resolvedReport = null;
+
+  // 1. Update local storage
   const reports = getLocalReports();
   const updated = reports.map(r => {
     if (r.id === reportId) {
-      return {
+      resolvedReport = {
         ...r,
         status: resolutionStatus, // 'resolved', 'dismissed'
         resolution_notes: notes || 'Resolved by creator.',
         resolved_at: new Date().toISOString(),
         resolved_by: actorEmail,
       };
+      return resolvedReport;
     }
     return r;
   });
   saveLocalReports(updated);
 
-  // Update Supabase if available
+  // 2. Update Supabase notifications message payload
+  try {
+    const { data: notifs } = await supabase
+      .from('notifications')
+      .select('*')
+      .ilike('message', `%${reportId}%`);
+
+    if (notifs && notifs.length > 0) {
+      for (const n of notifs) {
+        const match = n.message.match(/<!--DISPUTE_DATA:(.*?)-->/s);
+        if (match) {
+          try {
+            const parsed = JSON.parse(match[1]);
+            parsed.status = resolutionStatus;
+            parsed.resolution_notes = notes || 'Resolved by creator.';
+            parsed.resolved_at = new Date().toISOString();
+            parsed.resolved_by = actorEmail;
+            const newMsg = n.message.replace(/<!--DISPUTE_DATA:.*?-->/s, `<!--DISPUTE_DATA:${JSON.stringify(parsed)}-->`);
+            await supabase.from('notifications').update({ message: newMsg, is_read: true }).eq('id', n.id);
+            resolvedReport = resolvedReport || parsed;
+          } catch {}
+        }
+      }
+    }
+  } catch (err) {
+    console.debug('[DisputeSystem] Notification update error:', err);
+  }
+
+  // 3. Update Supabase table if available
   try {
     await supabase
       .from('student_reports')
@@ -220,7 +335,84 @@ export async function resolveStudentReport({ reportId, resolutionStatus, notes, 
     console.debug('[DisputeSystem] Remote update skipped:', e);
   }
 
+  // 4. Notify the student directly in their Supabase notification bell
+  if (resolvedReport && resolvedReport.student_id && resolvedReport.student_id !== 'guest') {
+    try {
+      const isApproved = resolutionStatus === 'resolved';
+      await supabase.from('notifications').insert([
+        {
+          user_id: resolvedReport.student_id,
+          title: isApproved
+            ? `Dispute Resolved! 🎉 (${resolvedReport.pack_title})`
+            : `Dispute Closed: ${resolvedReport.pack_title}`,
+          message: isApproved
+            ? `Good news! Your instructor reviewed your issue regarding "${resolvedReport.session_title || resolvedReport.pack_title}" and marked it as RESOLVED. Note: ${notes || 'Issue has been addressed.'}`
+            : `Your dispute regarding "${resolvedReport.session_title || resolvedReport.pack_title}" was closed with note: ${notes || 'Dismissed by instructor.'}`,
+          is_read: false,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    } catch (notifErr) {
+      console.debug('[DisputeSystem] Student resolution notification failed:', notifErr);
+    }
+  }
+
   return true;
+}
+
+/**
+ * Direct Slip Verification & Student Activation from the Dispute Desk.
+ */
+export async function verifySlipAndActivateStudent({ report, actorEmail }) {
+  let enrollmentUpdated = false;
+
+  // 1. Update enrollment in Supabase to active
+  try {
+    if (report.pack_id && report.student_id && report.student_id !== 'guest') {
+      // Update enrollment to confirmed/active with confirmed_at timestamp
+      const { data, error } = await supabase
+        .from('enrollments')
+        .update({
+          status: 'confirmed',
+          confirmed_at: new Date().toISOString(),
+        })
+        .eq('pack_id', report.pack_id)
+        .eq('learner_id', report.student_id);
+
+      if (!error) {
+        enrollmentUpdated = true;
+      }
+    }
+  } catch (err) {
+    console.debug('[DisputeSystem] Enrollment update error:', err);
+  }
+
+  // 2. Resolve the report
+  await resolveStudentReport({
+    reportId: report.id,
+    resolutionStatus: 'resolved',
+    notes: `Bank slip verified & student enrolled directly from Dispute Desk by ${actorEmail || 'Creator'}.`,
+    actorEmail,
+  });
+
+  // 3. Send celebratory active enrollment notification to student
+  if (report.student_id && report.student_id !== 'guest') {
+    try {
+      await supabase.from('notifications').insert([
+        {
+          user_id: report.student_id,
+          title: `Slip Verified & Access Granted! 🎉 (${report.pack_title})`,
+          message: `Your payment slip appeal has been approved by your instructor. Your course "${report.pack_title}" is now active and ready to access!`,
+          is_read: false,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    } catch (e) {
+      console.debug('[DisputeSystem] Student activation notification failed:', e);
+    }
+  }
+
+  return { success: true, enrollmentUpdated };
 }
 
 // ─── Local Storage Helpers ───

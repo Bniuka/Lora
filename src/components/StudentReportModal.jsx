@@ -44,6 +44,7 @@ export default function StudentReportModal({
         studentId: user?.id || 'guest',
         studentName: `${profile?.first_name || 'Student'} ${profile?.last_name || ''}`.trim(),
         studentEmail: user?.email || 'student@loraspace.com',
+        studentPhone: profile?.contact_number || profile?.phone || user?.phone || '',
         creatorId: pack?.creator_id,
         packId: pack?.id,
         packTitle: pack?.title || 'Course Pack',
