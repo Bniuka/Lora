@@ -35,18 +35,33 @@
 }
 
 /* ── 2. BASE BODY & ATMOSPHERIC AMBIENT BACKGROUNDS ── */
-html.dark,
+html.dark {
+  background-color: #080A12 !important;
+}
+
 body.dark-theme {
+  background: transparent !important;
+  color: #F5F5FA !important;
+  font-family: 'Figtree', system-ui, -apple-system, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* GPU-composited static ambient layer — eliminates scroll repaints on mobile & desktop */
+body.dark-theme::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
   background-color: #080A12 !important;
   background-image: 
     radial-gradient(900px 560px at 10% -5%, rgba(118, 87, 255, 0.16), transparent 70%),
     radial-gradient(850px 520px at 90% 25%, rgba(57, 139, 255, 0.14), transparent 70%),
     radial-gradient(750px 600px at 50% 85%, rgba(167, 139, 250, 0.08), transparent 70%) !important;
-  background-attachment: fixed !important;
-  color: #F5F5FA !important;
-  font-family: 'Figtree', system-ui, -apple-system, sans-serif !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  will-change: transform !important;
 }
 
 /* Subtle cinematic noise overlay simulation via radial blends */
@@ -195,8 +210,7 @@ body.dark-theme {
 .dark .ld-pill,
 .dark .lora-theme-pill,
 .dark .cta.line {
-  background: rgba(23, 29, 51, 0.75) !important;
-  backdrop-filter: blur(12px) !important;
+  background: #171D33 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #F5F5FA !important;
   border-radius: 14px !important;
@@ -319,8 +333,7 @@ body.dark-theme {
 
 /* Payment pill tags */
 .dark .lora-home .pills span {
-  background: rgba(23, 29, 51, 0.8) !important;
-  backdrop-filter: blur(12px) !important;
+  background: #171D33 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #F5F5FA !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
@@ -2657,7 +2670,7 @@ body.dark-theme .lora-wizard {
   background: radial-gradient(720px 420px at 0 0, rgba(118, 87, 255, 0.12), transparent 70%),
               radial-gradient(640px 420px at 100% 35%, rgba(57, 139, 255, 0.08), transparent 70%),
               #080A12 !important;
-  background-attachment: fixed !important;
+  background-attachment: scroll !important;
 }
 
 .dark .lora-wizard .card,
@@ -3172,5 +3185,79 @@ body.dark-theme .lora-wizard {
   border: none !important;
   box-shadow: 0 4px 18px rgba(118, 87, 255, 0.45) !important;
 }
+
+/* ══════════════════════════════════════════════════════
+   MOBILE PERFORMANCE & VIEWPORT FIXES FOR DARK THEME
+   ══════════════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+  /* Remove heavy multi-pass backdrop blur on mobile dark surfaces */
+  .dark header,
+  .dark .lora-home header,
+  .dark .lora-creator .top,
+  .dark .lora-learner header,
+  [data-theme="dark"] header {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Simplify heavy drop shadows on mobile to reduce GPU overdraw */
+  .dark .card,
+  .dark .bc,
+  .dark .sec,
+  .dark .box,
+  .dark .s-card,
+  .dark .mpk-card,
+  .dark .mpk-hero,
+  .dark .rep-table-wrap,
+  .dark .stat-card,
+  [data-theme="dark"] .card,
+  [data-theme="dark"] .bc,
+  [data-theme="dark"] .sec,
+  [data-theme="dark"] .box,
+  [data-theme="dark"] .s-card,
+  [data-theme="dark"] .mpk-card,
+  [data-theme="dark"] .mpk-hero,
+  [data-theme="dark"] .rep-table-wrap,
+  [data-theme="dark"] .stat-card {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* Ensure page wrappers and primary sections strictly fit mobile screens */
+  .dark .lora-dash,
+  .dark .lora-creator,
+  .dark .mpk-container,
+  .dark .lora-settings,
+  .dark .lora-wizard,
+  .dark .lora-guide,
+  .dark .lora-sessions,
+  .dark .lora-edit,
+  .dark .lora-creator-reports,
+  [data-theme="dark"] .lora-dash,
+  [data-theme="dark"] .lora-creator,
+  [data-theme="dark"] .mpk-container,
+  [data-theme="dark"] .lora-settings,
+  [data-theme="dark"] .lora-wizard,
+  [data-theme="dark"] .lora-guide,
+  [data-theme="dark"] .lora-sessions,
+  [data-theme="dark"] .lora-edit,
+  [data-theme="dark"] .lora-creator-reports {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Prevent button hover jumps on touch devices */
+  .dark .btn.pri:hover,
+  .dark .btn-primary:hover,
+  .dark .mpk-btn-new:hover,
+  [data-theme="dark"] .btn.pri:hover,
+  [data-theme="dark"] .btn-primary:hover,
+  [data-theme="dark"] .mpk-btn-new:hover {
+    transform: none !important;
+    box-shadow: 0 4px 16px rgba(118, 87, 255, 0.45) !important;
+  }
+}
+
 
 

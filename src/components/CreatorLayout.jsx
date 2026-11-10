@@ -76,8 +76,8 @@ function NotificationPanel({ userId, onClose }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 12, scale: 0.97 }}
       transition={{ duration: 0.2 }}
-      className="absolute right-0 top-full mt-4 z-50"
-      style={{ width: 400 }}
+      className="absolute right-0 top-full mt-4 z-50 max-w-[calc(100vw-28px)]"
+      style={{ width: 'min(400px, calc(100vw - 28px))' }}
     >
       <div
         className="bg-white dark:bg-[#141e33] rounded-3xl overflow-hidden border border-[#E8EDF3] dark:border-[rgba(255,255,255,0.1)] shadow-[0_12px_48px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.6)]"

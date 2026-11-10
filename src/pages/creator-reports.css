@@ -693,7 +693,27 @@
 
 @media(max-width: 768px) {
   .lora-creator-reports {
-    padding: 16px 14px 60px;
+    padding: 16px 12px 60px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  .rep-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-width: 100% !important;
+  }
+  .rep-table {
+    min-width: 580px;
+  }
+  .table-search {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .table-search input {
+    width: 100%;
+    font-size: 16px !important;
   }
 }
 

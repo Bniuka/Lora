@@ -88,6 +88,37 @@
   100% { transform: translate(-25px, 40px) scale(0.95); }
 }
 
+@media (max-width: 768px) {
+  .mpk-container {
+    padding: 16px 12px 64px !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .mpk-ambient-orb,
+  .mpk-orb-1,
+  .mpk-orb-2,
+  .mpk-orb-3 {
+    display: none !important;
+    animation: none !important;
+  }
+  .mpk-hero {
+    padding: 20px 16px 20px !important;
+    border-radius: 20px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .mpk-hero-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .mpk-btn-new,
+  .mpk-btn-multi,
+  .mpk-btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
 /* ── Hero Banner Section ── */
 .mpk-hero {
   position: relative;

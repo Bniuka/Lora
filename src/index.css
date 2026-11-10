@@ -134,6 +134,11 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -142,13 +147,31 @@ body {
   color: var(--color-lora-text);
   min-height: 100vh;
   line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
+  position: relative;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 #root {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Prevent accidental zoom jumps & tap delay on mobile */
+button,
+a,
+input,
+select,
+textarea,
+label {
+  touch-action: manipulation;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -949,21 +972,92 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   RESPONSIVE UTILITIES
+   RESPONSIVE UTILITIES & MOBILE HARDWARE OPTIMIZATION
    ============================================================ */
 
 @media (max-width: 768px) {
+  /* Prevent background-attachment fixed repaint lag on mobile scroll */
+  *, *::before, *::after {
+    background-attachment: scroll !important;
+  }
+
+  /* Prevent iOS Safari / Android auto-zoom on input focus */
+  input,
+  textarea,
+  select,
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  .PhoneInputInput,
+  .lora-creator .gsearch input,
+  .table-search input,
+  .s-field input,
+  .s-field select,
+  .s-field textarea {
+    font-size: 16px !important;
+  }
+
+  /* Disable heavy continuous conic-gradient orbit animations on mobile to stop GPU lag */
+  :is(
+    .btn-primary,
+    .lora-mascot-hero__btn-primary,
+    .lora-learner .btn:not(.sm),
+    .lora-sessions .btn.live,
+    .lora-pay .pm-btn:not(.ghost),
+    .lora-btn-post-review,
+    .lora-dash .pill.pri,
+    .lora-wizard .btn.pri,
+    .mp-guide-continue-btn,
+    .lora-edit .save,
+    .lora-guide .lg-btn-pri,
+    .lora-home .btn.pri,
+    .lora-course .btn.pri,
+    .lora-signup-page .btn,
+    .lora-sub .trial-btn,
+    .setup-btn-next
+  ):not(:disabled) {
+    animation: none !important;
+    background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+    box-shadow: 0 4px 14px rgba(118, 87, 255, 0.4) !important;
+  }
+
+  :is(
+    .btn-primary,
+    .lora-mascot-hero__btn-primary,
+    .lora-learner .btn:not(.sm),
+    .lora-sessions .btn.live,
+    .lora-pay .pm-btn:not(.ghost),
+    .lora-btn-post-review,
+    .lora-dash .pill.pri,
+    .lora-wizard .btn.pri,
+    .mp-guide-continue-btn,
+    .lora-edit .save,
+    .lora-guide .lg-btn-pri,
+    .lora-home .btn.pri,
+    .lora-course .btn.pri,
+    .lora-signup-page .btn,
+    .lora-sub .trial-btn,
+    .setup-btn-next
+  ):not(:disabled)::before {
+    display: none !important;
+  }
+
   .btn-primary,
   .btn-secondary {
     padding: 12px 24px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .modal-content {
-    padding: 28px;
+    padding: 20px;
+    border-radius: 18px;
   }
 
   .stat-card {
-    padding: 20px;
+    padding: 16px;
   }
 }
