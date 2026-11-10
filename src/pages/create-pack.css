@@ -477,29 +477,48 @@
   border-radius: 18px !important;
   overflow: hidden !important;
   border: 1.5px solid var(--edge) !important;
-  background: center / cover no-repeat !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-color: var(--surface) !important;
+  display: block !important;
+}
+
+.lora-wizard .thumb img,
+.lora-wizard .thumb .thumb-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  z-index: 1 !important;
 }
 
 .lora-wizard .thumb button {
   position: absolute !important;
   right: 12px !important;
   top: 12px !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 38px !important;
+  height: 38px !important;
   border: 0 !important;
-  border-radius: 11px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  color: var(--bad) !important;
+  border-radius: 12px !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  color: #fff !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   cursor: pointer !important;
   display: grid !important;
   place-items: center !important;
-  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.5) !important;
-  transition: 0.15s !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+  transition: all 0.2s ease !important;
+  z-index: 5 !important;
 }
 
 .lora-wizard .thumb button:hover {
   background: var(--bad) !important;
   color: #fff !important;
+  transform: scale(1.08) !important;
 }
 
 /* Switch */
@@ -1269,6 +1288,49 @@ body.dark-theme .lora-wizard {
 .dark .lora-wizard .drop small,
 [data-theme="dark"] .lora-wizard .drop small {
   color: #929BB0 !important;
+}
+
+/* Uploaded Thumbnail Preview in Dark Mode */
+.dark .lora-wizard .thumb,
+[data-theme="dark"] .lora-wizard .thumb,
+body.dark-theme .lora-wizard .thumb {
+  background-color: #0D1020 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(118, 87, 255, 0.08) !important;
+}
+
+.dark .lora-wizard .thumb img,
+.dark .lora-wizard .thumb .thumb-img,
+[data-theme="dark"] .lora-wizard .thumb img,
+[data-theme="dark"] .lora-wizard .thumb .thumb-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  z-index: 1 !important;
+}
+
+.dark .lora-wizard .thumb button,
+[data-theme="dark"] .lora-wizard .thumb button,
+body.dark-theme .lora-wizard .thumb button {
+  background: rgba(8, 10, 18, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #F87171 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+  z-index: 5 !important;
+}
+
+.dark .lora-wizard .thumb button:hover,
+[data-theme="dark"] .lora-wizard .thumb button:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.55) !important;
 }
 
 .dark .lora-wizard .sw,

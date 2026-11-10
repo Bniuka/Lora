@@ -747,7 +747,8 @@ export default function CreatePack() {
                   <div className="f">
                     <label>Thumbnail</label>
                     {form.thumbnailPreview ? (
-                      <div className="thumb" style={{ backgroundImage: `url(${form.thumbnailPreview})` }}>
+                      <div className="thumb">
+                        <img src={form.thumbnailPreview} alt="Pack thumbnail" className="thumb-img" />
                         <button
                           type="button"
                           onClick={() => {
@@ -1183,7 +1184,9 @@ export default function CreatePack() {
                   </div>
 
                   {form.thumbnailPreview && (
-                    <div className="thumb" style={{ backgroundImage: `url(${form.thumbnailPreview})` }} />
+                    <div className="thumb">
+                      <img src={form.thumbnailPreview} alt="Pack thumbnail" className="thumb-img" />
+                    </div>
                   )}
 
                   {form.has_free_session && (

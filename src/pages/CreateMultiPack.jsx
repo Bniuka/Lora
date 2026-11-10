@@ -568,7 +568,8 @@ export default function CreateMultiPack() {
                   <div className="f">
                     <label>Main course cover image</label>
                     {form.thumbnailPreview ? (
-                      <div className="thumb" style={{ backgroundImage: `url(${form.thumbnailPreview})` }}>
+                      <div className="thumb">
+                        <img src={form.thumbnailPreview} alt="Main course cover" className="thumb-img" />
                         <button
                           type="button"
                           onClick={() => {
@@ -659,15 +660,14 @@ export default function CreateMultiPack() {
               {step === 3 && (
                 <div>
                   <div className="rv">
-                    <div
-                      className="rimg"
-                      style={
-                        form.thumbnailPreview
-                          ? { backgroundImage: `url(${form.thumbnailPreview})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                          : {}
-                      }
-                    >
-                      {!form.thumbnailPreview && (
+                    <div className="rimg" style={{ position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {form.thumbnailPreview ? (
+                        <img
+                          src={form.thumbnailPreview}
+                          alt="Main course thumbnail preview"
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
                         <Layers size={28} />
                       )}
                     </div>

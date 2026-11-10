@@ -2872,6 +2872,49 @@ body.dark-theme .lora-wizard {
   color: #929BB0 !important;
 }
 
+/* Uploaded Thumbnail Preview in Dark Mode */
+.dark .lora-wizard .thumb,
+[data-theme="dark"] .lora-wizard .thumb,
+body.dark-theme .lora-wizard .thumb {
+  background-color: #0D1020 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(118, 87, 255, 0.08) !important;
+}
+
+.dark .lora-wizard .thumb img,
+.dark .lora-wizard .thumb .thumb-img,
+[data-theme="dark"] .lora-wizard .thumb img,
+[data-theme="dark"] .lora-wizard .thumb .thumb-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  z-index: 1 !important;
+}
+
+.dark .lora-wizard .thumb button,
+[data-theme="dark"] .lora-wizard .thumb button,
+body.dark-theme .lora-wizard .thumb button {
+  background: rgba(8, 10, 18, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #F87171 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+  z-index: 5 !important;
+}
+
+.dark .lora-wizard .thumb button:hover,
+[data-theme="dark"] .lora-wizard .thumb button:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.55) !important;
+}
+
 .dark .lora-wizard .sw,
 [data-theme="dark"] .lora-wizard .sw {
   background: #0D1020 !important;
