@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { useVictory } from '../context/VictoryContext';
 import './enrollments.css';
 
 const TABS = [
@@ -33,6 +34,7 @@ const QUICK_REASONS = [
 export default function Enrollments() {
   useSubscriptionGuard();
   const { user } = useAuth();
+  const { triggerVictory } = useVictory();
   const [searchParams] = useSearchParams();
 
   const [enrollments, setEnrollments] = useState([]);
@@ -128,6 +130,14 @@ export default function Enrollments() {
     showToast('Enrollment approved');
     setProcessing(null);
     fetchEnrollments();
+
+    triggerVictory({
+      type: 'customer',
+      title: 'Customer Approved! 💰',
+      subtitle: enrollment?.session_packs?.title
+        ? `Access granted to "${enrollment.session_packs.title}".`
+        : 'New customer enrollment confirmed successfully!',
+    });
   };
 
   const rejectPayment = async () => {

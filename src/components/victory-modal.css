@@ -1,0 +1,278 @@
+/* ================================================================
+   LoraSpace Victory Celebration Modal Styles
+   Rich celebrations with corner confetti, Lorabot cheer & audio-visual feel
+   ================================================================ */
+
+.lora-victory-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 10, 18, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.lora-victory-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px 26px 24px;
+  box-shadow: 0 32px 84px rgba(0, 0, 0, 0.35), 0 0 40px rgba(118, 87, 255, 0.15);
+  text-align: center;
+  overflow: hidden;
+  border: 1.5px solid rgba(118, 87, 255, 0.2);
+  box-sizing: border-box;
+}
+
+/* Dark mode card */
+.dark .lora-victory-card,
+[data-theme="dark"] .lora-victory-card,
+body.dark-theme .lora-victory-card {
+  background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
+  border: 1.5px solid rgba(118, 87, 255, 0.35) !important;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.9), 0 0 60px rgba(118, 87, 255, 0.3) !important;
+  color: #F5F5FA !important;
+}
+
+/* Close button in top right corner */
+.lora-victory-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.lora-victory-close-btn:hover {
+  background: #EF4444;
+  color: #ffffff;
+  border-color: #EF4444;
+  transform: scale(1.1) rotate(90deg);
+}
+
+.dark .lora-victory-close-btn,
+[data-theme="dark"] .lora-victory-close-btn {
+  background: #171D33 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-victory-close-btn:hover,
+[data-theme="dark"] .lora-victory-close-btn:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #ffffff !important;
+}
+
+/* Mascot Wrapper */
+.lora-victory-mascot-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lora-victory-bot-glow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(118, 87, 255, 0.45) 0%, rgba(57, 139, 255, 0.25) 45%, transparent 70%);
+  animation: loraVictoryPulse 2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes loraVictoryPulse {
+  0% { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.lora-victory-bot-img {
+  width: 125px;
+  height: 125px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(118, 87, 255, 0.4));
+  position: relative;
+  z-index: 2;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Floating celebratory sparkles */
+.lora-victory-sparkle {
+  position: absolute;
+  font-size: 22px;
+  pointer-events: none;
+  animation: loraVictorySparkle 2s ease-in-out infinite;
+  z-index: 3;
+}
+
+.lora-victory-sparkle.s-left {
+  top: 10px;
+  left: -8px;
+  animation-delay: 0.2s;
+}
+
+.lora-victory-sparkle.s-right {
+  top: 14px;
+  right: -8px;
+  animation-delay: 0.6s;
+}
+
+.lora-victory-sparkle.s-top {
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0.9s;
+}
+
+@keyframes loraVictorySparkle {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.9; }
+  50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+}
+
+/* Victory Badge */
+.lora-victory-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, rgba(118, 87, 255, 0.15), rgba(57, 139, 255, 0.15));
+  color: #7657FF;
+  border: 1px solid rgba(118, 87, 255, 0.3);
+  margin-bottom: 12px;
+}
+
+.dark .lora-victory-badge,
+[data-theme="dark"] .lora-victory-badge {
+  background: rgba(118, 87, 255, 0.2) !important;
+  color: #A78BFA !important;
+  border-color: rgba(118, 87, 255, 0.4) !important;
+  box-shadow: 0 0 16px rgba(118, 87, 255, 0.3) !important;
+}
+
+/* Victory Title */
+.lora-victory-title {
+  font-family: 'Bricolage Grotesque', 'Figtree', sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  color: #0F172A;
+  letter-spacing: -0.02em;
+}
+
+.dark .lora-victory-title,
+[data-theme="dark"] .lora-victory-title {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #A78BFA 60%, #7657FF 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Victory Subtitle */
+.lora-victory-sub {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #64748B;
+  margin: 0 0 16px;
+}
+
+.dark .lora-victory-sub,
+[data-theme="dark"] .lora-victory-sub {
+  color: #929BB0 !important;
+}
+
+/* Mascot Reaction Quote */
+.lora-victory-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: #F1F5F9;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 22px;
+  border: 1px solid #E2E8F0;
+}
+
+.dark .lora-victory-reaction,
+[data-theme="dark"] .lora-victory-reaction {
+  background: #080A12 !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(118, 87, 255, 0.3) !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Primary Action Button */
+.lora-victory-btn {
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%);
+  box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.55);
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.lora-victory-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px -4px rgba(118, 87, 255, 0.7);
+  filter: brightness(1.08);
+}
+
+.lora-victory-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* 3-Second Progress Countdown Line */
+.lora-victory-progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.dark .lora-victory-progress-track,
+[data-theme="dark"] .lora-victory-progress-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.lora-victory-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #7657FF, #398BFF, #10B981);
+}

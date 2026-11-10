@@ -18,6 +18,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useVictory } from '../context/VictoryContext';
 import { supabase } from '../lib/supabase';
 import { PageTransition } from '../components/ui';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
@@ -221,6 +222,7 @@ export default function CreateMultiPack() {
   useSubscriptionGuard();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const { triggerVictory } = useVictory();
 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -330,10 +332,19 @@ export default function CreateMultiPack() {
         throw packErr;
       }
 
-      showToast(publish ? 'Main Multi-Pack published! Now add your first Sub-Pack.' : 'Saved as draft!');
-      setTimeout(() => {
-        navigate(`/creator/multi-packs/${pack.id}`);
-      }, 650);
+      if (publish) {
+        triggerVictory({
+          type: 'multi_pack',
+          onComplete: () => {
+            navigate(`/creator/multi-packs/${pack.id}`);
+          },
+        });
+      } else {
+        showToast('Saved as draft!');
+        setTimeout(() => {
+          navigate(`/creator/multi-packs/${pack.id}`);
+        }, 650);
+      }
     } catch (err) {
       console.error('Multi-pack save error:', err);
       showToast('Error: ' + err.message);

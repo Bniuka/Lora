@@ -10,6 +10,7 @@ import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { generateUniquePackSlug, generateInviteToken } from '../lib/utils';
 import { checkDuplicateSessionLinks, registerCopyrightAlert } from '../lib/linkSentinel';
 import PackSetupModal from '../components/PackSetupModal';
+import { useVictory } from '../context/VictoryContext';
 import './create-pack.css';
 
 const STEPS = ['Basic Info', 'Media', 'Contact & Community', 'Sessions', 'Review'];
@@ -78,6 +79,7 @@ export default function CreatePack() {
   useSubscriptionGuard();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const { triggerVictory } = useVictory();
   const [searchParams] = useSearchParams();
   const parentPackId = searchParams.get('parent');
   const [parentPack, setParentPack] = useState(null);
@@ -440,10 +442,19 @@ export default function CreatePack() {
         console.debug('[CreatePack] Link sentinel check non-blocking:', sentinelErr);
       }
 
-      showToast(publish ? (parentPackId ? 'Sub-Pack published!' : 'Pack published!') : 'Saved as draft');
-      setTimeout(() => {
-        navigate(parentPackId ? `/creator/multi-packs/${parentPackId}` : '/creator/packs');
-      }, 700);
+      if (publish) {
+        triggerVictory({
+          type: parentPackId ? 'sub_pack' : 'session_pack',
+          onComplete: () => {
+            navigate(parentPackId ? `/creator/multi-packs/${parentPackId}` : '/creator/packs');
+          },
+        });
+      } else {
+        showToast('Saved as draft');
+        setTimeout(() => {
+          navigate(parentPackId ? `/creator/multi-packs/${parentPackId}` : '/creator/packs');
+        }, 700);
+      }
     } catch (err) {
       console.error('Save error:', err);
       showToast('Error: ' + err.message);

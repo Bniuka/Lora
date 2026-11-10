@@ -93,6 +93,9 @@ export default function VerifyEmail() {
         setVerified(true);
         localStorage.removeItem("pending_verify_email");
         localStorage.removeItem("pending_verify_role");
+        if (role === "creator") {
+          localStorage.setItem("lora_victory_trigger", "account");
+        }
         if (refreshProfile) await refreshProfile();
 
         const targetDashboard = role === "creator" ? "/creator/dashboard" : "/learner/dashboard";
@@ -153,6 +156,9 @@ export default function VerifyEmail() {
       setVerified(true);
       localStorage.removeItem("pending_verify_email");
       localStorage.removeItem("pending_verify_role");
+      if (role === "creator") {
+        localStorage.setItem("lora_victory_trigger", "account");
+      }
 
       if (refreshProfile) {
         try {

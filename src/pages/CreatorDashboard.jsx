@@ -5,6 +5,7 @@ import { Layers, Package, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
+import { useVictory } from '../context/VictoryContext';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import './dashboard.css';
@@ -371,6 +372,7 @@ function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
 export default function CreatorDashboard() {
   useSubscriptionGuard();
   const { user, profile, creatorProfile } = useAuth();
+  const { triggerVictory } = useVictory();
 
   const [stats, setStats] = useState({ packs: 0, students: 0, revenue: 0, pending: 0 });
   const [recentPacks, setRecentPacks] = useState([]);
@@ -394,6 +396,14 @@ export default function CreatorDashboard() {
     const seenTour = localStorage.getItem(`lora_welcome_tour_seen_${user.id}`) === 'true';
     if (!seenTour) {
       setTourOpen(true);
+    }
+
+    const victoryTrigger = localStorage.getItem('lora_victory_trigger');
+    if (victoryTrigger) {
+      localStorage.removeItem('lora_victory_trigger');
+      setTimeout(() => {
+        triggerVictory({ type: victoryTrigger });
+      }, 500);
     }
 
     try {
@@ -503,6 +513,20 @@ export default function CreatorDashboard() {
       setActivity(notifRes.data || []);
       setMissingRecordings(missingList);
       setLoading(false);
+
+      if (confirmed.length > 0 && user?.id) {
+        const studentMilestoneKey = `lora_celebrated_customer_${user.id}`;
+        if (!localStorage.getItem(studentMilestoneKey)) {
+          localStorage.setItem(studentMilestoneKey, 'true');
+          setTimeout(() => {
+            triggerVictory({
+              type: 'customer',
+              title: 'First Customer Enrolled! 💰',
+              subtitle: 'Congratulations! You have your first active student on LoraSpace!'
+            });
+          }, 900);
+        }
+      }
     };
     loadData();
   }, [user]);

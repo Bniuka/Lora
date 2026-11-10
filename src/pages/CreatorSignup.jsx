@@ -129,6 +129,7 @@ export default function CreatorSignup() {
         category: data.category,
       });
 
+      localStorage.setItem('lora_victory_trigger', 'account');
       navigate('/verify-email', { state: { email: data.email, role: 'creator' } });
     } catch (err) {
       console.error('[CreatorSignup] error:', err.message, err);
