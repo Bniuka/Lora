@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { Layers, Package, Lock } from 'lucide-react';
+import { Layers, Package, Lock, Volume2, Pause } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { useSubscriptionGuard } from '../hooks/useSubscriptionGuard';
 import { useVictory } from '../context/VictoryContext';
 import CreatorWelcomeTour from '../components/CreatorWelcomeTour';
+import CreatorVoiceAssistant, { VoiceEqualizer } from '../components/CreatorVoiceAssistant';
+import { voiceEngine, useVoiceEngine } from '../lib/sinhalaVoiceEngine';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import './dashboard.css';
 
@@ -303,10 +305,28 @@ function MissingRecordingsAlert({ missingSessions, onSaveRecording, savingSessio
 }
 
 /* ════════════════ ONBOARDING CHECKLIST ════════════════ */
-function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
+const STEP_VOICE_MAP = {
+  profile: 'diag_si_missing_profile',
+  payouts: 'diag_si_missing_bank',
+  pack: 'diag_si_missing_pack',
+  share: 'diag_si_missing_publish',
+};
+
+function OnboardingChecklist({ steps, onOpenTour, onOpenVoice, onDismiss }) {
+  const voice = useVoiceEngine();
   const completedCount = steps.filter(s => s.done).length;
   const totalCount = steps.length;
   const pct = Math.round((completedCount / totalCount) * 100);
+
+  const handleSpeakStep = (step) => {
+    const clipId = STEP_VOICE_MAP[step.id];
+    if (!clipId) return;
+    if (voice.activeClipId === clipId && voice.isPlaying) {
+      voiceEngine.togglePause();
+      return;
+    }
+    voiceEngine.playClip(clipId, { itemId: step.id, text: step.desc, lang: 'si' });
+  };
 
   return (
     <section className="card ld-onboard">
@@ -321,6 +341,11 @@ function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
         </div>
 
         <div className="ld-onboard-actions">
+          <button type="button" className="ld-voice-btn" onClick={onOpenVoice}>
+            <Volume2 size={14} />
+            <span>සිංහලෙන් අහන්න (Voice Guide)</span>
+            <VoiceEqualizer active={voice.isPlaying && !voice.isPaused} />
+          </button>
           <button type="button" className="ld-tour-btn" onClick={onOpenTour}>
             ✨ 1-Min Feature Tour
           </button>
@@ -346,23 +371,39 @@ function OnboardingChecklist({ steps, onOpenTour, onDismiss }) {
 
       {/* 4 Step Cards */}
       <div className="ld-onboard-grid">
-        {steps.map((step, idx) => (
-          <div key={step.id} className={`ld-onboard-step ${step.done ? 'done' : ''}`}>
-            <div className="ld-onboard-step-top">
-              <span className={`ld-onboard-check ${step.done ? 'done' : ''}`}>
-                {step.done ? '✓' : idx + 1}
-              </span>
-              <span className="ld-onboard-status">
-                {step.done ? 'Completed' : 'Pending'}
-              </span>
+        {steps.map((step, idx) => {
+          const stepClipId = STEP_VOICE_MAP[step.id];
+          const isStepSpeaking = voice.activeClipId === stepClipId && voice.isPlaying && !voice.isPaused;
+          return (
+            <div key={step.id} className={`ld-onboard-step ${step.done ? 'done' : ''} ${isStepSpeaking ? 'speaking' : ''}`}>
+              <div className="ld-onboard-step-top">
+                <span className={`ld-onboard-check ${step.done ? 'done' : ''}`}>
+                  {step.done ? '✓' : idx + 1}
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    type="button"
+                    className={`ld-step-speak-btn ${isStepSpeaking ? 'active' : ''}`}
+                    onClick={() => handleSpeakStep(step)}
+                    title="මේ පියවර සිංහලෙන් අහන්න"
+                    aria-label={`Listen to ${step.title} in Sinhala`}
+                  >
+                    {isStepSpeaking ? <Pause size={12} /> : <Volume2 size={12} />}
+                    <span>{isStepSpeaking ? 'අහමින්' : 'සිංහල'}</span>
+                  </button>
+                  <span className="ld-onboard-status">
+                    {step.done ? 'Completed' : 'Pending'}
+                  </span>
+                </div>
+              </div>
+              <h3>{step.title}</h3>
+              <p>{step.desc}</p>
+              <Link to={step.to} className="ld-onboard-link">
+                {step.done ? step.doneLabel : step.ctaLabel} →
+              </Link>
             </div>
-            <h3>{step.title}</h3>
-            <p>{step.desc}</p>
-            <Link to={step.to} className="ld-onboard-link">
-              {step.done ? step.doneLabel : step.ctaLabel} →
-            </Link>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -386,6 +427,7 @@ export default function CreatorDashboard() {
   const [toastMsg, setToastMsg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tourOpen, setTourOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
   const [checklistOpen, setChecklistOpen] = useState(false);
 
   useEffect(() => {
@@ -658,6 +700,16 @@ export default function CreatorDashboard() {
   ];
 
   const completedCount = onboardingSteps.filter(s => s.done).length;
+  const voiceDiagnosisState = {
+    hasProfile: Boolean(profile?.first_name && (creatorProfile?.about || profile?.contact_number)),
+    hasBank: Boolean(hasBankDetails || creatorProfile?.payment_link),
+    packsCount: stats.packs,
+    hasSessions: latestPack ? sessionCount > 0 : true,
+    hasPublishedPack: recentPacks.some(p => p.is_published),
+    pendingSlipsCount: stats.pending,
+    missingRecordingsCount: missingRecordings.length,
+    latestPackId: latestPack?.id || null,
+  };
 
   return (
     <div className="lora-dash">
@@ -712,6 +764,16 @@ export default function CreatorDashboard() {
               How LoraSpace works
             </button>
 
+            <button
+              type="button"
+              className="pill ld-voice-pill"
+              onClick={() => setVoiceOpen(true)}
+              title="Open Sinhala AI Voice Co-Pilot"
+            >
+              <Volume2 size={15} />
+              <span>සිංහල හඬ සහායකයා (Voice Guide)</span>
+            </button>
+
             <Link className="pill" to="/creator/multi-packs/new">
               <IcPack />
               Create Multi-Pack
@@ -732,6 +794,7 @@ export default function CreatorDashboard() {
           <OnboardingChecklist
             steps={onboardingSteps}
             onOpenTour={() => setTourOpen(true)}
+            onOpenVoice={() => setVoiceOpen(true)}
             onDismiss={handleDismissChecklist}
           />
         )}
@@ -1103,6 +1166,14 @@ export default function CreatorDashboard() {
 
         {/* ── First-Time Welcome Tour Modal ── */}
         <CreatorWelcomeTour isOpen={tourOpen} onClose={handleCloseTour} />
+
+        {/* ── Smart Sinhala Voice Co-Pilot & Missing-Items Assistant ── */}
+        <CreatorVoiceAssistant
+          isOpen={voiceOpen}
+          onClose={() => setVoiceOpen(false)}
+          externalState={voiceDiagnosisState}
+          onOpenWelcomeTour={() => setTourOpen(true)}
+        />
 
       </div>
     </div>

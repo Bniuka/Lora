@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase';
 import { isUserAdmin } from '../lib/admin';
 import AppLogo from './AppLogo';
 import ThemeSwitcher from './ThemeSwitcher';
+import CreatorVoiceAssistant from './CreatorVoiceAssistant';
 import './creator-layout.css';
 
 const _NAV_ITEMS = [
@@ -185,6 +186,7 @@ export default function CreatorLayout({ children }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMascotClosed, setMobileMascotClosed] = useState(false);
+  const [voiceGuideOpen, setVoiceGuideOpen] = useState(false);
   const notifRef = useRef(null);
   const userMenuRef = useRef(null);
 
@@ -320,11 +322,11 @@ export default function CreatorLayout({ children }) {
           ) : (
             <div
               className="creator-mascot-widget"
-              onClick={() => navigate('/creator/guide')}
+              onClick={() => setVoiceGuideOpen(true)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/creator/guide')}
-              title="Dream big! Click to open Creator Guide"
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setVoiceGuideOpen(true)}
+              title="Tap to open Lora Sinhala Voice Assistant"
             >
               {/* Mobile Minimize Button */}
               <button
@@ -366,9 +368,9 @@ export default function CreatorLayout({ children }) {
 
               {/* Dreamy Interactive Speech Bubble / Pill */}
               <div className="creator-mascot-bubble">
-                <span className="bubble-text">Dream big, Creator!</span>
+                <span className="bubble-text">🔊 සිංහල හඬ සහායකයා</span>
                 <span className="bubble-hint">
-                  <span>Guide</span>
+                  <span>Voice Guide</span>
                   <svg viewBox="0 0 24 24" className="bubble-arrow" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
               </div>
@@ -397,9 +399,9 @@ export default function CreatorLayout({ children }) {
               <button
                 type="button"
                 className="creator-mascot-mobile"
-                onClick={() => navigate('/creator/guide')}
-                aria-label="Creator Guide"
-                title="Dream big! Tap for Creator Guide"
+                onClick={() => setVoiceGuideOpen(true)}
+                aria-label="Open Sinhala Voice Assistant"
+                title="Tap for Sinhala Voice Guide"
               >
                 <span className="creator-mascot-mobile-ring">
                   <img
@@ -477,6 +479,12 @@ export default function CreatorLayout({ children }) {
           </div>
         </main>
       </div>
+
+      {/* Global Sinhala Voice Co-Pilot Modal */}
+      <CreatorVoiceAssistant
+        isOpen={voiceGuideOpen}
+        onClose={() => setVoiceGuideOpen(false)}
+      />
     </div>
   );
 }

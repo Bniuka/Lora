@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Sparkles, Building2, Video, Ticket, Share2,
-  CheckCircle2, ArrowRight, ArrowLeft, X, BookOpen, ShieldCheck
+  CheckCircle2, ArrowRight, ArrowLeft, X, BookOpen, ShieldCheck,
+  Volume2, Pause
 } from 'lucide-react';
+import { voiceEngine, useVoiceEngine, TOUR_VOICE_CLIPS } from '../lib/sinhalaVoiceEngine';
+import { VoiceEqualizer } from './CreatorVoiceAssistant';
 import '../pages/creator-guide.css';
 
 const TOUR_SLIDES = {
@@ -301,27 +304,76 @@ const DARK_ACCENT_TOKENS = {
 export default function CreatorWelcomeTour({ isOpen, onClose }) {
   const [step, setStep] = useState(0);
   const [lang, setLang] = useState(() => localStorage.getItem('lora_guide_lang') || 'si');
+  const [autoNext, setAutoNext] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const saved = localStorage.getItem('lora_guide_lang');
-    if (saved === 'si' || saved === 'en') setLang(saved);
-  }, [isOpen]);
-
-  const handleLangChange = (newLang) => {
-    setLang(newLang);
-    localStorage.setItem('lora_guide_lang', newLang);
-  };
+  const voice = useVoiceEngine();
 
   if (!isOpen) return null;
 
   const slides = TOUR_SLIDES[lang] || TOUR_SLIDES.si;
   const current = slides[step] || slides[0];
+  const voiceClips = TOUR_VOICE_CLIPS[lang] || TOUR_VOICE_CLIPS.si;
+  const currentVoiceClip = voiceClips[step] || voiceClips[0];
   const darkAccent = DARK_ACCENT_TOKENS[current.accent] || DARK_ACCENT_TOKENS['#2563eb'];
   const Icon = current.icon;
   const isLast = step === slides.length - 1;
+  const isCurrentSlideSpeaking = voice.activeClipId === currentVoiceClip.clipId && voice.isPlaying && !voice.isPaused;
+
+  const speakSlide = (slideIndex, targetLang = lang, shouldAutoAdvance = autoNext) => {
+    const list = TOUR_VOICE_CLIPS[targetLang] || TOUR_VOICE_CLIPS.si;
+    const clip = list[slideIndex];
+    if (!clip) return;
+
+    voiceEngine.playClip(clip.clipId, {
+      itemId: `tour_${slideIndex}`,
+      text: clip.text,
+      lang: targetLang,
+      onEnd: () => {
+        if (shouldAutoAdvance && slideIndex < list.length - 1) {
+          const nextIdx = slideIndex + 1;
+          setStep(nextIdx);
+          speakSlide(nextIdx, targetLang, shouldAutoAdvance);
+        } else {
+          voiceEngine.stop();
+        }
+      },
+    });
+  };
+
+  const handleToggleVoice = () => {
+    if (voice.activeClipId === currentVoiceClip.clipId && voice.isPlaying) {
+      voiceEngine.togglePause();
+      return;
+    }
+    speakSlide(step, lang, autoNext);
+  };
+
+  const handleStepChange = (nextStep) => {
+    const wasPlaying = voice.isPlaying;
+    setStep(nextStep);
+    if (wasPlaying) {
+      speakSlide(nextStep, lang, autoNext);
+    }
+  };
+
+  const handleLangChange = (newLang) => {
+    const wasPlaying = voice.isPlaying;
+    setLang(newLang);
+    localStorage.setItem('lora_guide_lang', newLang);
+    if (wasPlaying) {
+      speakSlide(step, newLang, autoNext);
+    } else {
+      voiceEngine.stop();
+    }
+  };
+
+  const handleCloseModal = () => {
+    voiceEngine.stop();
+    onClose();
+  };
 
   const handleOpenGuide = () => {
+    voiceEngine.stop();
     onClose();
     navigate('/creator/guide');
   };
@@ -332,7 +384,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label={current.title}
-      onClick={onClose}
+      onClick={handleCloseModal}
     >
       <div
         className="lt-modal"
@@ -376,7 +428,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
               <button
                 type="button"
                 className="lt-close-btn"
-                onClick={onClose}
+                onClick={handleCloseModal}
                 aria-label="Close welcome tour"
               >
                 <X size={17} />
@@ -386,6 +438,32 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
           <h2 className="lt-title">{current.title}</h2>
           <p className="lt-subtitle">{current.subtitle}</p>
+
+          {/* Voice Guide Narration Bar */}
+          <div className="lt-voice-bar">
+            <button
+              type="button"
+              className={`lt-voice-play-btn ${isCurrentSlideSpeaking ? 'playing' : ''}`}
+              onClick={handleToggleVoice}
+            >
+              {isCurrentSlideSpeaking ? <Pause size={15} /> : <Volume2 size={16} />}
+              <span>
+                {isCurrentSlideSpeaking
+                  ? lang === 'si' ? 'හඬ නවත්වන්න (Pause)' : 'Pause Voice'
+                  : lang === 'si' ? '🔊 සිංහලෙන් අහන්න (Voice Guide)' : '🔊 Listen to Voice Guide'}
+              </span>
+              <VoiceEqualizer active={isCurrentSlideSpeaking} />
+            </button>
+
+            <label className="lt-voice-autonext">
+              <input
+                type="checkbox"
+                checked={autoNext}
+                onChange={(e) => setAutoNext(e.target.checked)}
+              />
+              <span>{lang === 'si' ? 'ඊළඟ පියවරට ඉබේම යන්න (Auto-Next)' : 'Auto-advance slides'}</span>
+            </label>
+          </div>
         </div>
 
         {/* Body Content */}
@@ -445,7 +523,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
                 key={i}
                 type="button"
                 className={`lt-dot ${i === step ? 'active' : ''}`}
-                onClick={() => setStep(i)}
+                onClick={() => handleStepChange(i)}
                 aria-label={`Slide ${i + 1}`}
               />
             ))}
@@ -460,7 +538,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
               <button
                 type="button"
                 className="lt-btn-back"
-                onClick={() => setStep(step - 1)}
+                onClick={() => handleStepChange(step - 1)}
               >
                 <ArrowLeft size={15} /> {lang === 'si' ? 'ආපසු' : 'Back'}
               </button>
@@ -478,7 +556,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
               <button
                 type="button"
                 className="lt-btn-next"
-                onClick={() => setStep(step + 1)}
+                onClick={() => handleStepChange(step + 1)}
               >
                 {lang === 'si' ? 'ඊළඟ' : 'Next'} <ArrowRight size={15} />
               </button>
@@ -494,7 +572,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
                 <button
                   type="button"
                   className="lt-btn-done"
-                  onClick={onClose}
+                  onClick={handleCloseModal}
                 >
                   {lang === 'si' ? 'හරි, පටන් ගමු!' : "Got It, Let's Go!"}
                 </button>
