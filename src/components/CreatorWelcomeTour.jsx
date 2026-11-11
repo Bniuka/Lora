@@ -289,6 +289,15 @@ const TOUR_SLIDES = {
   ],
 };
 
+const DARK_ACCENT_TOKENS = {
+  '#2563eb': { color: '#60a5fa', soft: 'rgba(59, 130, 246, 0.16)', border: 'rgba(96, 165, 250, 0.34)' },
+  '#059669': { color: '#34d399', soft: 'rgba(16, 185, 129, 0.16)', border: 'rgba(52, 211, 153, 0.34)' },
+  '#7c3aed': { color: '#a78bfa', soft: 'rgba(124, 58, 237, 0.18)', border: 'rgba(167, 139, 250, 0.36)' },
+  '#d97706': { color: '#fbbf24', soft: 'rgba(245, 158, 11, 0.16)', border: 'rgba(251, 191, 36, 0.34)' },
+  '#db2777': { color: '#f472b6', soft: 'rgba(236, 72, 153, 0.16)', border: 'rgba(244, 114, 182, 0.34)' },
+  '#dc2626': { color: '#f87171', soft: 'rgba(239, 68, 68, 0.16)', border: 'rgba(248, 113, 113, 0.34)' },
+};
+
 export default function CreatorWelcomeTour({ isOpen, onClose }) {
   const [step, setStep] = useState(0);
   const [lang, setLang] = useState(() => localStorage.getItem('lora_guide_lang') || 'si');
@@ -308,6 +317,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
   const slides = TOUR_SLIDES[lang] || TOUR_SLIDES.si;
   const current = slides[step] || slides[0];
+  const darkAccent = DARK_ACCENT_TOKENS[current.accent] || DARK_ACCENT_TOKENS['#2563eb'];
   const Icon = current.icon;
   const isLast = step === slides.length - 1;
 
@@ -319,63 +329,33 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
   return (
     <div
       className="lora-tour-overlay"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: 'rgba(14, 23, 51, 0.65)',
-        backdropFilter: 'blur(6px)',
-        display: 'grid',
-        placeItems: 'center',
-        padding: '16px',
-        fontFamily: "'Figtree', system-ui, sans-serif",
-      }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={current.title}
       onClick={onClose}
     >
       <div
+        className="lt-modal"
         style={{
-          width: '100%',
-          maxWidth: 640,
-          background: '#ffffff',
-          borderRadius: 26,
-          boxShadow: '0 28px 70px -15px rgba(14, 23, 51, 0.38)',
-          border: '1px solid #e3e7f1',
-          overflow: 'hidden',
-          animation: 'loraRecToastIn 0.25s ease',
+          '--lt-accent': current.accent,
+          '--lt-accent-soft': current.accentSoft,
+          '--lt-accent-border': `${current.accent}33`,
+          '--lt-accent-dark': darkAccent.color,
+          '--lt-accent-dark-soft': darkAccent.soft,
+          '--lt-accent-dark-border': darkAccent.border,
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top colorful header banner */}
-        <div
-          style={{
-            background: `linear-gradient(135deg, ${current.accentSoft} 0%, #ffffff 100%)`,
-            borderBottom: '1px solid #eef1f8',
-            padding: '22px 26px 18px',
-            position: 'relative',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: '#ffffff',
-                color: current.accent,
-                border: `1px solid ${current.accent}33`,
-                borderRadius: 99,
-                padding: '5px 13px',
-                fontSize: 12.5,
-                fontWeight: 700,
-                letterSpacing: '0.02em',
-              }}
-            >
+        <div className="lt-header">
+          <div className="lt-header-top">
+            <span className="lt-badge">
               <Icon size={14} />
               {current.badge}
             </span>
 
             {/* Language Switcher + Close Button */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="lt-header-controls">
               <div className="lg-lang-switch">
                 <button
                   type="button"
@@ -395,90 +375,31 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
               <button
                 type="button"
+                className="lt-close-btn"
                 onClick={onClose}
                 aria-label="Close welcome tour"
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '50%',
-                  border: '1px solid #e2e8f0',
-                  background: '#ffffff',
-                  color: '#64748b',
-                  display: 'grid',
-                  placeItems: 'center',
-                  cursor: 'pointer',
-                }}
               >
                 <X size={17} />
               </button>
             </div>
           </div>
 
-          <h2
-            style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontSize: 'clamp(21px, 3vw, 26px)',
-              fontWeight: 800,
-              color: '#0e1733',
-              margin: '0 0 6px',
-              lineHeight: 1.25,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {current.title}
-          </h2>
-          <p style={{ margin: 0, color: '#5b647d', fontSize: 14.5, lineHeight: 1.55 }}>
-            {current.subtitle}
-          </p>
+          <h2 className="lt-title">{current.title}</h2>
+          <p className="lt-subtitle">{current.subtitle}</p>
         </div>
 
         {/* Body Content */}
-        <div style={{ padding: '20px 26px' }}>
+        <div className="lt-body">
           {/* Visual mini-preview pill bar for Promo slide */}
           {current.previewType === 'promo' && (
-            <div
-              style={{
-                background: '#f8fafc',
-                border: '1.5px dashed #cbd5e1',
-                borderRadius: 14,
-                padding: '12px 16px',
-                marginBottom: 16,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 10,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span
-                  style={{
-                    fontFamily: 'monospace',
-                    fontWeight: 800,
-                    fontSize: 15,
-                    color: '#2563eb',
-                    background: '#eff6ff',
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    border: '1px solid #bfdbfe',
-                  }}
-                >
-                  LORA-FREE-7X9
-                </span>
-                <span style={{ fontSize: 13, color: '#475569', fontWeight: 600 }}>
+            <div className="lt-preview-promo">
+              <div className="lt-preview-main">
+                <span className="lt-promo-code">LORA-FREE-7X9</span>
+                <span className="lt-promo-meta">
                   {lang === 'si' ? '100% නොමිලේ · ළමයි 15 / 15' : '100% Free Access · 15 / 15 attempts'}
                 </span>
               </div>
-              <span
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  background: '#dcfce7',
-                  color: '#15803d',
-                  padding: '3px 9px',
-                  borderRadius: 99,
-                }}
-              >
+              <span className="lt-promo-expiry">
                 {lang === 'si' ? '16 වෙනියාට Auto-Expire වේ' : 'Auto-Expires on 16th'}
               </span>
             </div>
@@ -486,95 +407,29 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
 
           {/* Visual mini-preview pill bar for Security slide */}
           {current.previewType === 'security' && (
-            <div
-              style={{
-                background: '#fef2f2',
-                border: '1.5px solid #fecaca',
-                borderRadius: 14,
-                padding: '12px 16px',
-                marginBottom: 16,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 10,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span
-                  style={{
-                    fontFamily: 'monospace',
-                    fontWeight: 800,
-                    fontSize: 12.5,
-                    color: '#b91c1c',
-                    background: '#fee2e2',
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    border: '1px solid #fca5a5',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                  }}
-                >
-                  🔒 Copyright Sentinel Active
-                </span>
-                <span style={{ fontSize: 13, color: '#991b1b', fontWeight: 600 }}>
+            <div className="lt-preview-security">
+              <div className="lt-preview-main">
+                <span className="lt-sec-badge">🔒 Copyright Sentinel Active</span>
+                <span className="lt-sec-meta">
                   {lang === 'si' ? 'Zoom & Video Fingerprints සුරක්ෂිතයි' : 'Live Streams & Replays Protected'}
                 </span>
               </div>
-              <span
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  background: '#ecfdf5',
-                  color: '#047857',
-                  border: '1px solid #a7f3d0',
-                  padding: '3px 9px',
-                  borderRadius: 99,
-                }}
-              >
+              <span className="lt-sec-pill">
                 {lang === 'si' ? '1-Click Delist / Ban' : 'Instant Anti-Theft Ban'}
               </span>
             </div>
           )}
 
           {/* Feature Highlights List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="lt-highlights">
             {current.highlights.map((item, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 13,
-                  background: '#f8fafc',
-                  border: '1px solid #eef2f6',
-                  borderRadius: 16,
-                  padding: '13px 16px',
-                }}
-              >
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 9,
-                    background: current.accentSoft,
-                    color: current.accent,
-                    display: 'grid',
-                    placeItems: 'center',
-                    flexShrink: 0,
-                    marginTop: 1,
-                  }}
-                >
+              <div key={idx} className="lt-highlight-card">
+                <div className="lt-highlight-icon">
                   <CheckCircle2 size={16} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 14.5, color: '#0e1733', marginBottom: 3 }}>
-                    {item.title}
-                  </div>
-                  <div style={{ fontSize: 13.5, color: '#475569', lineHeight: 1.5 }}>
-                    {item.desc}
-                  </div>
+                  <div className="lt-highlight-title">{item.title}</div>
+                  <div className="lt-highlight-desc">{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -582,45 +437,25 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
         </div>
 
         {/* Footer Controls */}
-        <div
-          style={{
-            padding: '16px 26px 20px',
-            borderTop: '1px solid #eef1f8',
-            background: '#fafbfd',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="lt-footer">
           {/* Progress Dots */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div className="lt-dots-wrap">
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
+                className={`lt-dot ${i === step ? 'active' : ''}`}
                 onClick={() => setStep(i)}
                 aria-label={`Slide ${i + 1}`}
-                style={{
-                  width: i === step ? 24 : 8,
-                  height: 8,
-                  borderRadius: 99,
-                  border: 0,
-                  background: i === step ? current.accent : '#cbd5e1',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  padding: 0,
-                }}
               />
             ))}
-            <span style={{ fontSize: 12.5, color: '#64748b', fontWeight: 600, marginLeft: 6 }}>
+            <span className="lt-step-count">
               {step + 1} / {slides.length}
             </span>
           </div>
 
           {/* Navigation Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="lt-actions">
             {step > 0 ? (
               <button
                 type="button"
@@ -648,7 +483,7 @@ export default function CreatorWelcomeTour({ isOpen, onClose }) {
                 {lang === 'si' ? 'ඊළඟ' : 'Next'} <ArrowRight size={15} />
               </button>
             ) : (
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className="lt-actions-end">
                 <button
                   type="button"
                   className="lt-btn-guide"

@@ -2145,6 +2145,32 @@ body.dark-theme .lora-guide .lg-hero-badge {
   color: #F5F5FA !important;
 }
 
+.dark .lora-dash .ld-onboard-pill {
+  background: rgba(118, 87, 255, 0.16) !important;
+  color: #C4B5FD !important;
+  border: 1px solid rgba(118, 87, 255, 0.32) !important;
+}
+
+.dark .lora-dash .ld-onboard-count {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.28) !important;
+}
+
+.dark .lora-dash .ld-onboard-head h2 {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-dash .ld-onboard-head p {
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .ld-tour-btn {
+  background: linear-gradient(135deg, #7657FF 0%, #398BFF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 20px -4px rgba(118, 87, 255, 0.5) !important;
+}
+
 .dark .lora-dash .ld-onboard-step {
   background: #111629 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -2160,6 +2186,24 @@ body.dark-theme .lora-guide .lg-hero-badge {
   border-color: rgba(16, 185, 129, 0.3) !important;
 }
 
+.dark .lora-dash .ld-onboard-check {
+  background: rgba(118, 87, 255, 0.18) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-dash .ld-onboard-check.done {
+  background: #10B981 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-dash .ld-onboard-status {
+  color: #929BB0 !important;
+}
+
+.dark .lora-dash .ld-onboard-step.done .ld-onboard-status {
+  color: #34D399 !important;
+}
+
 .dark .lora-dash .ld-onboard-step h3 {
   color: #F5F5FA !important;
 }
@@ -2168,10 +2212,24 @@ body.dark-theme .lora-guide .lg-hero-badge {
   color: #929BB0 !important;
 }
 
+.dark .lora-dash .ld-onboard-link {
+  color: #A78BFA !important;
+}
+
+.dark .lora-dash .ld-onboard-step.done .ld-onboard-link {
+  color: #34D399 !important;
+}
+
 .dark .lora-dash .ld-guide-btn {
   background: #171D33 !important;
   color: #F5F5FA !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-dash .ld-guide-btn:hover {
+  background: #1C2440 !important;
+  border-color: rgba(167, 139, 250, 0.35) !important;
+  color: #FFFFFF !important;
 }
 
 .dark .lora-dash .ld-onboard-dismiss {
