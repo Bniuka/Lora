@@ -87,9 +87,9 @@
 }
 
 .lora-edit .actions .in {
-  max-width: 860px !important;
+  max-width: 900px !important;
   margin: 0 auto !important;
-  padding: 12px 32px !important;
+  padding: 14px 36px !important;
   display: flex !important;
   align-items: center !important;
   gap: 14px !important;
@@ -167,12 +167,12 @@
 }
 
 .lora-edit .page {
-  max-width: 860px !important;
+  max-width: 900px !important;
   margin: 0 auto !important;
-  padding: 26px 32px 72px !important;
+  padding: 36px 36px 88px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 22px !important;
+  gap: 30px !important;
 }
 
 .lora-edit .page > h1 {
@@ -188,7 +188,7 @@
   border: 1.5px solid var(--edge) !important;
   border-radius: 24px !important;
   box-shadow: 0 2px 4px rgba(14, 23, 51, 0.06), 0 22px 40px -20px rgba(47, 91, 255, 0.38) !important;
-  padding: 24px 26px 26px 32px !important;
+  padding: 32px 34px 34px 40px !important;
 }
 
 .lora-edit .card:before {
@@ -219,8 +219,8 @@
 .lora-edit .sh {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  margin-bottom: 20px !important;
+  gap: 16px !important;
+  margin-bottom: 26px !important;
 }
 
 .lora-edit .sh .ib {
@@ -252,17 +252,19 @@
 .lora-edit .sh h2 {
   font-size: 21px !important;
   color: var(--ink) !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-edit .sh p {
   margin: 0 !important;
   color: var(--muted) !important;
   font-size: 14px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-edit .g {
   display: grid !important;
-  gap: 16px !important;
+  gap: 24px !important;
 }
 
 .lora-edit .g3 {
@@ -276,8 +278,9 @@
 .lora-edit .f label {
   display: block !important;
   font-weight: 600 !important;
-  font-size: 13.5px !important;
-  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  margin-bottom: 9px !important;
   color: var(--ink) !important;
 }
 
@@ -289,7 +292,8 @@
 .lora-edit .f .h {
   font-size: 13px !important;
   color: var(--muted) !important;
-  margin: -2px 0 8px !important;
+  margin: 4px 0 12px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-edit .f input,
@@ -299,15 +303,16 @@
   background: #fff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 13px !important;
-  padding: 12px 14px !important;
-  min-height: 48px !important;
+  padding: 13.5px 16px !important;
+  min-height: 50px !important;
   outline: 0 !important;
   color: var(--ink) !important;
   transition: 0.15s !important;
 }
 
 .lora-edit .f textarea {
-  min-height: 110px !important;
+  min-height: 128px !important;
+  line-height: 1.6 !important;
   resize: vertical !important;
 }
 
@@ -499,9 +504,9 @@
   position: relative !important;
   border: 1.5px solid #f2d9a8 !important;
   background: linear-gradient(100deg, #fff6e2, #fff 50%) !important;
-  border-radius: 20px !important;
-  padding: 18px 18px 20px !important;
-  margin-bottom: 16px !important;
+  border-radius: 22px !important;
+  padding: 24px 26px 26px !important;
+  margin-bottom: 22px !important;
   transition: 0.2s !important;
 }
 
@@ -518,8 +523,8 @@
 .lora-edit .sh2 {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  margin-bottom: 14px !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
 }
 
 .lora-edit .num {
@@ -677,7 +682,7 @@
 
 .lora-edit .add {
   width: 100% !important;
-  min-height: 52px !important;
+  min-height: 56px !important;
   border: 2px dashed #9db3ff !important;
   background: rgba(255, 255, 255, 0.7) !important;
   border-radius: 16px !important;
@@ -688,6 +693,7 @@
   gap: 8px !important;
   align-items: center !important;
   justify-content: center !important;
+  margin-top: 18px !important;
   transition: 0.15s !important;
 }
 
@@ -776,13 +782,13 @@
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
+  gap: 16px !important;
   background: #fff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 16px !important;
-  padding: 12px 16px !important;
+  padding: 16px 20px !important;
   cursor: pointer !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 20px !important;
   font-weight: 600 !important;
 }
 
@@ -826,12 +832,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 16px !important;
+  gap: 20px !important;
   background: #ffffff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 18px !important;
-  padding: 16px 20px !important;
-  margin-bottom: 22px !important;
+  padding: 20px 24px !important;
+  margin-bottom: 28px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
@@ -849,7 +855,7 @@
 .lora-edit .sw.free-banner .sw-info {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 6px !important;
 }
 
 .lora-edit .sw.free-banner .sw-title {
@@ -879,26 +885,26 @@
   margin: 0 !important;
   font-size: 13px !important;
   color: var(--muted) !important;
-  line-height: 1.4 !important;
+  line-height: 1.55 !important;
   font-weight: 400 !important;
 }
 
 /* ── Promo Codes Section in Edit Pack ── */
 .lora-edit .promo-section {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .lora-edit .promo-card {
   background: #f8fafc !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 18px !important;
-  padding: 16px 20px !important;
+  padding: 20px 24px !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .lora-edit .promo-card.exhausted {
@@ -909,7 +915,7 @@
 .lora-edit .promo-card-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .lora-edit .promo-code-badge {
@@ -920,7 +926,7 @@
   background: #fff !important;
   border: 1.5px dashed var(--brand) !important;
   color: var(--brand) !important;
-  padding: 6px 14px !important;
+  padding: 8px 16px !important;
   border-radius: 10px !important;
   display: inline-flex;
   align-items: center;
@@ -930,7 +936,7 @@
 .lora-edit .promo-meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
 }
 
 .lora-edit .promo-uses {
@@ -1000,8 +1006,8 @@ body.dark-theme .lora-edit .sess {
   background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
   border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 22px !important;
-  padding: 20px 20px 22px !important;
-  margin-bottom: 18px !important;
+  padding: 24px 26px 26px !important;
+  margin-bottom: 24px !important;
   box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65), 0 0 24px rgba(118, 87, 255, 0.05) !important;
   position: relative !important;
   overflow: hidden !important;
@@ -1180,7 +1186,8 @@ body.dark-theme .lora-edit .del {
   color: #A78BFA !important;
   font-weight: 600 !important;
   display: inline-block !important;
-  margin-top: 6px !important;
+  margin-top: 10px !important;
+  line-height: 1.5 !important;
 }
 
 .dark .lora-edit .sess.free small,
@@ -1192,7 +1199,7 @@ body.dark-theme .lora-edit .del {
 [data-theme="dark"] .lora-edit .add,
 body.dark-theme .lora-edit .add {
   width: 100% !important;
-  min-height: 54px !important;
+  min-height: 56px !important;
   border: 1.5px dashed rgba(118, 87, 255, 0.45) !important;
   background: rgba(17, 22, 41, 0.75) !important;
   border-radius: 18px !important;
@@ -1205,7 +1212,7 @@ body.dark-theme .lora-edit .add {
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
-  margin-top: 14px !important;
+  margin-top: 18px !important;
   cursor: pointer !important;
 }
 
@@ -1405,49 +1412,49 @@ body.dark-theme .lora-edit {
 
 /* ── Course Visibility & Secret Invite ── */
 .edit-visibility-section {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
 .edit-visibility-label {
   display: block;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .edit-visibility-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-  gap: 10px;
+  gap: 14px;
 }
 
 .edit-visibility-btn {
   text-align: left;
-  padding: 12px 13px;
-  border-radius: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
   border: 1.5px solid #e2e8f0;
   background: #ffffff;
   cursor: pointer;
   transition: all 0.18s ease;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .edit-visibility-btn .edit-visibility-head {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 14px;
   color: #0f172a;
 }
 
 .edit-visibility-btn .edit-visibility-sub {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: #64748b;
-  line-height: 1.35;
+  line-height: 1.5;
 }
 
 .edit-visibility-btn.public.active {
@@ -1475,14 +1482,14 @@ body.dark-theme .lora-edit {
 }
 
 .edit-invite-box {
-  margin-top: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
+  margin-top: 16px;
+  padding: 18px 20px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%);
   border: 1.5px solid #ddd6fe;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .edit-invite-row {
@@ -1490,7 +1497,7 @@ body.dark-theme .lora-edit {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .edit-invite-left {
@@ -1499,12 +1506,12 @@ body.dark-theme .lora-edit {
   gap: 8px;
   color: #5b21b6;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 13.5px;
 }
 
 .edit-invite-code {
   background: #ede9fe;
-  padding: 2px 7px;
+  padding: 3px 9px;
   border-radius: 6px;
   font-size: 12.5px;
 }
@@ -1519,12 +1526,12 @@ body.dark-theme .lora-edit {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 8px 14px;
   border-radius: 9px;
   background: #6d28d9;
   color: #ffffff;
   border: none;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
@@ -1539,21 +1546,21 @@ body.dark-theme .lora-edit {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 7px 10px;
+  padding: 8px 12px;
   border-radius: 9px;
   background: #ffffff;
   color: #64748b;
   border: 1px solid #cbd5e1;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .edit-invite-desc {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   color: #6b21a8;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* Visibility Dark Mode */
@@ -1796,31 +1803,33 @@ body.dark-theme .lora-edit {
 
 .lora-promo-modal {
   width: 100%;
-  max-width: 500px;
+  max-width: 540px;
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
-  padding: 24px 26px;
+  padding: 30px 32px;
   margin: auto;
 }
 
 .lora-promo-modal-hd {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .lora-promo-modal-hd h3 {
   margin: 0;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 800;
   color: #0f172a;
 }
 
 .lora-promo-modal-hd p {
-  margin: 2px 0 0;
-  font-size: 13px;
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
   color: #64748b;
 }
 
@@ -1828,13 +1837,14 @@ body.dark-theme .lora-edit {
   background: #f1f5f9;
   border: 0;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
   display: grid;
   place-items: center;
   color: #64748b;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 .lora-promo-close-btn:hover {
@@ -1843,39 +1853,39 @@ body.dark-theme .lora-edit {
 }
 
 .lora-promo-field-group {
-  margin-bottom: 16px;
+  margin-bottom: 22px;
 }
 
 .lora-promo-label {
   display: block;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   color: #1e293b;
 }
 
 .lora-promo-type-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 8px;
   background: #f1f5f9;
-  padding: 4px;
-  border-radius: 12px;
+  padding: 6px;
+  border-radius: 14px;
 }
 
 .lora-promo-type-btn {
   background: transparent;
   color: #475569;
   border: 0;
-  border-radius: 9px;
-  padding: 8px 6px;
+  border-radius: 10px;
+  padding: 10px 8px;
   font-weight: 700;
   font-size: 12.5px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   transition: all 0.15s ease;
 }
 
@@ -1886,17 +1896,17 @@ body.dark-theme .lora-edit {
 }
 
 .lora-promo-type-btn .type-desc {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
-  opacity: 0.75;
+  opacity: 0.78;
 }
 
 .lora-promo-input {
   width: 100%;
-  height: 44px;
+  height: 48px;
   border: 1.5px solid #cbd5e1;
   border-radius: 12px;
-  padding: 0 14px;
+  padding: 0 16px;
   font-size: 14.5px;
   font-weight: 600;
   background: #ffffff;
@@ -1913,8 +1923,8 @@ body.dark-theme .lora-edit {
 
 .lora-promo-input-suffix {
   position: absolute;
-  right: 12px;
-  top: 12px;
+  right: 14px;
+  top: 14px;
   font-weight: 700;
   color: #64748b;
 }
@@ -1929,8 +1939,8 @@ body.dark-theme .lora-edit {
 
 .lora-promo-pills-row {
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 
@@ -1940,7 +1950,7 @@ body.dark-theme .lora-edit {
   color: #475569;
   font-weight: 700;
   font-size: 12px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
@@ -1954,25 +1964,27 @@ body.dark-theme .lora-edit {
 
 .lora-promo-preview-calc {
   color: #059669;
-  font-size: 12px;
-  margin-top: 6px;
+  font-size: 12.5px;
+  margin-top: 8px;
+  line-height: 1.5;
   display: block;
   font-weight: 600;
 }
 
 .lora-promo-free-callout {
-  margin-bottom: 16px;
-  padding: 10px 14px;
+  margin-bottom: 22px;
+  padding: 14px 16px;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 12px;
   color: #166534;
-  font-size: 12.5px;
+  font-size: 13px;
+  line-height: 1.55;
   font-weight: 600;
 }
 
 .lora-promo-roll-btn {
-  padding: 0 14px;
+  padding: 0 16px;
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
   border-radius: 12px;
@@ -1992,8 +2004,9 @@ body.dark-theme .lora-edit {
 
 .lora-promo-hint {
   color: #64748b;
-  font-size: 11.5px;
-  margin-top: 5px;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.5;
   display: block;
 }
 
@@ -2001,7 +2014,7 @@ body.dark-theme .lora-edit {
   background: none;
   border: 0;
   color: #ef4444;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   padding: 0;
@@ -2009,9 +2022,10 @@ body.dark-theme .lora-edit {
 
 .lora-promo-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
-  padding-top: 12px;
+  padding-top: 18px;
+  margin-top: 6px;
   border-top: 1px solid #f1f5f9;
 }
 

@@ -130,7 +130,7 @@
 .lora-settings .s-stack {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 30px;
   min-width: 0;
 }
 
@@ -138,25 +138,26 @@
 .lora-settings .s-card {
   background: var(--s-surface) !important;
   border: 1px solid var(--s-line) !important;
-  border-radius: 20px !important;
-  padding: 26px !important;
+  border-radius: 22px !important;
+  padding: 30px 32px !important;
   box-shadow: var(--s-shadow) !important;
   color: var(--s-ink) !important;
 }
 
 .lora-settings .s-card > header {
-  margin-bottom: 20px !important;
+  margin-bottom: 24px !important;
 }
 
 .lora-settings .s-card > header h2 {
-  font-size: 20px !important;
+  font-size: 21px !important;
   color: var(--s-ink) !important;
 }
 
 .lora-settings .s-card > header p {
-  margin: 4px 0 0 !important;
+  margin: 6px 0 0 !important;
   color: var(--s-muted) !important;
   font-size: 14px !important;
+  line-height: 1.55 !important;
 }
 
 /* ────────── Plan card (dark hero) ────────── */
@@ -509,7 +510,7 @@
 .lora-settings .s-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 22px;
 }
 
 @media (max-width: 640px) {
@@ -531,8 +532,8 @@
 .lora-settings .s-field label {
   display: block !important;
   font-weight: 600 !important;
-  font-size: 13.5px !important;
-  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
   color: var(--s-ink) !important;
   font-family: 'Figtree', sans-serif !important;
 }

@@ -380,7 +380,7 @@ export default function ManageMultiPack() {
                 </Link>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {subPacks.map((sub, idx) => {
                   const sessionCount = sub.sessions?.[0]?.count || 0;
                   const studentCount = sub.enrollments?.[0]?.count || 0;
@@ -388,7 +388,7 @@ export default function ManageMultiPack() {
                   return (
                     <div
                       key={sub.id}
-                      className="bg-white rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md transition-all p-5 flex flex-col md:flex-row md:items-center gap-5"
+                      className="bg-white rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md transition-all p-6 flex flex-col md:flex-row md:items-center gap-6"
                     >
                       {/* Order Controls + Number */}
                       <div className="flex md:flex-col items-center gap-1.5 flex-shrink-0">
@@ -432,7 +432,7 @@ export default function ManageMultiPack() {
 
                       {/* Sub-pack Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <div className="flex flex-wrap items-center gap-2.5 mb-1.5">
                           <h3 className="font-bold text-[#0F172A] text-base truncate">{sub.title}</h3>
                           <button
                             type="button"
@@ -443,7 +443,7 @@ export default function ManageMultiPack() {
                           </button>
                         </div>
 
-                        <p className="text-xs text-[#64748B] line-clamp-1 mb-2.5">
+                        <p className="text-xs text-[#64748B] line-clamp-1 mb-3 leading-relaxed">
                           {sub.description || 'No description'}
                         </p>
 
@@ -534,7 +534,7 @@ export default function ManageMultiPack() {
         {activeTab === 'details' && (
           <div className="mmp-layout">
             {/* Left: Bento Form Cards */}
-            <form onSubmit={handleSaveMainDetails} className="space-y-6">
+            <form onSubmit={handleSaveMainDetails} className="space-y-8">
 
               {/* BENTO 1: Course Identity & Visibility */}
               <div className="mmp-bento">
@@ -549,8 +549,8 @@ export default function ManageMultiPack() {
                 </div>
 
                 {/* Visibility Selector */}
-                <div className="mb-5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 block">
+                <div className="mb-6">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 block">
                     Course Visibility
                   </label>
                   <div className="mmp-vis-grid">
@@ -608,8 +608,8 @@ export default function ManageMultiPack() {
                 </div>
 
                 {/* Course Title */}
-                <div className="mb-5">
-                  <div className="flex items-center justify-between mb-1.5">
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
                       Main Course Title *
                     </label>
@@ -619,7 +619,7 @@ export default function ManageMultiPack() {
                   </div>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 font-semibold text-base focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 font-semibold text-base focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
                     placeholder="e.g. Complete Full-Stack Web Mastery (Monthly Cohort)"
                     value={pack.title || ''}
                     onChange={e => setPack(prev => ({ ...prev, title: e.target.value }))}
@@ -629,8 +629,8 @@ export default function ManageMultiPack() {
                 </div>
 
                 {/* Description */}
-                <div className="mb-5">
-                  <div className="flex items-center justify-between mb-1.5">
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
                       Full Course Description *
                     </label>
@@ -640,7 +640,7 @@ export default function ManageMultiPack() {
                   </div>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none leading-relaxed"
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none leading-relaxed"
                     placeholder="Describe what learners will learn across all batches, who this multi-course is for, and prerequisites..."
                     value={pack.description || ''}
                     onChange={e => setPack(prev => ({ ...prev, description: e.target.value }))}
@@ -649,13 +649,13 @@ export default function ManageMultiPack() {
                 </div>
 
                 {/* Category & Currency */}
-                <div className="grid sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                <div className="grid sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 block">
                       Course Category
                     </label>
                     <select
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none mb-2"
+                      className="w-full px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none mb-2.5"
                       value={pack.category || ''}
                       onChange={e => setPack(prev => ({ ...prev, category: e.target.value }))}
                     >
@@ -663,7 +663,7 @@ export default function ManageMultiPack() {
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
 
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                       {CATEGORIES.slice(0, 5).map(cat => (
                         <button
                           key={cat}
@@ -678,17 +678,17 @@ export default function ManageMultiPack() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 block">
                       Default Currency for New Batches
                     </label>
                     <select
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-semibold focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                      className="w-full px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-semibold focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
                       value={pack.currency || 'LKR'}
                       onChange={e => setPack(prev => ({ ...prev, currency: e.target.value }))}
                     >
                       {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <p className="text-[11px] text-slate-400 mt-2">
+                    <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
                       New sub-packs created under this multi-course will inherit this currency by default.
                     </p>
                   </div>
@@ -880,7 +880,7 @@ export default function ManageMultiPack() {
                   </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-6">
                   {/* WhatsApp Hub */}
                   <div className="mmp-brand-card whatsapp">
                     <div className="mmp-brand-head">
@@ -890,9 +890,9 @@ export default function ManageMultiPack() {
                       <span className="mmp-brand-title">WhatsApp Support & Group</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <div>
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1 block">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1.5 block">
                           Inquiry WhatsApp Number
                         </label>
                         <PhoneInput
@@ -904,7 +904,7 @@ export default function ManageMultiPack() {
                       </div>
 
                       <div>
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1 block">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 mb-1.5 block">
                           Default WhatsApp Group Link
                         </label>
                         <input
@@ -927,9 +927,9 @@ export default function ManageMultiPack() {
                       <span className="mmp-brand-title">Telegram Community</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <div>
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-sky-900 mb-1 block">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-sky-900 mb-1.5 block">
                           Default Telegram Channel / Group
                         </label>
                         <input
@@ -940,7 +940,7 @@ export default function ManageMultiPack() {
                           onChange={e => setPack(prev => ({ ...prev, telegram_link: e.target.value }))}
                         />
                       </div>
-                      <p className="text-[11px] text-sky-700/80 leading-relaxed pt-2">
+                      <p className="text-xs text-sky-700/80 leading-relaxed pt-2">
                         Shared with learners automatically after enrollment into any sub-pack or batch.
                       </p>
                     </div>

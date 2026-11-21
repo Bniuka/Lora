@@ -67,7 +67,7 @@
 .lora-creator aside {
   background: var(--surface) !important;
   border-right: 1px solid var(--line) !important;
-  padding: 22px 14px !important;
+  padding: 24px 16px !important;
   display: flex !important;
   flex-direction: column !important;
   position: sticky !important;
@@ -88,7 +88,7 @@
   align-items: center !important;
   gap: 10px !important;
   font: 800 22px 'Bricolage Grotesque', sans-serif !important;
-  padding: 0 4px 22px !important;
+  padding: 0 6px 26px !important;
   color: var(--ink) !important;
   text-decoration: none !important;
 }
@@ -119,13 +119,14 @@
 .lora-creator nav {
   display: flex !important;
   flex-direction: column !important;
+  gap: 5px !important;
 }
 
 .lora-creator nav a {
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
-  padding: 10px 12px !important;
+  gap: 13px !important;
+  padding: 11.5px 14px !important;
   border-radius: 12px !important;
   color: var(--muted) !important;
   font-weight: 500 !important;
@@ -402,8 +403,8 @@
 .lora-creator .top {
   display: flex !important;
   align-items: center !important;
-  gap: 16px !important;
-  padding: 14px 32px !important;
+  gap: 20px !important;
+  padding: 16px 36px !important;
   background: var(--surface) !important;
   border-bottom: 1px solid var(--line) !important;
   position: sticky !important;
@@ -453,7 +454,7 @@
   margin-left: auto !important;
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 14px !important;
 }
 
 .lora-creator .bell {
@@ -532,26 +533,29 @@
 .lora-creator .user-dropdown {
   position: absolute !important;
   right: 0 !important;
-  top: calc(100% + 8px) !important;
+  top: calc(100% + 10px) !important;
   background: var(--surface) !important;
   border: 1px solid var(--line) !important;
-  border-radius: 14px !important;
+  border-radius: 16px !important;
   box-shadow: 0 12px 32px rgba(14, 23, 51, 0.12) !important;
-  min-width: 200px !important;
-  padding: 6px !important;
+  min-width: 215px !important;
+  padding: 8px !important;
   z-index: 40 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
 }
 
 .lora-creator .user-dropdown button {
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 12px !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
   border: 0 !important;
   background: none !important;
-  border-radius: 8px !important;
-  font-size: 13.5px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
   color: var(--ink) !important;
   cursor: pointer !important;
   text-align: left !important;

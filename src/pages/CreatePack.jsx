@@ -487,10 +487,10 @@ export default function CreatePack() {
             </div>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 10 }}>
             <div>
               <h1 style={{ margin: 0 }}>{parentPack ? 'Create Sub-Pack (Month / Batch)' : 'Create session pack'}</h1>
-              <p style={{ margin: '4px 0 0', color: 'var(--muted)' }}>
+              <p style={{ margin: '8px 0 0', color: 'var(--muted)', lineHeight: 1.55 }}>
                 {parentPack
                   ? `Shared settings from "${parentPack.title}" have been pre-filled automatically.`
                   : 'Launch your live interactive course in 5 simple steps.'}
@@ -567,7 +567,7 @@ export default function CreatePack() {
                     {/* Course Visibility & Access Selector */}
                     <div className="f">
                       <label>Course visibility &amp; access</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 14 }}>
                         {[
                           {
                             id: 'public',
@@ -947,7 +947,7 @@ export default function CreatePack() {
                                 onChange={e => updateFreeSession('recording_url', e.target.value)}
                                 required
                               />
-                              <small style={{ color: '#059669', fontSize: 12, fontWeight: 600 }}>
+                              <small style={{ color: '#059669', fontSize: 12, fontWeight: 600, display: 'block', marginTop: 8, lineHeight: 1.5 }}>
                                 ✓ Free preview recording: Visible and playable immediately by anyone.
                               </small>
                             </div>
@@ -1090,7 +1090,7 @@ export default function CreatePack() {
                                 onChange={e => updateSession(idx, 'recording_url', e.target.value)}
                                 required
                               />
-                              <small style={{ color: '#7c3aed', fontSize: 12, fontWeight: 600 }}>
+                              <small style={{ color: '#7c3aed', fontSize: 12, fontWeight: 600, display: 'block', marginTop: 8, lineHeight: 1.5 }}>
                                 ✓ Catch-up Recording: Learners get immediate access to watch this session the moment they enroll.
                               </small>
                             </div>

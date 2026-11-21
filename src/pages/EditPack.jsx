@@ -1059,7 +1059,7 @@ export default function EditPack() {
                               onChange={e => updateSession(idx, 'recording_url', e.target.value)}
                               required
                             />
-                            <small style={{ color: '#7c3aed', fontSize: 12, fontWeight: 600 }}>
+                            <small style={{ color: '#7c3aed', fontSize: 12, fontWeight: 600, display: 'block', marginTop: 8, lineHeight: 1.5 }}>
                               ✓ Catch-up Recording: Learners get immediate access to watch this session the moment they enroll.
                             </small>
                           </div>

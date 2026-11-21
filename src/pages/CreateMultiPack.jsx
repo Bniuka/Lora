@@ -360,13 +360,13 @@ export default function CreateMultiPack() {
     <PageTransition>
       <div className="lora-wizard">
         <div className="page">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 10 }}>
             <div>
               <div className="mp-badge-tag">
                 <Layers size={13} /> MULTI-COURSE PACK
               </div>
               <h1 style={{ margin: 0 }}>Create Multi-Pack</h1>
-              <p style={{ margin: '4px 0 0', color: 'var(--muted)' }}>
+              <p style={{ margin: '8px 0 0', color: 'var(--muted)', lineHeight: 1.55 }}>
                 Create a main course showcase and organize monthly classes or sequential batches underneath it.
               </p>
             </div>
@@ -447,7 +447,7 @@ export default function CreateMultiPack() {
                     {/* Course Visibility */}
                     <div className="f">
                       <label>Main course visibility</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 14 }}>
                         {[
                           {
                             id: 'public',
@@ -539,7 +539,7 @@ export default function CreateMultiPack() {
                     {/* Recommendation #2: Batch Progression / Unlock Rule */}
                     <div className="f">
                       <label>How should learners enroll in your Sub-Packs?</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 10 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 14 }}>
                         <button
                           type="button"
                           onClick={() => update('sequential_unlock', false)}

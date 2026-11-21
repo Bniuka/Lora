@@ -80,11 +80,11 @@
 /* ── Page wrapper ── */
 .lora-dash .page,
 .lora-dash .ld-page {
-  max-width: 1180px !important;
-  padding: 28px 32px 56px !important;
+  max-width: 1220px !important;
+  padding: 36px 40px 72px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 24px !important;
+  gap: 32px !important;
   margin: 0 auto !important;
 }
 
@@ -94,37 +94,38 @@
   display: flex !important;
   align-items: flex-end !important;
   justify-content: space-between !important;
-  gap: 18px !important;
+  gap: 24px !important;
   flex-wrap: wrap !important;
 }
 
 .lora-dash .hello h1,
 .lora-dash .ld-hello h1 {
   font-size: clamp(30px, 4vw, 44px) !important;
-  line-height: 1.05 !important;
+  line-height: 1.1 !important;
   color: var(--ink) !important;
 }
 
 .lora-dash .hello p,
 .lora-dash .ld-hello p {
-  margin: 6px 0 0 !important;
+  margin: 10px 0 0 !important;
   color: var(--muted) !important;
+  line-height: 1.6 !important;
 }
 
 /* Header action pill buttons */
 .lora-dash .hb,
 .lora-dash .ld-hello-btns {
   display: flex !important;
-  gap: 10px !important;
+  gap: 12px !important;
   flex-wrap: wrap !important;
 }
 
 .lora-dash .pill {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  min-height: 44px !important;
-  padding: 0 16px !important;
+  gap: 9px !important;
+  min-height: 46px !important;
+  padding: 0 18px !important;
   border-radius: 13px !important;
   font-weight: 600 !important;
   border: 1.5px solid var(--edge) !important;
@@ -187,13 +188,13 @@
 .lora-dash .ld-stats {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 18px !important;
+  gap: 22px !important;
 }
 
 /* Stat card */
 .lora-dash .stat,
 .lora-dash .ld-stat {
-  padding: 22px !important;
+  padding: 26px !important;
   position: relative !important;
 }
 
@@ -229,13 +230,13 @@
 .lora-dash .ld-stat .ld-r {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
+  gap: 16px !important;
 }
 
 .lora-dash .ib,
 .lora-dash .ld-ib {
-  width: 46px !important;
-  height: 46px !important;
+  width: 48px !important;
+  height: 48px !important;
   border-radius: 14px !important;
   display: grid !important;
   place-items: center !important;
@@ -256,6 +257,7 @@
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
   display: block !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-dash .big,
@@ -269,7 +271,7 @@
 
 .lora-dash .trend,
 .lora-dash .ld-trend {
-  margin-top: 12px !important;
+  margin-top: 16px !important;
   font-size: 13px !important;
   color: var(--muted) !important;
   display: flex !important;
@@ -301,7 +303,7 @@
   display: block !important;
   width: 100% !important;
   height: 54px !important;
-  margin-top: 10px !important;
+  margin-top: 14px !important;
 }
 
 /* ── Actions Grid ── */
@@ -309,16 +311,16 @@
 .lora-dash .ld-acts {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 18px !important;
+  gap: 22px !important;
 }
 
 .lora-dash .act,
 .lora-dash .ld-act {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  padding: 18px 20px !important;
-  min-height: 92px !important;
+  gap: 16px !important;
+  padding: 22px 24px !important;
+  min-height: 104px !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
   text-decoration: none !important;
 }
@@ -335,13 +337,14 @@
   display: block !important;
   font: 700 16px 'Bricolage Grotesque', sans-serif !important;
   color: var(--ink) !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-dash .act span,
 .lora-dash .ld-act span {
   color: var(--muted) !important;
   font-size: 13.5px !important;
-  line-height: 1.35 !important;
+  line-height: 1.5 !important;
   display: block !important;
 }
 
@@ -371,8 +374,8 @@
 .lora-dash .cols,
 .lora-dash .ld-cols {
   display: grid !important;
-  grid-template-columns: 1fr 360px !important;
-  gap: 24px !important;
+  grid-template-columns: 1fr 380px !important;
+  gap: 28px !important;
   align-items: start !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -382,7 +385,7 @@
 
 .lora-dash .sec,
 .lora-dash .ld-sec {
-  padding: 24px !important;
+  padding: 28px 30px !important;
   min-width: 0 !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -392,7 +395,7 @@
 .lora-dash .ld-side {
   display: flex !important;
   flex-direction: column !important;
-  gap: 24px !important;
+  gap: 28px !important;
   min-width: 0 !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -402,16 +405,16 @@
 .lora-dash .ld-sh {
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
-  margin-bottom: 18px !important;
+  gap: 14px !important;
+  margin-bottom: 24px !important;
   min-width: 0 !important;
   width: 100% !important;
 }
 
 .lora-dash .sh .ib,
 .lora-dash .ld-sh .ld-ib {
-  width: 42px !important;
-  height: 42px !important;
+  width: 44px !important;
+  height: 44px !important;
   background: var(--brand-soft) !important;
   color: var(--brand) !important;
   border-radius: 14px !important;
@@ -421,6 +424,7 @@
 .lora-dash .ld-sh h2 {
   font-size: 20px !important;
   color: var(--ink) !important;
+  margin-bottom: 3px !important;
 }
 
 .lora-dash .sh p,
@@ -428,6 +432,7 @@
   margin: 0 !important;
   color: var(--muted) !important;
   font-size: 13.5px !important;
+  line-height: 1.5 !important;
 }
 
 .lora-dash .va,
@@ -444,20 +449,20 @@
   text-decoration: none !important;
 }
 
-/* ── Compact Recent Packs List ── */
+/* ── Recent Packs List ── */
 .lora-dash .pack-list {
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 16px !important;
 }
 
 .lora-dash .pack-mini {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  padding: 10px 14px !important;
+  gap: 18px !important;
+  padding: 16px 20px !important;
   border: 1.5px solid var(--edge) !important;
-  border-radius: 16px !important;
+  border-radius: 18px !important;
   background: #ffffff !important;
   transition: all 0.22s ease !important;
   position: relative !important;
@@ -471,9 +476,9 @@
 }
 
 .lora-dash .pm-thumb {
-  width: 72px !important;
-  height: 54px !important;
-  border-radius: 12px !important;
+  width: 86px !important;
+  height: 64px !important;
+  border-radius: 14px !important;
   overflow: hidden !important;
   flex-shrink: 0 !important;
   position: relative !important;
@@ -531,13 +536,13 @@
   min-width: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 3px !important;
+  gap: 6px !important;
 }
 
 .lora-dash .pm-top {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
   flex-wrap: wrap !important;
 }
 
@@ -576,14 +581,14 @@
 
 .lora-dash .pm-title {
   font-family: 'Bricolage Grotesque', 'Figtree', sans-serif !important;
-  font-size: 15px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
   color: var(--ink) !important;
   margin: 0 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  line-height: 1.3 !important;
+  line-height: 1.4 !important;
 }
 
 .lora-dash .pack-mini:hover .pm-title {
@@ -593,26 +598,27 @@
 .lora-dash .pm-meta {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  font-size: 12px !important;
+  gap: 10px !important;
+  font-size: 12.5px !important;
   color: var(--muted) !important;
+  margin-top: 2px !important;
 }
 
 .lora-dash .pm-meta span {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 4px !important;
+  gap: 5px !important;
 }
 
 .lora-dash .pm-meta .ic {
-  width: 13px !important;
-  height: 13px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .lora-dash .pm-price {
   font-weight: 700 !important;
   color: var(--brand) !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 .lora-dash .pm-price.free {
@@ -627,10 +633,10 @@
 .lora-dash .pm-btn {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 5px !important;
-  padding: 7px 13px !important;
-  border-radius: 10px !important;
-  font-size: 12px !important;
+  gap: 6px !important;
+  padding: 9px 16px !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
   background: #eff6ff !important;
   color: #1e40af !important;
@@ -827,13 +833,19 @@
 .lora-dash .ld-qs a {
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
-  padding: 10px 8px !important;
+  gap: 14px !important;
+  padding: 12px 14px !important;
   border-radius: 14px !important;
-  min-height: 56px !important;
+  min-height: 60px !important;
+  margin-bottom: 6px !important;
   transition: background 0.15s ease !important;
   text-decoration: none !important;
   color: var(--ink) !important;
+}
+
+.lora-dash .qs a:last-child,
+.lora-dash .ld-qs a:last-child {
+  margin-bottom: 0 !important;
 }
 
 .lora-dash .qs a:hover,
@@ -843,8 +855,8 @@
 
 .lora-dash .qs a .ib,
 .lora-dash .ld-qs a .ld-ib {
-  width: 40px !important;
-  height: 40px !important;
+  width: 42px !important;
+  height: 42px !important;
   border-radius: 12px !important;
   display: grid !important;
   place-items: center !important;
@@ -871,10 +883,10 @@
   color: var(--muted) !important;
 }
 
-/* ── Activity Feed (Compact Internal Scroll + 2-Line Clamp) ── */
+/* ── Activity Feed ── */
 .lora-dash .activity-sec .sh {
-  margin-bottom: 14px !important;
-  gap: 10px !important;
+  margin-bottom: 20px !important;
+  gap: 12px !important;
 }
 
 .lora-dash .activity-sec .sh-title-row {
@@ -919,7 +931,7 @@
   color: var(--muted) !important;
   font-size: 12px !important;
   font-weight: 700 !important;
-  padding: 4px 10px !important;
+  padding: 5px 12px !important;
   border-radius: 8px !important;
   cursor: pointer !important;
   transition: all 0.16s ease !important;
@@ -955,14 +967,14 @@
   list-style: none !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 14px !important;
 }
 
 .lora-dash .feed.feed-scroll {
-  max-height: 256px !important;
+  max-height: 340px !important;
   overflow-y: auto !important;
   overscroll-behavior: contain !important;
-  padding-right: 4px !important;
+  padding-right: 6px !important;
   scrollbar-width: thin !important;
   scrollbar-color: #cbd5e1 transparent !important;
 }
@@ -987,12 +999,12 @@
 .lora-dash .feed li,
 .lora-dash .ld-feed li {
   display: flex !important;
-  gap: 10px !important;
+  gap: 14px !important;
   align-items: flex-start !important;
   background: #fff !important;
   border: 1px solid var(--edge) !important;
-  border-radius: 14px !important;
-  padding: 10px 12px !important;
+  border-radius: 16px !important;
+  padding: 15px 18px !important;
   cursor: pointer !important;
   transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease !important;
 }
@@ -1010,18 +1022,18 @@
 
 .lora-dash .feed .ib,
 .lora-dash .ld-feed .ld-ib {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 10px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 11px !important;
   display: grid !important;
   place-items: center !important;
   flex: none !important;
-  margin-top: 1px !important;
+  margin-top: 2px !important;
 }
 
 .lora-dash .feed .ib .ic {
-  width: 15px !important;
-  height: 15px !important;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .lora-dash .feed .feed-body {
@@ -1033,13 +1045,14 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 8px !important;
+  gap: 10px !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-dash .feed b,
 .lora-dash .ld-feed b {
   display: block !important;
-  font: 700 14px/1.3 'Bricolage Grotesque', sans-serif !important;
+  font: 700 14.5px/1.4 'Bricolage Grotesque', sans-serif !important;
   color: var(--ink) !important;
   min-width: 0 !important;
   flex: 1 !important;
@@ -1054,7 +1067,7 @@
 .lora-dash .feed .feed-meta {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
   flex-shrink: 0 !important;
 }
 
@@ -1062,9 +1075,9 @@
 .lora-dash .ld-feed small {
   display: block !important;
   color: var(--muted) !important;
-  font-size: 12.5px !important;
-  line-height: 1.42 !important;
-  margin-top: 3px !important;
+  font-size: 13px !important;
+  line-height: 1.58 !important;
+  margin-top: 5px !important;
   word-break: break-word !important;
 }
 
@@ -1163,24 +1176,24 @@
 
 /* ── Onboarding Checklist Card (Seamless V2 Integration) ── */
 .lora-dash .ld-onboard {
-  padding: 24px 26px !important;
+  padding: 30px 32px !important;
 }
 
 .lora-dash .ld-onboard-head {
   display: flex !important;
   align-items: flex-start !important;
   justify-content: space-between !important;
-  gap: 16px !important;
+  gap: 20px !important;
   flex-wrap: wrap !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 22px !important;
 }
 
 .lora-dash .ld-onboard-badges {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 12px !important;
   flex-wrap: wrap !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 10px !important;
 }
 
 .lora-dash .ld-onboard-pill {
@@ -1188,7 +1201,7 @@
   color: var(--brand) !important;
   font-weight: 800 !important;
   font-size: 12px !important;
-  padding: 4px 11px !important;
+  padding: 5px 12px !important;
   border-radius: 99px !important;
   letter-spacing: 0.02em !important;
 }
@@ -1198,26 +1211,27 @@
   font-weight: 700 !important;
   color: #12a46f !important;
   background: #e3f7ee !important;
-  padding: 4px 11px !important;
+  padding: 5px 12px !important;
   border-radius: 99px !important;
 }
 
 .lora-dash .ld-onboard-head h2 {
   font-size: 22px !important;
   color: var(--ink) !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 8px !important;
 }
 
 .lora-dash .ld-onboard-head p {
   margin: 0 !important;
-  font-size: 14px !important;
+  font-size: 14.5px !important;
   color: var(--muted) !important;
+  line-height: 1.6 !important;
 }
 
 .lora-dash .ld-onboard-actions {
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 10px !important;
   flex-wrap: wrap !important;
 }
 
@@ -1225,10 +1239,10 @@
   background: var(--brand) !important;
   color: #ffffff !important;
   border: 0 !important;
-  border-radius: 11px !important;
-  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
   font-weight: 700 !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   cursor: pointer !important;
 }
 
@@ -1236,16 +1250,16 @@
   background: #ffffff !important;
   color: var(--ink) !important;
   border: 1px solid var(--line) !important;
-  border-radius: 11px !important;
-  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
   font-weight: 700 !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   text-decoration: none !important;
 }
 
 .lora-dash .ld-onboard-dismiss {
-  width: 32px !important;
-  height: 32px !important;
+  width: 34px !important;
+  height: 34px !important;
   border-radius: 50% !important;
   border: 1px solid var(--line) !important;
   background: #ffffff !important;
@@ -1263,7 +1277,7 @@
   background: #e2e8f0 !important;
   border-radius: 99px !important;
   overflow: hidden !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 26px !important;
 }
 
 .lora-dash .ld-onboard-bar-fill {
@@ -1276,17 +1290,17 @@
 .lora-dash .ld-onboard-grid {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 14px !important;
+  gap: 18px !important;
 }
 
 .lora-dash .ld-onboard-step {
   background: #ffffff !important;
   border: 1.5px solid var(--edge) !important;
-  border-radius: 16px !important;
-  padding: 16px !important;
+  border-radius: 18px !important;
+  padding: 20px 22px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 12px !important;
   transition: border-color 0.15s ease, transform 0.15s ease !important;
 }
 
@@ -1304,12 +1318,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-dash .ld-onboard-check {
-  width: 28px !important;
-  height: 28px !important;
+  width: 30px !important;
+  height: 30px !important;
   border-radius: 50% !important;
   background: var(--brand-soft) !important;
   color: var(--brand) !important;
@@ -1337,16 +1351,17 @@
 }
 
 .lora-dash .ld-onboard-step h3 {
-  font-size: 16px !important;
+  font-size: 16.5px !important;
   font-weight: 700 !important;
   color: var(--ink) !important;
+  line-height: 1.35 !important;
 }
 
 .lora-dash .ld-onboard-step p {
   margin: 0 !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   color: var(--muted) !important;
-  line-height: 1.45 !important;
+  line-height: 1.6 !important;
   flex: 1 !important;
 }
 
@@ -1354,7 +1369,7 @@
   font-size: 13.5px !important;
   font-weight: 700 !important;
   color: var(--brand) !important;
-  margin-top: 4px !important;
+  margin-top: 8px !important;
   display: inline-block !important;
 }
 
@@ -1366,12 +1381,13 @@
 .lora-dash .ld-trial {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
+  gap: 16px !important;
   background: linear-gradient(90deg, #e4f8ee, #e9f1ff) !important;
   border: 1.5px solid #c9ecd9 !important;
-  border-radius: 16px !important;
-  padding: 12px 16px !important;
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
   font-size: 14px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-dash .ld-trial .ld-dot {
@@ -1430,11 +1446,11 @@
   background: linear-gradient(135deg, #fff7ed 0%, #fffbf5 100%) !important;
   border: 1.5px solid #fed7aa !important;
   border-radius: 22px !important;
-  padding: 22px 24px !important;
+  padding: 26px 28px !important;
   box-shadow: 0 4px 18px -4px rgba(242, 98, 15, 0.12) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
+  gap: 20px !important;
 }
 
 .lora-dash .ld-missing-rec-header {
@@ -1502,18 +1518,18 @@
 .lora-dash .ld-missing-rec-list {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 16px !important;
 }
 
 .lora-dash .ld-missing-rec-item {
   background: #ffffff !important;
   border: 1px solid #fed7aa !important;
   border-radius: 16px !important;
-  padding: 14px 18px !important;
+  padding: 18px 22px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 16px !important;
+  gap: 20px !important;
   flex-wrap: wrap !important;
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }

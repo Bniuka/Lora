@@ -19,10 +19,10 @@
 .lora-victory-card {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   background: #ffffff;
   border-radius: 28px;
-  padding: 32px 26px 24px;
+  padding: 36px 30px 28px;
   box-shadow: 0 32px 84px rgba(0, 0, 0, 0.35), 0 0 40px rgba(118, 87, 255, 0.15);
   text-align: center;
   overflow: hidden;
@@ -176,10 +176,10 @@ body.dark-theme .lora-victory-card {
 /* Victory Title */
 .lora-victory-title {
   font-family: 'Bricolage Grotesque', 'Figtree', sans-serif;
-  font-size: 23px;
+  font-size: 24px;
   font-weight: 800;
-  line-height: 1.25;
-  margin: 0 0 8px;
+  line-height: 1.35;
+  margin: 0 0 12px;
   color: #0F172A;
   letter-spacing: -0.02em;
 }
@@ -194,10 +194,10 @@ body.dark-theme .lora-victory-card {
 
 /* Victory Subtitle */
 .lora-victory-sub {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 14.5px;
+  line-height: 1.62;
   color: #64748B;
-  margin: 0 0 16px;
+  margin: 0 0 20px;
 }
 
 .dark .lora-victory-sub,
@@ -209,14 +209,15 @@ body.dark-theme .lora-victory-card {
 .lora-victory-reaction {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 10px 18px;
   border-radius: 12px;
   background: #F1F5F9;
-  font-size: 13px;
+  font-size: 13.5px;
+  line-height: 1.5;
   font-weight: 600;
   color: #334155;
-  margin-bottom: 22px;
+  margin-bottom: 26px;
   border: 1px solid #E2E8F0;
 }
 

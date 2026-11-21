@@ -76,29 +76,30 @@
 
 /* Page container */
 .lora-enroll .page {
-  max-width: 1120px !important;
-  padding: 30px 32px 56px !important;
+  max-width: 1160px !important;
+  padding: 36px 36px 68px !important;
   margin: 0 auto !important;
 }
 
 .lora-enroll .hd h1 {
   font-size: clamp(30px, 4vw, 40px) !important;
-  line-height: 1.1 !important;
+  line-height: 1.15 !important;
   color: var(--ink) !important;
 }
 
 .lora-enroll .hd p {
-  margin: 4px 0 22px !important;
+  margin: 8px 0 26px !important;
   color: var(--muted) !important;
   font-size: 15px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-enroll .tools {
   display: flex !important;
-  gap: 14px !important;
+  gap: 16px !important;
   flex-wrap: wrap !important;
   align-items: center !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 24px !important;
 }
 
 .lora-enroll .q {
@@ -190,7 +191,7 @@
 .lora-enroll .list {
   display: flex !important;
   flex-direction: column !important;
-  gap: 14px !important;
+  gap: 18px !important;
 }
 
 .lora-enroll .card {
@@ -203,9 +204,9 @@
 .lora-enroll .en {
   display: grid !important;
   grid-template-columns: minmax(210px, 1.2fr) 2fr auto !important;
-  gap: 22px !important;
+  gap: 24px !important;
   align-items: center !important;
-  padding: 18px 20px !important;
+  padding: 22px 24px !important;
   transition: box-shadow 0.2s !important;
 }
 
@@ -540,30 +541,31 @@
 /* Rejection Modal */
 .lora-enroll .reject-card {
   background: var(--surface) !important;
-  border-radius: 22px !important;
-  max-width: 480px !important;
+  border-radius: 24px !important;
+  max-width: 500px !important;
   width: 100% !important;
-  padding: 24px !important;
+  padding: 30px !important;
   box-shadow: 0 20px 48px -12px rgba(14, 23, 51, 0.4) !important;
 }
 
 .lora-enroll .reject-card h3 {
-  font-size: 20px !important;
-  margin-bottom: 6px !important;
+  font-size: 21px !important;
+  margin-bottom: 8px !important;
   color: var(--ink) !important;
 }
 
 .lora-enroll .reject-card p {
   color: var(--muted) !important;
   font-size: 14px !important;
-  margin: 0 0 16px !important;
+  line-height: 1.55 !important;
+  margin: 0 0 20px !important;
 }
 
 .lora-enroll .reject-chips {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: 8px !important;
-  margin-bottom: 14px !important;
+  gap: 10px !important;
+  margin-bottom: 18px !important;
 }
 
 .lora-enroll .reject-chip {

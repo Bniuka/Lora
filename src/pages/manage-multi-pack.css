@@ -5,7 +5,7 @@
 .mmp-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
+  gap: 32px;
 }
 
 @media (min-width: 1024px) {
@@ -21,10 +21,16 @@
   border-radius: 24px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
-  padding: 24px sm:p-7;
+  padding: 28px 30px;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
   position: relative;
   overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .mmp-bento {
+    padding: 20px 18px;
+  }
 }
 
 .mmp-bento:hover {
@@ -34,13 +40,13 @@
 .mmp-bento-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .mmp-bento-icon {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -52,7 +58,7 @@
 
 .mmp-bento-title {
   font-family: 'Bricolage Grotesque', system-ui, sans-serif;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.01em;
@@ -60,20 +66,21 @@
 }
 
 .mmp-bento-sub {
-  font-size: 12.5px;
+  font-size: 13px;
+  line-height: 1.5;
   color: #64748b;
-  margin: 2px 0 0 0;
+  margin: 4px 0 0 0;
 }
 
 /* ── Visibility Switcher ── */
 .mmp-vis-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .mmp-vis-btn {
-  padding: 14px 16px;
+  padding: 18px 20px;
   border-radius: 16px;
   border: 1.5px solid #e2e8f0;
   background: #ffffff;
@@ -82,7 +89,7 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   position: relative;
 }
 
@@ -126,9 +133,10 @@
 }
 
 .mmp-vis-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748b;
-  line-height: 1.35;
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* ── Interactive Image Dropzone ── */
@@ -201,25 +209,25 @@
 .mmp-flowchart {
   background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #eff6ff 100%);
   border: 1.5px solid #e9d5ff;
-  border-radius: 20px;
-  padding: 20px 22px;
+  border-radius: 22px;
+  padding: 24px 28px;
 }
 
 .mmp-flow-steps {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin: 14px 0 10px 0;
+  margin: 18px 0 12px 0;
 }
 
 .mmp-flow-node {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 10px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   background: #ffffff;
   color: #6b21a8;
@@ -284,7 +292,7 @@
 /* ── Community Brand Cards ── */
 .mmp-brand-card {
   border-radius: 18px;
-  padding: 18px 20px;
+  padding: 22px 24px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   border: 1.5px solid transparent;
 }
@@ -313,7 +321,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .mmp-brand-pill {
@@ -349,7 +357,7 @@
   top: 90px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .mmp-preview-badge-row {
@@ -414,7 +422,7 @@
 }
 
 .mmp-discover-body {
-  padding: 18px 20px;
+  padding: 22px 24px;
 }
 
 /* ── Save Action Bar ── */
@@ -422,11 +430,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   background: #ffffff;
   border-radius: 20px;
   border: 1.5px solid #e2e8f0;
-  padding: 16px 22px;
+  padding: 20px 26px;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
 }
 

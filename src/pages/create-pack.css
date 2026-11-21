@@ -77,12 +77,12 @@
 }
 
 .lora-wizard .page {
-  max-width: 860px !important;
+  max-width: 900px !important;
   margin: 0 auto !important;
-  padding: 28px 32px 72px !important;
+  padding: 36px 36px 88px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 20px !important;
+  gap: 28px !important;
 }
 
 .lora-wizard .page > h1 {
@@ -91,8 +91,9 @@
 }
 
 .lora-wizard .page > h1 + p {
-  margin: -14px 0 0 !important;
+  margin: -6px 0 0 !important;
   color: var(--muted) !important;
+  line-height: 1.55 !important;
 }
 
 .lora-wizard .card {
@@ -106,7 +107,7 @@
 
 /* ── Stepper ── */
 .lora-wizard .stp {
-  padding: 22px 24px 16px !important;
+  padding: 26px 30px 22px !important;
 }
 
 .lora-wizard .steps {
@@ -138,7 +139,7 @@
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 10px !important;
   text-align: center !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -193,7 +194,7 @@
 /* ── Step Content ── */
 .lora-wizard .body {
   position: relative !important;
-  padding: 26px 28px 24px 34px !important;
+  padding: 32px 34px 30px 40px !important;
 }
 
 .lora-wizard .body:before {
@@ -234,13 +235,13 @@
 .lora-wizard .sh {
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  margin-bottom: 20px !important;
+  gap: 16px !important;
+  margin-bottom: 28px !important;
 }
 
 .lora-wizard .sh .ib {
-  width: 46px !important;
-  height: 46px !important;
+  width: 48px !important;
+  height: 48px !important;
   border-radius: 14px !important;
   background: var(--brand-soft) !important;
   color: var(--brand) !important;
@@ -272,17 +273,19 @@
 .lora-wizard .sh h2 {
   font-size: 23px !important;
   color: var(--ink) !important;
+  margin-bottom: 4px !important;
 }
 
 .lora-wizard .sh p {
   margin: 0 !important;
   color: var(--muted) !important;
   font-size: 14px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-wizard .g {
   display: grid !important;
-  gap: 16px !important;
+  gap: 24px !important;
 }
 
 .lora-wizard .g3 {
@@ -296,9 +299,10 @@
 .lora-wizard .f label {
   display: block !important;
   font-weight: 600 !important;
-  font-size: 13.5px !important;
-  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  margin-bottom: 9px !important;
   color: var(--ink) !important;
+  line-height: 1.4 !important;
 }
 
 .lora-wizard .f label span {
@@ -314,7 +318,8 @@
 .lora-wizard .f .h {
   font-size: 13px !important;
   color: var(--muted) !important;
-  margin: 5px 0 0 !important;
+  margin: 8px 0 0 !important;
+  line-height: 1.55 !important;
 }
 
 .lora-wizard .f input,
@@ -324,16 +329,17 @@
   background: #fff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 13px !important;
-  padding: 12px 14px !important;
-  min-height: 48px !important;
+  padding: 13.5px 16px !important;
+  min-height: 50px !important;
   outline: 0 !important;
   color: var(--ink) !important;
   transition: 0.15s !important;
 }
 
 .lora-wizard .f textarea {
-  min-height: 110px !important;
+  min-height: 128px !important;
   resize: vertical !important;
+  line-height: 1.6 !important;
 }
 
 .lora-wizard .f input:focus,
@@ -395,7 +401,7 @@
 }
 
 .lora-wizard .use-profile-num {
-  margin-top: 8px !important;
+  margin-top: 10px !important;
   font-size: 12.5px !important;
   font-weight: 600 !important;
   color: var(--brand) !important;
@@ -417,7 +423,7 @@
   align-items: center !important;
   gap: 10px !important;
   font: 700 17px 'Bricolage Grotesque', sans-serif !important;
-  margin: 6px 0 2px !important;
+  margin: 12px 0 4px !important;
 }
 
 .lora-wizard .sub:after {
@@ -428,9 +434,10 @@
 }
 
 .lora-wizard .note {
-  margin: -6px 0 4px !important;
+  margin: -4px 0 8px !important;
   color: var(--muted) !important;
   font-size: 14px !important;
+  line-height: 1.6 !important;
 }
 
 /* Upload dropzone */
@@ -438,7 +445,7 @@
   display: grid !important;
   place-items: center !important;
   text-align: center !important;
-  gap: 6px !important;
+  gap: 10px !important;
   aspect-ratio: 16 / 7 !important;
   border: 2px dashed #b9a6ff !important;
   border-radius: 18px !important;
@@ -446,7 +453,7 @@
   color: var(--violet) !important;
   cursor: pointer !important;
   transition: 0.15s !important;
-  padding: 16px !important;
+  padding: 24px !important;
 }
 
 .lora-wizard .drop:hover {
@@ -526,13 +533,13 @@
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
+  gap: 16px !important;
   background: #fff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 16px !important;
-  padding: 12px 16px !important;
+  padding: 16px 20px !important;
   cursor: pointer !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 20px !important;
   font-weight: 600 !important;
 }
 
@@ -540,12 +547,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 16px !important;
+  gap: 20px !important;
   background: #ffffff !important;
   border: 1.5px solid var(--edge) !important;
   border-radius: 18px !important;
-  padding: 16px 20px !important;
-  margin-bottom: 22px !important;
+  padding: 20px 24px !important;
+  margin-bottom: 26px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
@@ -563,7 +570,7 @@
 .lora-wizard .sw.free-banner .sw-info {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 6px !important;
 }
 
 .lora-wizard .sw.free-banner .sw-title {
@@ -591,9 +598,9 @@
 
 .lora-wizard .sw.free-banner .sw-desc {
   margin: 0 !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   color: var(--muted) !important;
-  line-height: 1.4 !important;
+  line-height: 1.55 !important;
   font-weight: 400 !important;
 }
 
@@ -646,9 +653,9 @@
 .lora-wizard .sess {
   border: 1.5px solid #f2d9a8 !important;
   background: linear-gradient(100deg, #fff6e2, #fff 50%) !important;
-  border-radius: 20px !important;
-  padding: 16px 16px 18px !important;
-  margin-bottom: 14px !important;
+  border-radius: 22px !important;
+  padding: 24px 26px 26px !important;
+  margin-bottom: 22px !important;
 }
 
 .lora-wizard .sess.free {
@@ -753,8 +760,8 @@
 .lora-wizard .sh2 {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  margin-bottom: 12px !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
   flex-wrap: wrap !important;
 }
 
@@ -772,8 +779,8 @@
 }
 
 .lora-wizard .num {
-  width: 30px !important;
-  height: 30px !important;
+  width: 32px !important;
+  height: 32px !important;
   border-radius: 50% !important;
   background: var(--ink) !important;
   color: #fff !important;
@@ -784,8 +791,9 @@
 
 .lora-wizard .hint {
   color: var(--muted) !important;
-  font-size: 13.5px !important;
-  margin: 0 0 12px !important;
+  font-size: 14px !important;
+  margin: 0 0 18px !important;
+  line-height: 1.55 !important;
 }
 
 .lora-wizard .del {
@@ -809,18 +817,19 @@
 
 .lora-wizard .add {
   width: 100% !important;
-  min-height: 50px !important;
+  min-height: 54px !important;
   border: 2px dashed #9db3ff !important;
   background: rgba(255, 255, 255, 0.7) !important;
-  border-radius: 16px !important;
+  border-radius: 18px !important;
   color: var(--brand) !important;
   font-weight: 700 !important;
   cursor: pointer !important;
   display: flex !important;
-  gap: 8px !important;
+  gap: 10px !important;
   align-items: center !important;
   justify-content: center !important;
   transition: 0.15s !important;
+  margin-top: 18px !important;
 }
 
 .lora-wizard .add:hover {
@@ -829,28 +838,30 @@
 }
 
 .lora-wizard .hd2 {
-  font: 800 12.5px 'Figtree', sans-serif !important;
+  font: 800 13px 'Figtree', sans-serif !important;
   letter-spacing: 0.12em !important;
   text-transform: uppercase !important;
   color: var(--muted) !important;
-  margin: 18px 0 10px !important;
+  margin: 26px 0 16px !important;
 }
 
 /* Review */
 .lora-wizard .rv h3 {
   font-size: 26px !important;
+  margin-bottom: 6px !important;
 }
 
 .lora-wizard .rv p {
-  margin: 4px 0 12px !important;
+  margin: 8px 0 18px !important;
   color: var(--muted) !important;
+  line-height: 1.6 !important;
 }
 
 .lora-wizard .chips {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: 8px !important;
-  margin-bottom: 14px !important;
+  gap: 10px !important;
+  margin-bottom: 20px !important;
 }
 
 .lora-wizard .chips span {
@@ -858,7 +869,7 @@
   align-items: center !important;
   gap: 6px !important;
   border-radius: 99px !important;
-  padding: 5px 14px !important;
+  padding: 7px 16px !important;
   font-weight: 600 !important;
   font-size: 13.5px !important;
   background: var(--brand-soft) !important;
@@ -876,18 +887,18 @@
 }
 
 .lora-wizard .rv .thumb {
-  margin-bottom: 16px !important;
+  margin-bottom: 22px !important;
 }
 
 .lora-wizard .ri {
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
+  gap: 14px !important;
   background: #fff !important;
   border: 1.5px solid var(--edge) !important;
-  border-radius: 14px !important;
-  padding: 12px 14px !important;
-  margin-bottom: 8px !important;
+  border-radius: 16px !important;
+  padding: 16px 20px !important;
+  margin-bottom: 12px !important;
 }
 
 .lora-wizard .ri b {
@@ -908,10 +919,10 @@
 /* Footer & Buttons */
 .lora-wizard .foot {
   display: flex !important;
-  gap: 12px !important;
+  gap: 16px !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 0 28px 26px 34px !important;
+  padding: 8px 34px 32px 40px !important;
 }
 
 .lora-wizard .btn {
@@ -1407,7 +1418,7 @@ body.dark-theme .lora-wizard .hd2 {
   letter-spacing: 0.12em !important;
   text-transform: uppercase !important;
   color: #A78BFA !important;
-  margin: 24px 0 14px !important;
+  margin: 28px 0 18px !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -1429,7 +1440,7 @@ body.dark-theme .lora-wizard .sw {
   background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
   border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 16px !important;
-  padding: 14px 18px !important;
+  padding: 16px 20px !important;
   color: #F5F5FA !important;
   font-weight: 700 !important;
   font-size: 14.5px !important;
@@ -1437,7 +1448,7 @@ body.dark-theme .lora-wizard .sw {
   transition: all 0.2s ease !important;
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
+  gap: 16px !important;
   cursor: pointer !important;
 }
 
@@ -1473,8 +1484,8 @@ body.dark-theme .lora-wizard .sess {
   background: linear-gradient(145deg, #111629 0%, #0D1020 100%) !important;
   border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 22px !important;
-  padding: 20px 20px 22px !important;
-  margin-bottom: 18px !important;
+  padding: 24px 26px 26px !important;
+  margin-bottom: 24px !important;
   box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65), 0 0 24px rgba(118, 87, 255, 0.05) !important;
   position: relative !important;
   overflow: hidden !important;
@@ -1524,8 +1535,8 @@ body.dark-theme .lora-wizard .sess.past {
 [data-theme="dark"] .lora-wizard .sh2 {
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
-  margin-bottom: 14px !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
   flex-wrap: wrap !important;
 }
 
@@ -1570,8 +1581,9 @@ body.dark-theme .lora-wizard .tag {
 [data-theme="dark"] .lora-wizard .hint,
 body.dark-theme .lora-wizard .hint {
   color: #929BB0 !important;
-  font-size: 13.5px !important;
-  margin: 0 0 14px !important;
+  font-size: 14px !important;
+  margin: 0 0 18px !important;
+  line-height: 1.55 !important;
 }
 
 /* Session Type Switcher (Live Upcoming vs Past Recording) - Replaces ugly grey box */
@@ -1695,8 +1707,9 @@ body.dark-theme .lora-wizard .del {
 [data-theme="dark"] .lora-wizard .sess small {
   color: #A78BFA !important;
   font-weight: 600 !important;
-  display: inline-block !important;
-  margin-top: 6px !important;
+  display: block !important;
+  margin-top: 8px !important;
+  line-height: 1.5 !important;
 }
 
 .dark .lora-wizard .sess.free small,
@@ -1709,7 +1722,7 @@ body.dark-theme .lora-wizard .del {
 [data-theme="dark"] .lora-wizard .add,
 body.dark-theme .lora-wizard .add {
   width: 100% !important;
-  min-height: 54px !important;
+  min-height: 56px !important;
   border: 1.5px dashed rgba(118, 87, 255, 0.45) !important;
   background: rgba(17, 22, 41, 0.75) !important;
   border-radius: 18px !important;
@@ -1722,7 +1735,7 @@ body.dark-theme .lora-wizard .add {
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
-  margin-top: 14px !important;
+  margin-top: 18px !important;
   cursor: pointer !important;
 }
 
@@ -1742,13 +1755,13 @@ body.dark-theme .lora-wizard .ri {
   background: #0D1020 !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 16px !important;
-  padding: 14px 16px !important;
+  padding: 16px 20px !important;
   color: #F5F5FA !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   display: flex !important;
   align-items: center !important;
-  gap: 12px !important;
-  margin-bottom: 8px !important;
+  gap: 14px !important;
+  margin-bottom: 12px !important;
 }
 
 .dark .lora-wizard .ri b,
@@ -1796,16 +1809,16 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-info-callout {
-  padding: 12px 16px;
-  border-radius: 14px;
+  padding: 16px 20px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
   border: 1.5px solid #bfdbfe;
-  font-size: 13px;
+  font-size: 13.5px;
   color: #1e3a8a;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  line-height: 1.5;
+  gap: 14px;
+  line-height: 1.6;
 }
 
 .mp-info-callout-icon {
@@ -1815,16 +1828,16 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-parent-banner {
-  margin-bottom: 14px;
-  padding: 12px 16px;
-  border-radius: 14px;
+  margin-bottom: 18px;
+  padding: 16px 20px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
   border: 1.5px solid #bfdbfe;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 14px;
 }
 
 .mp-parent-banner-icon {
@@ -1833,15 +1846,16 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-parent-banner-text {
-  font-size: 13.5px;
+  font-size: 14px;
   color: #1e3a8a;
+  line-height: 1.5;
 }
 
 .mp-parent-banner-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 12.5px;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 700;
   color: #2563eb;
   text-decoration: none;
@@ -1849,30 +1863,30 @@ body.dark-theme .lora-wizard .ri {
 
 .mp-option-btn {
   text-align: left;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
   border: 1.5px solid var(--line, #e2e8f0);
   background: #ffffff;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   transition: all 0.15s ease;
 }
 
 .mp-option-head {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-weight: 750;
-  font-size: 14px;
+  font-size: 14.5px;
   color: #0f172a;
 }
 
 .mp-option-desc {
-  font-size: 12px;
+  font-size: 12.5px;
   color: #64748b;
-  line-height: 1.35;
+  line-height: 1.5;
 }
 
 .mp-vis-btn.public.active {
@@ -1900,13 +1914,13 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-unlock-btn {
-  padding: 14px 16px;
-  gap: 5px;
+  padding: 18px 20px;
+  gap: 8px;
 }
 .mp-unlock-btn .mp-option-desc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: #475569;
-  line-height: 1.4;
+  line-height: 1.55;
 }
 .mp-unlock-btn.active {
   border: 2px solid #2563eb;
@@ -1924,11 +1938,11 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-visibility-notice {
-  margin-top: 10px;
-  padding: 11px 14px;
-  border-radius: 12px;
-  font-size: 12.5px;
-  line-height: 1.5;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
 }
 .mp-visibility-notice.private {
   background: #fffbeb;
@@ -1985,20 +1999,21 @@ body.dark-theme .lora-wizard .ri {
 }
 
 .mp-review-subtext {
-  margin-top: 6px;
-  font-size: 13.5px;
+  margin-top: 8px;
+  font-size: 14px;
   color: #475569;
+  line-height: 1.5;
 }
 
 .mp-review-callout {
-  margin-top: 18px;
-  padding: 16px 18px;
-  border-radius: 16px;
+  margin-top: 24px;
+  padding: 20px 24px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
   border: 1.5px solid #c7d2fe;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
 }
 .mp-review-callout-icon {
   color: #4f46e5;
@@ -2006,9 +2021,9 @@ body.dark-theme .lora-wizard .ri {
   margin-top: 2px;
 }
 .mp-review-callout-text {
-  font-size: 13.5px;
+  font-size: 14px;
   color: #1e1b4b;
-  line-height: 1.55;
+  line-height: 1.65;
 }
 
 /* =========================================================================

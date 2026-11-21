@@ -549,7 +549,7 @@
 
 .lora-tour-overlay .lt-modal {
   width: 100%;
-  max-width: 640px;
+  max-width: 680px;
   max-height: calc(100vh - 32px);
   overflow-y: auto;
   background: #ffffff;
@@ -562,7 +562,7 @@
 .lora-tour-overlay .lt-header {
   background: linear-gradient(135deg, var(--lt-accent-soft, #eff6ff) 0%, #ffffff 100%);
   border-bottom: 1px solid #eef1f8;
-  padding: 22px 26px 18px;
+  padding: 26px 30px 22px;
   position: relative;
 }
 
@@ -570,9 +570,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .lora-tour-overlay .lt-badge {
@@ -619,8 +619,8 @@
   font-size: clamp(21px, 3vw, 26px);
   font-weight: 800;
   color: #0e1733;
-  margin: 0 0 6px;
-  line-height: 1.25;
+  margin: 0 0 10px;
+  line-height: 1.38;
   letter-spacing: -0.02em;
 }
 
@@ -628,24 +628,24 @@
   margin: 0;
   color: #5b647d;
   font-size: 14.5px;
-  line-height: 1.55;
+  line-height: 1.68;
 }
 
 .lora-tour-overlay .lt-body {
-  padding: 20px 26px;
+  padding: 26px 30px;
 }
 
 .lora-tour-overlay .lt-preview-promo {
   background: #f8fafc;
   border: 1.5px dashed #cbd5e1;
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .lora-tour-overlay .lt-preview-main {
@@ -684,14 +684,14 @@
 .lora-tour-overlay .lt-preview-security {
   background: #fef2f2;
   border: 1.5px solid #fecaca;
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .lora-tour-overlay .lt-sec-badge {
@@ -727,52 +727,53 @@
 .lora-tour-overlay .lt-highlights {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .lora-tour-overlay .lt-highlight-card {
   display: flex;
   align-items: flex-start;
-  gap: 13px;
+  gap: 16px;
   background: #f8fafc;
   border: 1px solid #eef2f6;
-  border-radius: 16px;
-  padding: 13px 16px;
+  border-radius: 18px;
+  padding: 18px 20px;
 }
 
 .lora-tour-overlay .lt-highlight-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
   background: var(--lt-accent-soft, #eff6ff);
   color: var(--lt-accent, #2563eb);
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .lora-tour-overlay .lt-highlight-title {
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 15px;
   color: #0e1733;
-  margin-bottom: 3px;
+  line-height: 1.4;
+  margin-bottom: 6px;
 }
 
 .lora-tour-overlay .lt-highlight-desc {
   font-size: 13.5px;
   color: #475569;
-  line-height: 1.5;
+  line-height: 1.65;
 }
 
 .lora-tour-overlay .lt-footer {
-  padding: 16px 26px 20px;
+  padding: 20px 30px 24px;
   border-top: 1px solid #eef1f8;
   background: #fafbfd;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -1287,13 +1288,13 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 
 /* Welcome Tour Voice Bar */
 .lora-tour-overlay .lt-voice-bar {
-  margin-top: 14px;
-  padding-top: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
   border-top: 1px dashed rgba(100, 116, 139, 0.22);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -1338,7 +1339,7 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 
 /* Smart Voice Co-Pilot Modal (.lva-*) */
 .lora-tour-overlay .lva-modal {
-  max-width: 700px;
+  max-width: 740px;
 }
 
 .lora-tour-overlay .lva-badge {
@@ -1349,7 +1350,7 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 .lora-tour-overlay .lva-hero-row {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .lora-tour-overlay .lva-avatar-wrap {
@@ -1392,10 +1393,10 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 }
 
 .lora-tour-overlay .lva-player-bar {
-  margin-top: 16px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -1467,9 +1468,9 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 
 /* Live Spoken Caption Box */
 .lora-tour-overlay .lva-caption-box {
-  margin-top: 14px;
-  padding: 12px 15px;
-  border-radius: 14px;
+  margin-top: 18px;
+  padding: 16px 20px;
+  border-radius: 16px;
   background: #f8fafc;
   border: 1px solid #dbeafe;
 }
@@ -1478,7 +1479,7 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .lora-tour-overlay .lva-caption-live {
@@ -1507,9 +1508,9 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 }
 
 .lora-tour-overlay .lva-caption-text {
-  margin: 0 0 8px;
-  font-size: 13.5px;
-  line-height: 1.55;
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.68;
   color: #0f172a;
   font-weight: 600;
 }
@@ -1534,19 +1535,19 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .lora-tour-overlay .lva-section-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
   color: #0f172a;
 }
 
 .lora-tour-overlay .lva-section-sub {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #64748b;
 }
@@ -1554,18 +1555,18 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 .lora-tour-overlay .lva-items-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 320px;
+  gap: 14px;
+  max-height: 360px;
   overflow-y: auto;
-  padding-right: 2px;
+  padding-right: 4px;
 }
 
 .lora-tour-overlay .lva-item-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 13px 15px;
+  gap: 18px;
+  padding: 16px 20px;
   border-radius: 16px;
   background: #f8fafc;
   border: 1.5px solid #e2e8f0;
@@ -1625,9 +1626,9 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 .lora-tour-overlay .lva-item-badges {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 }
 
 .lora-tour-overlay .lva-step-pill {
@@ -1657,16 +1658,17 @@ body.dark-theme .lora-tour-overlay .lt-btn-done {
 }
 
 .lora-tour-overlay .lva-item-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 2px;
+  line-height: 1.4;
+  margin-bottom: 5px;
 }
 
 .lora-tour-overlay .lva-item-desc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: #475569;
-  line-height: 1.45;
+  line-height: 1.6;
 }
 
 .lora-tour-overlay .lva-item-actions {
