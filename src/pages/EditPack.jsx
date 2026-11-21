@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X, Percent, Clock, Calendar, Globe2, Lock, EyeOff, KeyRound } from 'lucide-react';
+import { Loader2, Tag, Copy, Check, Trash2, RefreshCw, Sparkles, X, Percent, Clock, Calendar, Globe2, Lock, EyeOff, KeyRound, FileText, Video, Image as ImageIcon, MessageCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PageTransition, Skeleton } from '../components/ui';
@@ -19,12 +19,31 @@ import './edit-pack.css';
 
 const CATEGORIES = ['Technology', 'Design', 'Business', 'Language', 'Music', 'Fitness', 'Other'];
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'BDT', 'INR', 'PKR', 'NGN', 'KES', 'PHP', 'BRL', 'LKR'];
+const VALID_EDIT_TABS = ['basic', 'promos', 'sessions', 'media', 'contact'];
 
 export default function EditPack() {
   useSubscriptionGuard();
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialTabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(
+    VALID_EDIT_TABS.includes(initialTabParam) ? initialTabParam : 'basic'
+  );
+
+  useEffect(() => {
+    const t = searchParams.get('tab');
+    if (t && VALID_EDIT_TABS.includes(t) && t !== activeTab) {
+      setActiveTab(t);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSearchParams(tabId === 'basic' ? {} : { tab: tabId }, { replace: true });
+  };
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -431,6 +450,49 @@ export default function EditPack() {
   }
 
   const now = new Date();
+  const missingRecordingsCount = sessions.filter(s => {
+    const isPast = s.is_past_session || (s.scheduled_at && new Date(s.scheduled_at) < now);
+    return isPast && !s.recording_url && !s.is_past_session;
+  }).length;
+
+  const EDIT_TABS = [
+    {
+      id: 'basic',
+      label: 'Basic Info',
+      sub: 'Title, visibility & price',
+      icon: FileText,
+    },
+    {
+      id: 'promos',
+      label: 'Discounts & Promos',
+      sub: 'Coupons & flash sales',
+      icon: Tag,
+      badge: promoCodes.length > 0 ? promoCodes.length : null,
+      accent: 'gold',
+    },
+    {
+      id: 'sessions',
+      label: 'Sessions',
+      sub: 'Live classes & recordings',
+      icon: Video,
+      badge: sessions.length,
+      alert: missingRecordingsCount > 0,
+    },
+    {
+      id: 'media',
+      label: 'Thumbnail & Media',
+      sub: 'Cover image & trailer',
+      icon: ImageIcon,
+    },
+    {
+      id: 'contact',
+      label: 'Contact & Links',
+      sub: 'WhatsApp & community',
+      icon: MessageCircle,
+    },
+  ];
+
+  const currentTabIndex = EDIT_TABS.findIndex(t => t.id === activeTab);
 
   return (
     <PageTransition>
@@ -459,9 +521,63 @@ export default function EditPack() {
 
         {/* Main page form container */}
         <div className="page">
-          <h1>Edit pack</h1>
+          <div className="edit-page-header">
+            <div>
+              <h1>Edit pack</h1>
+              <p className="edit-page-sub">
+                Editing <b>{pack.title || 'Untitled Pack'}</b> ·{' '}
+                <span>
+                  {Number(pack.price) === 0 ? '100% Free' : `${pack.currency || 'USD'} ${Number(pack.price || 0).toLocaleString()}`}
+                </span>
+              </p>
+            </div>
 
-          {/* Section 1: Basic Info */}
+            {activeTab !== 'promos' && (
+              <button
+                type="button"
+                className="edit-quick-promo-btn"
+                onClick={() => handleTabChange('promos')}
+              >
+                <Tag size={15} />
+                <span>Manage Discounts &amp; Promo Codes ({promoCodes.length})</span>
+              </button>
+            )}
+          </div>
+
+          {/* Focused Tab Bar — Click to switch sections without scrolling */}
+          <nav className="edit-tabs-nav" aria-label="Edit pack sections">
+            {EDIT_TABS.map((t) => {
+              const IconComp = t.icon;
+              const isActive = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => handleTabChange(t.id)}
+                  className={`edit-tab-btn ${isActive ? 'active' : ''} ${t.accent ? `accent-${t.accent}` : ''}`}
+                  aria-selected={isActive}
+                >
+                  <span className="edit-tab-icon">
+                    <IconComp size={16} />
+                  </span>
+                  <span className="edit-tab-text">
+                    <span className="edit-tab-label">
+                      {t.label}
+                      {t.badge !== null && t.badge !== undefined && (
+                        <span className={`edit-tab-badge ${t.alert ? 'alert' : ''}`}>
+                          {t.badge}
+                        </span>
+                      )}
+                    </span>
+                    <span className="edit-tab-sub">{t.sub}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* TAB 1: Basic Info */}
+          {activeTab === 'basic' && (
           <section className="card">
             <div className="sh">
               <span className="ib">
@@ -550,8 +666,8 @@ export default function EditPack() {
                   </div>
                   <p className="edit-invite-desc">
                     {pack.visibility === 'private'
-                      ? 'Learners on the Sessions page see this course as 🔒 Private with session details hidden. Share this Secret Invite Link (or any Promo Code / Promo Link below) with selected people to unlock enrollment & free previews.'
-                      : 'This course is completely hidden from public pages. Only people with this Secret Invite Link (or a Promo Code / Promo Link below) can view and enroll.'}
+                      ? 'Learners on the Sessions page see this course as 🔒 Private with session details hidden. Share this Secret Invite Link (or any Promo Code / Promo Link) with selected people to unlock enrollment & free previews.'
+                      : 'This course is completely hidden from public pages. Only people with this Secret Invite Link (or a Promo Code / Promo Link) can view and enroll.'}
                   </p>
                 </div>
               )}
@@ -657,8 +773,10 @@ export default function EditPack() {
               </div>
             </div>
           </section>
+          )}
 
-          {/* Section 2: Thumbnail */}
+          {/* TAB 4: Thumbnail & Media */}
+          {activeTab === 'media' && (
           <section className="card c2">
             <div className="sh">
               <span className="ib">
@@ -669,55 +787,77 @@ export default function EditPack() {
                 </svg>
               </span>
               <div>
-                <h2>Thumbnail</h2>
-                <p>The cover image for your course.</p>
+                <h2>Thumbnail &amp; intro video</h2>
+                <p>The cover image and preview trailer for your course.</p>
               </div>
             </div>
-            <div className="thumb">
-              {thumbPreview ? (
-                <>
-                  <img src={thumbPreview} alt="Pack thumbnail" />
-                  <div className="tb">
-                    <label className="btn-change">
-                      Change
+            <div className="g">
+              <div className="f">
+                <label>Course cover image (16:9 recommended)</label>
+                <div className="thumb">
+                  {thumbPreview ? (
+                    <>
+                      <img src={thumbPreview} alt="Pack thumbnail" />
+                      <div className="tb">
+                        <label className="btn-change">
+                          Change
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnail}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        <button
+                          className="rm"
+                          type="button"
+                          onClick={handleRemoveThumbnail}
+                          aria-label="Remove thumbnail"
+                        >
+                          <svg className="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <label className="thumb-empty">
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleThumbnail}
                         style={{ display: 'none' }}
                       />
+                      <div className="ib">
+                        <svg className="ic" viewBox="0 0 24 24">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                        </svg>
+                      </div>
+                      <b>Upload thumbnail</b>
+                      <span>PNG, JPG or WebP (16:9 recommended)</span>
                     </label>
-                    <button
-                      className="rm"
-                      type="button"
-                      onClick={handleRemoveThumbnail}
-                      aria-label="Remove thumbnail"
-                    >
-                      <svg className="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <label className="thumb-empty">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleThumbnail}
-                    style={{ display: 'none' }}
-                  />
-                  <div className="ib">
-                    <svg className="ic" viewBox="0 0 24 24">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                    </svg>
-                  </div>
-                  <b>Upload thumbnail</b>
-                  <span>PNG, JPG or WebP (16:9 recommended)</span>
-                </label>
-              )}
+                  )}
+                </div>
+              </div>
+
+              <div className="f">
+                <label htmlFor="intro">Intro video URL <span>(YouTube/Vimeo)</span></label>
+                <div className="h">
+                  Add an optional course preview video that learners can watch on your course page before enrolling.
+                </div>
+                <input
+                  id="intro"
+                  name="introVideo"
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={pack.intro_video_url || ''}
+                  onChange={e => updatePack('intro_video_url', e.target.value)}
+                />
+              </div>
             </div>
           </section>
+          )}
 
-          {/* Section 3: Inquiry Contact & Community Links */}
+          {/* TAB 5: Inquiry Contact & Community Links */}
+          {activeTab === 'contact' && (
           <section className="card c3">
             <div className="sh">
               <span className="ib">
@@ -751,18 +891,6 @@ export default function EditPack() {
                     Use my profile number ({profile.contact_number})
                   </button>
                 )}
-              </div>
-
-              <div className="f">
-                <label htmlFor="intro">Intro video URL <span>(YouTube/Vimeo)</span></label>
-                <input
-                  id="intro"
-                  name="introVideo"
-                  type="url"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={pack.intro_video_url || ''}
-                  onChange={e => updatePack('intro_video_url', e.target.value)}
-                />
               </div>
 
               <div className="f">
@@ -814,8 +942,10 @@ export default function EditPack() {
               </div>
             </div>
           </section>
+          )}
 
-          {/* Section: Promo Codes (Free Student Access) */}
+          {/* TAB 2: Promo Codes & Discounts */}
+          {activeTab === 'promos' && (
           <section className="card promo-section">
             <div className="sh" style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 12 }}>
               <div style={{ display: 'flex', gap: 14 }}>
@@ -968,8 +1098,10 @@ export default function EditPack() {
               </div>
             )}
           </section>
+          )}
 
-          {/* Section 4: Sessions */}
+          {/* TAB 3: Sessions */}
+          {activeTab === 'sessions' && (
           <section className="card c4">
             <div className="sh">
               <span className="ib">
@@ -1152,6 +1284,48 @@ export default function EditPack() {
               Add session
             </button>
           </section>
+          )}
+
+          {/* Bottom Tab Navigation & Save Bar */}
+          <div className="edit-bottom-bar">
+            <div className="edit-bottom-nav">
+              {currentTabIndex > 0 && (
+                <button
+                  type="button"
+                  className="edit-step-btn"
+                  onClick={() => handleTabChange(EDIT_TABS[currentTabIndex - 1].id)}
+                >
+                  ← {EDIT_TABS[currentTabIndex - 1].label}
+                </button>
+              )}
+              {currentTabIndex < EDIT_TABS.length - 1 && (
+                <button
+                  type="button"
+                  className="edit-step-btn"
+                  onClick={() => handleTabChange(EDIT_TABS[currentTabIndex + 1].id)}
+                >
+                  {EDIT_TABS[currentTabIndex + 1].label} →
+                </button>
+              )}
+            </div>
+
+            <button
+              className="save"
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? (
+                <Loader2 className="ic animate-spin" />
+              ) : (
+                <svg className="ic" viewBox="0 0 24 24">
+                  <path d="M5 3h11l4 4v14H5z" />
+                  <path d="M8 3v6h8V3M8 21v-7h8v7" />
+                </svg>
+              )}
+              <span>{saving ? 'Saving...' : 'Save changes'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Modal: Generate Discount & Promo Code */}

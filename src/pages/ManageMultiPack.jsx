@@ -491,7 +491,21 @@ export default function ManageMultiPack() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-2 pt-3 md:pt-0 border-t md:border-t-0 border-[#F1F5F9]">
+                      <div className="flex flex-wrap items-center gap-2 pt-3 md:pt-0 border-t md:border-t-0 border-[#F1F5F9]">
+                        <Link
+                          to={`/creator/packs/${sub.id}/edit?tab=promos`}
+                          className="btn-ghost text-xs py-2 px-3 border border-[#FDE68A] bg-[#FFFBEB] text-[#B45309] hover:bg-[#FEF3C7]"
+                          title="Manage discounts & promo codes for this sub-pack"
+                        >
+                          Discounts
+                        </Link>
+                        <Link
+                          to={`/creator/packs/${sub.id}/edit?tab=sessions`}
+                          className="btn-ghost text-xs py-2 px-3 border border-[#DDD6FE] bg-[#F5F3FF] text-[#6D28D9] hover:bg-[#EDE9FE]"
+                          title="Manage sessions & recordings for this sub-pack"
+                        >
+                          Sessions
+                        </Link>
                         <Link
                           to={`/creator/packs/${sub.id}/edit`}
                           className="btn-ghost text-xs py-2 px-3.5 border border-[#E2E8F0]"

@@ -2214,3 +2214,339 @@ body.dark-theme .lora-edit {
   color: #FFFFFF !important;
   box-shadow: 0 8px 24px -4px rgba(118, 87, 255, 0.5) !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   FOCUSED TABBED EDIT WORKSPACE (No-Scroll Section Switching)
+   ══════════════════════════════════════════════════════════════════════ */
+.lora-edit .edit-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.lora-edit .edit-page-header h1 {
+  font-size: clamp(28px, 3.8vw, 38px) !important;
+  color: var(--ink) !important;
+  margin: 0 !important;
+}
+
+.lora-edit .edit-page-sub {
+  margin: 6px 0 0 !important;
+  font-size: 14.5px !important;
+  color: var(--muted) !important;
+  line-height: 1.5 !important;
+}
+
+.lora-edit .edit-page-sub b {
+  color: var(--ink) !important;
+}
+
+.lora-edit .edit-quick-promo-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 18px !important;
+  border-radius: 14px !important;
+  border: 1.5px solid #fcd34d !important;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  color: #b45309 !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px -4px rgba(245, 158, 11, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.lora-edit .edit-quick-promo-btn:hover {
+  transform: translateY(-1.5px) !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 8px 20px -4px rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Tab Bar Container */
+.lora-edit .edit-tabs-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid var(--edge);
+  border-radius: 22px;
+  padding: 10px;
+  box-shadow: 0 4px 20px -8px rgba(14, 23, 51, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.lora-edit .edit-tab-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  padding: 12px 14px !important;
+  border-radius: 16px !important;
+  border: 1.5px solid transparent !important;
+  background: transparent !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  min-width: 0 !important;
+}
+
+.lora-edit .edit-tab-btn:hover:not(.active) {
+  background: #f8fafc !important;
+  border-color: var(--line) !important;
+  color: var(--ink) !important;
+}
+
+.lora-edit .edit-tab-btn.active {
+  background: #ffffff !important;
+  border-color: var(--brand) !important;
+  color: var(--ink) !important;
+  box-shadow: 0 8px 22px -6px rgba(47, 91, 255, 0.25) !important;
+}
+
+.lora-edit .edit-tab-btn.accent-gold.active {
+  border-color: #f59e0b !important;
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%) !important;
+  box-shadow: 0 8px 22px -6px rgba(245, 158, 11, 0.28) !important;
+}
+
+.lora-edit .edit-tab-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 11px !important;
+  background: var(--soft) !important;
+  color: var(--muted) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.lora-edit .edit-tab-btn.active .edit-tab-icon {
+  background: var(--brand) !important;
+  color: #ffffff !important;
+}
+
+.lora-edit .edit-tab-btn.accent-gold.active .edit-tab-icon {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.lora-edit .edit-tab-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.lora-edit .edit-tab-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  color: var(--ink) !important;
+  white-space: nowrap !important;
+}
+
+.lora-edit .edit-tab-sub {
+  font-size: 11.5px !important;
+  color: var(--muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.lora-edit .edit-tab-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1px 7px !important;
+  border-radius: 99px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  background: var(--brand-soft) !important;
+  color: var(--brand) !important;
+}
+
+.lora-edit .edit-tab-btn.accent-gold .edit-tab-badge {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+}
+
+.lora-edit .edit-tab-badge.alert {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+/* Bottom Navigation & Save Bar */
+.lora-edit .edit-bottom-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  padding: 20px 26px !important;
+  background: #ffffff !important;
+  border: 1.5px solid var(--edge) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 10px 28px -10px rgba(14, 23, 51, 0.1) !important;
+}
+
+.lora-edit .edit-bottom-nav {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.lora-edit .edit-step-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid var(--edge) !important;
+  background: var(--soft) !important;
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.lora-edit .edit-step-btn:hover {
+  background: var(--brand-soft) !important;
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+@media (max-width: 860px) {
+  .lora-edit .edit-tabs-nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 8px;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+  .lora-edit .edit-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .lora-edit .edit-tab-btn {
+    flex: 0 0 auto !important;
+    padding: 10px 14px !important;
+  }
+  .lora-edit .edit-tab-sub {
+    display: none !important;
+  }
+}
+
+/* Dark Theme Overrides for Tabbed Edit Workspace */
+.dark .lora-edit .edit-page-sub b,
+[data-theme="dark"] .lora-edit .edit-page-sub b {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .edit-quick-promo-btn,
+[data-theme="dark"] .lora-edit .edit-quick-promo-btn {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.38) !important;
+  color: #FBBF24 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark .lora-edit .edit-quick-promo-btn:hover,
+[data-theme="dark"] .lora-edit .edit-quick-promo-btn:hover {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #FBBF24 !important;
+}
+
+.dark .lora-edit .edit-tabs-nav,
+[data-theme="dark"] .lora-edit .edit-tabs-nav {
+  background: #111629 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .lora-edit .edit-tab-btn:hover:not(.active),
+[data-theme="dark"] .lora-edit .edit-tab-btn:hover:not(.active) {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .lora-edit .edit-tab-btn.active,
+[data-theme="dark"] .lora-edit .edit-tab-btn.active {
+  background: #171D33 !important;
+  border-color: #7657FF !important;
+  box-shadow: 0 6px 20px rgba(118, 87, 255, 0.28) !important;
+}
+
+.dark .lora-edit .edit-tab-btn.accent-gold.active,
+[data-theme="dark"] .lora-edit .edit-tab-btn.accent-gold.active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, #171D33 100%) !important;
+  border-color: #FBBF24 !important;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25) !important;
+}
+
+.dark .lora-edit .edit-tab-icon,
+[data-theme="dark"] .lora-edit .edit-tab-icon {
+  background: #080A12 !important;
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .edit-tab-btn.active .edit-tab-icon,
+[data-theme="dark"] .lora-edit .edit-tab-btn.active .edit-tab-icon {
+  background: linear-gradient(135deg, #7657FF, #398BFF) !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-edit .edit-tab-btn.accent-gold.active .edit-tab-icon,
+[data-theme="dark"] .lora-edit .edit-tab-btn.accent-gold.active .edit-tab-icon {
+  background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+  color: #FFFFFF !important;
+}
+
+.dark .lora-edit .edit-tab-label,
+[data-theme="dark"] .lora-edit .edit-tab-label {
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .edit-tab-sub,
+[data-theme="dark"] .lora-edit .edit-tab-sub {
+  color: #929BB0 !important;
+}
+
+.dark .lora-edit .edit-tab-badge,
+[data-theme="dark"] .lora-edit .edit-tab-badge {
+  background: rgba(118, 87, 255, 0.2) !important;
+  color: #A78BFA !important;
+}
+
+.dark .lora-edit .edit-tab-btn.accent-gold .edit-tab-badge,
+[data-theme="dark"] .lora-edit .edit-tab-btn.accent-gold .edit-tab-badge {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #FBBF24 !important;
+}
+
+.dark .lora-edit .edit-bottom-bar,
+[data-theme="dark"] .lora-edit .edit-bottom-bar {
+  background: #111629 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .lora-edit .edit-step-btn,
+[data-theme="dark"] .lora-edit .edit-step-btn {
+  background: #171D33 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #F5F5FA !important;
+}
+
+.dark .lora-edit .edit-step-btn:hover,
+[data-theme="dark"] .lora-edit .edit-step-btn:hover {
+  background: rgba(118, 87, 255, 0.18) !important;
+  border-color: #7657FF !important;
+  color: #A78BFA !important;
+}

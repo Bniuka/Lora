@@ -21,6 +21,7 @@ import {
   Globe,
   AlertTriangle,
   FolderOpen,
+  Tag,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
@@ -591,6 +592,28 @@ export default function MyPacks() {
                               'Copy Link'
                             )}
                           </button>
+                        </div>
+                      )}
+
+                      {/* Quick Edit Shortcuts (Direct jump to Discounts or Sessions tab without scrolling) */}
+                      {!isMulti && (
+                        <div className="mpk-quick-shortcuts">
+                          <Link
+                            to={`/creator/packs/${pack.id}/edit?tab=promos`}
+                            className="mpk-shortcut-chip promo"
+                            title="Open Discounts & Promo Codes tab directly"
+                          >
+                            <Tag size={12} />
+                            <span>Discounts &amp; Promo</span>
+                          </Link>
+                          <Link
+                            to={`/creator/packs/${pack.id}/edit?tab=sessions`}
+                            className="mpk-shortcut-chip sessions"
+                            title="Open Sessions & Recordings tab directly"
+                          >
+                            <Video size={12} />
+                            <span>Sessions ({totalSessions})</span>
+                          </Link>
                         </div>
                       )}
 

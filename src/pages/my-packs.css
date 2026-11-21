@@ -1049,6 +1049,78 @@
   background: #059669;
 }
 
+/* ── Quick Edit Shortcuts Strip (Discounts & Sessions direct tab jump) ── */
+.mpk-quick-shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mpk-shortcut-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.mpk-shortcut-chip.promo {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.mpk-shortcut-chip.promo:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+.mpk-shortcut-chip.sessions {
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+}
+
+.mpk-shortcut-chip.sessions:hover {
+  background: #ede9fe;
+  border-color: #8b5cf6;
+  transform: translateY(-1px);
+}
+
+.dark .mpk-shortcut-chip.promo,
+[data-theme="dark"] .mpk-shortcut-chip.promo {
+  background: rgba(245, 158, 11, 0.14) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fbbf24 !important;
+}
+
+.dark .mpk-shortcut-chip.promo:hover,
+[data-theme="dark"] .mpk-shortcut-chip.promo:hover {
+  background: rgba(245, 158, 11, 0.24) !important;
+  border-color: #fbbf24 !important;
+}
+
+.dark .mpk-shortcut-chip.sessions,
+[data-theme="dark"] .mpk-shortcut-chip.sessions {
+  background: rgba(124, 58, 237, 0.14) !important;
+  border-color: rgba(167, 139, 250, 0.3) !important;
+  color: #c4b5fd !important;
+}
+
+.dark .mpk-shortcut-chip.sessions:hover,
+[data-theme="dark"] .mpk-shortcut-chip.sessions:hover {
+  background: rgba(124, 58, 237, 0.24) !important;
+  border-color: #a78bfa !important;
+}
+
 /* ── Card Action Buttons Toolbar ── */
 .mpk-card-actions {
   display: flex;
