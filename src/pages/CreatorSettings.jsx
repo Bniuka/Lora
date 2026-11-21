@@ -404,31 +404,46 @@ export default function CreatorSettings() {
               <h2>Lora Creator Plan</h2>
               <p>
                 {isLifetime
-                  ? 'You have permanent, unrestricted access to all Lora Creator features. No renewals or payments needed.'
+                  ? 'You have permanent, unrestricted access to all Lora Creator features & your Branded Academy Website (Sub-Web). No renewals or payments needed.'
                   : isGrantedAccess && nextBilling
                     ? `Complimentary creator access active until ${nextBilling.toLocaleDateString()}.`
                     : subStatus === 'trial'
-                      ? `Trial ends on ${trialEnd.toLocaleDateString()}, then Rs.\u00a03,499/month.`
+                      ? `Trial ends on ${trialEnd.toLocaleDateString()}, then Rs.\u00a04,999/month (or Rs.\u00a034,499 one-time for Own Website).`
                       : isPaidActive && nextBilling
-                        ? `Next billing: ${nextBilling.toLocaleDateString()} · Rs.\u00a03,499/month`
-                        : 'Rs.\u00a03,499/month'}
+                        ? `Next billing: ${nextBilling.toLocaleDateString()} · Rs.\u00a04,999/month`
+                        : 'Rs.\u00a04,999/month'}
               </p>
             </div>
 
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
               {isLifetime ? (
-                <div className="s-plan-vip-pill">
-                  <Sparkles size={16} />
-                  <span>VIP Status Active</span>
-                </div>
+                <>
+                  <div className="s-plan-vip-pill">
+                    <Sparkles size={16} />
+                    <span>VIP &amp; Sub-Web Active</span>
+                  </div>
+                  <Link to="/creator/website" className="s-plan-manage">
+                    🌐 Open Website Studio
+                  </Link>
+                </>
               ) : isGrantedAccess ? (
-                <div className="s-plan-vip-pill" style={{ borderColor: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)' }}>
-                  <span>{daysLeft} Days Remaining</span>
-                </div>
+                <>
+                  <div className="s-plan-vip-pill" style={{ borderColor: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)' }}>
+                    <span>{daysLeft} Days Remaining</span>
+                  </div>
+                  <Link to="/creator/subscription?plan=onetime&upgrade=true" className="s-plan-manage">
+                    🌐 Get Own Website (Rs. 34,499)
+                  </Link>
+                </>
               ) : (subStatus === 'trial' || subStatus === 'expired' || subStatus === 'cancelled') ? (
-                <Link to="/creator/subscription?upgrade=true" className="s-btn-light">
-                  Upgrade now
-                </Link>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
+                  <Link to="/creator/subscription?plan=onetime&upgrade=true" className="s-btn-light">
+                    🌐 Own Website (Rs. 34,499)
+                  </Link>
+                  <Link to="/creator/subscription?plan=monthly&upgrade=true" className="s-plan-manage">
+                    Monthly Plan (Rs. 4,999/mo)
+                  </Link>
+                </div>
               ) : isPaidActive ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <a href="https://www.paypal.com/myaccount/autopay/" target="_blank" rel="noopener noreferrer" className="s-plan-manage">

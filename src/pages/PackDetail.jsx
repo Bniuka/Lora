@@ -21,6 +21,7 @@ import { PageTransition, GoldBadge, Modal, StatusBadge, Skeleton, ShareMenu } fr
 import PackReviewsSection from '../components/PackReviewsSection';
 import StudentReportModal from '../components/StudentReportModal';
 import { isPackBanned } from '../lib/linkSentinel';
+import { detectSubWebHost } from '../lib/subWeb';
 import './payment-code-modal.css';
 import './payment-modal.css';
 import './course-detail.css';
@@ -1473,19 +1474,48 @@ export default function PackDetail() {
       <div className="lora-course">
         <div className="wrap">
           {/* BREADCRUMB */}
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
-            <span>›</span>
-            <Link to="/learner/discover">Sessions</Link>
-            {parentPack && (
-              <>
+          {(() => {
+            const subWebHost = detectSubWebHost();
+            const academySlugParam = searchParams.get('academy');
+            const isSubWebContext = Boolean(subWebHost || academySlugParam);
+            const backToAcademyUrl = subWebHost ? '/' : `/s/${academySlugParam}`;
+
+            if (isSubWebContext) {
+              return (
+                <nav className="crumbs" aria-label="Breadcrumb">
+                  <Link to={backToAcademyUrl} style={{ fontWeight: 700, color: 'var(--brand)' }}>
+                    ← Back to {creatorName || 'Academy'} Website
+                  </Link>
+                  {parentPack && (
+                    <>
+                      <span>›</span>
+                      <Link to={`/p/${parentPack.slug || parentPack.id}${academySlugParam ? `?academy=${academySlugParam}` : ''}`}>
+                        {parentPack.title}
+                      </Link>
+                    </>
+                  )}
+                  <span>›</span>
+                  <b>{pack.title}</b>
+                </nav>
+              );
+            }
+
+            return (
+              <nav className="crumbs" aria-label="Breadcrumb">
+                <Link to="/">Home</Link>
                 <span>›</span>
-                <Link to={`/learner/pack/${parentPack.slug || parentPack.id}`}>{parentPack.title}</Link>
-              </>
-            )}
-            <span>›</span>
-            <b>{pack.title}</b>
-          </nav>
+                <Link to="/learner/discover">Sessions</Link>
+                {parentPack && (
+                  <>
+                    <span>›</span>
+                    <Link to={`/learner/pack/${parentPack.slug || parentPack.id}`}>{parentPack.title}</Link>
+                  </>
+                )}
+                <span>›</span>
+                <b>{pack.title}</b>
+              </nav>
+            );
+          })()}
 
           {/* SUB-PACK PARENT COURSE BANNER */}
           {parentPack && (

@@ -5,7 +5,7 @@ import {
   Loader2, Sparkles, X, ShieldAlert, UserCheck, 
   Lock, KeyRound, Eye, EyeOff, ArrowLeft, ShieldCheck,
   ExternalLink, Ban, Play, Tv, 
-  AlertTriangle, Unlock
+  AlertTriangle, Unlock, Globe
 } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
@@ -13,6 +13,7 @@ import { supabase } from '../lib/supabase';
 import { isUserAdmin } from '../lib/admin';
 import { getCopyrightAlerts, resolveCopyrightAlert } from '../lib/linkSentinel';
 import { getAllReportsForFounder, resolveStudentReport } from '../lib/disputeSystem';
+import { normalizeSubWebConfig, saveCreatorSubWebConfig, sanitizeSubdomainSlug, sanitizeCustomDomain } from '../lib/subWeb';
 import { PageTransition } from '../components/ui';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import './admin-panel.css';
@@ -44,6 +45,9 @@ export default function AdminPanel() {
   // Selected access grant option
   const [preset, setPreset] = useState('6m');
   const [customDate, setCustomDate] = useState('');
+  const [adminSubWebEnabled, setAdminSubWebEnabled] = useState(false);
+  const [adminSubWebSlug, setAdminSubWebSlug] = useState('');
+  const [adminCustomDomain, setAdminCustomDomain] = useState('');
 
   // 🛡️ Copyright Sentinel State
   const [copyrightAlerts, setCopyrightAlerts] = useState([]);
@@ -293,7 +297,12 @@ export default function AdminPanel() {
 
   const openManageModal = (creator) => {
     setSelectedCreator(creator);
-    setPreset('6m');
+    const cp = creator.creator_profiles || {};
+    const cfg = normalizeSubWebConfig(cp, creator);
+    setAdminSubWebEnabled(Boolean(cfg.has_sub_web));
+    setAdminSubWebSlug(cfg.sub_web_slug || '');
+    setAdminCustomDomain(cfg.custom_domain || '');
+    setPreset(cfg.has_sub_web ? 'subweb_lifetime' : '6m');
     setCustomDate(format(addMonths(new Date(), 6), 'yyyy-MM-dd'));
   };
 
@@ -304,6 +313,7 @@ export default function AdminPanel() {
     try {
       let newStatus = 'active';
       let targetDate = null;
+      let grantSubWeb = adminSubWebEnabled;
 
       if (actionType === '1m') {
         targetDate = addMonths(new Date(), 1);
@@ -317,12 +327,16 @@ export default function AdminPanel() {
         targetDate = addMonths(new Date(), 12);
       } else if (actionType === 'lifetime') {
         targetDate = null;
+      } else if (actionType === 'subweb_lifetime') {
+        targetDate = null;
+        grantSubWeb = true;
       } else if (actionType === 'custom') {
         if (!customDate) throw new Error("Please select a valid custom date");
         targetDate = new Date(customDate);
       } else if (actionType === 'revoke') {
         newStatus = 'expired';
         targetDate = new Date(Date.now() - 86400000);
+        grantSubWeb = false;
       }
 
       // Update creator_profiles
@@ -338,12 +352,27 @@ export default function AdminPanel() {
 
       if (upErr) throw upErr;
 
+      // Save Sub-Web & Custom Domain config
+      const existingCfg = normalizeSubWebConfig(selectedCreator.creator_profiles || {}, selectedCreator);
+      await saveCreatorSubWebConfig(selectedCreator.id, {
+        ...existingCfg,
+        has_sub_web: grantSubWeb,
+        sub_web_slug: sanitizeSubdomainSlug(adminSubWebSlug || existingCfg.sub_web_slug),
+        custom_domain: sanitizeCustomDomain(adminCustomDomain),
+      });
+
       // Send creator notification
       await supabase.from('notifications').insert({
         user_id: selectedCreator.id,
-        title: actionType === 'revoke' ? 'Subscription Updated' : 'Free Access Granted! 🎉',
+        title: actionType === 'revoke'
+          ? 'Subscription Updated'
+          : actionType === 'subweb_lifetime'
+          ? '🌐 Own Academy Website + Lifetime VIP Unlocked!'
+          : 'Free Access Granted! 🎉',
         message: actionType === 'revoke'
           ? 'Your creator subscription has ended.'
+          : actionType === 'subweb_lifetime'
+          ? 'Your Branded Academy Website (Sub-Web Studio) & Lifetime VIP license have been activated! Open "My Website" in your sidebar to customize your domain and colors.'
           : actionType === 'lifetime'
           ? 'You have been awarded Lifetime VIP Founder Access to LoraSpace! Enjoy unlimited features forever.'
           : `You have been awarded complimentary creator access! Valid through ${format(targetDate, 'MMM dd, yyyy')}.`,
@@ -1020,6 +1049,90 @@ export default function AdminPanel() {
                     <Crown size={18} />
                     👑 Lifetime VIP Access (Never Expires)
                   </button>
+                  <button
+                    type="button"
+                    className={`lora-admin-preset-btn preset-vip ${preset === 'subweb_lifetime' ? 'active' : ''}`}
+                    onClick={() => { setPreset('subweb_lifetime'); setAdminSubWebEnabled(true); }}
+                    style={{ gridColumn: '1 / -1' }}
+                  >
+                    <Globe size={18} />
+                    🌐 Own Academy Website + Lifetime License (Rs. 34,499 Package)
+                  </button>
+                </div>
+
+                {/* Founder Sub-Web & Custom Domain Controls */}
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: '14px 16px',
+                    borderRadius: 14,
+                    background: '#f8fafc',
+                    border: '1.5px solid #e2e8f0',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                  }}
+                >
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: '#0f172a',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span>🌐 Enable Branded Sub-Web (Own Academy Website)</span>
+                    <input
+                      type="checkbox"
+                      checked={adminSubWebEnabled}
+                      onChange={(e) => setAdminSubWebEnabled(e.target.checked)}
+                      style={{ width: 17, height: 17, accentColor: '#2563eb' }}
+                    />
+                  </label>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>
+                        Subdomain Slug (.loraspace.com)
+                      </label>
+                      <input
+                        type="text"
+                        value={adminSubWebSlug}
+                        onChange={(e) => setAdminSubWebSlug(sanitizeSubdomainSlug(e.target.value))}
+                        placeholder="e.g. apex-physics"
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          borderRadius: 9,
+                          border: '1px solid #cbd5e1',
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>
+                        VIP Custom Domain (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={adminCustomDomain}
+                        onChange={(e) => setAdminCustomDomain(e.target.value)}
+                        placeholder="e.g. www.apexphysics.lk"
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          borderRadius: 9,
+                          border: '1px solid #cbd5e1',
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {preset === 'custom' && (

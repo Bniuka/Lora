@@ -17,6 +17,8 @@ import UpdatePassword from './pages/UpdatePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import PackDetail from './pages/PackDetail';
 import CreatorPublicProfile from './pages/CreatorPublicProfile';
+import CreatorSubWeb from './pages/CreatorSubWeb';
+import { detectSubWebHost } from './lib/subWeb';
 
 /* ── Creator Pages ── */
 import CreatorDashboard from './pages/CreatorDashboard';
@@ -30,6 +32,7 @@ import CreatorSettings from './pages/CreatorSettings';
 import CreatorSubscription from './pages/CreatorSubscription';
 import CreatorGuide from './pages/CreatorGuide';
 import CreatorReports from './pages/CreatorReports';
+import CreatorWebsiteStudio from './pages/CreatorWebsiteStudio';
 import AdminPanel from './pages/AdminPanel';
 /* ── Learner Pages ── */
 import LearnerDashboard from './pages/LearnerDashboard';
@@ -37,11 +40,18 @@ import Discover from './pages/Discover';
 import MySessions from './pages/MySessions';
 
 export default function App() {
+  const subWebHost = detectSubWebHost();
+
   return (
     <AnimatePresence mode="wait">
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Public routes — If accessed via a creator subdomain (e.g. apex-physics.loraspace.com) or custom domain, render their Sub-Web at "/" */}
+        <Route
+          path="/"
+          element={subWebHost ? <CreatorSubWeb hostContext={subWebHost} /> : <LandingPage />}
+        />
+        <Route path="/s/:slug" element={<CreatorSubWeb />} />
+        <Route path="/academy/:slug" element={<CreatorSubWeb />} />
         <Route path="/signup" element={<RoleSelection />} />
         <Route path="/signup/creator" element={<CreatorSignup />} />
         <Route path="/signup/learner" element={<LearnerSignup />} />
@@ -100,6 +110,11 @@ export default function App() {
         <Route path="/creator/reports" element={
           <ProtectedRoute allowedRole="creator">
             <CreatorLayout><CreatorReports /></CreatorLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/creator/website" element={
+          <ProtectedRoute allowedRole="creator">
+            <CreatorLayout><CreatorWebsiteStudio /></CreatorLayout>
           </ProtectedRoute>
         } />
         <Route path="/creator/settings" element={

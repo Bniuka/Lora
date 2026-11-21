@@ -484,3 +484,124 @@
     animation: none !important;
   }
 }
+
+/* ── Plan Switcher (Monthly Rs. 4,999 vs One-Time Own Website Rs. 34,499) ── */
+.lora-sub .sub-plan-switcher {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.lora-sub .sub-plan-option {
+  position: relative;
+  text-align: left;
+  padding: 15px 18px;
+  border-radius: 18px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: inherit;
+}
+
+.lora-sub .sub-plan-option:hover {
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.lora-sub .sub-plan-option.active {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  box-shadow: 0 8px 22px -8px rgba(47, 91, 255, 0.35);
+}
+
+.lora-sub .sub-plan-option.onetime.active {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  box-shadow: 0 10px 26px -8px rgba(245, 158, 11, 0.4);
+}
+
+.lora-sub .sub-plan-popular-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.lora-sub .sub-plan-opt-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lora-sub .sub-plan-opt-name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.lora-sub .sub-plan-opt-price {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--brand);
+}
+
+.lora-sub .sub-plan-option.onetime .sub-plan-opt-price {
+  color: #b45309;
+}
+
+.lora-sub .sub-plan-opt-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.lora-sub .head.head-onetime {
+  background: radial-gradient(260px 160px at 100% 0, rgba(245, 158, 11, 0.45), transparent 70%),
+              linear-gradient(135deg, #0f172a 0%, #3b1d8f 55%, #1d4ed8 100%);
+}
+
+/* Dark theme adjustments for plan switcher */
+.dark .lora-sub .sub-plan-option,
+[data-theme="dark"] .lora-sub .sub-plan-option {
+  background: #111629;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .lora-sub .sub-plan-option.active,
+[data-theme="dark"] .lora-sub .sub-plan-option.active {
+  background: rgba(118, 87, 255, 0.18);
+  border-color: #7657ff;
+}
+
+.dark .lora-sub .sub-plan-option.onetime.active,
+[data-theme="dark"] .lora-sub .sub-plan-option.onetime.active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, #171d33 100%);
+  border-color: #fbbf24;
+}
+
+.dark .lora-sub .sub-plan-opt-name,
+[data-theme="dark"] .lora-sub .sub-plan-opt-name {
+  color: #f5f5fa;
+}
+
+.dark .lora-sub .sub-plan-opt-desc,
+[data-theme="dark"] .lora-sub .sub-plan-opt-desc {
+  color: #929bb0;
+}
